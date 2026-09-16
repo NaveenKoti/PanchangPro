@@ -1,0 +1,368 @@
+{
+  "common": {
+    "appName": "VedaTime",
+    "loading": "Loading Panchang...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "yesterday": "Yesterday",
+    "share": "Share",
+    "shareSuccess": "Shared successfully!",
+    "shareError": "Failed to share",
+    "invite": "Invite",
+    "send": "Send",
+    "minutes": "minutes",
+    "download": "Download",
+    "whatsapp": "WhatsApp",
+    "ads": "Advertisement",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "location": "Location"
+  },
+  "navigation": {
+    "today": "Today",
+    "calendar": "Calendar",
+    "muhurta": "Muhurta",
+    "fasts": "Fasts",
+    "myTithis": "My Tithis",
+    "stories": "Stories",
+    "settings": "Settings",
+    "more": "More"
+  },
+  "panchang": {
+    "tithi": "Tithi",
+    "nakshatra": "Nakshatra",
+    "yoga": "Yoga",
+    "karana": "Karana",
+    "vaar": "Vaar",
+    "paksha": "Paksha",
+    "shukla": "Shukla",
+    "krishna": "Krishna",
+    "sunrise": "Sunrise",
+    "sunset": "Sunset",
+    "moonrise": "Moonrise",
+    "moonset": "Moonset",
+    "rahuKaal": "Rahu Kaal",
+    "yamagandam": "Yamagandam",
+    "gulikaKaal": "Gulika Kaal",
+    "auspicious": "Auspicious",
+    "inauspicious": "Inauspicious",
+    "title": "Panchang",
+    "dayLength": "daylight",
+    "rahuKaalWarning": "Avoid important tasks",
+    "samvatsara": "Samvatsara",
+    "samvatsaraDesc": "Hindu Year (60-year cycle)"
+  },
+  "tithi": {
+    "title": "Tithi",
+    "current": "Current Tithi",
+    "next": "Next Tithi",
+    "prev": "Previous Tithi",
+    "custom": "Custom Tithi",
+    "recurring": "Recurring",
+    "oneTime": "One-time"
+  },
+  "nakshatra": {
+    "title": "Nakshatra",
+    "current": "Current Nakshatra",
+    "ruler": "Ruler"
+  },
+  "yoga": {
+    "title": "Yoga"
+  },
+  "karana": {
+    "title": "Karana"
+  },
+  "vaar": {
+    "sunday": "Sunday",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Customize your experience",
+    "language": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "location": "Location",
+    "appearance": "Appearance",
+    "about": "About",
+    "share": "Share Today's Panchang",
+    "inviteFamily": "Invite Family",
+    "version": "Version 3.7.0",
+    "ads": "Advertisements",
+    "adsDescription": "Support us by enabling ads",
+    "premium": "Premium",
+    "upgrade": "Upgrade to Premium",
+    "enterManual": "Enter coordinates manually",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "dataPrivacy": "Data & Privacy",
+    "sharePanchang": "Share Today's Panchang",
+    "sharePanchangDesc": "Share panchang via WhatsApp",
+    "clearData": "Clear All Data",
+    "clearDataDesc": "Remove all saved data permanently",
+    "clear": "Clear",
+    "aboutApp": "About VedaTime",
+    "aboutAppDesc": "Version, features & credits",
+    "locationUpdated": "Location updated!"
+  },
+  "language": {
+    "en": "English",
+    "hi": "हिंदी",
+    "sa": "संस्कृत"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "fastingReminders": "Fasting Alerts",
+    "fastingDescription": "Get notified before fasting days",
+    "festivalAlerts": "Festival Alerts",
+    "festivalDescription": "Get notified before festivals",
+    "dinacharyaReminders": "Dinacharya Reminders",
+    "dinacharyaDescription": "Daily Ayurvedic routine reminders",
+    "customTithiReminders": "Custom Tithi Reminders"
+  },
+  "location": {
+    "title": "Location",
+    "selectCity": "Select your city",
+    "current": "Current Location"
+  },
+  "festivals": {
+    "title": "Festivals",
+    "today": "Today's Festivals",
+    "upcoming": "Upcoming Festivals",
+    "significance": "Significance",
+    "date": "Date"
+  },
+  "fasting": {
+    "title": "Fasting",
+    "subtitle": "Spiritual observances & fasting days",
+    "today": "Today's Fast",
+    "upcoming": "Upcoming Fasts",
+    "type": "Type",
+    "ekadashi": "Ekadashi",
+    "ekadashiList": "All 24 Ekadashi Fasts",
+    "otherVrats": "Other Vrats",
+    "otherFasts": "Other Fasting Days",
+    "pradosh": "Pradosh",
+    "sankashti": "Sankashti",
+    "purnima": "Purnima",
+    "amavasya": "Amavasya",
+    "custom": "Custom",
+    "significance": "Significance",
+    "benefits": "Benefits",
+    "rules": "Rules",
+    "parana": "Parana Time",
+    "noFast": "No fasting today"
+  },
+  "ayurveda": {
+    "title": "Ayurvedic Clock",
+    "dinacharya": "Dinacharya",
+    "currentPhase": "Current Phase",
+    "nextPhase": "Next Phase",
+    "recommended": "Recommended Activities",
+    "dosha": "Dosha",
+    "vata": "Vata",
+    "pitta": "Pitta",
+    "kapha": "Kapha"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "month": "Month",
+    "year": "Year",
+    "goToToday": "Go to Today",
+    "today": "Today",
+    "solar": "Solar",
+    "legend": {
+      "festival": "Festival",
+      "fast": "Fast",
+      "purnima": "Purnima",
+      "amavasya": "Amavasya",
+      "ekadashi": "Ekadashi",
+      "tapForDetails": "Tap a day for details"
+    }
+  },
+  "muhurta": {
+    "title": "Choghadiya",
+    "subtitle": "Auspicious timings for daily activities",
+    "day": "Day",
+    "night": "Night",
+    "both": "Both",
+    "current": "Current Choghadiya",
+    "completed": "completed",
+    "duration": "Duration",
+    "now": "Now",
+    "legend": "Legend",
+    "auspiciousTitle": "Auspicious",
+    "inauspiciousTitle": "Inauspicious",
+    "types": {
+      "amrit": "Amrit",
+      "shubh": "Shubh",
+      "labh": "Labh",
+      "char": "Char",
+      "rog": "Rog",
+      "kaal": "Kaal",
+      "udveg": "Udveg"
+    },
+    "descriptions": {
+      "amrit": "Best time for all auspicious activities. Brings success and prosperity.",
+      "shubh": "Good for starting new ventures, marriages, and important decisions.",
+      "labh": "Favorable for business, trade, and profit-making activities.",
+      "char": "Suitable for travel, movement, and transient activities.",
+      "rog": "Avoid starting new activities. Good for health-related matters only.",
+      "kaal": "Inauspicious period. Avoid important decisions and new beginnings.",
+      "udveg": "Time of anxiety. Avoid conflicts and major undertakings."
+    }
+  },
+  "myTithis": {
+    "title": "My Tithis",
+    "addNew": "Add New Tithi",
+    "edit": "Edit Tithi",
+    "delete": "Delete Tithi",
+    "name": "Name",
+    "nameHindi": "Name in Hindi",
+    "tithiNumber": "Tithi Number",
+    "paksha": "Paksha",
+    "month": "Month",
+    "notes": "Notes",
+    "reminder": "Enable Reminder",
+    "reminderTime": "Reminder Time",
+    "noTithis": "No custom tithis added yet",
+    "freeLimit": "Free users can add up to 5 tithis.",
+    "viewOccurrences": "View next occurrences",
+    "next5Occurrences": "Next 5 occurrences",
+    "export": "Export Tithis",
+    "import": "Import Tithis",
+    "importTithis": "Import Tithis",
+    "importDescription": "Paste JSON data or upload a file to import custom tithis.",
+    "uploadFile": "Upload File",
+    "saved": "saved",
+    "remaining": "remaining",
+    "addFirst": "Add Your First Tithi",
+    "empty": "No Custom Tithis Yet",
+    "emptySubtitle": "Add your family rituals, regional festivals, or personal observances",
+    "recurring": "Recurring",
+    "noReminder": "No reminder",
+    "nextOccurrences": "Next Occurrences",
+    "deleteConfirm": "Delete this tithi?"
+  },
+  "about": {
+    "title": "About VedaTime",
+    "description": "VedaTime is your comprehensive Hindu Panchang app featuring:",
+    "features": [
+      "Accurate tithi calculations (offline)",
+      "Daily panchang details",
+      "Ayurvedic clock (Dinacharya)",
+      "Festival & fasting information",
+      "Custom tithi management",
+      "Location-aware calculations"
+    ],
+    "tagline": "Share via WhatsApp"
+  },
+  "premium": {
+    "title": "Premium Features",
+    "upgradeTitle": "Upgrade to Premium",
+    "upgradeSubtitle": "Ad-free experience + unlock all features",
+    "upgradeNow": "Upgrade — ₹99/year"
+  },
+  "stories": {
+    "title": "Daily Wisdom",
+    "subtitle": "Sacred teachings & spiritual insights",
+    "tithiMeaning": "Today's Tithi",
+    "nakshatraWisdom": "Nakshatra of the Day",
+    "sacredDay": "Sacred Day",
+    "todaysVerse": "Today's Verse",
+    "solarTimings": "Solar Timings"
+  },
+  "invite": {
+    "title": "Invite Family Member",
+    "description": "Enter the phone number of the family member you want to invite.",
+    "phonePlaceholder": "+91 98765 43210",
+    "sendInvite": "Send Invite",
+    "familyMember": "Invite Family Member",
+    "phone": "Phone number",
+    "send": "Send Invite"
+  },
+  "errors": {
+    "locationDenied": "Location access denied. Using default location.",
+    "calculationError": "Error calculating panchang. Please try again.",
+    "networkError": "Network error. Please check your connection."
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "welcome": {
+      "tagline": "Your Daily Vedic Guide",
+      "description": "Discover accurate Panchang calculations, festival tracking, and personalized tithi management for your spiritual journey.",
+      "getStarted": "Get Started"
+    },
+    "features": {
+      "title": "Key Features",
+      "subtitle": "Everything you need in one app",
+      "dailyPanchang": {
+        "title": "Daily Panchang",
+        "description": "Tithi, Nakshatra, Yoga, Karana & more"
+      },
+      "monthlyCalendar": {
+        "title": "Monthly Calendar",
+        "description": "View Tithi overlay on monthly calendar"
+      },
+      "customTithis": {
+        "title": "Custom Tithis",
+        "description": "Manage your personal tithi events"
+      },
+      "festivalTracker": {
+        "title": "Festival Tracker",
+        "description": "Never miss important festivals & fasts"
+      },
+      "muhurta": {
+        "title": "Muhurta/Choghadiya",
+        "description": "Find auspicious times for activities"
+      }
+    },
+    "location": {
+      "title": "Set Your Location",
+      "description": "Accurate Panchang calculations depend on your location. We use this to determine sunrise, sunset, and other timings.",
+      "allow": "Allow Location Access",
+      "detecting": "Detecting...",
+      "detected": "Location Detected",
+      "skip": "Skip for now",
+      "notSupported": "Geolocation is not supported by your browser",
+      "error": "Could not detect location",
+      "permissionDenied": "Location permission denied"
+    },
+    "notifications": {
+      "title": "Stay Updated",
+      "description": "Get timely reminders for fasting days, festivals, and daily Panchang updates.",
+      "dailyPanchang": "Daily Panchang",
+      "dailyPanchangDesc": "Morning updates at 7:00 AM",
+      "festivalReminders": "Festival Reminders",
+      "festivalRemindersDesc": "Get notified a day before",
+      "fastingReminders": "Fasting Reminders",
+      "fastingRemindersDesc": "Evening alerts before fasts",
+      "enable": "Enable Notifications",
+      "skip": "Not now"
+    },
+    "preferences": {
+      "title": "Customize Your Experience",
+      "subtitle": "Choose your preferred theme and language",
+      "theme": "Theme",
+      "language": "Language",
+      "preview": "Preview",
+      "complete": "Complete Setup"
+    }
+  }
+}

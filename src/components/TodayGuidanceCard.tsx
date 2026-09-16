@@ -1,0 +1,317 @@
+/**
+ * TodayGuidanceCard - Premium Redesign
+ * 
+ * Design Principles:
+ * - Calm, not alarming
+ * - Single color indicator (not traffic lights)
+ * - Generous whitespace
+ * - Minimal text density
+ * - Soft, breathable layout
+ */
+
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Chip,
+  Collapse,
+  IconButton,
+  Fade,
+  useTheme,
+} from '@mui/material';
+import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { Panchang, TimeRange } from '../types';
+import {
+  calculateGuidance,
+  GuidanceResult,
+  calculateAbhijitMuhurta,
+  getGuidanceSummary,
+  getGuidanceSummaryHindi,
+} from '../engine/guidanceEngine';
+import { useI18n } from '../hooks/useI18n';
+
+interface TodayGuidanceCardProps {
+  panchang: Panchang;
+  rahuKaal: TimeRange;
+  yamagandam: TimeRange;
+  gulikaKaal: TimeRange;
+}
+
+export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
+  panchang,
+  rahuKaal,
+  yamagandam,
+  gulikaKaal,
+}) => {
+  const theme = useTheme();
+  const { currentLanguage } = useI18n();
+  const [expanded, setExpanded] = useState(false);
+  const [guidance, setGuidance] = useState<GuidanceResult | null>(null);
+  const [currentTime] = useState(new Date());
+  const isHindi = currentLanguage === 'hi';
+
+  useEffect(() => {
+    const abhijitMuhurta = calculateAbhijitMuhurta(
+      panchang.sunrise,
+      panchang.sunset
+    );
+
+    const result = calculateGuidance(
+      panchang,
+      currentTime,
+      {
+        rahuKaal,
+        yamagandam,
+        gulikaKaal,
+        abhijitMuhurta,
+      }
+    );
+
+    setGuidance(result);
+  }, [panchang, currentTime, rahuKaal, yamagandam, gulikaKaal]);
+
+  if (!guidance) return null;
+
+  // Theme-aware colors
+  const getColor = () => {
+    if (guidance.overall === 'good') return theme.palette.success.main;
+    if (guidance.overall === 'neutral') return theme.palette.warning.main;
+    return theme.palette.error.main;
+  };
+
+  const color = getColor();
+  const isDark = theme.palette.mode === 'dark';
+  const colorLight = isDark ? `${color}15` : `${color}08`;
+  const colorBorder = isDark ? `${color}30` : `${color}20`;
+
+  return (
+    <Fade in timeout={500}>
+      <Card
+        elevation={0}
+        sx={{
+          borderRadius: 3,
+          overflow: 'hidden',
+          bgcolor: 'background.paper',
+          border: `1px solid ${colorBorder}`,
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
+      >
+        <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
+          {/* Header - Always Visible */}
+          <Box
+            sx={{
+              p: 2.5,
+              bgcolor: colorLight,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            onClick={() => setExpanded(!expanded)}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              {/* Icon */}
+              <Box
+                sx={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 2.5,
+                  bgcolor: `${color}15`, // 8% opacity
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Sparkles size={22} strokeWidth={1.5} color={color} />
+              </Box>
+
+              {/* Text */}
+              <Box sx={{ flex: 1 }}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    fontWeight: 500,
+                    fontSize: '1rem',
+                    color: 'text.primary',
+                    mb: 0.5,
+                    letterSpacing: '-0.01em',
+                  }}
+                >
+                  {isHindi ? 'आज का मार्गदर्शन' : "Today's Guidance"}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 400,
+                    fontSize: '0.875rem',
+                    color: 'text.secondary',
+                  }}
+                >
+                  {isHindi ? getGuidanceSummaryHindi(guidance) : getGuidanceSummary(guidance)}
+                </Typography>
+              </Box>
+
+              {/* Score & Expand */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Box
+                  sx={{
+                    px: 1.5,
+                    py: 0.5,
+                    borderRadius: 1.5,
+                    bgcolor: color,
+                  }}
+                >
+              <Typography
+                variant="caption"
+                sx={{
+                  fontWeight: 500,
+                  fontSize: '0.75rem',
+                  color: theme.palette.primary.contrastText,
+                  letterSpacing: '0.02em',
+                }}
+              >
+                {guidance.score}
+              </Typography>
+                </Box>
+                <IconButton
+                  size="small"
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    color,
+                    transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                  }}
+                >
+                  {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                </IconButton>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Expanded Content */}
+          <Collapse in={expanded} timeout={300}>
+            <Box sx={{ p: 2.5 }}>
+              {/* Good For */}
+              {guidance.goodFor.length > 0 && (
+                <Box sx={{ mb: 2.5 }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{
+                      fontWeight: 500,
+                      fontSize: '0.75rem',
+                      color: theme.palette.success.main,
+                      mb: 1,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    {isHindi ? 'इनके लिए अच्छा' : 'Good For'}
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+                    {(isHindi ? guidance.goodForHindi : guidance.goodFor).slice(0, 6).map((item, index) => (
+                      <Chip
+                        key={index}
+                        label={item}
+                        size="small"
+                        sx={{
+                          height: 28,
+                          borderRadius: 1.5,
+                          bgcolor: `${theme.palette.success.main}10`,
+                          color: theme.palette.success.main,
+                          fontWeight: 500,
+                          fontSize: '0.75rem',
+                        }}
+                      />
+                    ))}
+                  </Box>
+                </Box>
+              )}
+
+              {/* Avoid */}
+              {guidance.avoid.length > 0 && (
+                <Box sx={{ mb: 2.5 }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{
+                      fontWeight: 500,
+                      fontSize: '0.75rem',
+                      color: theme.palette.error.main,
+                      mb: 1,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    {isHindi ? 'इनसे बचें' : 'Avoid'}
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+                    {(isHindi ? guidance.avoidHindi : guidance.avoid).slice(0, 6).map((item, index) => (
+                      <Chip
+                        key={index}
+                        label={item}
+                        size="small"
+                        sx={{
+                          height: 28,
+                          borderRadius: 1.5,
+                          bgcolor: `${theme.palette.error.main}10`,
+                          color: theme.palette.error.main,
+                          fontWeight: 500,
+                          fontSize: '0.75rem',
+                        }}
+                      />
+                    ))}
+                  </Box>
+                </Box>
+              )}
+
+              {/* Reasons */}
+              {guidance.reasons.length > 0 && (
+                <Box
+                  sx={{
+                    mt: 2,
+                    p: 2,
+                    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+                    borderRadius: 2,
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontWeight: 500,
+                      fontSize: '0.7rem',
+                      color: 'text.secondary',
+                      display: 'block',
+                      mb: 1,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    {isHindi ? 'कारण' : 'Why this guidance?'}
+                  </Typography>
+                  {(isHindi ? guidance.reasonsHindi : guidance.reasons).slice(0, 2).map((reason, index) => (
+                    <Typography
+                      key={index}
+                      variant="body2"
+                      sx={{
+                        fontWeight: 400,
+                        fontSize: '0.8125rem',
+                        color: 'text.secondary',
+                        lineHeight: 1.6,
+                        mb: index === 0 ? 0.5 : 0,
+                      }}
+                    >
+                      • {reason}
+                    </Typography>
+                  ))}
+                </Box>
+              )}
+            </Box>
+          </Collapse>
+        </CardContent>
+      </Card>
+    </Fade>
+  );
+};
+
+export default TodayGuidanceCard;

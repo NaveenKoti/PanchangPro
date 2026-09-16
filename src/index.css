@@ -1,0 +1,239 @@
+/** VedaTime Theme - Main CSS Entry Point
+ * This file imports all theme-related CSS files and serves as the main entry point for styles
+ */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Crimson\+Text:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source\+Sans\+Pro:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto\+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto\+Sans\+Devanagari:wght@300;400;500;600;700&display=swap');
+
+/* Base styles with CSS variables */
+@import './styles/globals.css';
+
+/* Print styles */
+@import './styles/print.css';
+
+:root {
+  /* Color Tokens - Light Mode (Default)  */
+  --veda-saffron-100: #fff3e0;
+  --veda-saffron-200: #ffe0b2;
+  --veda-saffron-300: #ffcc80;
+  --veda-saffron-400: #ffb74d;
+  --veda-saffron-500: #c75b12;
+  --veda-saffron-600: #7a3008;
+  --veda-saffron-700: #5a2406;
+  --veda-saffron-800: #3a1804;
+  --veda-saffron-900: #1a0c02;
+
+  --veda-temple-100: #e8f5e8;
+  --veda-temple-200: #c8e6c9;
+  --veda-temple-300: #a5d6a7;
+  --veda-temple-400: #7db356;
+  --veda-temple-500: #3d6b24;
+  --veda-temple-600: #2a4a19;
+  --veda-temple-700: #1f3a14;
+  --veda-temple-800: #142a0f;
+  --veda-temple-900: #091a09;
+
+  --veda-neutral-50: #fefefe;
+  --veda-neutral-100: #f5f3f0;
+  --veda-neutral-200: #e8e6e3;
+  --veda-neutral-300: #d1cdc7;
+  --veda-neutral-400: #9e9b94;
+  --veda-neutral-500: #6b6b6b;
+  --veda-neutral-600: #2c2c2c;
+  --veda-neutral-700: #1f1f1f;
+  --veda-neutral-800: #121212;
+  --veda-neutral-900: #0a0a0a;
+
+  --veda-text-primary: #2c2c2c;
+  --veda-text-secondary: #6b6b6b;
+  --veda-text-disabled: #9e9b94;
+
+  --veda-background-default: #fefefe;
+  --veda-background-paper: #f5f3f0;
+
+  --veda-error-main: #d32f2f;
+  --veda-warning-main: #f57c00;
+  --veda-info-main: #0288d1;
+  --veda-success-main: #3d6b24;
+
+  --veda-border-radius: 8px;
+  --veda-border-radius-sm: 4px;
+  --veda-border-radius-lg: 12px;
+  --veda-border-radius-xl: 12px;
+
+  --veda-shadow-level-1: 0px 2px 1px -1px rgba(0, 0, 0, 0.08);
+  --veda-shadow-level-2: 0px 3px 1px -2px rgba(0, 0, 0, 0.08), 0px 2px 2px 0px rgba(0, 0, 0, 0.06);
+
+  --veda-transition-fast: 0.2s;
+  --veda-transition-medium: 0.3s;
+  --veda-transition-slow: 0.5s;
+  --veda-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  --veda-focus-outline-width: 3px;
+  --veda-focus-outline-color: var(--veda-saffron-500);
+  --veda-focus-outline-offset: 2px;
+
+  --veda-spacing-xs: 4px;
+  --veda-spacing-sm: 8px;
+  --veda-spacing-md: 16px;
+  --veda-spacing-lg: 24px;
+  --veda-spacing-xl: 32px;
+  --veda-spacing-xxl: 48px;
+  --veda-spacing-3xl: 64px;
+
+  --veda-grid-columns-mobile: 4;
+  --veda-grid-columns-tablet: 8;
+  --veda-grid-columns-desktop: 12;
+  --veda-grid-gutter-mobile: 16px;
+  --veda-grid-gutter-tablet: 24px;
+  --veda-grid-gutter-desktop: 32px;
+
+  --veda-golden-ratio: 1.618;
+  --veda-asymmetric-balance: 61.8%;
+
+  --veda-touch-target-min: 44px;
+  --veda-touch-target-primary: 48px;
+}
+
+/* Dark mode color overrides */
+[data-theme='dark'] {
+  --veda-saffron-100: #2a1810;
+  --veda-saffron-200: #3d2418;
+  --veda-saffron-300: #5a3323;
+  --veda-saffron-400: #834f38;
+  --veda-saffron-500: #e8884a;
+  --veda-saffron-600: #f0a060;
+  --veda-saffron-700: #fddcb5;
+  --veda-saffron-800: #fff3e7;
+  --veda-saffron-900: #fff8f0;
+
+  --veda-temple-100: #122712;
+  --veda-temple-200: #1a361a;
+  --veda-temple-300: #274f27;
+  --veda-temple-400: #7db356;
+  --veda-temple-500: #7db356;
+  --veda-temple-600: #ebf5e3;
+  --veda-temple-700: #f8fbf6;
+  --veda-temple-800: #ffffff;
+  --veda-temple-900: #ffffff;
+
+  --veda-neutral-50: #0f0e0c;
+  --veda-neutral-100: #1c1916;
+  --veda-neutral-200: #2f2b27;
+  --veda-neutral-300: #474238;
+  --veda-neutral-400: #6b665c;
+  --veda-neutral-500: #9a958b;
+  --veda-neutral-600: #c4b39e;
+  --veda-neutral-700: #ddd3c5;
+  --veda-neutral-800: #f0e9e1;
+  --veda-neutral-900: #fcfaf7;
+
+  --veda-text-primary: #fcf8f0;
+  --veda-text-secondary: #ddd3c5;
+  --veda-text-disabled: #c4b39e;
+
+  --veda-background-default: #0f0e0c;
+  --veda-background-paper: #1c1916;
+
+  --veda-error-main: #ef6060;
+  --veda-warning-main: #fddcb5;
+  --veda-info-main: #7b9bd6;
+  --veda-success-main: #7db356;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--veda-neutral-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--veda-saffron-400);
+  border-radius: var(--veda-border-radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--veda-saffron-500);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: var(--veda-neutral-900);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: var(--veda-saffron-600);
+}
+
+/* Selection highlight */
+::selection {
+  background: var(--veda-saffron-100);
+  color: var(--veda-text-primary);
+}
+
+::-moz-selection {
+  background: var(--veda-saffron-100);
+  color: var(--veda-text-primary);
+}
+
+/* Focus ring for keyboard navigation */
+:focus-visible {
+  outline: var(--veda-focus-outline-width) solid var(--veda-focus-outline-color);
+  outline-offset: var(--veda-focus-outline-offset);
+  border-radius: var(--veda-border-radius);
+}
+
+/* Smooth transitions for theme changes */
+.theme-transition {
+  transition: background-color var(--veda-transition-medium) var(--veda-transition-easing),
+              color var(--veda-transition-medium) var(--veda-transition-easing),
+              border-color var(--veda-transition-medium) var(--veda-transition-easing);
+}
+
+/* Safe area for mobile devices with notches */
+.safe-area-inset-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.safe-area-inset-left {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+
+.safe-area-inset-right {
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* Print styles override */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  a[href]::after {
+    content: ' (' attr(href) ')';
+  }
+}

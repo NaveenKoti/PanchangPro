@@ -1,0 +1,96 @@
+.pwa-install-anim-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  animation: rotate 20s linear infinite;
+  opacity: 0.1;
+}
+
+.pwa-install-anim-bg svg {
+  position: absolute;
+  animation: float 6s ease-in-out infinite;
+}
+
+.pwa-install-anim-bg svg:nth-child(1) {
+  animation-delay: 0s;
+  animation-duration: 7s;
+}
+
+.pwa-install-anim-bg svg:nth-child(2) {
+  animation-delay: 1s;
+  animation-duration: 8s;
+}
+
+.pwa-install-anim-bg svg:nth-child(3) {
+  animation-delay: 2s;
+  animation-duration: 9s;
+}
+
+.pwa-install-dialog {
+  animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pwa-install-icon {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pwa-install-icon:hover {
+  transform: rotate(15deg) scale(1.1);
+}
+
+.pwa-install-chip {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pwa-install-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+  100% { transform: translateY(0px) rotate(360deg); }
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { opacity: 0.4; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0.4; transform: scale(0.8); }
+}
+
+.offline-indicator {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.offline-indicator:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(199, 91, 18, 0.2);
+}
+
+.pwa-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.pwa-success {
+  animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}

@@ -1,0 +1,22 @@
+/**
+ * TodayScreen - Legacy Styles
+ *
+ * Minimal CSS kept for backward compatibility.
+ * All layout and theming now uses MUI sx props and globals.css.
+ * Only unique animation keyframes remain here.
+ */
+
+@keyframes successPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
