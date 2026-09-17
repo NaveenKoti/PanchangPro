@@ -3,7 +3,7 @@
  *
  * Validates:
  *   - Custom tithi addition and deletion via the Zustand app store
- *   - Free-tier limit enforcement (MAX_FREE_CUSTOM_TITHIS = 2)
+ *   - Free-tier limit enforcement (MAX_FREE_CUSTOM_TITHIS = 5)
  *   - Premium-tier unlimited tithi support
  *   - Notification scheduling on add and cancellation on delete
  *   - Deletion frees up a slot for free-tier users
