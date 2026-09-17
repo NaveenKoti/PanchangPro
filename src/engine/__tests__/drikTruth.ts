@@ -521,12 +521,6 @@ export const DRIK_TRUTH: DrikTruthRow[] = [
  * vitest fails the suite if a listed date starts passing.
  */
 export const KNOWN_TITHI_MISS = new Set<string>([
-  '2025-01-19',
-  '2025-04-13',
-  '2025-05-17',
-  '2025-05-28',
-  '2025-10-27',
-  '2026-02-10',
-  '2026-02-24',
-  '2026-03-19',
+  // Empty 2026-09-17: lunar-series rewrite (true Table 47.A + E-factors,
+  // ayanamsa base fix) corrected all 8 boundary misses. Tithi 490/490 exact.
 ]);

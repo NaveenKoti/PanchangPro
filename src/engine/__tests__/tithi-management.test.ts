@@ -268,7 +268,8 @@ describe('Tithi Management', () => {
       expect(notificationService.scheduleCustomTithiReminder).toHaveBeenCalledTimes(1);
       expect(notificationService.scheduleCustomTithiReminder).toHaveBeenCalledWith(
         expect.objectContaining({ name: 'Reminder Tithi' }),
-        '07:00'
+        '07:00',
+        useAppStore.getState().customTithis[0].nextOccurrence
       );
     });
 
@@ -871,21 +872,26 @@ describe('Custom tithi reminder scheduling (engine dates)', () => {
   beforeEach(async () => {
     SCHEDULE_KEYS.forEach((k) => localStorage.removeItem(k));
     // Stub the browser Notification API as granted.
-    (window as any).Notification = class {
+    vi.stubGlobal('Notification', class {
       static permission = 'granted';
-      close() { /* noop */ }
-      constructor(public title: string, public options?: unknown) { /* noop */ }
-    };
+      close = vi.fn();
+      constructor(public title: string, public options?: unknown) {}
+    });
     const actual = await vi.importActual<RealModule>('../../services/notificationService');
     realService = actual.notificationService;
     realService.cancelAllNotifications();
   });
 
   afterEach(() => {
-    vi.useRealTimers();
-    realService.cancelAllNotifications();
-    SCHEDULE_KEYS.forEach((k) => localStorage.removeItem(k));
-    delete (window as any).Notification;
+    try {
+      realService.cancelAllNotifications();
+      SCHEDULE_KEYS.forEach((k) => localStorage.removeItem(k));
+    } finally {
+      vi.clearAllTimers();
+      vi.useRealTimers();
+      vi.unstubAllGlobals();
+      vi.restoreAllMocks();
+    }
   });
 
   it('schedules from the engine-computed nextOccurrence, not the calendar approximation', () => {
@@ -937,13 +943,22 @@ describe('Custom tithi reminder scheduling (engine dates)', () => {
     const id = realService.scheduleCustomTithiReminder(tithi, '10:05');
     expect(id).toBe(`tithi-${tithi.id}`);
 
-    // Fire the reminder; the recurring reschedule should advance one year.
-    vi.advanceTimersByTime(6 * 60 * 1000);
+    const showNotification = vi.spyOn(realService, 'showNotification');
+
+    vi.advanceTimersByTime(5 * 60 * 1000);
+
+    expect(new Date()).toEqual(new Date(2026, 8, 15, 10, 5, 0));
+    expect(showNotification).toHaveBeenCalledTimes(1);
+    expect(showNotification).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ tag: id, data: expect.objectContaining({ recurring: true }) })
+    );
 
     const rescheduled = realService.getScheduledNotifications().find((n) => n.id === id);
     expect(rescheduled).toBeDefined();
     const next = new Date(rescheduled!.scheduledTime);
     expect(next.getFullYear()).toBe(2027);
     expect(next.getMonth()).toBe(8);
+    expect(next).toEqual(new Date(2027, 8, 15, 10, 5, 0));
   });
 });

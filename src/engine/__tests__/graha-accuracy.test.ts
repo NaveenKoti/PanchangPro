@@ -42,7 +42,6 @@ import {
   toSidereal,
 } from '../astronomy';
 import { calculateSunrise } from '../sunrise';
-import { KNOWN_TITHI_MISS } from './drikTruth';
 
 interface GrahaTruthRow {
   dateISO: string;
@@ -194,33 +193,30 @@ describe('Yoga/karana spot-check vs Drik day pages (Delhi, 6 days) — MEASUREME
   let yogaPass = 0;
   let karanaPass = 0;
   const failures: string[] = [];
-  const karanaKnownMiss = new Set<string>(['2025-04-13']);
 
   for (const row of YOGA_KARANA_SPOT) {
-    it(`${row.dateISO}: ${row.yoga} / ${row.karana}`, () => {
+    it(`${row.dateISO}: yoga ${row.yoga}`, () => {
       const [y, m, d] = row.dateISO.split('-').map(Number);
       const p = engine.calculate(new Date(y, m - 1, d));
       const yogaOk = p.yoga.name === row.yoga;
-      const karanaOk = p.karana.name === row.karana;
       if (yogaOk) yogaPass++;
-      else failures.push(`${row.dateISO}: yoga drik=${row.yoga} engine=${p.yoga.name}`);
+      else failures.push(`${row.dateISO}: yoga drik=${row.yoga} engine=${p.yoga.name} sunrise=${p.sunrise.toISOString()}`);
+      expect(p.yoga.name).toBe(row.yoga);
+    });
+
+    it(`${row.dateISO}: karana ${row.karana}`, () => {
+      const [y, m, d] = row.dateISO.split('-').map(Number);
+      const p = engine.calculate(new Date(y, m - 1, d));
+      const karanaOk = p.karana.name === row.karana;
       if (karanaOk) karanaPass++;
-      else failures.push(`${row.dateISO}: karana drik=${row.karana} engine=${p.karana.name}`);
-      if (karanaKnownMiss.has(row.dateISO)) {
-        // Known tithi miss on this date — expect mismatch but verify it's the expected miss
-        expect(p.karana.name).not.toBe(row.karana);
-      } else {
-        expect(p.yoga.name).toBe(row.yoga);
-        expect(p.karana.name).toBe(row.karana);
-      }
+      else failures.push(`${row.dateISO}: karana drik=${row.karana} engine=${p.karana.name} sunrise=${p.sunrise.toISOString()}`);
+      expect(p.karana.name).toBe(row.karana);
     });
   }
 
   afterAll(() => {
-    const totalKaranaRows = YOGA_KARANA_SPOT.length;
-    const karanaExactRows = totalKaranaRows - [...karanaKnownMiss].filter(d => YOGA_KARANA_SPOT.some(r => r.dateISO === d)).length;
-    console.log(`\nYOGA (spot): ${yogaPass}/${totalKaranaRows} exact matches`);
-    console.log(`KARANA (spot): ${karanaPass}/${karanaExactRows} exact matches`);
+    console.log(`\nYOGA (spot): ${yogaPass}/${YOGA_KARANA_SPOT.length} exact matches`);
+    console.log(`KARANA (spot): ${karanaPass}/${YOGA_KARANA_SPOT.length} exact matches`);
     for (const f of failures.slice(0, 30)) console.log(`  MISS ${f}`);
   });
 });
@@ -229,13 +225,6 @@ const NAKSHATRA_SPAN = 360 / 27;
 // sunrise means a boundary falls within roughly +/-1h of sunrise, i.e. the
 // miss is plausibly boundary timing rather than a systematic index offset.
 const BOUNDARY_ADJACENT_DEG = 0.5;
-
-const KNOWN_NAKSHATRA_MISS = new Set<string>([
-  '2025-01-25', // Jyeshtha — boundary-adjacent
-  '2025-01-30', // Shravana — boundary-adjacent
-  '2025-04-04', // Ardra — boundary-adjacent
-  '2026-04-08', // Mula — boundary-adjacent
-]);
 
 describe('Nakshatra accuracy vs Drik (Delhi, 105 days) — MEASUREMENT', () => {
   const engine = createPanchangEngine(DELHI);
@@ -259,15 +248,11 @@ describe('Nakshatra accuracy vs Drik (Delhi, 105 days) — MEASUREMENT', () => {
       if (ok) pass++;
       else {
         failures.push(
-          `${row.dateISO}: drik=${row.nakshatra} engine=${p.nakshatra.name} ` +
+          `${row.dateISO}: drik=${row.nakshatra} engine=${p.nakshatra.name} sunrise=${p.sunrise.toISOString()} ` +
           `moonDistToEdge=${distToEdge.toFixed(3)}deg${adjacent ? ' BOUNDARY-ADJACENT' : ' CLEAR-MISS'}`,
         );
       }
-      if (KNOWN_NAKSHATRA_MISS.has(row.dateISO)) {
-        // Known boundary-adjacent miss — ratcheted, same as tithi KNOWN_TITHI_MISS
-      } else {
-        expect(p.nakshatra.name).toBe(row.nakshatra);
-      }
+      expect(p.nakshatra.name).toBe(row.nakshatra);
     });
   }
 

@@ -6,6 +6,8 @@
  *
  * Baseline 2026-09-10: tithi 482/490 exact (8 boundary misses, all Drik
  * day-page verified — engine ±1 near boundaries, 7 early / 1 late).
+ * 2026-09-17: lunar-series rewrite (true Meeus Table 47.A + E-factors,
+ * ayanamsa base 23.85216 -> 23.857092) corrected all 8 — now 490/490 exact.
  * Sunrise/sunset show a SEASONAL systematic (short-day) drift, worst in
  * Delhi winter (sunset to -41min) and spring sunrise (+21min) — Phase 3 fix target.
  *
