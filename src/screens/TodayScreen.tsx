@@ -45,6 +45,8 @@ import { AuspiciousIndicator } from '../components/AuspiciousIndicator';
 import { ExpandableSection } from '../components/ExpandableSection';
 import { TithiExplanationDialog } from '../components/TithiExplanationDialog';
 import { NakshatraExplanationDialog } from '../components/NakshatraExplanationDialog';
+import { GlossaryDialog } from '../components/GlossaryDialog';
+import type { GlossaryEntry } from '../data/panchangGlossary';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { FastingChip } from '../components/FastingChip';
 import { useBreakpoints } from '../hooks/useBreakpoints';
@@ -68,6 +70,7 @@ export const TodayScreen: React.FC = () => {
 
   const [isTithiDialogOpen, setIsTithiDialogOpen] = useState(false);
   const [isNakshatraDialogOpen, setIsNakshatraDialogOpen] = useState(false);
+  const [glossaryLimb, setGlossaryLimb] = useState<GlossaryEntry['id'] | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -192,12 +195,12 @@ export const TodayScreen: React.FC = () => {
           elevation={0}
           sx={{
             mb: 2,
-            borderRadius: 2.5,
+            borderRadius: 2,
             overflow: 'hidden',
             border: '1px solid',
             borderColor: 'divider',
             position: 'sticky',
-            top: 64,
+            top: 56,
             zIndex: 500,
             bgcolor: 'background.paper',
             boxShadow: isDark
@@ -211,9 +214,9 @@ export const TodayScreen: React.FC = () => {
             },
           }}
         >
-          <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+          <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
             {/* Merged header row: location + sunrise (was standalone header) */}
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <MapPin size={16} color={muiTheme.palette.primary.main} />
                 <Box>
@@ -248,13 +251,14 @@ export const TodayScreen: React.FC = () => {
                 </Typography>
               </Box>
             </Box>
-            <Divider sx={{ mb: 1.5, borderColor: 'divider' }} />
+            <Divider sx={{ mb: 1, borderColor: 'divider' }} />
             <Box
               sx={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 gap: 1,
+                flexWrap: 'wrap',
               }}
             >
               <IconButton
@@ -262,8 +266,9 @@ export const TodayScreen: React.FC = () => {
                 size="small"
                 aria-label="previous day"
                 sx={{
-                  width: 40,
-                  height: 40,
+                  width: 48,
+                  height: 48,
+                  flexShrink: 0,
                   bgcolor: isDark
                     ? `${muiTheme.palette.primary.main}15`
                     : `${muiTheme.palette.primary.main}8`,
@@ -331,8 +336,9 @@ export const TodayScreen: React.FC = () => {
                 size="small"
                 aria-label="next day"
                 sx={{
-                  width: 40,
-                  height: 40,
+                  width: 48,
+                  height: 48,
+                  flexShrink: 0,
                   bgcolor: isDark
                     ? `${muiTheme.palette.primary.main}15`
                     : `${muiTheme.palette.primary.main}8`,
@@ -361,7 +367,7 @@ export const TodayScreen: React.FC = () => {
             xs: '1fr',
             md: '1fr 0.618fr', // Golden ratio on tablet+
           },
-          gap: { xs: 2, sm: 2, md: 3 },
+          gap: { xs: 2, md: 3 },
           mb: 2,
           width: '100%',
         }}
@@ -387,7 +393,7 @@ export const TodayScreen: React.FC = () => {
             sx={{
               height: '100%',
               p: 2,
-              borderRadius: 2.5,
+              borderRadius: 2,
               border: '1px solid',
               borderColor: 'divider',
               bgcolor: 'background.paper',
@@ -434,7 +440,7 @@ export const TodayScreen: React.FC = () => {
                   fontWeight: 500,
                   color: 'text.primary',
                   fontFamily: '"Noto Sans", sans-serif',
-                  fontSize: '1.1rem',
+                  fontSize: { xs: '1rem', sm: '1.1rem' },
                 }}
               >
                 {panchang.nakshatra.name}
@@ -450,7 +456,13 @@ export const TodayScreen: React.FC = () => {
             <Divider sx={{ my: 1, borderColor: 'divider' }} />
 
             {/* Yoga */}
-            <Box sx={{ py: 1 }}>
+            <Box
+              sx={{ py: 1, cursor: 'pointer' }}
+              onClick={() => {
+                triggerHapticIfSupported('light');
+                setGlossaryLimb('yoga');
+              }}
+            >
               <Box
                 sx={{
                   display: 'flex',
@@ -487,7 +499,7 @@ export const TodayScreen: React.FC = () => {
                   fontWeight: 500,
                   color: 'text.primary',
                   fontFamily: '"Noto Sans", sans-serif',
-                  fontSize: '1.1rem',
+                  fontSize: { xs: '1rem', sm: '1.1rem' },
                 }}
               >
                 {panchang.yoga.name}
@@ -504,7 +516,13 @@ export const TodayScreen: React.FC = () => {
             <Divider sx={{ my: 1, borderColor: 'divider' }} />
 
             {/* Karana */}
-            <Box sx={{ py: 1 }}>
+            <Box
+              sx={{ py: 1, cursor: 'pointer' }}
+              onClick={() => {
+                triggerHapticIfSupported('light');
+                setGlossaryLimb('karana');
+              }}
+            >
               <Box
                 sx={{
                   display: 'flex',
@@ -541,7 +559,7 @@ export const TodayScreen: React.FC = () => {
                   fontWeight: 500,
                   color: 'text.primary',
                   fontFamily: '"Noto Sans", sans-serif',
-                  fontSize: '1.1rem',
+                  fontSize: { xs: '1rem', sm: '1.1rem' },
                 }}
               >
                 {panchang.karana.name}
@@ -567,6 +585,56 @@ export const TodayScreen: React.FC = () => {
             yamagandam={panchang.yamagandam}
             gulikaKaal={panchang.gulikaKaal}
           />
+        </Box>
+      </Fade>
+
+      {/* ========== SEGMENT 2c. TIMINGS ROW — single source for Rahu Kaal / Yamagandam / Gulika
+          (moved up directly under guidance so sunrise/Rahu Kaal are visible without deep scroll;
+          TodayGuidanceCard above already receives these as props; times live here once) ========== */}
+      <Fade in timeout={325}>
+        <Box sx={{ mb: 2 }}>
+          <Card
+            elevation={0}
+            sx={{
+              borderRadius: 2,
+              border: '1px solid',
+              borderColor: isDark
+                ? `${muiTheme.palette.warning.main}30`
+                : `${muiTheme.palette.warning.main}20`,
+              bgcolor: isDark
+                ? `${muiTheme.palette.warning.main}8`
+                : `${muiTheme.palette.warning.main}5`,
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                boxShadow: isDark
+                  ? '0 4px 12px rgba(0,0,0,0.3)'
+                  : '0 4px 12px rgba(0,0,0,0.08)',
+                transform: 'translateY(-1px)',
+              },
+            }}
+          >
+            <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+              <Typography variant="overline" sx={{ color: 'warning.main', fontWeight: 500, letterSpacing: '0.08em', fontSize: '0.7rem', display: 'block' }}>
+                {t('panchang.timings') || 'Timings'}
+              </Typography>
+              <Typography variant="h5" sx={{ fontWeight: 500, color: 'text.primary', mt: 0.25, fontSize: { xs: '0.875rem', sm: '0.95rem' } }}>
+                {t('panchang.rahuKaal')}: {formatTime(panchang.rahuKaal.start)} - {formatTime(panchang.rahuKaal.end)}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
+                {t('panchang.yamagandam') || 'Yamagandam'}: {formatTime(panchang.yamagandam.start)} - {formatTime(panchang.yamagandam.end)}
+                {'  ·  '}
+                {t('panchang.gulikaKaal') || 'Gulika'}: {formatTime(panchang.gulikaKaal.start)} - {formatTime(panchang.gulikaKaal.end)}
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'warning.main', display: 'block', mt: 0.25 }}>
+                {t('panchang.rahuKaalWarning')}
+              </Typography>
+              <AuspiciousIndicator
+                favorability="challenging"
+                size="small"
+                sx={{ mt: 1 }}
+              />
+            </CardContent>
+          </Card>
         </Box>
       </Fade>
 
@@ -665,7 +733,7 @@ export const TodayScreen: React.FC = () => {
                 sm: 'repeat(2, 1fr)',
                 md: 'repeat(3, 1fr)',
               },
-              gap: { xs: 1.5, sm: 2 },
+              gap: 2,
               width: '100%',
             }}
           >
@@ -727,8 +795,13 @@ export const TodayScreen: React.FC = () => {
             >
               <Card
                 elevation={0}
+                onClick={() => {
+                  triggerHapticIfSupported('light');
+                  setGlossaryLimb('yoga');
+                }}
                 sx={{
                   borderRadius: 2,
+                  cursor: 'pointer',
                   border: '1px solid',
                   borderColor: 'divider',
                   transition: 'all 0.2s ease',
@@ -738,6 +811,7 @@ export const TodayScreen: React.FC = () => {
                       : '0 4px 12px rgba(0,0,0,0.08)',
                     transform: 'translateY(-1px)',
                   },
+                  '&:active': { transform: 'scale(0.98)' },
                 }}
               >
                 <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
@@ -795,51 +869,6 @@ export const TodayScreen: React.FC = () => {
               </Card>
             )}
 
-            {/* Timings row — single source for Rahu Kaal / Yamagandam / Gulika
-                (deduped: TodayGuidanceCard above already receives these as props;
-                times live here once, nothing removed) */}
-            <Card
-              elevation={0}
-              sx={{
-                borderRadius: 2,
-                border: '1px solid',
-                borderColor: isDark
-                  ? `${muiTheme.palette.warning.main}30`
-                  : `${muiTheme.palette.warning.main}20`,
-                bgcolor: isDark
-                  ? `${muiTheme.palette.warning.main}8`
-                  : `${muiTheme.palette.warning.main}5`,
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                  boxShadow: isDark
-                    ? '0 4px 12px rgba(0,0,0,0.3)'
-                    : '0 4px 12px rgba(0,0,0,0.08)',
-                  transform: 'translateY(-1px)',
-                },
-              }}
-            >
-              <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
-                <Typography variant="overline" sx={{ color: 'warning.main', fontWeight: 500, letterSpacing: '0.08em', fontSize: '0.7rem', display: 'block' }}>
-                  {t('panchang.timings') || 'Timings'}
-                </Typography>
-                <Typography variant="h5" sx={{ fontWeight: 500, color: 'text.primary', mt: 0.25, fontSize: '0.95rem' }}>
-                  {t('panchang.rahuKaal')}: {formatTime(panchang.rahuKaal.start)} - {formatTime(panchang.rahuKaal.end)}
-                </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-                  {t('panchang.yamagandam') || 'Yamagandam'}: {formatTime(panchang.yamagandam.start)} - {formatTime(panchang.yamagandam.end)}
-                  {'  ·  '}
-                  {t('panchang.gulikaKaal') || 'Gulika'}: {formatTime(panchang.gulikaKaal.start)} - {formatTime(panchang.gulikaKaal.end)}
-                </Typography>
-                <Typography variant="caption" sx={{ color: 'warning.main', display: 'block', mt: 0.25 }}>
-                  {t('panchang.rahuKaalWarning')}
-                </Typography>
-                <AuspiciousIndicator
-                  favorability="challenging"
-                  size="small"
-                  sx={{ mt: 1 }}
-                />
-              </CardContent>
-            </Card>
           </Box>
         </Box>
       </Fade>
@@ -920,6 +949,12 @@ export const TodayScreen: React.FC = () => {
         open={isNakshatraDialogOpen}
         onClose={() => setIsNakshatraDialogOpen(false)}
         nakshatraNumber={panchang?.nakshatra.number || 1}
+      />
+
+      <GlossaryDialog
+        open={glossaryLimb !== null}
+        onClose={() => setGlossaryLimb(null)}
+        limbId={glossaryLimb ?? 'yoga'}
       />
     </ScreenContainer>
   );

@@ -13,6 +13,8 @@ import { Box, Fade, useTheme } from '@mui/material';
 export interface OnboardingLayoutProps {
   /** Current step variant determines background, alignment, and indicator */
   variant: 'welcome' | 'setup' | 'ready';
+  /** Explicit step index for the indicator (0-based, 4 steps). Defaults to legacy mapping. */
+  step?: number;
   /** Fade animation duration (ms) */
   fadeTimeout?: number;
   children: React.ReactNode;
@@ -24,7 +26,7 @@ const StepIndicator: React.FC<{ current: number }> = ({ current }) => {
   const theme = useTheme();
   return (
     <Box sx={{ display: 'flex', gap: 0.75, mb: 5 }}>
-      {[0, 1, 2].map((i) => (
+      {[0, 1, 2, 3].map((i) => (
         <Box
           key={i}
           sx={{
@@ -42,9 +44,11 @@ const StepIndicator: React.FC<{ current: number }> = ({ current }) => {
 
 export const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
   variant,
+  step,
   fadeTimeout,
   children,
 }) => {
+  const theme = useTheme();
   const timeout = fadeTimeout ?? FADE_TIMEOUTS[variant];
 
   return (
@@ -58,30 +62,33 @@ export const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                px: 3,
-                background: 'linear-gradient(160deg, #7A3008 0%, #C75B12 45%, #E8944A 100%)',
+                px: 2,
+                background: `linear-gradient(160deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 45%, ${theme.palette.primary.light} 100%)`,
                 position: 'relative',
                 overflow: 'hidden',
                 textAlign: 'center',
               }
             : {
                 minHeight: '100vh',
+                maxHeight: '100dvh',
                 display: 'flex',
                 flexDirection: 'column',
                 bgcolor: 'background.default',
-                px: { xs: 2.5, sm: 4 },
+                px: { xs: 2, sm: 4 },
                 pt: 6,
                 pb: 4,
                 maxWidth: 480,
                 mx: 'auto',
                 width: '100%',
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch',
                 justifyContent: variant === 'ready' ? 'center' : 'flex-start',
                 alignItems: variant === 'ready' ? 'center' : 'stretch',
                 textAlign: variant === 'ready' ? 'center' : 'left',
               }
         }
       >
-        {variant !== 'welcome' && <StepIndicator current={variant === 'setup' ? 1 : 2} />}
+        {variant !== 'welcome' && <StepIndicator current={step ?? (variant === 'setup' ? 1 : 2)} />}
         {children}
       </Box>
     </Fade>

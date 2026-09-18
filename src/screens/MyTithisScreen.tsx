@@ -341,7 +341,7 @@ export const MyTithisScreen: React.FC = () => {
                 sx={{
                   fontSize: '0.7rem',
                   fontWeight: 500,
-                  bgcolor: remainingTithis <= 2 ? 'warning.light' : 'rgba(61, 107, 36, 0.15)',
+                  bgcolor: remainingTithis <= 2 ? 'warning.light' : 'success.light',
                   color: remainingTithis <= 2 ? 'warning.dark' : 'success.main',
                   height: 28,
                 }}
@@ -412,11 +412,12 @@ export const MyTithisScreen: React.FC = () => {
           <Paper
             elevation={0}
             sx={{
-              p: 4,
+              p: 2,
               textAlign: 'center',
-              borderRadius: 3,
+              borderRadius: 2,
               bgcolor: 'background.paper',
-              border: '1px solid rgba(0,0,0,0.05)',
+              border: '1px solid',
+              borderColor: 'divider',
             }}
           >
             <Box
@@ -437,8 +438,13 @@ export const MyTithisScreen: React.FC = () => {
             <Typography variant="h6" sx={{ fontWeight: 500, mb: 1 }}>
               {t('myTithis.empty') || 'No Custom Tithis Yet'}
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
               {t('myTithis.emptySubtitle') || 'Add your family rituals, regional festivals, or personal observances'}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, lineHeight: 1.6 }}>
+              {isHindi
+                ? 'कोई लॉगिन नहीं — तिथि जोड़ें, रिमाइंडर चालू करें, ऐप खोलते ही याद पाएँ।'
+                : 'No login needed — add a tithi, turn on its reminder, and you’ll be reminded when you open the app.'}
             </Typography>
             <Button
               variant="contained"
@@ -470,7 +476,8 @@ export const MyTithisScreen: React.FC = () => {
                     mb: 1.5,
                     borderRadius: 2,
                     bgcolor: 'background.paper',
-                    border: '1px solid rgba(0,0,0,0.05)',
+                    border: '1px solid',
+                    borderColor: 'divider',
                     transition: 'all 0.2s ease',
                     '&:hover': {
                       boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
@@ -516,8 +523,8 @@ export const MyTithisScreen: React.FC = () => {
                               sx={{
                                 fontSize: '0.65rem',
                                 fontWeight: 500,
-                                bgcolor: 'rgba(61, 107, 36, 0.15)',
-                                color: '#3D6B24',
+                                bgcolor: 'success.light',
+                                color: 'success.main',
                                 height: 22,
                               }}
                             />
@@ -552,8 +559,8 @@ export const MyTithisScreen: React.FC = () => {
                               sx={{
                                 fontSize: '0.7rem',
                                 fontWeight: 500,
-                                bgcolor: 'rgba(61, 107, 36, 0.1)',
-                                color: '#3D6B24',
+                                bgcolor: 'success.light',
+                                color: 'success.main',
                                 height: 26,
                               }}
                             />
@@ -599,8 +606,8 @@ export const MyTithisScreen: React.FC = () => {
                                       justifyContent: 'space-between',
                                       mb: 0.5,
                                       p: 0.75,
-                                      bgcolor: 'rgba(255,255,255,0.6)',
-                                      borderRadius: 1.5,
+                                      bgcolor: 'background.paper',
+                                      borderRadius: 2,
                                     }}
                                   >
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -609,7 +616,7 @@ export const MyTithisScreen: React.FC = () => {
                     width: 8,
                     height: 8,
                     borderRadius: '50%',
-                    bgcolor: daysUntil <= 3 ? muiTheme.palette.primary.main : '#3D6B24',
+                    bgcolor: daysUntil <= 3 ? muiTheme.palette.primary.main : muiTheme.palette.success.main,
                                         }}
                                       />
                                       <Typography variant="caption" sx={{ fontWeight: 500 }}>
@@ -622,8 +629,8 @@ export const MyTithisScreen: React.FC = () => {
                                       sx={{
                                         fontSize: '0.65rem',
                                         fontWeight: 500,
-                                        bgcolor: daysUntil <= 3 ? 'rgba(199, 91, 18, 0.15)' : 'rgba(61, 107, 36, 0.15)',
-                                        color: daysUntil <= 3 ? '#7A3008' : '#3D6B24',
+                                        bgcolor: daysUntil <= 3 ? 'warning.light' : 'success.light',
+                                        color: daysUntil <= 3 ? 'warning.dark' : 'success.main',
                                         height: 22,
                                       }}
                                     />
@@ -706,7 +713,7 @@ export const MyTithisScreen: React.FC = () => {
         fullWidth
         maxWidth="sm"
         PaperProps={{
-          sx: { borderRadius: 3, p: 2 },
+          sx: { borderRadius: 2, p: 2 },
         }}
       >
         <DialogTitle sx={{ fontWeight: 500, pb: 1 }}>
@@ -731,9 +738,9 @@ export const MyTithisScreen: React.FC = () => {
                   label={type}
                   onClick={() => setFormData({ ...formData, name: type })}
                 sx={{
-                  bgcolor: formData.name === type ? 'rgba(199, 91, 18, 0.15)' : 'rgba(0,0,0,0.05)',
-                  color: formData.name === type ? muiTheme.palette.primary.main : 'text.secondary',
-                  fontWeight: formData.name === type ? 600 : 400,
+                  bgcolor: formData.name === type ? 'primary.light' : 'action.hover',
+                  color: formData.name === type ? 'primary.main' : 'text.secondary',
+                  fontWeight: formData.name === type ? 500 : 400,
                 }}
                 />
               ))}
@@ -911,7 +918,7 @@ export const MyTithisScreen: React.FC = () => {
         fullWidth
         maxWidth="sm"
         PaperProps={{
-          sx: { borderRadius: 3, p: 2 },
+          sx: { borderRadius: 2, p: 2 },
         }}
       >
         <DialogTitle sx={{ fontWeight: 500, pb: 1 }}>

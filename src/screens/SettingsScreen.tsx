@@ -67,6 +67,7 @@ import { notificationService, notificationScheduler } from '../services/notifica
 import { useThemeManager } from '../components/ThemeProvider';
 import { ScreenContainer } from '../components/ScreenContainer';
 import NotificationCenter from '../components/NotificationCenter';
+import { PANCHANG_GLOSSARY } from '../data/panchangGlossary';
 
 // Indian cities for location selection
 const CITIES = [
@@ -81,7 +82,8 @@ const CITIES = [
 ];
 
 export default function SettingsScreen() {
-  const { t } = useI18n();
+  const { t, currentLanguage } = useI18n();
+  const isHindi = currentLanguage === 'hi';
   const muiTheme = useMuiTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(muiTheme.breakpoints.up('sm'));
@@ -257,7 +259,7 @@ export default function SettingsScreen() {
             elevation={0}
             sx={{
               mb: 2,
-              borderRadius: 3,
+              borderRadius: 2,
               overflow: 'hidden',
               bgcolor: 'rgba(199,91,18,0.08)',
               border: '2px solid rgba(199,91,18,0.2)',
@@ -270,7 +272,7 @@ export default function SettingsScreen() {
                   sx={{
                     width: { xs: 48, sm: 56 },
                     height: { xs: 48, sm: 56 },
-                    borderRadius: 3,
+                    borderRadius: 2,
                     bgcolor: 'rgba(199,91,18,0.1)',
                     display: 'flex',
                     alignItems: 'center',
@@ -299,7 +301,7 @@ export default function SettingsScreen() {
               fontWeight: 500,
               bgcolor: muiTheme.palette.primary.main,
               color: muiTheme.palette.getContrastText(muiTheme.palette.primary.main),
-              '&:hover': { bgcolor: muiTheme.palette.mode === 'dark' ? muiTheme.palette.primary.dark : '#7A3008' },
+              '&:hover': { bgcolor: 'primary.dark' },
                     }}
                   >
                     {t('premium.upgradeNow') || 'Upgrade Now'}
@@ -319,7 +321,7 @@ export default function SettingsScreen() {
             elevation={0}
             sx={{
               mb: 2,
-              borderRadius: 3,
+              borderRadius: 2,
               overflow: 'hidden',
               bgcolor: 'background.paper',
               border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)'}`,
@@ -390,7 +392,7 @@ export default function SettingsScreen() {
             elevation={0}
             sx={{
               mb: 2,
-              borderRadius: 3,
+              borderRadius: 2,
               overflow: 'hidden',
               bgcolor: 'background.paper',
               border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)'}`,
@@ -468,7 +470,7 @@ export default function SettingsScreen() {
             elevation={0}
             sx={{
               mb: 2,
-              borderRadius: 3,
+              borderRadius: 2,
               overflow: 'hidden',
               bgcolor: 'background.paper',
               border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)'}`,
@@ -541,7 +543,7 @@ export default function SettingsScreen() {
               elevation={0}
               sx={{
                 mb: 2,
-                borderRadius: 3,
+                borderRadius: 2,
                 overflow: 'hidden',
                 bgcolor: 'rgba(199,91,18,0.04)',
                 border: '1px solid rgba(199,91,18,0.1)',
@@ -596,7 +598,7 @@ export default function SettingsScreen() {
             elevation={0}
             sx={{
               mb: 2,
-              borderRadius: 3,
+              borderRadius: 2,
               overflow: 'hidden',
               bgcolor: 'background.paper',
               border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)'}`,
@@ -657,7 +659,7 @@ export default function SettingsScreen() {
             elevation={0}
             sx={{
               mb: 2,
-              borderRadius: 3,
+              borderRadius: 2,
               overflow: 'hidden',
               bgcolor: 'background.paper',
               border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)'}`,
@@ -703,7 +705,7 @@ export default function SettingsScreen() {
       <Dialog 
         open={manualCoords} 
         onClose={() => setManualCoords(false)}
-        PaperProps={{ sx: { borderRadius: 3, p: 2 } }}
+        PaperProps={{ sx: { borderRadius: 2, p: 2 } }}
       >
         <DialogTitle sx={{ fontWeight: 500 }}>
           {t('settings.enterManual')}
@@ -752,7 +754,7 @@ export default function SettingsScreen() {
       <Dialog 
         open={aboutDialog} 
         onClose={() => setAboutDialog(false)}
-        PaperProps={{ sx: { borderRadius: 3, p: 2 } }}
+        PaperProps={{ sx: { borderRadius: 2, p: 2 } }}
       >
         <DialogTitle sx={{ fontWeight: 500, textAlign: 'center' }}>
           🙏 {t('common.appName')}
@@ -764,12 +766,35 @@ export default function SettingsScreen() {
           </IconButton>
         </DialogTitle>
         <DialogContent sx={{ textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
             {t('settings.aboutContent') || 'Your complete Hindu calendar companion'}
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+            {isHindi
+              ? 'कोई खाता नहीं, कोई लॉगिन नहीं — सब कुछ आपके फ़ोन पर रहता है।'
+              : 'No account, no login — everything stays on your phone.'}
           </Typography>
           <Typography variant="caption" color="text.secondary">
             Version 3.7.0
           </Typography>
+
+          {/* Permanent glossary reference — same copy as onboarding */}
+          <Divider sx={{ my: 2 }} />
+          <Typography variant="subtitle2" sx={{ fontWeight: 500, textAlign: 'left', mb: 1 }}>
+            {isHindi ? 'पंचांग के अंग — क्या है?' : 'Parts of the Panchang — what do they mean?'}
+          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, textAlign: 'left' }}>
+            {PANCHANG_GLOSSARY.map((entry) => (
+              <Box key={entry.id}>
+                <Typography variant="body2" sx={{ fontWeight: 500, color: 'primary.main' }}>
+                  {isHindi ? entry.nameHindi : entry.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                  {isHindi ? entry.meaningHindi : entry.meaning}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2, justifyContent: 'center' }}>
           <Button 
@@ -786,7 +811,7 @@ export default function SettingsScreen() {
       <Dialog 
         open={inviteDialog} 
         onClose={() => setInviteDialog(false)}
-        PaperProps={{ sx: { borderRadius: 3, p: 2 } }}
+        PaperProps={{ sx: { borderRadius: 2, p: 2 } }}
       >
         <DialogTitle sx={{ fontWeight: 500 }}>
           {t('invite.familyMember')}

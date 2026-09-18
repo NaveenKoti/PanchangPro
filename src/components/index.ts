@@ -30,6 +30,7 @@ export { SettingsSkeleton } from './skeletons/SettingsSkeleton';
 // Dialogs & Cards
 export { default as TithiExplanationDialog } from './TithiExplanationDialog';
 export { default as NakshatraExplanationDialog } from './NakshatraExplanationDialog';
+export { default as GlossaryDialog } from './GlossaryDialog';
 export { TodayGuidanceCard } from './TodayGuidanceCard';
 export { default as EkadashiDetailCard } from './EkadashiDetailCard';
 export { ExpandableSection } from './ExpandableSection';

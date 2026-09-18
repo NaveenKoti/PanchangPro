@@ -1,6 +1,6 @@
 /**
  * OnboardingScreen - First-time user onboarding (shows once)
- * 3-step flow: Welcome → Setup (location + language) → Ready
+ * 4-step flow: Welcome → Learn (what is Panchang) → Setup (location + language) → Ready
  */
 
 import React, { useState, useCallback } from 'react';
@@ -14,13 +14,14 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import { MapPin, CheckCircle, Sun, Moon, Monitor } from 'lucide-react';
+import { MapPin, CheckCircle, Sun, Moon, Monitor, ShieldCheck } from 'lucide-react';
 import { useI18n } from '../hooks/useI18n';
 import { useAppStore } from '../stores/appStore';
 import { GeoLocation } from '../types';
 import { OnboardingLayout } from '../components/OnboardingLayout';
+import { PANCHANG_GLOSSARY } from '../data/panchangGlossary';
 
-type Step = 0 | 1 | 2;
+type Step = 0 | 1 | 2 | 3;
 
 interface OnboardingScreenProps {
   onComplete: () => void;
@@ -39,6 +40,9 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<'en' | 'hi' | 'sa' | 'kn' | 'te' | 'ta'>('en');
   const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark' | 'system'>('system');
+  const isHindiOnboarding = selectedLanguage === 'hi';
+  const limbs = PANCHANG_GLOSSARY.filter((e) => e.id !== 'panchang');
+  const panchangIntro = PANCHANG_GLOSSARY[0];
 
   const handleDetectLocation = useCallback(() => {
     setIsDetecting(true);
@@ -111,7 +115,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             sx={{
               fontWeight: 500,
               fontSize: isMobile ? '2.4rem' : '3rem',
-              color: '#FFF8F0',
+              color: 'primary.contrastText',
               letterSpacing: '-0.02em',
               mb: 1,
               textAlign: 'center',
@@ -123,7 +127,8 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           <Typography
             variant="h6"
             sx={{
-              color: 'rgba(255,248,240,0.75)',
+              color: 'primary.contrastText',
+              opacity: 0.75,
               fontWeight: 400,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
@@ -138,7 +143,8 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           <Typography
             variant="body1"
             sx={{
-              color: 'rgba(255,248,240,0.85)',
+              color: 'primary.contrastText',
+              opacity: 0.85,
               textAlign: 'center',
               maxWidth: 320,
               lineHeight: 1.7,
@@ -154,16 +160,18 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             size="large"
             onClick={() => setStep(1)}
             sx={{
-              bgcolor: '#FFF8F0',
+              bgcolor: 'primary.contrastText',
               color: theme.palette.primary.main,
               fontWeight: 500,
               fontSize: '1rem',
               px: 5,
               py: 1.5,
-              borderRadius: 3,
+              minHeight: 48,
+              borderRadius: 2,
               boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
               '&:hover': {
-                bgcolor: '#FFFFFF',
+                bgcolor: 'primary.contrastText',
+                opacity: 0.95,
                 transform: 'translateY(-2px)',
                 boxShadow: '0 12px 32px rgba(0,0,0,0.25)',
               },
@@ -176,7 +184,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           <Button
             variant="text"
             onClick={handleComplete}
-            sx={{ mt: 2, color: 'rgba(255,248,240,0.6)', fontSize: '0.85rem' }}
+            sx={{ mt: 2, color: 'primary.contrastText', opacity: 0.6, fontSize: '0.85rem', minHeight: 48 }}
           >
             Skip setup
           </Button>
@@ -184,7 +192,81 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
       )}
 
       {step === 1 && (
-        <OnboardingLayout variant="setup">
+        <OnboardingLayout variant="setup" step={1}>
+          <Typography variant="h4" sx={{ fontWeight: 500, mb: 0.75, color: 'text.primary' }}>
+            {isHindiOnboarding ? 'पंचांग क्या है?' : 'What is Panchang?'}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.7 }}>
+            {isHindiOnboarding ? panchangIntro.meaningHindi : panchangIntro.meaning}
+          </Typography>
+
+          {/* Five limbs — one line each */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mb: 3 }}>
+            {limbs.map((limb) => (
+              <Box
+                key={limb.id}
+                sx={{
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  borderRadius: 2,
+                  p: 1.5,
+                  bgcolor: 'background.paper',
+                }}
+              >
+                <Typography variant="subtitle2" sx={{ fontWeight: 500, color: 'primary.main', mb: 0.25 }}>
+                  {isHindiOnboarding ? limb.nameHindi : limb.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                  {isHindiOnboarding ? limb.meaningHindi : limb.meaning}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+
+          {/* No-login + reminders note */}
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 1.5,
+              alignItems: 'flex-start',
+              border: '1px solid',
+              borderColor: 'success.main',
+              borderRadius: 2,
+              p: 1.5,
+              mb: 4,
+              bgcolor: 'background.paper',
+            }}
+          >
+            <ShieldCheck size={20} color={theme.palette.success.main} style={{ flexShrink: 0, marginTop: 2 }} />
+            <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+              {isHindiOnboarding
+                ? 'कोई खाता नहीं, कोई लॉगिन नहीं — सब कुछ आपके फ़ोन पर रहता है। My Tithis में पारिवारिक तिथियाँ जोड़ें और सूचनाएँ चालू करें; ऐप खोलते ही VedaTime याद दिलाएगा।'
+                : 'No account, no login — everything stays on your phone. Add family tithis in My Tithis and allow notifications; VedaTime reminds you when you open the app.'}
+            </Typography>
+          </Box>
+
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => setStep(2)}
+            fullWidth
+            sx={{ py: 1.5, minHeight: 48, borderRadius: 2, fontWeight: 500, fontSize: '1rem' }}
+          >
+            {isHindiOnboarding ? 'आगे बढ़ें' : 'Continue'}
+          </Button>
+
+          <Button
+            variant="text"
+            onClick={() => setStep(0)}
+            sx={{ mt: 1.5, color: 'text.secondary', fontSize: '0.85rem' }}
+          >
+            {isHindiOnboarding ? 'पीछे' : 'Back'}
+          </Button>
+        </OnboardingLayout>
+      )}
+
+      {step === 2 && (
+        <OnboardingLayout variant="setup" step={2}>
           <Typography variant="h4" sx={{ fontWeight: 500, mb: 0.75, color: 'text.primary' }}>
             Quick Setup
           </Typography>
@@ -200,18 +282,18 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             sx={{
               border: '1px solid',
               borderColor: detectedLocation ? 'success.main' : 'divider',
-              borderRadius: 2.5,
+              borderRadius: 2,
               p: 2,
               mb: 3,
-              bgcolor: detectedLocation ? 'rgba(61,107,36,0.04)' : 'background.paper',
+              bgcolor: 'background.paper',
               transition: 'all 0.3s',
             }}
           >
             {detectedLocation ? (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <CheckCircle size={20} color="#3D6B24" />
+                <CheckCircle size={20} color={theme.palette.success.main} />
                 <Box>
-                  <Typography variant="body2" sx={{ fontWeight: 500, color: '#3D6B24' }}>
+                  <Typography variant="body2" sx={{ fontWeight: 500, color: 'success.main' }}>
                     Location detected
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
@@ -222,7 +304,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             ) : (
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <MapPin size={20} color={locationError ? '#A33030' : theme.palette.primary.main} />
+                  <MapPin size={20} color={locationError ? theme.palette.error.main : theme.palette.primary.main} />
                   <Box>
                     <Typography variant="body2" sx={{ fontWeight: 500 }}>
                       {locationError ? 'Using Mumbai (default)' : 'Allow location access'}
@@ -256,15 +338,19 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             value={selectedLanguage}
             exclusive
             onChange={(_e, val) => { if (val) setSelectedLanguage(val); }}
-            fullWidth
-            sx={{ mb: 3 }}
+            sx={{
+              mb: 3,
+              display: 'grid',
+              gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(3, 1fr)' },
+              gap: 1,
+            }}
           >
-            <ToggleButton value="en" sx={{ py: 1.25, fontWeight: 500 }}>English</ToggleButton>
-            <ToggleButton value="hi" sx={{ py: 1.25, fontWeight: 500 }}>हिंदी</ToggleButton>
-            <ToggleButton value="sa" sx={{ py: 1.25, fontWeight: 500 }}>संस्कृत</ToggleButton>
-            <ToggleButton value="kn" sx={{ py: 1.25, fontWeight: 500 }}>ಕನ್ನಡ</ToggleButton>
-            <ToggleButton value="te" sx={{ py: 1.25, fontWeight: 500 }}>తెలుగు</ToggleButton>
-            <ToggleButton value="ta" sx={{ py: 1.25, fontWeight: 500 }}>தமிழ்</ToggleButton>
+            <ToggleButton value="en" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>English</ToggleButton>
+            <ToggleButton value="hi" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>हिंदी</ToggleButton>
+            <ToggleButton value="sa" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>संस्कृत</ToggleButton>
+            <ToggleButton value="kn" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>ಕನ್ನಡ</ToggleButton>
+            <ToggleButton value="te" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>తెలుగు</ToggleButton>
+            <ToggleButton value="ta" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>தமிழ்</ToggleButton>
           </ToggleButtonGroup>
 
           {/* Theme */}
@@ -278,13 +364,13 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             fullWidth
             sx={{ mb: 5 }}
           >
-            <ToggleButton value="light" sx={{ py: 1.25, gap: 0.75, fontWeight: 500 }}>
+            <ToggleButton value="light" sx={{ minHeight: 48, py: 1.5, gap: 0.75, fontWeight: 500 }}>
               <Sun size={16} /> Light
             </ToggleButton>
-            <ToggleButton value="dark" sx={{ py: 1.25, gap: 0.75, fontWeight: 500 }}>
+            <ToggleButton value="dark" sx={{ minHeight: 48, py: 1.5, gap: 0.75, fontWeight: 500 }}>
               <Moon size={16} /> Dark
             </ToggleButton>
-            <ToggleButton value="system" sx={{ py: 1.25, gap: 0.75, fontWeight: 500 }}>
+            <ToggleButton value="system" sx={{ minHeight: 48, py: 1.5, gap: 0.75, fontWeight: 500 }}>
               <Monitor size={16} /> Auto
             </ToggleButton>
           </ToggleButtonGroup>
@@ -292,16 +378,16 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           <Button
             variant="contained"
             size="large"
-            onClick={() => setStep(2)}
+            onClick={() => setStep(3)}
             fullWidth
-            sx={{ py: 1.5, borderRadius: 2.5, fontWeight: 500, fontSize: '1rem' }}
+            sx={{ py: 1.5, minHeight: 48, borderRadius: 2, fontWeight: 500, fontSize: '1rem' }}
           >
             Continue
           </Button>
 
           <Button
             variant="text"
-            onClick={() => setStep(0)}
+            onClick={() => setStep(1)}
             sx={{ mt: 1.5, color: 'text.secondary', fontSize: '0.85rem' }}
           >
             Back
@@ -309,18 +395,18 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
         </OnboardingLayout>
       )}
 
-      {step === 2 && (
-        <OnboardingLayout variant="ready">
+      {step === 3 && (
+        <OnboardingLayout variant="ready" step={3}>
           <Box
             sx={{
               width: 80, height: 80, borderRadius: '50%',
-              background: 'linear-gradient(135deg, #C75B12 0%, #E8944A 100%)',
+              background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               mb: 3,
               boxShadow: '0 8px 24px rgba(199,91,18,0.35)',
             }}
           >
-            <CheckCircle size={36} color="#FFF8F0" />
+            <CheckCircle size={36} color={theme.palette.primary.contrastText} />
           </Box>
 
           <Typography variant="h4" sx={{ fontWeight: 500, mb: 1, color: 'text.primary' }}>
@@ -335,7 +421,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             size="large"
             onClick={handleComplete}
             sx={{
-              px: 6, py: 1.5, borderRadius: 3,
+              px: 6, py: 1.5, minHeight: 48, borderRadius: 2,
               fontWeight: 500, fontSize: '1rem',
               boxShadow: '0 6px 20px rgba(199,91,18,0.3)',
               '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 10px 28px rgba(199,91,18,0.4)' },
@@ -347,7 +433,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
 
           <Button
             variant="text"
-            onClick={() => setStep(1)}
+            onClick={() => setStep(2)}
             sx={{ mt: 2, color: 'text.secondary', fontSize: '0.85rem' }}
           >
             Back
