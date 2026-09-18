@@ -6,9 +6,8 @@ import {
  IconButton,
  Chip,
  Fade,
- Zoom,
- useMediaQuery,
- useTheme as useMuiTheme,
+  Zoom,
+  useTheme as useMuiTheme,
  Skeleton,
  Snackbar,
  Alert,
@@ -36,6 +35,7 @@ import { AdCarousel } from '../components/AdCarousel';
 import { useAdManager } from '../components/AdManager';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { triggerHapticIfSupported } from '../utils/haptics';
+import { useBreakpoints } from '../hooks/useBreakpoints';
 
 interface CalendarScreenProps {
   /** Callback when user taps a festival to view its full story */
@@ -55,9 +55,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  const { t, currentLanguage } = useI18n();
  const muiTheme = useMuiTheme();
  const isDark = muiTheme.palette.mode === 'dark';
- const isMobile = useMediaQuery(muiTheme.breakpoints.down('sm'));
- const isTablet = useMediaQuery(muiTheme.breakpoints.up('sm'));
- const isDesktop = useMediaQuery(muiTheme.breakpoints.up('md'));
+  const { isMobile, isTablet, isDesktop } = useBreakpoints();
  const { shouldShowAds } = useAdManager();
  const showCalendarAds = shouldShowAds('calendar');
 
@@ -290,7 +288,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
     return (
       <ScreenContainer maxWidth={isDesktop ? 900 : isTablet ? 720 : undefined} sx={{ pt: 2.5 }}>
         <Skeleton variant="text" width={200} height={40} sx={{ mb: 2, mx: 'auto' }} animation="wave" />
-        <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 3, maxHeight: '70vh' }} animation="wave" />
+        <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2, maxHeight: '70vh' }} animation="wave" />
       </ScreenContainer>
     );
   }
@@ -311,7 +309,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  elevation={0}
  sx={{
  mb: 2,
- borderRadius: 3,
+ borderRadius: 2,
  bgcolor: 'background.paper',
  border: '1px solid',
  borderColor: 'divider',
@@ -346,7 +344,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
           <CalendarIcon size={17} color={muiTheme.palette.primary.main} />
  <Typography
  variant="h6"
- sx={{ fontWeight: 500, fontSize: '1.05rem', color: 'text.primary' }}
+  sx={{ fontWeight: 500, fontSize: { xs: '0.95rem', sm: '1.05rem' }, color: 'text.primary' }}
  >
  {getMonthName(currentMonth)}
  </Typography>
@@ -406,7 +404,7 @@ size="small"
  <Paper
  elevation={0}
  sx={{
- borderRadius: 3,
+ borderRadius: 2,
  overflow: 'hidden',
  bgcolor: 'background.paper',
  border: '1px solid',
@@ -685,7 +683,7 @@ size="small"
  sx={{
  position: isMobile ? 'relative' : 'relative',
  zIndex: isMobile ? 1301 : 'auto',
- borderRadius: isMobile ? '16px 16px 0 0' : 3,
+  borderRadius: isMobile ? '16px 16px 0 0' : 2,
  bgcolor: 'background.paper',
  border: '1px solid',
  borderColor: 'divider',
@@ -755,9 +753,9 @@ size="small"
  size="medium"
  onClick={handleShareDay}
  sx={{
- color: 'success.main',
- minWidth: 44,
- minHeight: 44,
+  color: 'success.main',
+  minWidth: 48,
+  minHeight: 48,
  '&:hover': { bgcolor: `${muiTheme.palette.success.main}15` },
  }}
  >
@@ -767,9 +765,9 @@ size="small"
  size="medium"
  onClick={() => setSelectedDay(null)}
  sx={{
- color: 'error.main',
- minWidth: 44,
- minHeight: 44,
+  color: 'error.main',
+  minWidth: 48,
+  minHeight: 48,
  '&:hover': { bgcolor: `${muiTheme.palette.error.main}15` },
  }}
  >
@@ -829,7 +827,7 @@ size="small"
  sx={{
  p: { xs: 1.5, sm: 2 },
  bgcolor: `${muiTheme.palette.primary.main}08`,
- borderRadius: 2.5,
+ borderRadius: 2,
  border: '1px solid',
  borderColor: 'divider',
  }}
@@ -884,7 +882,7 @@ size="small"
  sx={{
  p: { xs: 1.5, sm: 2 },
  bgcolor: `${muiTheme.palette.secondary.main}08`,
- borderRadius: 2.5,
+ borderRadius: 2,
  border: '1px solid',
  borderColor: 'divider',
  }}
@@ -949,7 +947,7 @@ size="small"
  sx={{
  p: { xs: 1.25, sm: 1.5 },
  bgcolor: `${muiTheme.palette.warning.main}08`,
- borderRadius: 2.5,
+ borderRadius: 2,
  border: '1px solid',
  borderColor: 'divider',
  }}
@@ -979,7 +977,7 @@ size="small"
  sx={{
  p: { xs: 1.25, sm: 1.5 },
  bgcolor: `${muiTheme.palette.info.main}08`,
- borderRadius: 2.5,
+ borderRadius: 2,
  border: '1px solid',
  borderColor: 'divider',
  }}
@@ -1015,7 +1013,7 @@ size="small"
  p: { xs: 1.25, sm: 1.5 },
  gridColumn: { xs: 'span 2', sm: 'span 1' },
  bgcolor: `${muiTheme.palette.warning.main}10`,
- borderRadius: 2.5,
+ borderRadius: 2,
  border: '1px solid',
  borderColor: `${muiTheme.palette.warning.main}30`,
  }}
@@ -1077,7 +1075,7 @@ size="small"
  mb: 1.5,
  p: 1.5,
  bgcolor: `${muiTheme.palette.primary.main}08`,
- borderRadius: 2.5,
+ borderRadius: 2,
  border: '1px solid',
  borderColor: isExpanded
  ? `${muiTheme.palette.primary.main}50`
@@ -1230,7 +1228,7 @@ size="small"
  sx={{
  p: 1.5,
  bgcolor: `${muiTheme.palette.success.main}08`,
- borderRadius: 2.5,
+ borderRadius: 2,
  border: '1px solid',
  borderColor: `${muiTheme.palette.success.main}30`,
  }}
@@ -1273,7 +1271,7 @@ size="small"
  sx={{
  p: { xs: 1.25, sm: 1.5 },
  bgcolor: `${muiTheme.palette.error.main}08`,
- borderRadius: 2.5,
+ borderRadius: 2,
  border: '1px solid',
  borderColor: `${muiTheme.palette.error.main}25`,
  flex: '1 1 calc(50% - 8px)',
@@ -1296,7 +1294,7 @@ size="small"
  sx={{
  p: { xs: 1.25, sm: 1.5 },
  bgcolor: muiTheme.palette.action.hover,
- borderRadius: 2.5,
+ borderRadius: 2,
  border: '1px solid',
  borderColor: 'divider',
  flex: '1 1 calc(50% - 8px)',
@@ -1320,7 +1318,7 @@ size="small"
  sx={{
  p: { xs: 1.25, sm: 1.5 },
  bgcolor: `${muiTheme.palette.secondary.main}08`,
- borderRadius: 2.5,
+ borderRadius: 2,
  border: '1px solid',
  borderColor: `${muiTheme.palette.secondary.main}25`,
  flex: '1 1 calc(50% - 8px)',
@@ -1350,14 +1348,14 @@ size="small"
  sx={{
  width: '100%',
  py: 1.5,
- borderRadius: 2.5,
+ borderRadius: 2,
  bgcolor: muiTheme.palette.action.hover,
  color: 'text.primary',
  fontWeight: 500,
  fontSize: '0.9rem',
- textAlign: 'center',
- cursor: 'pointer',
- minHeight: 44,
+  textAlign: 'center',
+  cursor: 'pointer',
+  minHeight: 48,
  display: 'flex',
  alignItems: 'center',
  justifyContent: 'center',
@@ -1382,7 +1380,7 @@ size="small"
  mt: 2,
  px: 2.5,
  py: 2,
- borderRadius: 2.5,
+ borderRadius: 2,
  bgcolor: 'background.paper',
  border: '1px solid',
  borderColor: 'divider',

@@ -975,4 +975,181 @@ export const notificationService = new NotificationService();
 // Export scheduler for direct use
 export { NotificationScheduler, scheduler as notificationScheduler };
 
+// ─── "While you were away" catch-up for CUSTOM TITHIS ───────────────────
+// Why: custom-tithi reminders are in-page setTimeout only, so any reminder
+// due while the app was closed is silently skipped (the scheduler above
+// does `if (reminderDate <= now) continue`). On app open we scan the
+// fire-times that fell inside (lastSeenAt, now] — lookback capped at 7
+// days — and surface them as an in-app banner on the Today screen.
+//
+// lastSeenAt update strategy: stamped on every load + on visibilitychange
+// to hidden. A periodic interval was deliberately NOT chosen: it would wake
+// CPU/battery for a timestamp write, while visibilitychange fires reliably
+// on background/close with zero polling. While the app stays open the live
+// setTimeout reminders fire, so no gap accrues between stamps.
+
+export const MAX_CATCHUP_LOOKBACK_DAYS = 7;
+
+const LAST_SEEN_AT_KEY = 'panchangpro_last_seen_at';
+const SHOWN_MISSED_TITHI_IDS_KEY = 'panchangpro_missed_tithi_shown_ids';
+const MAX_SHOWN_IDS_STORED = 300;
+
+export interface MissedTithiReminder {
+  /** Dedupe id: `missed-tithi-<tithiId>-<local YYYY-MM-DD of fireTime>`. */
+  id: string;
+  tithiId: string;
+  tithiName: string;
+  fireTime: Date;
+  occurrenceDate: Date;
+  daysBefore: number;
+}
+
+function catchupStorageGet(key: string): string | null {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return null;
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function catchupStorageSet(key: string, value: string): void {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    window.localStorage.setItem(key, value);
+  } catch {
+    // Storage write failure — non-critical
+  }
+}
+
+/** Last time the app was open. Null on first-ever run (caller sets baseline). */
+export function getLastSeenAt(): Date | null {
+  const raw = catchupStorageGet(LAST_SEEN_AT_KEY);
+  if (!raw) return null;
+  const date = new Date(raw);
+  return isNaN(date.getTime()) ? null : date;
+}
+
+export function setLastSeenAt(date: Date = new Date()): void {
+  catchupStorageSet(LAST_SEEN_AT_KEY, date.toISOString());
+}
+
+/**
+ * Pure: clamp the catch-up window to the last 7 days.
+ * Returns { start, end } with start = max(lastSeenAt, now - 7d), end = now.
+ */
+export function getCatchupWindow(now: Date, lastSeenAt: Date): { start: Date; end: Date } {
+  const end = new Date(now);
+  const cap = new Date(now);
+  cap.setDate(cap.getDate() - MAX_CATCHUP_LOOKBACK_DAYS);
+  const start = lastSeenAt > cap ? new Date(lastSeenAt) : cap;
+  return { start, end };
+}
+
+function toLocalDayKey(date: Date): string {
+  const y = date.getFullYear();
+  const m = `${date.getMonth() + 1}`.padStart(2, '0');
+  const d = `${date.getDate()}`.padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+export function buildMissedReminderId(tithiId: string, fireTime: Date): string {
+  return `missed-tithi-${tithiId}-${toLocalDayKey(fireTime)}`;
+}
+
+/** Ids already surfaced, so a second open in the same hour doesn't re-show. */
+export function getShownMissedReminderIds(): Set<string> {
+  try {
+    const raw = catchupStorageGet(SHOWN_MISSED_TITHI_IDS_KEY);
+    if (raw) return new Set(JSON.parse(raw) as string[]);
+  } catch {
+    // Corrupt storage — treat as empty
+  }
+  return new Set();
+}
+
+export function markMissedReminderIdsShown(ids: string[]): void {
+  if (ids.length === 0) return;
+  const merged = [...getShownMissedReminderIds(), ...ids];
+  catchupStorageSet(
+    SHOWN_MISSED_TITHI_IDS_KEY,
+    JSON.stringify(merged.slice(-MAX_SHOWN_IDS_STORED))
+  );
+}
+
+function clampReminderDaysBefore(value: unknown): number {
+  const n = typeof value === 'number' && !isNaN(value) ? Math.floor(value) : 0;
+  return Math.min(7, Math.max(0, n));
+}
+
+function parseReminderTimeOfDay(reminderTime: string): { hours: number; minutes: number } {
+  const [h, m] = reminderTime.split(':').map(Number);
+  return {
+    hours: !isNaN(h) ? h : 7,
+    minutes: !isNaN(m) ? m : 0,
+  };
+}
+
+/**
+ * Pure, testable window scan for missed CUSTOM-TITHI reminders.
+ *
+ * Fire-time semantics intentionally mirror scheduleCustomTithiReminder:
+ * occurrence date minus reminderDaysBefore days, at reminderTime.
+ * A fire-time is missed when it falls in (windowStart, windowEnd].
+ * Custom tithis without reminderEnabled/reminderTime are skipped, as are
+ * ids already in alreadyShownIds. Result sorted ascending by fireTime.
+ *
+ * @param tithis Custom tithis (reminderEnabled/reminderTime/daysBefore read here)
+ * @param occurrencesByTithiId Pre-resolved Gregorian occurrence dates per tithi id
+ *   (one-time tithis: customDate; recurring: engine day-scan matches — resolved
+ *   by the caller with the same tithiNumber+paksha rule the store uses).
+ */
+export function findMissedCustomTithiReminders(
+  tithis: CustomTithi[],
+  occurrencesByTithiId: Record<string, Array<Date | string>>,
+  windowStart: Date,
+  windowEnd: Date,
+  alreadyShownIds: Set<string> | string[] = new Set()
+): MissedTithiReminder[] {
+  const shown = alreadyShownIds instanceof Set ? alreadyShownIds : new Set(alreadyShownIds);
+  const startMs = windowStart.getTime();
+  const endMs = windowEnd.getTime();
+  const seenInRun = new Set<string>();
+  const missed: MissedTithiReminder[] = [];
+
+  for (const tithi of tithis) {
+    if (!tithi.reminderEnabled || !tithi.reminderTime) continue;
+    const daysBefore = clampReminderDaysBefore(tithi.reminderDaysBefore);
+    const { hours, minutes } = parseReminderTimeOfDay(tithi.reminderTime);
+    const occurrences = occurrencesByTithiId[tithi.id] ?? [];
+
+    for (const raw of occurrences) {
+      const occurrence = raw instanceof Date ? new Date(raw) : new Date(raw);
+      if (isNaN(occurrence.getTime())) continue;
+
+      const fire = new Date(occurrence);
+      fire.setDate(fire.getDate() - daysBefore);
+      fire.setHours(hours, minutes, 0, 0);
+      const fireMs = fire.getTime();
+      if (!(fireMs > startMs && fireMs <= endMs)) continue;
+
+      const id = buildMissedReminderId(tithi.id, fire);
+      if (shown.has(id) || seenInRun.has(id)) continue;
+      seenInRun.add(id);
+
+      missed.push({
+        id,
+        tithiId: tithi.id,
+        tithiName: tithi.name,
+        fireTime: fire,
+        occurrenceDate: occurrence,
+        daysBefore,
+      });
+    }
+  }
+
+  missed.sort((a, b) => a.fireTime.getTime() - b.fireTime.getTime());
+  return missed;
+}
+
 export default notificationService;

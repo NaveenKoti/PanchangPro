@@ -130,8 +130,8 @@ export const FastingChip: React.FC<FastingChipProps> = ({
         {/* Fasting icon with glow */}
         <Box
           sx={{
-            width: 40,
-            height: 40,
+            width: 48,
+            height: 48,
             borderRadius: 2,
             display: 'flex',
             alignItems: 'center',

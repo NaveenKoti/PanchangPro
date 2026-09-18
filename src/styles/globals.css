@@ -102,6 +102,12 @@
   --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slower: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Safe-area insets (viewport-fit=cover; 0px fallback where unsupported) */
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
 }
 
 /* ============================================================================
@@ -292,6 +298,28 @@ a:hover {
 .shadow-md { box-shadow: var(--shadow-md); }
 .shadow-lg { box-shadow: var(--shadow-lg); }
 .shadow-xl { box-shadow: var(--shadow-xl); }
+
+/* Safe-area utilities (notch/status-bar/home-indicator insets) */
+.safe-top { padding-top: var(--sat); }
+.safe-bottom { padding-bottom: var(--sab); }
+.safe-left { padding-left: var(--sal); }
+.safe-right { padding-right: var(--sar); }
+.safe-x {
+  padding-left: var(--sal);
+  padding-right: var(--sar);
+}
+.safe-y {
+  padding-top: var(--sat);
+  padding-bottom: var(--sab);
+}
+
+/* Full-viewport root: dvh preferred (mobile browser chrome), vh fallback */
+html,
+body,
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
 
 /* ============================================================================
    ANIMATIONS
@@ -509,6 +537,7 @@ a:hover {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--bg-default);
   color: var(--text-primary);
 }

@@ -13,7 +13,7 @@ import React from 'react';
 import { BottomNavigation, BottomNavigationAction, Paper, useTheme } from '@mui/material';
 import { Sunrise, CalendarDays, Leaf, MoreHorizontal, Star } from 'lucide-react';
 import { useI18n } from '../hooks/useI18n';
-import { useBreakpoints } from '../theme/breakpoints';
+import { useBreakpoints } from '../hooks/useBreakpoints';
 import { triggerHapticIfSupported } from '../utils/haptics';
 
 export type NavTab = 'today' | 'calendar' | 'fasts' | 'myTithis' | 'more' | 'stories';
@@ -58,8 +58,16 @@ export const BottomNav: React.FC<BottomNavProps> = ({ value, onChange, onShowMor
         left: 0,
         right: 0,
         zIndex: 1200,
-        bgcolor: 'background.paper',
+        // Glass blur + translucent background.paper (mirrors AppBar treatment)
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        bgcolor: (theme) =>
+          theme.palette.mode === 'dark'
+            ? 'rgba(36, 32, 25, 0.85)'
+            : 'rgba(255, 255, 255, 0.85)',
         borderTop: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
+        // Safe-area inset for gesture-bar devices, with fallback
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}
     >
       <BottomNavigation

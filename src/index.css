@@ -94,8 +94,14 @@
   --veda-golden-ratio: 1.618;
   --veda-asymmetric-balance: 61.8%;
 
-  --veda-touch-target-min: 44px;
+  --veda-touch-target-min: 48px;
   --veda-touch-target-primary: 48px;
+
+  /* Safe-area inset vars (viewport-fit=cover; 0px fallback where unsupported) */
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
 }
 
 /* Dark mode color overrides */
@@ -211,6 +217,31 @@
 
 .safe-area-inset-right {
   padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* Short aliases backed by the --sat/--sab/--sal/--sar vars above */
+.safe-top {
+  padding-top: var(--sat);
+}
+
+.safe-bottom {
+  padding-bottom: var(--sab);
+}
+
+.safe-left {
+  padding-left: var(--sal);
+}
+
+.safe-right {
+  padding-right: var(--sar);
+}
+
+/* Full-viewport root: dvh preferred (mobile browser chrome), vh fallback */
+html,
+body,
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 /* Print styles override */

@@ -80,11 +80,41 @@ const neutrals = {
 };
 
 // ============================================================================
+// BREAKPOINTS — SINGLE SOURCE OF TRUTH FOR RESPONSIVE LAYOUT
+// ============================================================================
+// Canonical MUI breakpoints so `sx` props + `useMediaQuery` agree everywhere.
+// Consumed via `src/hooks/useBreakpoints.ts` (the ONE hook):
+//   isMobile = down('sm') (<600), isTablet = between sm-md,
+//   isDesktop = up('md'), isLargeDesktop = up('lg').
+// Do NOT define competing breakpoint values in any other file.
+
+export const breakpointValues = {
+  xs: 0,
+  sm: 600,
+  md: 960,
+  lg: 1280,
+  xl: 1920,
+};
+
+// ============================================================================
+// CANONICAL CARD SPEC (documented token — do NOT restyle components here)
+// ============================================================================
+// Card = elevation 0 + border `1px solid` theme.palette.divider +
+// borderRadius 16 (shape.borderRadius) +
+// shadow `0 1px 3px rgba(0,0,0,0.04)` light /
+// `0 1px 3px rgba(0,0,0,0.3)` dark.
+// Component-level card styling is owned by other agents; this file only
+// provides the radius token + this spec comment. Do NOT override the full
+// MUI `shadows` array.
+
+// ============================================================================
 // THEME OPTIONS
 // ============================================================================
 
 export const themeOptions: ThemeOptions = {
-  palette: {
+  breakpoints: {
+    values: breakpointValues,
+  },  palette: {
     primary: saffron,
     secondary: indigo,
     success: forest,
@@ -162,7 +192,7 @@ export const themeOptions: ThemeOptions = {
     },
   },
   shape: {
-    borderRadius: 12, // More rounded, modern feel
+    borderRadius: 16, // Single canonical card radius — see CARD SPEC above
   },
   spacing: 8, // 8px base unit
 };
@@ -172,7 +202,12 @@ export const themeOptions: ThemeOptions = {
 // ============================================================================
 
 export const darkThemeOptions: ThemeOptions = {
-  palette: {
+  breakpoints: {
+    values: breakpointValues,
+  },
+  shape: {
+    borderRadius: 16, // Single canonical card radius — see CARD SPEC above
+  },  palette: {
     mode: 'dark',
     primary: {
       ...saffron,

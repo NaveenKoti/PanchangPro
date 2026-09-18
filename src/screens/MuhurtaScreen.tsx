@@ -56,47 +56,37 @@ type DayNightMode = 'day' | 'night' | 'both';
 const MuhurtaScreen: React.FC = () => {
   const { t, currentLanguage } = useI18n();
   const muiTheme = useMuiTheme();
-  const { isMobile, isTablet } = useBreakpoints();
+  const { isMobile } = useBreakpoints();
   const isDark = muiTheme.palette.mode === 'dark';
 
   const MUHURTA_BORDER: Record<MuhurtaType, string> = {
     Amrit: muiTheme.palette.success.main,
-    Shubh: '#4A8B2E',
-    Labh: '#6B9B3D',
+    Shubh: muiTheme.palette.success.dark,
+    Labh: muiTheme.palette.success.light,
     Char: muiTheme.palette.info.main,
     Rog: muiTheme.palette.error.main,
-    Kaal: '#B91C1C',
+    Kaal: muiTheme.palette.error.dark,
     Udveg: muiTheme.palette.warning.main,
   };
 
   const MUHURTA_GRADIENTS: Record<MuhurtaType, { light: string; dark: string }> = {
-    Amrit: { light: 'rgba(61, 107, 36, 0.08)', dark: 'rgba(61, 107, 36, 0.12)' },
-    Shubh: { light: 'rgba(61, 107, 36, 0.06)', dark: 'rgba(61, 107, 36, 0.10)' },
-    Labh: { light: 'rgba(61, 107, 36, 0.05)', dark: 'rgba(61, 107, 36, 0.08)' },
-    Char: { light: 'rgba(44, 62, 107, 0.06)', dark: 'rgba(44, 62, 107, 0.10)' },
-    Rog: { light: 'rgba(220, 38, 38, 0.06)', dark: 'rgba(220, 38, 38, 0.10)' },
-    Kaal: { light: 'rgba(185, 28, 28, 0.08)', dark: 'rgba(185, 28, 28, 0.12)' },
-    Udveg: { light: 'rgba(232, 148, 74, 0.06)', dark: 'rgba(232, 148, 74, 0.10)' },
+    Amrit: { light: `${muiTheme.palette.success.main}14`, dark: `${muiTheme.palette.success.main}24` },
+    Shubh: { light: `${muiTheme.palette.success.dark}14`, dark: `${muiTheme.palette.success.dark}24` },
+    Labh: { light: `${muiTheme.palette.success.light}1A`, dark: `${muiTheme.palette.success.light}24` },
+    Char: { light: `${muiTheme.palette.info.main}14`, dark: `${muiTheme.palette.info.main}24` },
+    Rog: { light: `${muiTheme.palette.error.main}14`, dark: `${muiTheme.palette.error.main}24` },
+    Kaal: { light: `${muiTheme.palette.error.dark}14`, dark: `${muiTheme.palette.error.dark}29` },
+    Udveg: { light: `${muiTheme.palette.warning.main}14`, dark: `${muiTheme.palette.warning.main}24` },
   };
 
   const MUHURTA_BG: Record<MuhurtaType, string> = {
-    Amrit: 'rgba(61, 107, 36, 0.12)',
-    Shubh: 'rgba(61, 107, 36, 0.10)',
-    Labh: 'rgba(61, 107, 36, 0.08)',
-    Char: 'rgba(44, 62, 107, 0.10)',
-    Rog: 'rgba(220, 38, 38, 0.10)',
-    Kaal: 'rgba(220, 38, 38, 0.14)',
-    Udveg: 'rgba(232, 148, 74, 0.10)',
-  };
-
-  const MUHURTA_TEXT_DARK: Record<MuhurtaType, string> = {
-    Amrit: '#1a3a0f', Shubh: '#1f4518', Labh: '#2a4a1a',
-    Char: '#1a2744', Rog: '#5c1010', Kaal: '#5c0e0e', Udveg: '#6b3e15',
-  };
-
-  const MUHURTA_TEXT_LIGHT: Record<MuhurtaType, string> = {
-    Amrit: '#e8f5e0', Shubh: '#e2f0d8', Labh: '#dceccf',
-    Char: '#d8e0f0', Rog: '#fde0e0', Kaal: '#fdd8d8', Udveg: '#fef0e0',
+    Amrit: `${muiTheme.palette.success.main}1F`,
+    Shubh: `${muiTheme.palette.success.dark}1F`,
+    Labh: `${muiTheme.palette.success.light}1F`,
+    Char: `${muiTheme.palette.info.main}1A`,
+    Rog: `${muiTheme.palette.error.main}1A`,
+    Kaal: `${muiTheme.palette.error.dark}24`,
+    Udveg: `${muiTheme.palette.warning.main}1A`,
   };
 
   const { selectedDate, preferences, calculatePanchang } = useAppStore();
@@ -389,7 +379,7 @@ const MuhurtaScreen: React.FC = () => {
           sx={{
             fontSize: { xs: '0.5rem', sm: '0.6rem' },
                   fontWeight: 500,
-            color: isCurrent ? color : isDark ? MUHURTA_TEXT_LIGHT[muhurta.name] : MUHURTA_TEXT_DARK[muhurta.name],
+            color: isCurrent ? color : 'text.primary',
             position: 'relative',
             zIndex: 1,
             lineHeight: 1,
@@ -427,9 +417,9 @@ const MuhurtaScreen: React.FC = () => {
         sx={{
           display: 'flex',
           gap: 0,
-          borderRadius: 3,
+          borderRadius: 2,
           overflow: 'hidden',
-          boxShadow: isDark ? '0 2px 8px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.1)',
+          boxShadow: isDark ? '0 1px 3px rgba(0,0,0,0.3)' : '0 1px 3px rgba(0,0,0,0.04)',
         }}
       >
         {muhurtas.map((m, i) => renderTimelineSegment(m, i, muhurtas.length))}
@@ -442,7 +432,7 @@ const MuhurtaScreen: React.FC = () => {
     const isExpanded = expandedDesc.has(name);
     const bg = isDark ? MUHURTA_GRADIENTS[name].dark : MUHURTA_GRADIENTS[name].light;
     const border = MUHURTA_BORDER[name];
-    const textColor = isDark ? MUHURTA_TEXT_LIGHT[name] : MUHURTA_TEXT_DARK[name];
+    const textColor = border;
 
     return (
       <Paper
@@ -543,7 +533,7 @@ const MuhurtaScreen: React.FC = () => {
             <IconButton
               size="small"
               onClick={() => toggleDesc(name)}
-              sx={{ p: 0.75, minWidth: 44, minHeight: 44 }}
+              sx={{ p: 0.75, minWidth: 48, minHeight: 48 }}
             >
               {isExpanded ? (
                 <ChevronUp size={16} />
@@ -569,11 +559,11 @@ const MuhurtaScreen: React.FC = () => {
               value={progressPercent}
               sx={{
                 height: 6,
-                borderRadius: 3,
-                bgcolor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+                borderRadius: 2,
+                bgcolor: muiTheme.palette.action.hover,
                 '& .MuiLinearProgress-bar': {
                   bgcolor: border,
-                  borderRadius: 3,
+                  borderRadius: 2,
                   transition: 'width 1s linear',
                   backgroundImage: 'none',
                 },
@@ -638,12 +628,12 @@ const MuhurtaScreen: React.FC = () => {
             textAlign: 'center',
             mb: 2,
             p: { xs: 1.5, sm: 2 },
-            borderRadius: 3,
+            borderRadius: 2,
             bgcolor: isDark
-              ? 'rgba(199, 91, 18, 0.08)'
-              : 'rgba(199, 91, 18, 0.04)',
+              ? `${muiTheme.palette.primary.main}14`
+              : `${muiTheme.palette.primary.main}0A`,
             border: '1px solid',
-            borderColor: isDark ? 'rgba(199, 91, 18, 0.3)' : 'rgba(199, 91, 18, 0.15)',
+            borderColor: isDark ? `${muiTheme.palette.primary.main}4D` : `${muiTheme.palette.primary.main}26`,
           }}
         >
           <Typography
@@ -687,7 +677,7 @@ const MuhurtaScreen: React.FC = () => {
             sx={{
               p: { xs: 2, sm: 3 },
               mb: 3,
-              borderRadius: 3,
+              borderRadius: 2,
               background: isDark
                 ? MUHURTA_GRADIENTS[currentMuhurta.muhurta.name].dark
                 : MUHURTA_GRADIENTS[currentMuhurta.muhurta.name].light,
@@ -836,7 +826,7 @@ const MuhurtaScreen: React.FC = () => {
                     mb: 1.5,
                     p: { xs: 0.75, sm: 1 },
                     borderRadius: 2,
-                    bgcolor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+                    bgcolor: muiTheme.palette.action.hover,
                     justifyContent: 'center',
                     flexWrap: 'wrap',
                   }}
@@ -875,7 +865,7 @@ const MuhurtaScreen: React.FC = () => {
                     sx={{
                       height: 8,
                       borderRadius: 4,
-                      bgcolor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+                      bgcolor: muiTheme.palette.action.hover,
                       '& .MuiLinearProgress-bar': {
                         bgcolor: MUHURTA_BORDER[currentMuhurta.muhurta.name],
                         borderRadius: 4,
@@ -908,7 +898,7 @@ const MuhurtaScreen: React.FC = () => {
               minWidth: 140,
               p: { xs: 1.25, sm: 1.5 },
               borderRadius: 2,
-              bgcolor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+              bgcolor: muiTheme.palette.action.hover,
               border: '1px solid',
               borderColor: 'divider',
               display: 'flex',
@@ -933,7 +923,7 @@ const MuhurtaScreen: React.FC = () => {
               minWidth: 140,
               p: { xs: 1.25, sm: 1.5 },
               borderRadius: 2,
-              bgcolor: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+              bgcolor: muiTheme.palette.action.hover,
               border: '1px solid',
               borderColor: 'divider',
               display: 'flex',
@@ -964,13 +954,13 @@ const MuhurtaScreen: React.FC = () => {
             size="small"
             fullWidth={isMobile}
             sx={{
-              bgcolor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-              borderRadius: 3,
+              bgcolor: muiTheme.palette.action.hover,
+              borderRadius: 2,
               '& .MuiToggleButton-root': {
                 px: { xs: 1.5, sm: 3 },
                 py: { xs: 1, sm: 1 },
                 border: 'none',
-                borderRadius: 3,
+                borderRadius: 2,
                 color: 'text.secondary',
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
                 minHeight: 44,
@@ -1056,7 +1046,7 @@ const MuhurtaScreen: React.FC = () => {
             p: 2,
             mt: 2,
             borderRadius: 2,
-            bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+            bgcolor: muiTheme.palette.action.hover,
             border: '1px solid',
             borderColor: 'divider',
           }}

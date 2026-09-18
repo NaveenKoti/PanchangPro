@@ -91,7 +91,7 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
       <Card
         elevation={0}
         sx={{
-          borderRadius: 3,
+          borderRadius: 2,
           overflow: 'hidden',
           bgcolor: 'background.paper',
           border: `1px solid ${colorBorder}`,
@@ -102,7 +102,7 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
           {/* Header - Always Visible */}
           <Box
             sx={{
-              p: 2.5,
+              p: 2,
               bgcolor: colorLight,
               cursor: 'pointer',
               transition: 'all 0.2s ease',
@@ -113,9 +113,9 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
               {/* Icon */}
               <Box
                 sx={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 2.5,
+                  width: 48,
+                  height: 48,
+                  borderRadius: 2,
                   bgcolor: `${color}15`, // 8% opacity
                   display: 'flex',
                   alignItems: 'center',
@@ -192,7 +192,7 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
 
           {/* Expanded Content */}
           <Collapse in={expanded} timeout={300}>
-            <Box sx={{ p: 2.5 }}>
+            <Box sx={{ p: 2 }}>
               {/* Good For */}
               {guidance.goodFor.length > 0 && (
                 <Box sx={{ mb: 2.5 }}>

@@ -9,7 +9,7 @@
  * - §4.4 Micro-interactions: Hover lifts, press effects
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -35,8 +35,19 @@ import {
   Heart,
   Calendar as CalendarIcon,
   Star,
+  Bell,
 } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
+import {
+  findMissedCustomTithiReminders,
+  getCatchupWindow,
+  getLastSeenAt,
+  setLastSeenAt,
+  getShownMissedReminderIds,
+  markMissedReminderIdsShown,
+  MAX_CATCHUP_LOOKBACK_DAYS,
+  type MissedTithiReminder,
+} from '../services/notificationService';
 import { useI18n } from '../hooks/useI18n';
 import { AyurvedicClock } from '../components/AyurvedicClock';
 import { TithiCard } from '../components/TithiCard';
@@ -53,6 +64,23 @@ import { useBreakpoints } from '../hooks/useBreakpoints';
 import { triggerHapticIfSupported } from '../utils/haptics';
 import './TodayScreen.css';
 
+/** Relative-day label for a missed fire-time ("Today" / "Yesterday" / "N days ago"). */
+function relativeDayLabel(fireTime: Date, now: Date): string {
+  const startOfDay = (d: Date): number => {
+    const c = new Date(d);
+    c.setHours(0, 0, 0, 0);
+    return c.getTime();
+  };
+  const diff = Math.round((startOfDay(now) - startOfDay(fireTime)) / 86400000);
+  if (diff <= 0) return 'Today';
+  if (diff === 1) return 'Yesterday';
+  return `${diff} days ago`;
+}
+
+function formatDueDate(date: Date): string {
+  return date.toLocaleDateString([], { day: 'numeric', month: 'short' });
+}
+
 export const TodayScreen: React.FC = () => {
   const { t } = useI18n();
   const muiTheme = useMuiTheme();
@@ -65,8 +93,93 @@ export const TodayScreen: React.FC = () => {
     preferences,
     calculatePanchang,
     addCustomTithi,
-    canAddMoreTithis,
   } = useAppStore();
+
+  // "While you were away" catch-up: custom-tithi reminders due while the app
+  // was closed are silently skipped by the in-page scheduler, so surface them
+  // here. Text-only banner (no "View My Tithis" CTA: tab state lives in
+  // App.tsx local useState with no store/hook to switch it from here).
+  const [missedReminders, setMissedReminders] = useState<MissedTithiReminder[]>([]);
+
+  useEffect(() => {
+    const now = new Date();
+    const lastSeen = getLastSeenAt();
+    if (!lastSeen) {
+      // First-ever run: establish baseline, no backfill.
+      setLastSeenAt(now);
+      return;
+    }
+    const { start, end } = getCatchupWindow(now, lastSeen);
+    if (start >= end) {
+      setLastSeenAt(now);
+      return;
+    }
+
+    const { customTithis, calculatePanchang: calc } = useAppStore.getState();
+    const withReminders = customTithis.filter((t) => t.reminderEnabled && t.reminderTime);
+    if (withReminders.length === 0) {
+      setLastSeenAt(now);
+      return;
+    }
+
+    // Resolve Gregorian occurrences per tithi with the same rules the store
+    // uses (one-time: customDate; recurring: tithiNumber+paksha engine match
+    // per day, as in getCalendarMonth). A fire-time in the window can come
+    // from an occurrence up to 7 days in the future (early reminder), so scan
+    // through end + 7 days.
+    const occurrencesByTithiId: Record<string, Date[]> = {};
+    const scanStart = new Date(start);
+    scanStart.setHours(0, 0, 0, 0);
+    const scanEnd = new Date(end);
+    scanEnd.setDate(scanEnd.getDate() + MAX_CATCHUP_LOOKBACK_DAYS);
+    scanEnd.setHours(0, 0, 0, 0);
+    for (const tithi of withReminders) {
+      if (!tithi.isRecurring) {
+        if (tithi.customDate) {
+          const custom = new Date(tithi.customDate);
+          if (!isNaN(custom.getTime())) occurrencesByTithiId[tithi.id] = [custom];
+        }
+        continue;
+      }
+      const dates: Date[] = [];
+      for (let d = new Date(scanStart); d <= scanEnd; d.setDate(d.getDate() + 1)) {
+        const day = new Date(d);
+        let tithiAtDay: { number: number; paksha: string } | null = null;
+        try {
+          tithiAtDay = calc(day)?.tithi ?? null;
+        } catch {
+          continue;
+        }
+        if (
+          tithiAtDay &&
+          tithiAtDay.number === tithi.tithiNumber &&
+          tithiAtDay.paksha === tithi.paksha
+        ) {
+          dates.push(day);
+        }
+      }
+      occurrencesByTithiId[tithi.id] = dates;
+    }
+
+    const missed = findMissedCustomTithiReminders(
+      withReminders,
+      occurrencesByTithiId,
+      start,
+      end,
+      getShownMissedReminderIds()
+    );
+    if (missed.length > 0) {
+      setMissedReminders(missed);
+      markMissedReminderIdsShown(missed.map((m) => m.id));
+    }
+    setLastSeenAt(now);
+
+    const onVisibilityChange = (): void => {
+      if (document.visibilityState === 'hidden') setLastSeenAt(new Date());
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+  }, []);
 
   const [isTithiDialogOpen, setIsTithiDialogOpen] = useState(false);
   const [isNakshatraDialogOpen, setIsNakshatraDialogOpen] = useState(false);
@@ -103,15 +216,7 @@ export const TodayScreen: React.FC = () => {
   };
 
   const handleQuickAddTithi = useCallback(() => {
-    if (!canAddMoreTithis()) {
-      setSnackbar({
-        open: true,
-        message: t('premium.upgradeRequired') || 'Upgrade to premium to add more tithis',
-        severity: 'info',
-      });
-      return;
-    }
-
+    // No tithi cap (premium paused): quick-add always proceeds.
     if (!panchang) return;
 
     const success = addCustomTithi({
@@ -133,7 +238,7 @@ export const TodayScreen: React.FC = () => {
         severity: 'success',
       });
     }
-  }, [addCustomTithi, canAddMoreTithis, panchang, selectedDate, t]);
+  }, [addCustomTithi, panchang, selectedDate]);
 
   const formatDate = useCallback((date: Date) => {
     const locale =
@@ -574,6 +679,73 @@ export const TodayScreen: React.FC = () => {
           </Paper>
         </Box>
       </Box>
+
+      {/* ========== "WHILE YOU WERE AWAY" CATCH-UP (custom tithis only) ========== */}
+      {missedReminders.length > 0 && (
+        <Fade in timeout={300}>
+          <Box sx={{ mb: 2 }}>
+            <Alert
+              icon={<Bell size={20} />}
+              severity="info"
+              onClose={() => setMissedReminders([])}
+              sx={{
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: isDark
+                  ? `${muiTheme.palette.info.main}30`
+                  : `${muiTheme.palette.info.main}20`,
+                bgcolor: isDark
+                  ? `${muiTheme.palette.info.main}12`
+                  : `${muiTheme.palette.info.main}8`,
+                '& .MuiAlert-icon': { color: muiTheme.palette.info.main },
+                '& .MuiAlert-action .MuiIconButton-root': { width: 48, height: 48 },
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 500,
+                  fontFamily: '"Noto Sans", sans-serif',
+                  color: 'text.primary',
+                  fontSize: '0.95rem',
+                }}
+              >
+                While you were away
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  mt: 0.25,
+                  fontWeight: 400,
+                  fontFamily: '"Noto Sans", sans-serif',
+                  color: 'text.secondary',
+                }}
+              >
+                {missedReminders.length === 1
+                  ? 'You missed a reminder while the app was closed.'
+                  : `You missed ${missedReminders.length} reminders while the app was closed.`}
+              </Typography>
+              <Box component="ul" sx={{ m: 0, mt: 1, pl: 2.5 }}>
+                {missedReminders.map((m) => (
+                  <Typography
+                    key={m.id}
+                    component="li"
+                    variant="body2"
+                    sx={{
+                      fontWeight: 400,
+                      fontFamily: '"Noto Sans", sans-serif',
+                      color: 'text.primary',
+                    }}
+                  >
+                    {relativeDayLabel(m.fireTime, new Date())} — {m.tithiName}
+                    {m.daysBefore > 0 ? ` (due ${formatDueDate(m.occurrenceDate)})` : ''}
+                  </Typography>
+                ))}
+              </Box>
+            </Alert>
+          </Box>
+        </Fade>
+      )}
 
       {/* Guidance directly under hero — single timings source via props, times render once in Timings row below */}
       {/* ========== SEGMENT 2b. TODAY'S GUIDANCE CARD ========== */}

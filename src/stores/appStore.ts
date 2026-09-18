@@ -111,9 +111,8 @@ const DEFAULT_PREMIUM: PremiumFeatures = {
   }
 };
 
-// Max free custom tithis (free tier = 5; premium paused pending payment backend,
-// so this cap applies to everyone and matches the "5 remaining" UI text)
-const MAX_FREE_CUSTOM_TITHIS = 5;
+// Premium is PAUSED repo-wide: no tithi cap. canAddMoreTithis() always
+// returns true and addCustomTithi() never rejects on count.
 
 interface AppState {
   // Onboarding
@@ -123,7 +122,6 @@ interface AppState {
   // Premium
   premium: PremiumFeatures;
   setPremiumTier: (tier: SubscriptionTier) => void;
-  upgradeToPremium: () => void;
   downgradeToFree: () => void;
   
   // Date
@@ -192,28 +190,6 @@ export const useAppStore = create<AppState>()(
           }
         });
       },
-      upgradeToPremium: () => {
-        const now = new Date();
-        const expiresAt = new Date(now.setFullYear(now.getFullYear() + 1));
-        set({
-          premium: {
-            isPremium: true,
-            tier: 'premium',
-            expiresAt,
-            features: {
-              unlimitedCustomTithis: true,
-              fullYearCalendar: true,
-              advancedMuhurta: true,
-              allLanguages: true,
-              allThemes: true,
-              advancedNotifications: true,
-              noAds: true,
-              export: true,
-              familySharing: false
-            }
-          }
-        });
-      },
       downgradeToFree: () => set({ premium: DEFAULT_PREMIUM }),
       
       // Date
@@ -249,12 +225,7 @@ export const useAppStore = create<AppState>()(
       // Custom Tithis
       customTithis: [],
       addCustomTithi: (data) => {
-        const { premium, customTithis, preferences } = get();
-        
-        // Check limit for free users
-        if (!premium.features.unlimitedCustomTithis && customTithis.length >= MAX_FREE_CUSTOM_TITHIS) {
-          return false;
-        }
+        const { preferences } = get();
         
         const newTithi: CustomTithi = {
           ...data,
@@ -307,10 +278,8 @@ export const useAppStore = create<AppState>()(
           customTithis: state.customTithis.filter((t) => t.id !== id)
         }));
       },
-      canAddMoreTithis: () => {
-        const { premium, customTithis } = get();
-        return premium.features.unlimitedCustomTithis || customTithis.length < MAX_FREE_CUSTOM_TITHIS;
-      },
+      // Premium is PAUSED: no cap — adding always works.
+      canAddMoreTithis: () => true,
       getNextOccurrences: (tithiId: string) => {
         const { customTithis, preferences } = get();
         const tithi = customTithis.find(t => t.id === tithiId);

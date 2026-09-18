@@ -26,6 +26,7 @@ import { Clock, BookOpen, Settings, X } from 'lucide-react';
 import { useI18n } from '../hooks/useI18n';
 import { useBreakpoints } from '../theme/breakpoints';
 import { triggerHapticIfSupported } from '../utils/haptics';
+import { trackFeatureUse } from '../services/analytics';
 
 interface MoreMenuProps {
   open: boolean;
@@ -47,6 +48,8 @@ export const MoreMenu: React.FC<MoreMenuProps> = ({ open, onClose, onSelectItem 
 
   const handleSelect = (item: 'muhurta' | 'stories' | 'settings') => {
     triggerHapticIfSupported('selection');
+    // Local-only tap telemetry (no network) — informs future nav IA decisions
+    trackFeatureUse('more_menu_select', { item });
     onSelectItem(item);
     onClose();
   };
@@ -141,8 +144,10 @@ export const MoreMenu: React.FC<MoreMenuProps> = ({ open, onClose, onSelectItem 
         <ListItemButton
           onClick={onClose}
           sx={{
-            width: 40,
-            height: 40,
+            width: 48,
+            height: 48,
+            minWidth: 48,
+            minHeight: 48,
             borderRadius: '50%',
             p: 0,
             justifyContent: 'center',

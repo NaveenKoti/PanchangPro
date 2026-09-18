@@ -210,7 +210,7 @@ const App: React.FC = () => {
     return (
       <ThemeProvider>
         <CssBaseline />
-        <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+        <Box sx={{ minHeight: '100vh', '@supports (min-height: 100dvh)': { minHeight: '100dvh' }, bgcolor: 'background.default' }}>
           <AppBar
             position="sticky"
             elevation={0}
@@ -225,7 +225,7 @@ const App: React.FC = () => {
               transition: 'background-color 0.3s ease',
             }}
           >
-            <Toolbar sx={{ minHeight: 56, px: 2 }}>
+            <Toolbar sx={{ minHeight: 56, px: 2, paddingTop: 'env(safe-area-inset-top, 0px)' }}>
               <IconButton
                 onClick={handleSettingsBack}
                 edge="start"
@@ -263,7 +263,7 @@ const App: React.FC = () => {
   return (
     <ThemeProvider>
       <CssBaseline />
-      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      <Box sx={{ minHeight: '100vh', '@supports (min-height: 100dvh)': { minHeight: '100dvh' }, bgcolor: 'background.default' }}>
         {/* Modern App Bar with Glassmorphism Effect */}
         <AppBar
           position="sticky"
@@ -279,7 +279,7 @@ const App: React.FC = () => {
             transition: 'background-color 0.3s ease',
           }}
         >
-          <Toolbar sx={{ minHeight: 56, px: 2 }}>
+          <Toolbar sx={{ minHeight: 56, px: 2, paddingTop: 'env(safe-area-inset-top, 0px)' }}>
             <Typography
               variant="h6"
               sx={{
@@ -290,7 +290,7 @@ const App: React.FC = () => {
                 letterSpacing: '-0.03em',
                 background: theme.palette.mode === 'dark' 
                   ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`
-                  : 'linear-gradient(135deg, #E8722A 0%, #FF9A5C 100%)',
+                  : `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -301,12 +301,13 @@ const App: React.FC = () => {
 
             {/* Action Menu */}
             <IconButton
-              size="small"
               onClick={handleMenuOpen}
               sx={{
                 color: 'text.primary',
-                width: 40,
-                height: 40,
+                width: 48,
+                height: 48,
+                minWidth: 48,
+                minHeight: 48,
                 '&:hover': { 
                   bgcolor: 'rgba(199, 91, 18, 0.08)',
                   transform: 'rotate(90deg)',
@@ -369,7 +370,7 @@ const App: React.FC = () => {
         </AppBar>
 
         {/* Main Content Area */}
-        <Box sx={{ pb: 10, minHeight: 'calc(100vh - 120px)' }}>
+        <Box sx={{ pb: 10, minHeight: 'calc(100vh - 120px)', '@supports (min-height: 100dvh)': { minHeight: 'calc(100dvh - 120px)' } }}>
           {/* Floating back button for inline screens */}
           {(inlineScreen || festivalDetail) && (
             <IconButton

@@ -16,7 +16,6 @@ import {
   Tab,
   Paper,
   Chip,
-  useMediaQuery,
   useTheme as useMuiTheme,
   Accordion,
   AccordionSummary,
@@ -37,6 +36,7 @@ import { EKADASHIS, OTHER_FASTS, FastingInfo } from '../data/fastings';
 import { AdCarousel } from '../components/AdCarousel';
 import { useAdManager } from '../components/AdManager';
 import { ScreenContainer } from '../components/ScreenContainer';
+import { useBreakpoints } from '../hooks/useBreakpoints';
 import { PanchangShareCard } from '../components/PanchangShareCard';
 import EkadashiDetailCard from '../components/EkadashiDetailCard';
 import { triggerHapticIfSupported } from '../utils/haptics';
@@ -52,7 +52,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
   const { t, currentLanguage } = useI18n();
   const muiTheme = useMuiTheme();
   const isDark = muiTheme.palette.mode === 'dark';
-  const isTablet = useMediaQuery(muiTheme.breakpoints.up('sm'));
+  const { isMobile } = useBreakpoints();
   const { shouldShowAds } = useAdManager();
   const isHindi = currentLanguage === 'hi';
 
@@ -407,7 +407,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                       height: 26,
                       fontSize: '0.75rem',
                       fontWeight: 500,
-                      minWidth: 44,
+                      minWidth: 48,
                       bgcolor: upcomingFasts[0].daysUntil <= 3
                         ? `${muiTheme.palette.error.main}15`
                         : `${muiTheme.palette.warning.main}15`,
@@ -537,7 +537,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                             height: 24,
                             fontSize: '0.7rem',
                             fontWeight: 500,
-                            minWidth: 44,
+                            minWidth: 48,
                             bgcolor: fast.daysUntil <= 3
                               ? `${muiTheme.palette.error.main}12`
                               : `${muiTheme.palette.warning.main}12`,
@@ -641,7 +641,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                       height: 24,
                       fontSize: '0.7rem',
                       fontWeight: 500,
-                      minWidth: 44,
+                      minWidth: 48,
                       bgcolor: upcomingFestivals[0].daysUntil <= 3
                         ? `${muiTheme.palette.error.main}15`
                         : `${muiTheme.palette.warning.main}15`,
@@ -797,7 +797,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                               height: 22,
                               fontSize: '0.65rem',
                               fontWeight: 500,
-                              minWidth: 40,
+                              minWidth: 48,
                               flexShrink: 0,
                               bgcolor: festival.daysUntil <= 3
                                 ? `${muiTheme.palette.error.main}12`
@@ -1416,10 +1416,10 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
         onClose={handleFastingDialogClose}
         maxWidth="sm"
         fullWidth
-        fullScreen={useMediaQuery(muiTheme.breakpoints.down('sm'))}
+        fullScreen={isMobile}
         PaperProps={{
           sx: {
-            borderRadius: { xs: 0, sm: 3 },
+            borderRadius: { xs: 0, sm: 2 },
             bgcolor: 'background.paper',
           },
         }}

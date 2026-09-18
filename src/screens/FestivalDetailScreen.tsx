@@ -184,14 +184,15 @@ const SectionCard = React.forwardRef<HTMLDivElement, SectionCardProps>(({ icon, 
       ref={ref}
       sx={{
         bgcolor: 'background.paper',
-        border: `1px solid ${isDark ? 'rgba(255,154,92,0.15)' : 'rgba(232,114,42,0.12)'}`,
-        borderRadius: 3,
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 2,
         mb: 3,
-        boxShadow: 'none',
+        boxShadow: isDark ? '0 1px 3px rgba(0,0,0,0.3)' : '0 1px 3px rgba(0,0,0,0.04)',
         ...sx,
       }}
     >
-      <CardContent sx={{ p: { xs: 2, sm: 2.5, md: 3.5 } }}>
+      <CardContent sx={{ p: { xs: 2, sm: 2, md: 3.5 } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 }, mb: { xs: 2, sm: 2.5 }, flexWrap: 'wrap' }}>
           <Box
             sx={{
@@ -376,21 +377,21 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
             <IconButton
               onClick={handleBookmark}
               size="small"
-              sx={{ color: isBookmarked ? 'warning.main' : 'text.secondary', minWidth: 44, minHeight: 44 }}
+              sx={{ color: isBookmarked ? 'warning.main' : 'text.secondary', minWidth: 48, minHeight: 48 }}
             >
               {isBookmarked ? <Bookmark /> : <BookmarkBorder />}
             </IconButton>
             <IconButton
               onClick={handleShare}
               size="small"
-              sx={{ color: 'text.secondary', minWidth: 44, minHeight: 44 }}
+              sx={{ color: 'text.secondary', minWidth: 48, minHeight: 48 }}
             >
               <Share />
             </IconButton>
             <IconButton
               onClick={handleOpenShare}
               size="small"
-              sx={{ color: 'text.secondary', minWidth: 44, minHeight: 44 }}
+              sx={{ color: 'text.secondary', minWidth: 48, minHeight: 48 }}
               aria-label="Share festival card"
             >
               <Share2 size={20} />
@@ -523,13 +524,14 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
           <Card
             sx={{
               bgcolor: 'background.paper',
-              border: `1px solid ${isDark ? 'rgba(255,154,92,0.2)' : 'rgba(232,114,42,0.15)'}`,
-              borderRadius: 3,
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: 2,
               mb: 3,
-              boxShadow: 'none',
+              boxShadow: isDark ? '0 1px 3px rgba(0,0,0,0.3)' : '0 1px 3px rgba(0,0,0,0.04)',
             }}
           >
-            <CardContent sx={{ p: { xs: 2.5, sm: 3.5 } }}>
+            <CardContent sx={{ p: { xs: 2, sm: 2 } }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
                 <Timer sx={{ color: theme.palette.primary.light }} />
                 <Typography

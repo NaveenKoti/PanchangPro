@@ -13,7 +13,7 @@ import React from 'react';
 import { Card, CardContent, Typography, Box, Chip, useTheme } from '@mui/material';
 import { Moon } from 'lucide-react';
 import { Tithi } from '../types';
-import { useBreakpoints } from '../theme/breakpoints';
+import { useBreakpoints } from '../hooks/useBreakpoints';
 import { triggerHapticIfSupported } from '../utils/haptics';
 
 interface TithiCardProps {
@@ -61,7 +61,7 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
       onClick={handleClick}
       elevation={0}
       sx={{
-        borderRadius: 3,
+        borderRadius: 2,
         overflow: 'hidden',
         bgcolor: 'background.paper',
         border: '1px solid',
@@ -78,13 +78,13 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
     >
       <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
         {/* Header - Minimal */}
-        <Box sx={{ px: 2.5, pt: 2.5, pb: 1.5 }}>
+        <Box sx={{ px: 2, pt: 2.5, pb: 1.5 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
             <Box
               sx={{
                 width: 48,
                 height: 48,
-                borderRadius: 2.5,
+                borderRadius: 2,
                 bgcolor: accentLight,
                 display: 'flex',
                 alignItems: 'center',
@@ -127,7 +127,7 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
         </Box>
 
         {/* Paksha Chips - Minimal */}
-        <Box sx={{ px: 2.5, pb: 2.5 }}>
+        <Box sx={{ px: 2, pb: 2.5 }}>
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Chip
               label={isShukla ? 'Shukla Paksha' : 'Krishna Paksha'}
@@ -162,7 +162,7 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
         {/* End Time - Subtle divider */}
         <Box
           sx={{
-            px: 2.5,
+            px: 2,
             py: 1.5,
             bgcolor: theme.palette.action.hover,
             borderTop: '1px solid',

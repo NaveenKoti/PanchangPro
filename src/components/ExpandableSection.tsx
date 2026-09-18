@@ -88,11 +88,11 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
         className="expandable-card"
         elevation={0}
         sx={{
-          borderRadius: 3,
+          borderRadius: 2,
           overflow: 'hidden',
           bgcolor: 'background.paper',
-          border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'}`,
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          border: '1px solid',
+          borderColor: 'divider',          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           '&:hover': {
             boxShadow: (theme) => theme.palette.mode === 'dark' ? '0 4px 12px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.08)',
           },
@@ -105,12 +105,12 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            p: 2.5,
+            p: 2,
             cursor: 'pointer',
             userSelect: 'none',
             bgcolor: 'background.paper',
             '&:hover': {
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(199, 91, 18, 0.02)',
+              bgcolor: (theme) => theme.palette.action.hover,
             },
           }}
         >
@@ -143,7 +143,7 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
               variant="h6"
               className="header-title"
               sx={{
-                fontFamily: 'Crimson Text, serif',
+                fontFamily: '"Noto Sans", sans-serif',
                 fontWeight: 500,
                 color: 'text.primary',
                 letterSpacing: '-0.01em',
@@ -176,7 +176,7 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
             ref={contentRef}
             className="expandable-content"
             sx={{
-              p: 2.5,
+              p: 2,
               pt: 0,
               opacity: currentExpanded ? 1 : 0,
               transition: `opacity ${animationDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`,

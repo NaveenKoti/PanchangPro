@@ -51,7 +51,6 @@ import {
   Calendar,
   Download,
   Upload,
-  Lock,
   Save,
   X,
   ChevronDown,
@@ -84,9 +83,7 @@ export const MyTithisScreen: React.FC = () => {
     addCustomTithi, 
     updateCustomTithi, 
     deleteCustomTithi, 
-    canAddMoreTithis, 
     getNextOccurrences, 
-    premium, 
     exportCustomTithis, 
     importCustomTithis 
   } = useAppStore();
@@ -162,10 +159,6 @@ export const MyTithisScreen: React.FC = () => {
         reminderDaysBefore: tithi.reminderDaysBefore ?? 1,
       });
     } else {
-      if (!canAddMoreTithis()) {
-        alert(t('premium.upgradeRequired') || 'Upgrade to premium to add more tithis');
-        return;
-      }
       setEditing(null);
       setFormData({
         name: '',
@@ -202,15 +195,10 @@ export const MyTithisScreen: React.FC = () => {
       }
     }
 
-    let saved: boolean | void = true;
     if (editing) {
       updateCustomTithi(editing.id, data);
     } else {
-      saved = addCustomTithi(data);
-      if (!saved) {
-        showMessage(t('premium.upgradeRequired') || 'Tithi limit reached', 'error');
-        return;
-      }
+      addCustomTithi(data);
     }
     if (data.reminderEnabled) {
       showMessage(t('myTithis.reminderSet') || 'Reminder scheduled', 'success');
@@ -285,9 +273,6 @@ export const MyTithisScreen: React.FC = () => {
     }
   };
 
-  const remainingTithis = 5 - customTithis.length;
-  const isPremium = premium.isPremium;
-
   return (
     <ScreenContainer maxWidth={isTablet ? 900 : undefined} sx={{ pt: 2 }}>
       {/* Top Ad */}
@@ -333,20 +318,6 @@ export const MyTithisScreen: React.FC = () => {
                 </Typography>
               </Box>
             </Box>
-
-            {!isPremium && (
-              <Chip
-                label={`${remainingTithis} ${t('myTithis.remaining') || 'remaining'}`}
-                size="small"
-                sx={{
-                  fontSize: '0.7rem',
-                  fontWeight: 500,
-                  bgcolor: remainingTithis <= 2 ? 'warning.light' : 'success.light',
-                  color: remainingTithis <= 2 ? 'warning.dark' : 'success.main',
-                  height: 28,
-                }}
-              />
-            )}
           </Box>
 
           {/* Action Buttons */}
@@ -355,7 +326,6 @@ export const MyTithisScreen: React.FC = () => {
               variant="contained"
               startIcon={<Plus size={18} />}
               onClick={() => handleOpen()}
-              disabled={!canAddMoreTithis()}
               sx={{
                 borderRadius: 2,
                 px: 2.5,
@@ -443,8 +413,8 @@ export const MyTithisScreen: React.FC = () => {
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, lineHeight: 1.6 }}>
               {isHindi
-                ? 'कोई लॉगिन नहीं — तिथि जोड़ें, रिमाइंडर चालू करें, ऐप खोलते ही याद पाएँ।'
-                : 'No login needed — add a tithi, turn on its reminder, and you’ll be reminded when you open the app.'}
+                ? 'कोई लॉगिन नहीं — तिथि जोड़ें, रिमाइंडर चालू करें, ऐप खोलते ही याद पाएँ। सब कुछ आपके फ़ोन पर रहता है (आपके शहर का नाम जानने के लिए एक बार का मानचित्र अनुरोध छोड़कर)।'
+                : 'No login needed — add a tithi, turn on its reminder, and you’ll be reminded when you open the app. Everything stays on your phone (apart from a one-time map lookup that names your city).'}
             </Typography>
             <Button
               variant="contained"

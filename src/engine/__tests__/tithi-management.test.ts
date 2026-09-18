@@ -3,10 +3,9 @@
  *
  * Validates:
  *   - Custom tithi addition and deletion via the Zustand app store
- *   - Free-tier limit enforcement (MAX_FREE_CUSTOM_TITHIS = 5)
- *   - Premium-tier unlimited tithi support
+ *   - No tithi cap (premium is PAUSED: canAddMoreTithis always true,
+ *     addCustomTithi never rejects on count, even beyond the old cap of 5)
  *   - Notification scheduling on add and cancellation on delete
- *   - Deletion frees up a slot for free-tier users
  *
  * NOTE: The Zustand store uses the `persist` middleware which does not properly
  * apply state changes via `set()` inside actions in the jsdom test environment.
@@ -66,7 +65,7 @@ import { CustomTithi } from '../../types';
 // Test helpers
 // ---------------------------------------------------------------------------
 
-const MAX_FREE_CUSTOM_TITHIS = 5;
+const MAX_FREE_CUSTOM_TITHIS = 5; // historical cap (premium paused: no longer enforced)
 
 /** Reset the store to a clean baseline before each test. */
 function resetStore() {
@@ -182,13 +181,13 @@ describe('Tithi Management', () => {
       expect(store.canAddMoreTithis()).toBe(true);
     });
 
-    it('canAddMoreTithis returns false when at the free-tier limit (5 tithis)', () => {
+    it('canAddMoreTithis always returns true, even at/above the old free-tier limit (5 tithis)', () => {
       const tithis = Array.from({ length: MAX_FREE_CUSTOM_TITHIS }, (_, i) =>
         createTithi({ name: `Tithi ${i + 1}` })
       );
       setFreeTierState(tithis);
       const store = useAppStore.getState();
-      expect(store.canAddMoreTithis()).toBe(false);
+      expect(store.canAddMoreTithis()).toBe(true);
     });
 
     it('canAddMoreTithis returns true on premium tier regardless of tithi count', () => {
@@ -215,14 +214,14 @@ describe('Tithi Management', () => {
       expect(result).toBe(true);
     });
 
-    it('addCustomTithi returns false when at the free-tier limit', () => {
+    it('addCustomTithi returns true even at the old free-tier limit (no cap)', () => {
       const tithis = Array.from({ length: MAX_FREE_CUSTOM_TITHIS }, (_, i) =>
         createTithi({ name: `Tithi ${i + 1}` })
       );
       setFreeTierState(tithis);
       const store = useAppStore.getState();
       const result = store.addCustomTithi({
-        name: 'Overflow Tithi',
+        name: 'Beyond Old Cap Tithi',
         nameHindi: '',
         tithiNumber: 1,
         paksha: 'Shukla',
@@ -230,7 +229,7 @@ describe('Tithi Management', () => {
         isRecurring: true,
         reminderEnabled: false,
       });
-      expect(result).toBe(false);
+      expect(result).toBe(true);
     });
 
     it('addCustomTithi returns true on premium tier regardless of count', () => {
@@ -305,7 +304,7 @@ describe('Tithi Management', () => {
       expect(store.customTithis).toHaveLength(0);
     });
 
-    it('deleting a tithi frees up a slot for free-tier users', () => {
+    it('deleting a tithi still works and canAddMoreTithis stays true (no cap)', () => {
       const tithis = Array.from({ length: MAX_FREE_CUSTOM_TITHIS }, (_, i) =>
         createTithi({ name: `Tithi ${i + 1}` })
       );
@@ -489,18 +488,18 @@ describe('Tithi Management', () => {
   });
 
   // -----------------------------------------------------------------------
-  // Free Tier Limits
+  // No-cap behavior (premium is PAUSED repo-wide: adding always works)
   // -----------------------------------------------------------------------
   describe('Free Tier Limits', () => {
-    it('free tier allows exactly 5 custom tithis', () => {
+    it('free tier allows more than 5 custom tithis (no cap)', () => {
       setFreeTierState([]);
       const store = useAppStore.getState();
 
       expect(store.premium.isPremium).toBe(false);
       expect(store.premium.features.unlimitedCustomTithis).toBe(false);
 
-      // Fill up to the limit
-      for (let i = 0; i < MAX_FREE_CUSTOM_TITHIS; i++) {
+      // Fill past the old limit of 5 — every add succeeds
+      for (let i = 0; i < MAX_FREE_CUSTOM_TITHIS + 1; i++) {
         const result = store.addCustomTithi({
           name: `Tithi ${i + 1}`,
           nameHindi: '',
@@ -513,7 +512,7 @@ describe('Tithi Management', () => {
         expect(result).toBe(true);
       }
 
-      // 6th tithi should fail
+      // The 6th tithi (old overflow) also succeeds
       const result = store.addCustomTithi({
         name: 'Overflow',
         nameHindi: '',
@@ -523,17 +522,17 @@ describe('Tithi Management', () => {
         isRecurring: true,
         reminderEnabled: false,
       });
-      expect(result).toBe(false);
+      expect(result).toBe(true);
     });
 
-    it('attempting to add beyond free tier limit fails gracefully', () => {
+    it('adding beyond the old free tier limit succeeds', () => {
       const tithis = Array.from({ length: MAX_FREE_CUSTOM_TITHIS }, (_, i) =>
         createTithi({ name: `Tithi ${i + 1}` })
       );
       setFreeTierState(tithis);
       const store = useAppStore.getState();
 
-      // These should all fail without throwing
+      // These all succeed without throwing (no cap anymore)
       expect(
         store.addCustomTithi({
           name: 'Overflow 1',
@@ -544,7 +543,7 @@ describe('Tithi Management', () => {
           isRecurring: true,
           reminderEnabled: false,
         })
-      ).toBe(false);
+      ).toBe(true);
       expect(
         store.addCustomTithi({
           name: 'Overflow 2',
@@ -555,7 +554,7 @@ describe('Tithi Management', () => {
           isRecurring: true,
           reminderEnabled: false,
         })
-      ).toBe(false);
+      ).toBe(true);
       expect(
         store.addCustomTithi({
           name: 'Overflow 3',
@@ -566,7 +565,7 @@ describe('Tithi Management', () => {
           isRecurring: true,
           reminderEnabled: false,
         })
-      ).toBe(false);
+      ).toBe(true);
     });
 
     it('premium tier allows unlimited custom tithis', () => {
@@ -591,7 +590,7 @@ describe('Tithi Management', () => {
       }
     });
 
-    it.skip('downgrading from premium to free enforces the limit (premium paused)', () => {
+    it.skip('downgrading from premium to free keeps adding working (premium paused)', () => {
       // Start with 1 tithi on premium (free tier limit is 1)
       const tithis = [createTithi({ name: 'Tithi 1' })];
       setPremiumState(tithis);
@@ -622,7 +621,7 @@ describe('Tithi Management', () => {
       // Existing tithis remain (they are not auto-deleted)
       expect(store.customTithis).toHaveLength(1);
 
-      // But cannot add more (already at limit of 1)
+      // But can still add more (no cap: premium paused)
       const result = store.addCustomTithi({
         name: 'New Tithi',
         nameHindi: '',
@@ -632,21 +631,21 @@ describe('Tithi Management', () => {
         isRecurring: true,
         reminderEnabled: false,
       });
-      expect(result).toBe(false);
+      expect(result).toBe(true);
     });
 
-    it('canAddMoreTithis reflects current tier correctly', () => {
+    it('canAddMoreTithis always returns true regardless of tier or count', () => {
       // Free tier, empty
       setFreeTierState([]);
       const store = useAppStore.getState();
       expect(store.canAddMoreTithis()).toBe(true);
 
-      // Fill to limit
+      // Past the old limit
       const tithis = Array.from({ length: MAX_FREE_CUSTOM_TITHIS }, (_, i) =>
         createTithi({ name: `Tithi ${i + 1}` })
       );
       setFreeTierState(tithis);
-      expect(store.canAddMoreTithis()).toBe(false);
+      expect(store.canAddMoreTithis()).toBe(true);
 
       // Upgrade to premium
       setPremiumState(tithis);
@@ -654,7 +653,7 @@ describe('Tithi Management', () => {
 
       // Downgrade back to free
       setFreeTierState(tithis);
-      expect(store.canAddMoreTithis()).toBe(false);
+      expect(store.canAddMoreTithis()).toBe(true);
     });
 
     it('scheduling notifications works on both free and premium tiers', () => {

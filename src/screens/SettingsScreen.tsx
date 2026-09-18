@@ -31,8 +31,6 @@ import {
   Alert,
   TextField,
   Paper,
-  Card,
-  CardContent,
   Fade,
   Zoom,
   useMediaQuery,
@@ -53,9 +51,9 @@ import {
   Monitor,
   Trash2,
   AlertTriangle,
+  Lock,
   Globe,
   Clock,
-  Star,
   Crown,
   CheckCircle,
   X,
@@ -97,12 +95,12 @@ export default function SettingsScreen() {
     sharePanchang,
     inviteFamilyMember,
     premium,
-    upgradeToPremium,
   } = useAppStore();
 
   const { setImmediateThemeMode, resetImmediateThemeMode } = useThemeManager();
 
   const [aboutDialog, setAboutDialog] = useState(false);
+  const [privacyDialog, setPrivacyDialog] = useState(false);
   const [phone, setPhone] = useState('');
   const [inviteDialog, setInviteDialog] = useState(false);
   const [manualCoords, setManualCoords] = useState(false);
@@ -251,67 +249,6 @@ export default function SettingsScreen() {
           </Typography>
         </Box>
       </Zoom>
-
-      {/* Premium Status Card */}
-      {!premium.isPremium && (
-        <Fade in timeout={600}>
-          <Card
-            elevation={0}
-            sx={{
-              mb: 2,
-              borderRadius: 2,
-              overflow: 'hidden',
-              bgcolor: 'rgba(199,91,18,0.08)',
-              border: '2px solid rgba(199,91,18,0.2)',
-              boxShadow: '0 4px 16px rgba(199,91,18,0.12)',
-            }}
-          >
-            <CardContent sx={{ p: { xs: 2, sm: 2.5 } }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 }, flexWrap: 'wrap' }}>
-                <Box
-                  sx={{
-                    width: { xs: 48, sm: 56 },
-                    height: { xs: 48, sm: 56 },
-                    borderRadius: 2,
-                    bgcolor: 'rgba(199,91,18,0.1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Crown size={28} color={muiTheme.palette.primary.main} />
-                </Box>
-                <Box sx={{ flex: '1 1 200px', minWidth: 0 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 500, mb: 0.5, fontSize: { xs: '1rem', sm: '1.1rem' } }}>
-                    {t('premium.upgradeTitle') || 'Upgrade to Premium'}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
-                    {t('premium.upgradeSubtitle') || 'Unlock all features and remove ads'}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    startIcon={<Star size={16} />}
-                    onClick={upgradeToPremium}
-                    sx={{
-                      borderRadius: 2,
-                      px: 2,
-              py: 0.75,
-              fontWeight: 500,
-              bgcolor: muiTheme.palette.primary.main,
-              color: muiTheme.palette.getContrastText(muiTheme.palette.primary.main),
-              '&:hover': { bgcolor: 'primary.dark' },
-                    }}
-                  >
-                    {t('premium.upgradeNow') || 'Upgrade Now'}
-                  </Button>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Fade>
-      )}
 
       {/* Settings Sections */}
       <List sx={{ px: 0 }}>
@@ -696,6 +633,19 @@ export default function SettingsScreen() {
                   secondary={t('settings.aboutAppDesc')}
                 />
               </ListItem>
+              <Divider />
+              <ListItem
+                onClick={() => setPrivacyDialog(true)}
+                sx={{ cursor: 'pointer', minHeight: 48, '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)' } }}
+              >
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  <Lock size={20} color={muiTheme.palette.info.main} />
+                </ListItemIcon>
+                <ListItemText
+                  primary={isHindi ? 'गोपनीयता' : 'Privacy'}
+                  secondary={isHindi ? 'आपका डेटा कहाँ रहता है' : 'Where your data stays'}
+                />
+              </ListItem>
             </List>
           </Paper>
         </Fade>
@@ -799,6 +749,39 @@ export default function SettingsScreen() {
         <DialogActions sx={{ px: 3, pb: 2, justifyContent: 'center' }}>
           <Button 
             onClick={() => setAboutDialog(false)} 
+            variant="contained"
+            sx={{ borderRadius: 2, px: 3 }}
+          >
+            {t('common.close')}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Privacy Dialog */}
+      <Dialog
+        open={privacyDialog}
+        onClose={() => setPrivacyDialog(false)}
+        PaperProps={{ sx: { borderRadius: 2, p: 2 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 500, textAlign: 'center' }}>
+          {isHindi ? 'गोपनीयता' : 'Privacy'}
+          <IconButton
+            onClick={() => setPrivacyDialog(false)}
+            sx={{ position: 'absolute', right: 16, top: 16 }}
+          >
+            <X size={20} />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
+            {isHindi
+              ? 'आपकी तिथियाँ, रिमाइंडर और सेटिंग्स आपके डिवाइस पर (स्थानीय संग्रहण में) रहती हैं — कोई खाता नहीं, कोई लॉगिन नहीं। विश्लेषण, यदि कोई हो, केवल स्थानीय है। सूर्योदय का समय निकालने के लिए आपका स्थान आपके डिवाइस पर ही उपयोग होता है। एकमात्र नेटवर्क अनुरोध आपके शहर का नाम जानने के लिए OpenStreetMap से एक बार का मानचित्र अनुरोध है। ऐप खुला रहने पर रिमाइंडर चलते हैं।'
+              : 'Your tithis, reminders and settings stay on your device (local storage) — no account, no login. Analytics, if any, are local-only. Your location is used on-device to compute sunrise timings. The only network call is a one-time map lookup to OpenStreetMap to name your city. Reminders fire while the app is open.'}
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2, justifyContent: 'center' }}>
+          <Button
+            onClick={() => setPrivacyDialog(false)}
             variant="contained"
             sx={{ borderRadius: 2, px: 3 }}
           >
