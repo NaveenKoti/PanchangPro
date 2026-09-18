@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dev-dist/
+
+# Test artifacts
+playwright-report/
+test-results/
+coverage/
+
+# Lock file (large, not useful for AI context)
+package-lock.json
+
+# TypeScript build cache
+tsconfig.tsbuildinfo
+
+# macOS
+.DS_Store
+
+# Git internals
+.git/
+
+# Large binary / media
+*.docx
+public/icons/*.png
+
+# Stale planning docs (superseded by session-notes.md)
+# NOTE: FIX_PLAN.md and UI_BUGS_FIX_PLAN.md are kept — actively referenced for bug fix details
+ALL-FIXES-SUMMARY.md
+ANALYSIS-PANCHANG-ERROR.md
+API-VS-LIBRARY-OPTIONS.md
+API-WILL-IT-FIX-ERRORS.md
+COLOR_REPLACEMENT_GUIDE.md
+COMPLETION_DOCUMENTATION.md
+FIX-SUMMARY.md
+INTEGRATION-SUMMARY.md
+PLANETARY-POSITION-CAPABILITIES.md
+PRODUCTION_READINESS.md
+TEMPORAL-APPLICABILITY.md
+TEST_SUMMARY.md
+TODO_COMPLETION_SUMMARY.md
+UI-FIXES-SUMMARY.md

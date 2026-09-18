@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#C75B12" />
+    <meta name="description" content="VedaTime - Sacred Rhythms of Time. Accurate Hindu Panchang with Ayurvedic clock, festivals, fasting tracker and more." />
+    <meta name="keywords" content="panchang, hindu calendar, tithi, nakshatra, yoga, karana, festivals, vrat, vedatime, ayurvedic clock" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta property="og:title" content="VedaTime - Sacred Rhythms of Time" />
+    <meta property="og:description" content="Ancient Vedic wisdom, beautifully designed. Tithi, Nakshatra, Ayurvedic clock and more." />
+    <meta property="og:type" content="website" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500&family=Noto+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <title>VedaTime - Sacred Rhythms of Time</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: 'Noto Sans', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #FAF6F1;
+      }
+      #root { min-height: 100vh; }
+
+      /* Loading screen while app loads */
+      .app-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #FAF6F1;
+        z-index: 9999;
+      }
+      .app-loader .spinner {
+        font-size: 3rem;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+      .app-loader p {
+        margin-top: 1rem;
+        color: #C75B12;
+        font-weight: 500;
+        font-size: 1rem;
+        letter-spacing: 0.02em;
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div class="app-loader">
+        <div class="spinner">🙏</div>
+        <p>VedaTime</p>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

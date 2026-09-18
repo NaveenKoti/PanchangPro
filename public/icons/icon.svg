@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Solid saffron background (required for PWA icons) -->
+  <rect width="512" height="512" rx="96" fill="#C75B12"/>
+
+  <!-- Clock face -->
+  <circle cx="256" cy="256" r="185" fill="#FEFAF5"/>
+
+  <!-- 12 hour ticks -->
+  <g stroke="#C75B12" stroke-width="8" stroke-linecap="round" opacity="0.5">
+    <line x1="256" y1="86" x2="256" y2="114"/>
+    <line x1="256" y1="398" x2="256" y2="426"/>
+    <line x1="86" y1="256" x2="114" y2="256"/>
+    <line x1="398" y1="256" x2="426" y2="256"/>
+    <line x1="152" y1="118" x2="166" y2="142"/>
+    <line x1="346" y1="370" x2="360" y2="394"/>
+    <line x1="118" y1="360" x2="142" y2="346"/>
+    <line x1="370" y1="166" x2="394" y2="152"/>
+    <line x1="360" y1="118" x2="346" y2="142"/>
+    <line x1="166" y1="370" x2="152" y2="394"/>
+    <line x1="394" y1="360" x2="370" y2="346"/>
+    <line x1="142" y1="166" x2="118" y2="152"/>
+  </g>
+
+  <!-- 8-pointed sun rays (Vedic motif, subtle) -->
+  <g fill="#C75B12" opacity="0.1">
+    <ellipse cx="256" cy="256" rx="14" ry="75" transform="rotate(0 256 256)"/>
+    <ellipse cx="256" cy="256" rx="14" ry="75" transform="rotate(45 256 256)"/>
+    <ellipse cx="256" cy="256" rx="14" ry="75" transform="rotate(90 256 256)"/>
+    <ellipse cx="256" cy="256" rx="14" ry="75" transform="rotate(135 256 256)"/>
+  </g>
+
+  <!-- Hour hand (~10 o'clock) -->
+  <line x1="256" y1="256" x2="192" y2="148"
+        stroke="#2C2C2C" stroke-width="14" stroke-linecap="round"/>
+
+  <!-- Minute hand (~2 o'clock) -->
+  <line x1="256" y1="256" x2="328" y2="144"
+        stroke="#C75B12" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- Center cap -->
+  <circle cx="256" cy="256" r="16" fill="#C75B12"/>
+  <circle cx="256" cy="256" r="7" fill="#FEFAF5"/>
+
+  <!-- ॐ below center, sacred green -->
+  <text x="256" y="392" font-family="serif" font-size="64"
+        fill="#3D6B24" text-anchor="middle" dominant-baseline="middle">ॐ</text>
+</svg>

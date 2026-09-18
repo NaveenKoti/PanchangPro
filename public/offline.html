@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VedaTime - Offline</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #F5F3F0 0%, #FEFEFE 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      color: #2C2C2C;
+    }
+    
+    .container {
+      max-width: 400px;
+      padding: 2rem;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #C75B12, #D9823F);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 40px;
+      color: white;
+    }
+    
+    h1 {
+      font-family: 'Crimson Text', serif;
+      font-size: 28px;
+      margin: 0 0 1rem;
+      color: #C75B12;
+    }
+    
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 0 0 1.5rem;
+      color: #6B6B6B;
+    }
+    
+    .status {
+      background: rgba(199, 91, 18, 0.1);
+      border: 1px solid rgba(199, 91, 18, 0.2);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+      font-size: 14px;
+    }
+    
+    .status.offline {
+      background: rgba(255, 193, 7, 0.1);
+      border-color: rgba(255, 193, 7, 0.2);
+    }
+    
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0;
+      text-align: left;
+      font-size: 14px;
+    }
+    
+    .benefit {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .benefit::before {
+      content: "✓";
+      color: #3D6B24;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    
+    button {
+      background: linear-gradient(135deg, #C75B12, #D9823F);
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #7A3008, #C75B12);
+      transform: translateY(-2px);
+    }
+    
+    .cache-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      font-size: 14px;
+      color: #3D6B24;
+    }
+    
+    .cache-icon {
+      width: 20px;
+      height: 20px;
+      background: #3D6B24;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .offline-text {
+      animation: pulse 2s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🛕</div>
+    <h1>Offline Mode</h1>
+    <p>
+      You are currently browsing offline, but don't worry! All your cached panchang calculations are available.
+    </p>
+    
+    <div class="status offline">
+      <strong>📱 Offline Status</strong><br>
+      <span class="offline-text">Accessing cached data from your device</span>
+    </div>
+    
+    <div class="benefits">
+      <div class="benefit">24-hour cache</div>
+      <div class="benefit">Auto-sync at 4 AM</div>
+      <div class="benefit">Complete Panchang data</div>
+      <div class="benefit">All dates available</div>
+    </div>
+    
+    <p style="font-size: 14px; color: #999;">
+      Connect to the internet to get the latest updates and recalculate today's panchang.
+    </p>
+    
+    <button onclick="window.location.href='/'">
+      Try Again
+    </button>
+    
+    <div class="cache-indicator" id="cache-stats">
+      <div class="cache-icon">⏳</div>
+      <span>Loading cache data...</span>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cacheIndicator = document.getElementById('cache-stats');
+      
+      if ('indexedDB' in window) {
+        try {
+          const request = indexedDB.open('VedaTimePanchangDB', 1);
+          
+          request.onsuccess = function(event) {
+            const db = event.target.result;
+            const transaction = db.transaction(['panchangCalculations'], 'readonly');
+            const store = transaction.objectStore('panchangCalculations');
+            const countRequest = store.count();
+            
+            countRequest.onsuccess = function() {
+              cacheIndicator.innerHTML = `
+                <div class="cache-icon">✓</div>
+                <span>Cached: ${countRequest.result} calculations</span>
+              `;
+            };
+            
+            countRequest.onerror = function() {
+              cacheIndicator.innerHTML = `
+                <div class="cache-icon">⚠</div>
+                <span>Cache available</span>
+              `;
+            };
+          };
+          
+          request.onerror = function() {
+            cacheIndicator.innerHTML = `
+              <div class="cache-icon">⚠</div>
+              <span>Cache ready</span>
+            `;
+          };
+        } catch (error) {
+          cacheIndicator.innerHTML = `
+            <div class="cache-icon">✓</div>
+            <span>Offline mode active</span>
+          `;
+        }
+      } else {
+        cacheIndicator.innerHTML = `
+          <div class="cache-icon">⚠</div>
+          <span>Basic offline mode</span>
+        `;
+      }
+    });
+    
+    setTimeout(() => {
+      if (navigator.onLine) {
+        window.location.href = '/';
+      }
+    }, 5000);
+  </script>
+</body>
+</html>
