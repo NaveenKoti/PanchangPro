@@ -51,9 +51,16 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
           sm: 3,
         },
         minHeight: '100vh',
+        '@supports (min-height: 100dvh)': {
+          minHeight: '100dvh',
+        },
         boxSizing: 'border-box',
-        overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch',
+        // visible/clip (NOT auto/hidden): any non-visible overflow traps
+        // position:sticky descendants in a non-scrolling box, disabling
+        // stickiness and displacing paint by the `top` value (Today date bar
+        // overlapped hero by 40px). clip blocks x-escape without trapping.
+        overflowY: 'visible',
+        overflowX: 'clip',
         // Safe area insets for notched phones (combined with responsive spacing)
         paddingTop: `calc(env(safe-area-inset-top, 0px) + ${theme.spacing(2)})`,
         paddingBottom: disableNavPadding
@@ -61,7 +68,8 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
           : {
               xs: `calc(env(safe-area-inset-bottom, 0px) + ${theme.spacing(10)})`,
               sm: `calc(env(safe-area-inset-bottom, 0px) + ${theme.spacing(12)})`,
-              md: `calc(env(safe-area-inset-bottom, 0px) + ${theme.spacing(4)})`,
+              // md+ clears the 72px desktop BottomNav (labels always visible) + safe inset
+              md: `calc(env(safe-area-inset-bottom, 0px) + ${theme.spacing(12)})`,
             },
         // Background variant
         bgcolor: variant === 'elevated'
