@@ -31,10 +31,11 @@
  *      you invented; the `static` kind exists only for hand-verified manual
  *      entries (e.g. a government-declared holiday) added with a source note.
  *
- * KNOWN LIMITATION — Adhik Maas: the engine (getHinduLunarMonth) has no
- * leap-month concept, so tithi-in-month rules may match the Adhik month as
- * well as the Nija month in Adhik years. Do not attempt Adhik handling here;
- * it belongs in the engine with Drik re-verification (see panchang.ts).
+ * KNOWN LIMITATION — RESOLVED: Adhik Maas is now engine-computed
+ * (PanchangEngine.getAdhikMaasInfo, amanta new-moon spans, Drik-verified
+ * anchors in adhik-maas.test.ts). The `adhik` kind below matches any day
+ * inside an Adhik span. Note tithi-in-month rules can still match the Adhik
+ * month as well as the Nija month in Adhik years — scope subtypes accordingly.
  */
 
 export interface TithiObservanceRule {
@@ -92,12 +93,23 @@ export interface StaticDateRule {
   dates: string[];
 }
 
+export interface AdhikMaasRule {
+  kind: 'adhik';
+  /**
+   * Matches any day inside an Adhik (leap-month) span, computed by the
+   * engine (getAdhikMaasInfo). Use maxDays ~1200 in findNextOccurrence —
+   * Adhik gaps run ~3 years.
+   */
+  note?: string;
+}
+
 export type ObservanceRule =
   | TithiObservanceRule
   | SolarIngressRule
   | WeekdayInMonthRule
   | DateRangeRule
-  | StaticDateRule;
+  | StaticDateRule
+  | AdhikMaasRule;
 
 export interface ObservanceEntry {
   id: string;

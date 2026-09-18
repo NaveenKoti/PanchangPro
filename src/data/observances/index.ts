@@ -24,11 +24,13 @@ import {
 import { SANKRANTI_OBSERVANCES } from './sankranti';
 import { VRAT_OBSERVANCES } from './vrats';
 import { RANGE_OBSERVANCES } from './ranges';
+import { ADHIK_OBSERVANCES } from './adhik';
 
 const REGISTRY_SEED: ObservanceEntry[] = [
   ...SANKRANTI_OBSERVANCES,
   ...VRAT_OBSERVANCES,
   ...RANGE_OBSERVANCES,
+  ...ADHIK_OBSERVANCES,
 ];
 
 const REGISTRY: ObservanceEntry[] = [...REGISTRY_SEED];
@@ -89,6 +91,8 @@ export function matchesRule(p: Panchang, rule: ObservanceRule): boolean {
       return p.lunarMonth === rule.lunarMonth && p.date.getDay() === rule.weekday;
     case 'static':
       return rule.dates.includes(toIsoDay(p.date));
+    case 'adhik':
+      return p.adhikMaas?.isAdhik === true;
     case 'date-range':
       return false;
     default:

@@ -13,7 +13,8 @@ import {
   Var,
   TimeRange,
   DinacharyaPhase,
-  SankrantiInfo
+  SankrantiInfo,
+  AdhikMaasInfo
 } from '../types';
 import {
   TITHI_NAMES,
@@ -146,6 +147,10 @@ export class PanchangEngine {
         }
       : null;
 
+    // Detect Adhik/Kshaya Maas for the enclosing lunar month (additive;
+    // legacy lunarMonth/festival matching untouched)
+    const adhikMaas = this.getAdhikMaasInfo(localDate);
+
     return {
       date: localDate,
       location: this.location,
@@ -164,7 +169,8 @@ export class PanchangEngine {
       dinacharya,
       samvatsara: this.calculateSamvatsara(localDate),
       lunarMonth,
-      sankranti
+      sankranti,
+      adhikMaas
     };
   }
 
@@ -614,6 +620,140 @@ export class PanchangEngine {
     }
 
     return { ingressTime: new Date(low), rashiIndex: endSign };
+  }
+
+  /**
+   * Tithi index (0-29) at an arbitrary moment. Index 0 = Shukla Pratipada
+   * (just after new moon); 29 = Krishna Amavasya (just before new moon).
+   */
+  private tithiIndexAt(at: Date): number {
+    const sunLong = toSidereal(getSunLongitude(at), getAyanamsa(at));
+    const moonLong = toSidereal(getMoonLongitude(at), getAyanamsa(at));
+    return calculateTithiIndex(sunLong, moonLong);
+  }
+
+  /**
+   * Nearest new-moon moment (tithi 29→0 transition) in the given direction.
+   *
+   * Walks a 12h grid (any tithi lasts ≥19h, so a 29→0 crossing always shows
+   * as an exact (29, 0) pair on this grid) up to 32 days out — a lunation is
+   * ~29.53d, so a new moon is always found. Bisects with findTithiChangeTime.
+   *
+   * @param from Reference moment (local time)
+   * @param direction -1 = latest new moon at/before `from`, +1 = earliest at/after
+   */
+  findNewMoonMoment(from: Date, direction: -1 | 1): Date | null {
+    const stepMs = 12 * 3600 * 1000;
+    const base = from.getTime();
+    for (let k = 0; k < 64; k++) {
+      const a = new Date(base + direction * k * stepMs);
+      const b = new Date(base + direction * (k + 1) * stepMs);
+      // Chronological window (s < e) regardless of direction.
+      const s = direction === -1 ? b : a;
+      const e = direction === -1 ? a : b;
+      if (this.tithiIndexAt(s) === 29 && this.tithiIndexAt(e) === 0) {
+        return this.findTithiChangeTime(s, e, 0);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Solar ingresses with ingressTime in (spanStart, spanEnd].
+   * Day-by-day reuse of the tested findSolarIngress detector.
+   */
+  private findIngressInSpan(spanStart: Date, spanEnd: Date): Array<{ ingressTime: Date; rashiIndex: number }> {
+    const out: Array<{ ingressTime: Date; rashiIndex: number }> = [];
+    const day = new Date(spanStart);
+    day.setHours(0, 0, 0, 0);
+    const endDay = new Date(spanEnd);
+    endDay.setHours(0, 0, 0, 0);
+    for (let d = new Date(day); d.getTime() <= endDay.getTime(); d.setDate(d.getDate() + 1)) {
+      const ingress = this.findSolarIngress(d);
+      if (
+        ingress &&
+        ingress.ingressTime.getTime() > spanStart.getTime() &&
+        ingress.ingressTime.getTime() <= spanEnd.getTime()
+      ) {
+        out.push(ingress);
+      }
+    }
+    return out;
+  }
+
+  /** Amanta month number (1=Chaitra … 12=Phalguna) from an ingress rashi. */
+  private amantaMonthFromRashi(rashiIndex: number): { monthNumber: number; name: string; nameHindi: string } {
+    // The lunar month containing an ingress into rashi R takes R's month:
+    // Mesha ingress (Apr) falls in Chaitra, Karka ingress (Jul) in Shravana, etc.
+    const monthNumber = rashiIndex + 1;
+    return {
+      monthNumber,
+      name: LUNAR_MONTHS[rashiIndex] ?? 'Unknown',
+      nameHindi: LUNAR_MONTHS_HINDI[rashiIndex] ?? 'Unknown',
+    };
+  }
+
+  /**
+   * Adhik Maas (leap month) / Kshaya Maas (deleted month) for the lunar
+   * month containing `date` (amanta: new-moon → new-moon span).
+   *
+   * - 0 ingresses in the span → Adhik, named after the FOLLOWING Nija month
+   *   (e.g. the Jul 18–Aug 16 2023 span has none → "Adhik Shravana", after
+   *   the Aug 16–Sep 15 span whose Simha ingress names it Shravana).
+   * - 2 ingresses → Kshaya (vanishingly rare; named from the first ingress).
+   * - 1 ingress → normal month → null.
+   *
+   * Additive only: the legacy sun-sign `lunarMonth` field is untouched.
+   */
+  getAdhikMaasInfo(date: Date): AdhikMaasInfo | null {
+    const day = new Date(date);
+    day.setHours(0, 0, 0, 0);
+
+    const prevNM = this.findNewMoonMoment(day, -1);
+    if (!prevNM) return null;
+    // Step just past prevNM so the forward search cannot return the same moment.
+    const nextNM = this.findNewMoonMoment(new Date(prevNM.getTime() + 3600 * 1000), 1);
+    if (!nextNM || nextNM.getTime() <= prevNM.getTime()) return null;
+
+    const ingresses = this.findIngressInSpan(prevNM, nextNM);
+    if (ingresses.length === 1) return null;
+
+    if (ingresses.length === 0) {
+      // Adhik: name comes from the next (Nija) month's sankranti.
+      const followingNM = this.findNewMoonMoment(new Date(nextNM.getTime() + 3600 * 1000), 1);
+      const nextSpanIngress = followingNM
+        ? this.findIngressInSpan(nextNM, followingNM)[0]
+        : undefined;
+      // Fallback (should not happen): name from the span's own sun sign.
+      const named = nextSpanIngress
+        ? this.amantaMonthFromRashi(nextSpanIngress.rashiIndex)
+        : (() => {
+            const mid = new Date((prevNM.getTime() + nextNM.getTime()) / 2);
+            const rashi = Math.floor(this.getSiderealSunLongitude(mid) / 30);
+            return this.amantaMonthFromRashi(rashi);
+          })();
+      return {
+        isAdhik: true,
+        isKshaya: false,
+        monthNumber: named.monthNumber,
+        name: named.name,
+        nameHindi: named.nameHindi,
+        spanStart: prevNM,
+        spanEnd: nextNM,
+      };
+    }
+
+    // 2+ ingresses: Kshaya Maas (last occurred 1983; next far future).
+    const named = this.amantaMonthFromRashi(ingresses[0].rashiIndex);
+    return {
+      isAdhik: false,
+      isKshaya: true,
+      monthNumber: named.monthNumber,
+      name: named.name,
+      nameHindi: named.nameHindi,
+      spanStart: prevNM,
+      spanEnd: nextNM,
+    };
   }
 
   /**

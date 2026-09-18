@@ -59,6 +59,7 @@ import { TithiExplanationDialog } from '../components/TithiExplanationDialog';
 import { NakshatraExplanationDialog } from '../components/NakshatraExplanationDialog';
 import { GlossaryDialog } from '../components/GlossaryDialog';
 import type { GlossaryEntry } from '../data/panchangGlossary';
+import { LUNAR_MONTHS, LUNAR_MONTHS_HINDI } from '../engine/constants';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { FastingChip } from '../components/FastingChip';
 import { useBreakpoints } from '../hooks/useBreakpoints';
@@ -408,6 +409,31 @@ export const TodayScreen: React.FC = () => {
                     {formatDate(selectedDate)}
                   </Typography>
                 </Box>
+                {/* Lunar month (+ Adhik qualifier), tappable → glossary */}
+                {panchang.lunarMonth !== undefined && (
+                  <Typography
+                    variant="caption"
+                    onClick={() => {
+                      triggerHapticIfSupported('light');
+                      setGlossaryLimb(panchang.adhikMaas?.isAdhik ? 'adhik' : 'maas');
+                    }}
+                    sx={{
+                      display: 'block',
+                      color: panchang.adhikMaas?.isAdhik ? 'primary.main' : 'text.secondary',
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {preferences.language === 'hi'
+                      ? panchang.adhikMaas?.isAdhik
+                        ? `अधिक ${panchang.adhikMaas.nameHindi} मास`
+                        : `${LUNAR_MONTHS_HINDI[panchang.lunarMonth - 1]} मास`
+                      : panchang.adhikMaas?.isAdhik
+                        ? `Adhik ${panchang.adhikMaas.name} Maas`
+                        : `${LUNAR_MONTHS[panchang.lunarMonth - 1]} Maas`}
+                  </Typography>
+                )}
                 {new Date().toDateString() !== selectedDate.toDateString() && (
                   <Button
                     size="small"

@@ -11,7 +11,7 @@
  */
 
 export interface GlossaryEntry {
-  id: 'tithi' | 'nakshatra' | 'yoga' | 'karana' | 'vara' | 'panchang';
+  id: 'tithi' | 'nakshatra' | 'yoga' | 'karana' | 'vara' | 'panchang' | 'maas' | 'paksha' | 'adhik';
   name: string;
   nameHindi: string;
   /** One-line "what it is" — shown in lists and onboarding. */
@@ -76,6 +76,33 @@ export const PANCHANG_GLOSSARY: GlossaryEntry[] = [
     meaningHindi: 'सप्ताह का दिन — प्रत्येक दिन एक ग्रह का होता है: रविवार–सूर्य, सोमवार–चंद्र, मंगलवार–मंगल आदि। सूर्योदय से गिना जाता है।',
     detail: 'The weekday colours daily worship — Monday for Shiva, Tuesday for Hanuman, Thursday for Vishnu. It is the fifth limb alongside the four above.',
     detailHindi: 'वार दैनिक पूजा का रंग तय करता है — सोमवार शिव, मंगलवार हनुमान, गुरुवार विष्णु के लिए। यह उपरोक्त चारों के साथ पाँचवाँ अंग है।',
+  },
+  {
+    id: 'maas',
+    name: 'Maas',
+    nameHindi: 'मास',
+    meaning: 'Lunar month — new moon to new moon, twelve in a year: Chaitra, Vaishakha, Jyeshtha, Ashadha, Shravana, Bhadrapada, Ashwin, Kartika, Margashirsha, Pausha, Magha, Phalguna.',
+    meaningHindi: 'चांद्र मास — अमावस्या से अमावस्या तक, वर्ष में बारह: चैत्र, वैशाख, ज्येष्ठ, आषाढ़, श्रावण, भाद्रपद, आश्विन, कार्तिक, मार्गशीर्ष, पौष, माघ, फाल्गुन।',
+    detail: 'Each month is named for the season of the full moon within it. Festivals are fixed to months — Diwali always falls in Kartika, Holi in Phalguna.',
+    detailHindi: 'प्रत्येक मास का नाम उसके भीतर की पूर्णिमा के अनुसार है। त्योहार मास से बँधे हैं — दीवाली सदा कार्तिक में, होली फाल्गुन में।',
+  },
+  {
+    id: 'paksha',
+    name: 'Paksha',
+    nameHindi: 'पक्ष',
+    meaning: 'Fortnight — the waxing half (Shukla, new moon to full moon) and the waning half (Krishna, full moon to new moon). Fifteen tithis each.',
+    meaningHindi: 'पक्ष — शुक्ल (अमावस्या से पूर्णिमा तक बढ़ता चंद्रमा) और कृष्ण (पूर्णिमा से अमावस्या तक घटता चंद्रमा)। प्रत्येक में पंद्रह तिथियाँ।',
+    detail: 'Shukla Paksha suits beginnings and growth; Krishna Paksha suits completion, remembrance, and ancestral rites like Pitru Paksha.',
+    detailHindi: 'शुक्ल पक्ष आरंभ और वृद्धि के लिए शुभ; कृष्ण पक्ष समापन, स्मरण और पितृ पक्ष जैसे पितृ-कार्यों के लिए।',
+  },
+  {
+    id: 'adhik',
+    name: 'Adhik Maas',
+    nameHindi: 'अधिक मास',
+    meaning: 'Leap month (Purushottam Maas) — about every 32 months, a lunar month passes with no solar ingress. That extra month is Adhik, and the year runs 13 months.',
+    meaningHindi: 'अधिक मास (पुरुषोत्तम मास) — लगभग हर 32 महीने में एक चांद्र मास बिना संक्रांति के बीतता है। वही अतिरिक्त मास अधिक कहलाता है, और वर्ष 13 मास का होता है।',
+    detail: 'Adhik Maas is sacred for prayer, fasting, and charity to Vishnu — but weddings, housewarmings, and new ventures wait for the Nija (regular) month. Recent ones: Adhik Shravana 2023, Adhik Jyeshtha 2026.',
+    detailHindi: 'अधिक मास जप, व्रत और विष्णु-सेवा के लिए पवित्र है — पर विवाह, गृहप्रवेश और नई शुरुआत निज (नियमित) मास में ही। हाल के: अधिक श्रावण 2023, अधिक ज्येष्ठ 2026।',
   },
 ];
 

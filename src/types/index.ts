@@ -115,6 +115,22 @@ export interface SankrantiInfo {
   ingressTime: Date;
 }
 
+// Adhik Maas (leap month) / Kshaya Maas (deleted month) information.
+// Amanta convention: a lunar month runs new-moon → new-moon. A month with
+// NO solar ingress (sankranti) is Adhik (extra, named after the following
+// Nija month); a month with TWO ingresses is Kshaya (extremely rare).
+export interface AdhikMaasInfo {
+  isAdhik: boolean;
+  isKshaya: boolean;
+  /** 1-12 amanta month number (1=Chaitra … 12=Phalguna). */
+  monthNumber: number;
+  name: string;
+  nameHindi: string;
+  /** Enclosing new-moon → new-moon span (local time). */
+  spanStart: Date;
+  spanEnd: Date;
+}
+
 // Complete panchang for a day
 export interface Panchang {
   date: Date;
@@ -138,6 +154,7 @@ export interface Panchang {
   isAuspiciousTime?: boolean;
   lunarMonth?: number; // Hindu lunar month (1=Chaitra, 12=Phalguna)
   sankranti?: SankrantiInfo | null; // Solar ingress if one occurs this day, else null
+  adhikMaas?: AdhikMaasInfo | null; // Non-null only in Adhik/Kshaya lunar months
 }
 
 // User subscription tier
