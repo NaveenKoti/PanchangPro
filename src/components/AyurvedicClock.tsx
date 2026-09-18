@@ -223,7 +223,7 @@ export const AyurvedicClock: React.FC<AyurvedicClockProps> = ({ panchang }) => {
                 }}
               />
               <Typography variant="caption" color="text.secondary" sx={{ flex: 1 }}>
-                Next: <strong>{nextPhase.name}</strong> in {timeRemaining}
+                Next: <Box component="span" sx={{ fontWeight: 500 }}>{nextPhase.name}</Box> in {timeRemaining}
               </Typography>
             </Box>
           )}
@@ -377,7 +377,7 @@ export const AyurvedicClock: React.FC<AyurvedicClockProps> = ({ panchang }) => {
               }}
             />
             <Typography variant="caption" color="text.secondary" sx={{ flex: 1 }}>
-              Next: <strong>{nextPhase.name}</strong>
+              Next: <Box component="span" sx={{ fontWeight: 500 }}>{nextPhase.name}</Box>
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {nextPhase.startTime.toLocaleTimeString([], {

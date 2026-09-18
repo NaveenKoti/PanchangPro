@@ -354,18 +354,6 @@ export const FESTIVALS: FestivalData[] = [
     type: 'major'
   },
   {
-    id: 'onam',
-    name: 'Onam',
-    nameHindi: 'ओणम',
-    description: 'Harvest Festival of Kerala',
-    significance: 'Celebrates the homecoming of King Mahabali. Famous for boat races, flower rangoli (Pookalam), and grand feast.',
-    tithiNumber: 1,
-    paksha: 'Shukla',
-    month: 6, // Bhadrapada (usually August-September)
-    type: 'regional',
-    region: ['Kerala']
-  },
-  {
     id: 'sharad-purnima',
     name: 'Sharad Purnima',
     nameHindi: 'शरद पूर्णिमा',
@@ -433,30 +421,6 @@ export const FESTIVALS: FestivalData[] = [
     region: ['Bihar', 'Jharkhand', 'Eastern UP', 'North India']
   },
   {
-    id: 'gudi-padwa',
-    name: 'Gudi Padwa',
-    nameHindi: 'गुड़ी पड़वा',
-    description: 'Marathi New Year',
-    significance: 'Marks the beginning of New Year in Maharashtra. Gudi (flag) is erected. Celebrates creation of the universe.',
-    tithiNumber: 1,
-    paksha: 'Shukla',
-    month: 1, // Chaitra
-    type: 'regional',
-    region: ['Maharashtra']
-  },
-  {
-    id: 'ugadi',
-    name: 'Ugadi / Gudi Padwa',
-    nameHindi: 'युगादि',
-    description: 'Telugu-Kannada New Year',
-    significance: 'New Year celebration in Karnataka, Andhra Pradesh, and Telangana. Special dish Ugadi Pachadi with six tastes.',
-    tithiNumber: 1,
-    paksha: 'Shukla',
-    month: 1, // Chaitra
-    type: 'regional',
-    region: ['Karnataka', 'Andhra Pradesh', 'Telangana']
-  },
-  {
     id: 'vishu',
     name: 'Vishu',
     nameHindi: 'विषु',
@@ -467,17 +431,6 @@ export const FESTIVALS: FestivalData[] = [
     month: 1, // Chaitra (Medam in Malayalam calendar)
     type: 'regional',
     region: ['Kerala']
-  },
-  {
-    id: 'rakhi-purnima',
-    name: 'Raksha Bandhan',
-    nameHindi: 'रक्षा बंधन',
-    description: 'Bond of Protection',
-    significance: 'Sisters tie protective thread (rakhi) on brothers\' wrists. Celebrates sibling bond.',
-    tithiNumber: 15,
-    paksha: 'Shukla',
-    month: 5, // Shravana
-    type: 'major'
   },
   {
     id: 'janmashtami-smart',

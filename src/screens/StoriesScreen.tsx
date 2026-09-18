@@ -153,7 +153,7 @@ const StoriesScreen: React.FC = () => {
                 {t('stories.tithiMeaning') || "Today's Tithi"}
               </Typography>
             </Box>
-            <IconButton size="small" onClick={() => handleShare(`Today's Tithi: ${panchang.tithi.name} (${panchang.tithi.paksha} Paksha)\n${tithiInfo.significance}`)}>
+            <IconButton size="small" onClick={() => handleShare(`Today's Tithi: ${panchang.tithi.name} (${panchang.tithi.paksha} Paksha)\n${tithiInfo.significance}`)} sx={{ minWidth: 48, minHeight: 48 }}>
               <Share2 size={14} color={theme.palette.text.secondary} />
             </IconButton>
           </Box>
@@ -209,7 +209,7 @@ const StoriesScreen: React.FC = () => {
                 {t('stories.nakshatraWisdom') || "Nakshatra of the Day"}
               </Typography>
             </Box>
-            <IconButton size="small" onClick={() => handleShare(`Today's Nakshatra: ${panchang.nakshatra.name}\n${nakshatraInfo}`)}>
+            <IconButton size="small" onClick={() => handleShare(`Today's Nakshatra: ${panchang.nakshatra.name}\n${nakshatraInfo}`)} sx={{ minWidth: 48, minHeight: 48 }}>
               <Share2 size={14} color={theme.palette.text.secondary} />
             </IconButton>
           </Box>
@@ -251,7 +251,7 @@ const StoriesScreen: React.FC = () => {
                 {t('stories.sacredDay') || "Sacred Day"}
               </Typography>
             </Box>
-            <IconButton size="small" onClick={() => handleShare(`Today: ${panchang.festivals[0].name}\n${panchang.festivals[0].significance}`)}>
+            <IconButton size="small" onClick={() => handleShare(`Today: ${panchang.festivals[0].name}\n${panchang.festivals[0].significance}`)} sx={{ minWidth: 48, minHeight: 48 }}>
               <Share2 size={14} color={theme.palette.text.secondary} />
             </IconButton>
           </Box>
@@ -300,7 +300,7 @@ const StoriesScreen: React.FC = () => {
               {t('stories.todaysVerse') || "Today's Verse"}
             </Typography>
           </Box>
-          <IconButton size="small" onClick={() => handleShare(`${todayVerse.sanskrit}\n\n${todayVerse.translation}\n— ${todayVerse.source}`)}>
+          <IconButton size="small" onClick={() => handleShare(`${todayVerse.sanskrit}\n\n${todayVerse.translation}\n— ${todayVerse.source}`)} sx={{ minWidth: 48, minHeight: 48 }}>
             <Share2 size={14} color={theme.palette.text.secondary} />
           </IconButton>
         </Box>
@@ -324,7 +324,7 @@ const StoriesScreen: React.FC = () => {
           </Typography>
           {todayVerse.meaning && (
             <Typography variant="body2" sx={{ lineHeight: 1.7, fontSize: '0.875rem', mb: 1.5, color: theme.palette.text.secondary }}>
-              <strong>Meaning:</strong> {todayVerse.meaning}
+              <Box component="span" sx={{ fontWeight: 500 }}>Meaning:</Box> {todayVerse.meaning}
             </Typography>
           )}
           <Typography variant="caption" sx={{ color: isDark ? 'rgba(255,248,240,0.6)' : 'rgba(92,64,51,0.7)', fontStyle: 'italic' }}>

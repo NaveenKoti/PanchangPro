@@ -141,22 +141,9 @@ export const useServiceWorker = () => {
       if ('serviceWorker' in navigator) {
         try {
           const registration = await navigator.serviceWorker.register('/sw.js')
-          if (import.meta.env.DEV) {
-            console.log('Service Worker registered:', registration)
-          }
           setRegistration(registration)
-
-          if (registration.installing) {
-            if (import.meta.env.DEV) console.log('Service worker installing')
-          } else if (registration.waiting) {
-            if (import.meta.env.DEV) console.log('Service worker installed')
-          } else if (registration.active) {
-            if (import.meta.env.DEV) console.log('Service worker active')
-          }
-        } catch (error) {
-          if (import.meta.env.DEV) {
-            console.error('Service Worker registration failed:', error)
-          }
+        } catch {
+          // Service Worker registration failed - proceed without offline support
         }
       }
     }
@@ -164,11 +151,10 @@ export const useServiceWorker = () => {
     registerServiceWorker()
 
     const handleUpdateFound = () => {
-      if (import.meta.env.DEV) console.log('New Service Worker update found')
+      // New Service Worker update available - will activate on next load
     }
 
     const handleControllerChange = () => {
-      if (import.meta.env.DEV) console.log('Service Worker controller changed')
       window.location.reload()
     }
 
@@ -192,10 +178,7 @@ export const useServiceWorker = () => {
         return true
       }
       return false
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error('Service Worker update failed:', error)
-      }
+    } catch {
       return false
     }
   }

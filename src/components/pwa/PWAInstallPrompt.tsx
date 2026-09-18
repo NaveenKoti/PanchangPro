@@ -285,7 +285,7 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
               startIcon={installInProgress ? null : <InstallIcon />}
               sx={{
                 background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
-                fontWeight: 'bold',
+                fontWeight: 500,
                 color: theme.palette.getContrastText(theme.palette.primary.main),
                 '&:hover': { background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})` },
                 '&:disabled': { background: 'linear-gradient(135deg, #ccc, #999)' }
@@ -414,7 +414,7 @@ export const PWAInstallButton: React.FC<{
       sx={{
         borderColor: theme.palette.primary.main,
         color: theme.palette.primary.main,
-        fontWeight: 'bold',
+        fontWeight: 500,
         '&:hover': {
           bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(199, 91, 18, 0.2)' : 'rgba(199, 91, 18, 0.1)',
           borderColor: theme.palette.primary.dark

@@ -12,7 +12,8 @@ import {
   Karana, 
   Var,
   TimeRange,
-  DinacharyaPhase 
+  DinacharyaPhase,
+  SankrantiInfo
 } from '../types';
 import {
   TITHI_NAMES,
@@ -28,6 +29,7 @@ import {
   DINACHARYA_PHASES
 } from './constants';
 import { getFestivalsForDate } from '../data/festivals';
+import { OTHER_FASTS } from '../data/fastings';
 import { isVerifiedEkadashi } from '../data/verifiedEkadashis';
 import {
   getSunLongitude,
@@ -54,6 +56,18 @@ import {
   subMinutes,
   isWithinInterval
 } from './utils';
+
+// Solar-sign (rashi) names entered at each Sankranti, indexed 0-11 by
+// sidereal longitude: 0=Mesha (0-30°) … 9=Makara (270-300°), 10=Kumbha, 11=Meena.
+// Single source of truth — also consumed by src/data/observances/sankranti.ts.
+export const SANKRANTI_NAMES = [
+  'Mesha', 'Vrishabha', 'Mithuna', 'Karka', 'Simha', 'Kanya',
+  'Tula', 'Vrishchika', 'Dhanu', 'Makara', 'Kumbha', 'Meena'
+];
+export const SANKRANTI_NAMES_HINDI = [
+  'मेष', 'वृषभ', 'मिथुन', 'कर्क', 'सिंह', 'कन्या',
+  'तुला', 'वृश्चिक', 'धनु', 'मकर', 'कुंभ', 'मीन'
+];
 
 export class PanchangEngine {
   private location: GeoLocation;
@@ -121,6 +135,17 @@ export class PanchangEngine {
     // Detect festivals based on tithi, paksha, AND lunar month
     const festivals = getFestivalsForDate(localDate, tithi.number, tithi.paksha, undefined, lunarMonth);
 
+    // Detect solar ingress (Sankranti) occurring during this civil day
+    const ingress = this.findSolarIngress(localDate);
+    const sankranti: SankrantiInfo | null = ingress
+      ? {
+          rashiIndex: ingress.rashiIndex,
+          name: SANKRANTI_NAMES[ingress.rashiIndex] || 'Unknown',
+          nameHindi: SANKRANTI_NAMES_HINDI[ingress.rashiIndex] || 'Unknown',
+          ingressTime: ingress.ingressTime
+        }
+      : null;
+
     return {
       date: localDate,
       location: this.location,
@@ -138,7 +163,8 @@ export class PanchangEngine {
       fasting,
       dinacharya,
       samvatsara: this.calculateSamvatsara(localDate),
-      lunarMonth
+      lunarMonth,
+      sankranti
     };
   }
 
@@ -186,6 +212,7 @@ export class PanchangEngine {
   private detectFastingDay(tithi: Tithi, date: Date, sunrise: Date, sunset: Date) {
     const tithiName = tithi.name.toLowerCase();
     const isShukla = tithi.paksha === 'Shukla';
+    const weekday = date.getDay(); // 0=Sun, 1=Mon, 2=Tue, …, 6=Sat
 
     // Ekadashi detection - use verified database first
     const verifiedEkadashi = isVerifiedEkadashi(date);
@@ -236,52 +263,79 @@ export class PanchangEngine {
       };
     }
 
-    // Pradosh (Trayodashi)
+    // Pradosh (Trayodashi, either paksha) with weekday subtyping:
+    // Monday=Soma, Tuesday=Bhauma, Saturday=Shani. Content comes from the
+    // OTHER_FASTS['pradosh-vrat'] template; only the subtype name/id varies.
     if (tithiName.includes('trayodashi')) {
-      return {
-        id: 'pradosh-vrat',
-        name: 'Pradosh Vrat',
-        nameHindi: 'प्रदोष व्रत',
-        type: 'pradosh' as const,
-        significance: 'Twilight worship on Trayodashi - Dedicated to Lord Shiva for removing obstacles',
-        significanceHindi: 'त्रयोदशी पर संध्या पूजा - बाधाएं दूर करने के लिए भगवान शिव को समर्पित',
-        benefits: [
-          'Removes obstacles',
-          'Brings prosperity',
-          'Fulfills desires',
-          'Mental peace'
-        ],
-        benefitsHindi: [
-          'बाधाएं दूर',
-          'समृद्धि लाता है',
-          'इच्छाएं पूरी',
-          'मानसिक शांति'
-        ],
-        rules: [
-          'Fast during the day',
-          'Worship Shiva during twilight',
-          'Offer water and bilva leaves',
-          'Chant Om Namah Shivaya'
-        ],
-        rulesHindi: [
-          'दिन के दौरान व्रत',
-          'संध्या के दौरान शिव पूजा',
-          'जल और बिल्व पत्र अर्पित करें',
-          'ॐ नमः शिवाय जाप'
-        ],
+      let id = 'pradosh-vrat';
+      let name = 'Pradosh Vrat';
+      let nameHindi = 'प्रदोष व्रत';
+      if (weekday === 1) {
+        id = 'soma-pradosh';
+        name = 'Soma Pradosh Vrat';
+        nameHindi = 'सोम प्रदोष व्रत';
+      } else if (weekday === 2) {
+        id = 'bhauma-pradosh';
+        name = 'Bhauma Pradosh Vrat';
+        nameHindi = 'भौम प्रदोष व्रत';
+      } else if (weekday === 6) {
+        id = 'shani-pradosh';
+        name = 'Shani Pradosh Vrat';
+        nameHindi = 'शनि प्रदोष व्रत';
+      }
+      return this.buildFastingFromTemplate(
+        'pradosh-vrat',
+        { id, name, nameHindi },
         date,
         // Pradosh fast is broken after evening Shiva worship during twilight:
-        // window opens at local sunset (previously a fixed 18:30, wrong whenever
-        // sunset differed — e.g. Delhi winter ~17:30), closes 2h later.
-        paranaTime: {
-          start: sunset,
-          end: addMinutes(sunset, 120)
-        }
-      };
+        // window opens at local sunset, closes 2h later.
+        { start: sunset, end: addMinutes(sunset, 120) }
+      );
     }
 
-    // Purnima (Full Moon)
-    if (tithiName.includes('purnima')) {
+    // Sankashti (Krishna Chaturthi) with Angarki subtyping on Tuesday.
+    if (tithi.number === 4 && !isShukla) {
+      const isAngarki = weekday === 2;
+      return this.buildFastingFromTemplate(
+        'sankashti-chaturthi',
+        isAngarki
+          ? { id: 'angarki-sankashti', name: 'Angarki Sankashti Chaturthi', nameHindi: 'अंगारकी संकष्टी चतुर्थी' }
+          : { id: 'sankashti-chaturthi', name: 'Sankashti Chaturthi', nameHindi: 'संकष्टी चतुर्थी' },
+        date,
+        // Fast is broken after moonrise; the engine has no moonrise model,
+        // so the window opens at local sunset (conservative) for 2h.
+        { start: sunset, end: addMinutes(sunset, 120) }
+      );
+    }
+
+    // Amavasya (Krishna 15) with Somvati (Monday) / Shani (Saturday) subtyping.
+    // NOTE: tithi number 15 is named 'Purnima/Amavasya' for both pakshas, so
+    // matching is by number+paksha and this branch MUST precede the Purnima
+    // branch below (which is now explicitly guarded to Shukla).
+    if (tithi.number === 15 && !isShukla) {
+      let id = 'amavasya-vrat';
+      let name = 'Amavasya Vrat';
+      let nameHindi = 'अमावस्या व्रत';
+      if (weekday === 1) {
+        id = 'somvati-amavasya';
+        name = 'Somvati Amavasya';
+        nameHindi = 'सोमवती अमावस्या';
+      } else if (weekday === 6) {
+        id = 'shani-amavasya';
+        name = 'Shani Amavasya';
+        nameHindi = 'शनि अमावस्या';
+      }
+      return this.buildFastingFromTemplate(
+        'amavasya-vrat',
+        { id, name, nameHindi },
+        date,
+        // Pitru rites run through the day; fast concludes after sunset.
+        { start: sunset, end: addMinutes(sunset, 120) }
+      );
+    }
+
+    // Purnima (Full Moon — Shukla 15 only; Krishna 15 is Amavasya, handled above)
+    if (tithiName.includes('purnima') && isShukla) {
       return {
         id: 'purnima-vrat',
         name: 'Purnima Vrat',
@@ -325,6 +379,36 @@ export class PanchangEngine {
     }
 
     return undefined;
+  }
+
+  /**
+   * Build an engine FastingInfo object from an OTHER_FASTS template,
+   * overriding only id/name/nameHindi for weekday subtypes (Soma/Bhauma/
+   * Shani Pradosh, Angarki Sankashti, Somvati/Shani Amavasya). The template
+   * carries the scriptural content; parana windows stay location-computed
+   * (sunset-anchored) per the ritual-correctness rule above.
+   */
+  private buildFastingFromTemplate(
+    templateId: 'pradosh-vrat' | 'sankashti-chaturthi' | 'amavasya-vrat' | 'purnima-vrat',
+    override: { id: string; name: string; nameHindi: string },
+    date: Date,
+    paranaTime: TimeRange
+  ) {
+    const template = OTHER_FASTS[templateId];
+    return {
+      id: override.id,
+      name: override.name,
+      nameHindi: override.nameHindi,
+      type: template.type as 'pradosh' | 'sankashti' | 'purnima' | 'amavasya',
+      significance: template.significance,
+      significanceHindi: template.significanceHindi,
+      benefits: template.benefits,
+      benefitsHindi: template.benefitsHindi,
+      rules: template.rules,
+      rulesHindi: template.rulesHindi,
+      date,
+      paranaTime
+    };
   }
 
   /**
@@ -477,6 +561,59 @@ export class PanchangEngine {
     }
 
     return new Date(low);
+  }
+
+  /**
+   * Sidereal (Nirayana, Lahiri) Sun longitude at a given moment.
+   * Thin wrapper over the untouched astronomy primitives — no formula change.
+   */
+  private getSiderealSunLongitude(at: Date): number {
+    return toSidereal(getSunLongitude(at), getAyanamsa(at));
+  }
+
+  /**
+   * Find the solar ingress (Sankranti) occurring during a civil day, if any.
+   *
+   * Mirrors the findTithiChangeTime bisection pattern: the Sun moves forward
+   * ~1°/day, so at most one 30° sidereal boundary can be crossed per day.
+   * Compares the rashi index at local midnight vs next midnight; when they
+   * differ, bisects to locate the exact crossing moment.
+   *
+   * @param date Any time during the civil day of interest (local time)
+   * @returns ingressTime + entered rashiIndex (0=Mesha … 11=Meena), or null
+   */
+  findSolarIngress(date: Date): { ingressTime: Date; rashiIndex: number } | null {
+    const dayStart = new Date(date);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
+
+    const lonStart = this.getSiderealSunLongitude(dayStart);
+    const lonEnd = this.getSiderealSunLongitude(dayEnd);
+
+    const startSign = Math.floor(lonStart / 30);
+    const endSign = Math.floor(lonEnd / 30);
+    if (endSign === startSign) return null;
+
+    // Unwrap longitudes relative to day start so the Meena→Mesha
+    // wrap (359.x° → 0.x°) bisects correctly in a monotonic space.
+    const unwrap = (lon: number): number => (lon < lonStart ? lon + 360 : lon);
+    const rawBoundary = endSign * 30;
+    const boundary = rawBoundary <= lonStart ? rawBoundary + 360 : rawBoundary;
+
+    const maxIterations = 50;
+    let low = dayStart.getTime();
+    let high = dayEnd.getTime();
+    for (let i = 0; i < maxIterations; i++) {
+      const mid = new Date((low + high) / 2);
+      if (unwrap(this.getSiderealSunLongitude(mid)) >= boundary) {
+        high = mid.getTime();
+      } else {
+        low = mid.getTime();
+      }
+    }
+
+    return { ingressTime: new Date(low), rashiIndex: endSign };
   }
 
   /**

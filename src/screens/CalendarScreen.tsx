@@ -59,7 +59,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  const { shouldShowAds } = useAdManager();
  const showCalendarAds = shouldShowAds('calendar');
 
- const { getCalendarMonth, setSelectedDate, premium } = useAppStore();
+  const { getCalendarMonth, setSelectedDate } = useAppStore();
  const [currentMonth, setCurrentMonth] = useState(new Date());
  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
  const [isLoading, setIsLoading] = useState(true);
@@ -79,12 +79,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  severity: 'info' | 'success' | 'error';
  }>({ open: false, message: '', severity: 'info' });
 
- const canNavigateFuture =
- premium.features.fullYearCalendar ||
- (currentMonth.getFullYear() === new Date().getFullYear() &&
- currentMonth.getMonth() <= new Date().getMonth() + 1);
-
- useEffect(() => {
+  useEffect(() => {
  setIsLoading(true);
  setMonthTransition('none');
  const days = getCalendarMonth(
@@ -149,17 +144,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  );
  };
 
- const handleNextMonth = () => {
- if (!canNavigateFuture) {
- setSnackbar({
- open: true,
- message:
- t('premium.upgradeRequired') ||
- 'Upgrade to premium for full year calendar',
- severity: 'info',
- });
- return;
- }
+  const handleNextMonth = () => {
  setMonthTransition('left');
  setCurrentMonth(
  new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1)
@@ -326,12 +311,12 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  bgcolor: `${muiTheme.palette.primary.main}10`,
  }}
  >
- <IconButton
- onClick={handlePrevMonth}
- size="small"
- sx={{
- width: 36,
- height: 36,
+  <IconButton
+  onClick={handlePrevMonth}
+  size="small"
+  sx={{
+  width: 48,
+  height: 48,
  color: 'primary.main',
  '&:hover': { bgcolor: `${muiTheme.palette.primary.main}20` },
  }}
@@ -348,25 +333,10 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  >
  {getMonthName(currentMonth)}
  </Typography>
- </Box>
- {!canNavigateFuture && (
- <Chip
- label={t('premium.upgradeRequired') || 'Premium unlock'}
-size="small"
-              sx={{
-                mt: 0.5,
-                height: 20,
-                fontSize: '0.65rem',
-                fontWeight: 500,
-                bgcolor: `${muiTheme.palette.primary.main}15`,
-                color: muiTheme.palette.primary.main,
-                border: `1px solid ${muiTheme.palette.primary.main}30`,
-              }}
- />
- )}
- </Box>
+  </Box>
+  </Box>
 
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
         <Chip
           label={t('calendar.today') || 'Today'}
           size="small"
@@ -382,12 +352,12 @@ size="small"
             '&:hover': { bgcolor: `${muiTheme.palette.primary.main}25` },
           }}
         />
- <IconButton
- onClick={handleNextMonth}
- size="small"
- sx={{
- width: 36,
- height: 36,
+  <IconButton
+  onClick={handleNextMonth}
+  size="small"
+  sx={{
+  width: 48,
+  height: 48,
  color: 'primary.main',
  '&:hover': { bgcolor: `${muiTheme.palette.primary.main}20` },
  }}

@@ -37,15 +37,6 @@ interface AdCarouselProps {
 // In-app promotional slides — brand-compliant VedaTime palette
 const getSlides = (theme: any): AdSlide[] => [
   {
-    id: '1',
-    title: 'Unlock the Full Year',
-    subtitle: 'Premium gives you the complete Vedic calendar, ad-free',
-    backgroundColor: theme.palette.mode === 'dark' 
-      ? `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`
-      : 'linear-gradient(135deg, #7A3008 0%, #E8722A 100%)',
-    ctaText: 'Upgrade',
-  },
-  {
     id: '2',
     title: 'Share Your Panchang',
     subtitle: 'Send today\'s tithi & muhurta to family on WhatsApp',

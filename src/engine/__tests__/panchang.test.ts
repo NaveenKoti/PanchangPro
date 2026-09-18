@@ -63,7 +63,12 @@ describe('PanchangEngine — Fasting detection', () => {
         // Fasting detection should return a defined fasting object for expected dates
         expect(result.fasting).toBeDefined();
         expect(result.fasting?.type).toBeDefined();
-        expect(['ekadashi', 'pradosh', 'purnima']).toContain(result.fasting?.type);
+        // Allowlist extended 2026-09: engine now also detects Amavasya
+        // (incl. Somvati/Shani subtypes) and Sankashti (incl. Angarki).
+        // NOTE: the 'Shukla Ekadashi' reference above points at 2025-01-29,
+        // which is actually Mauni Amavasya — the label (not the assertion)
+        // is stale; flagged for the owner, left untouched.
+        expect(['ekadashi', 'pradosh', 'purnima', 'amavasya', 'sankashti']).toContain(result.fasting?.type);
       }
     });
   }

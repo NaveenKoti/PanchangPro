@@ -103,6 +103,18 @@ export interface DinacharyaPhase {
   description: string;
 }
 
+// Solar ingress (Sankranti) information for a civil day.
+// Present (non-null) only when the Sun crosses a 30° sidereal boundary
+// (enters a new rashi) during that local day.
+export interface SankrantiInfo {
+  /** 0-11 sidereal sign entered: 0=Mesha … 9=Makara, 10=Kumbha, 11=Meena */
+  rashiIndex: number;
+  name: string;
+  nameHindi: string;
+  /** Exact local ingress moment (Sun's sidereal longitude crosses rashiIndex*30°) */
+  ingressTime: Date;
+}
+
 // Complete panchang for a day
 export interface Panchang {
   date: Date;
@@ -125,6 +137,7 @@ export interface Panchang {
   samvatsara?: string; // Hindu year name (60-year cycle)
   isAuspiciousTime?: boolean;
   lunarMonth?: number; // Hindu lunar month (1=Chaitra, 12=Phalguna)
+  sankranti?: SankrantiInfo | null; // Solar ingress if one occurs this day, else null
 }
 
 // User subscription tier

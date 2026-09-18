@@ -53,9 +53,8 @@ function loadEvents(): AnalyticsEvent[] {
 function saveEvents(events: AnalyticsEvent[]): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
-  } catch (e) {
+  } catch {
     // localStorage full or unavailable - silently fail
-    console.warn('[Analytics] Failed to save events:', e);
   }
 }
 

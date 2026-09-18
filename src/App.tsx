@@ -64,7 +64,6 @@ const App: React.FC = () => {
     completeOnboarding,
     preferences,
     sharePanchang,
-    premium,
     calculatePanchang,
     selectedDate,
   } = useAppStore();
@@ -391,8 +390,8 @@ const App: React.FC = () => {
                 boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
                 border: '1px solid',
                 borderColor: 'divider',
-                width: 40,
-                height: 40,
+                width: 48,
+                height: 48,
                 '&:hover': {
                   bgcolor: 'rgba(199, 91, 18, 0.08)',
                   transform: 'translateX(-2px)',

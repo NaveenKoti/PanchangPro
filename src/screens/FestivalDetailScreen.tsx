@@ -50,6 +50,9 @@ import { Share2 } from 'lucide-react';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { useI18n } from '../hooks/useI18n';
 import { getFestivalStory, FESTIVAL_STORIES, findFestivalStoryByName, FestivalStory } from '../data/festivalStories';
+import { getFestivalById } from '../data/festivals';
+import { findNextOccurrence } from '../data/observances';
+import type { ObservanceRule } from '../data/observances/types';
 import { FestivalShareCard } from '../components/FestivalShareCard';
 
 // ============================================================================
@@ -230,6 +233,42 @@ const SectionCard = React.forwardRef<HTMLDivElement, SectionCardProps>(({ icon, 
 });
 
 // ============================================================================
+// NEXT-OCCURRENCE RESOLUTION (engine-computed, no hardcoded dates)
+// ============================================================================
+
+/**
+ * Resolve a festival story to an ObservanceRule for next-occurrence scanning.
+ * Stories backed by festivals.ts reuse its month/paksha/tithiNumber
+ * convention; registry-covered stories without a festivals.ts row
+ * (makar-sankranti, dhanteras, bhai-dooj) map to explicit rules.
+ * Returns null for stories with no computable rule — callers must show
+ * graceful fallback text, never today-as-fake-date.
+ */
+function getRuleForFestivalStory(storyId: string): ObservanceRule | null {
+  if (storyId === 'makar-sankranti') {
+    return { kind: 'solar-ingress', rashiIndex: 9 };
+  }
+  if (storyId === 'dhanteras') {
+    return { kind: 'tithi', month: 8, paksha: 'Krishna', tithiNumber: 13 };
+  }
+  if (storyId === 'bhai-dooj') {
+    return { kind: 'tithi', month: 8, paksha: 'Shukla', tithiNumber: 2 };
+  }
+  const festival = getFestivalById(storyId);
+  if (!festival) return null;
+  if (festival.month === 0) {
+    // Every-month observance (e.g. Sankashti convention): no month filter.
+    return { kind: 'tithi', paksha: festival.paksha, tithiNumber: festival.tithiNumber };
+  }
+  return {
+    kind: 'tithi',
+    month: festival.month,
+    paksha: festival.paksha,
+    tithiNumber: festival.tithiNumber,
+  };
+}
+
+// ============================================================================
 // FESTIVAL DETAIL SCREEN
 // ============================================================================
 
@@ -256,24 +295,14 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
   }, [festivalId, festivalStory]);
 
   const nextOccurrence = useMemo(() => {
-    if (!festival) return new Date();
+    if (!festival) return null;
 
-    // Map festival IDs to approximate 2026 dates
-    const festivalDates: Record<string, Date> = {
-      'diwali': new Date(2026, 10, 8),    // Nov 8, 2026
-      'holi': new Date(2026, 2, 3),       // Mar 3, 2026
-      'navratri': new Date(2026, 9, 13),  // Oct 13, 2026
-      'dussehra': new Date(2026, 9, 22),  // Oct 22, 2026
-      'ganesh-chaturthi': new Date(2026, 7, 16), // Aug 16, 2026
-      'janmashtami': new Date(2026, 7, 5),  // Aug 5, 2026
-      'ram-navami': new Date(2026, 3, 5),   // Apr 5, 2026
-      'maha-shivratri': new Date(2026, 1, 16), // Feb 16, 2026
-      'raksha-bandhan': new Date(2026, 7, 29), // Aug 29, 2026
-      'karwa-chauth': new Date(2026, 9, 21),   // Oct 21, 2026
-    };
-
-    const date = festivalDates[festival.id] || new Date();
-    return date;
+    // Engine-computed next occurrence (≤400-day forward scan over the
+    // Udaya-tithi Panchang). Null when the story has no computable rule —
+    // UI shows fallback text instead of a fake date.
+    const rule = getRuleForFestivalStory(festival.id);
+    if (!rule) return null;
+    return findNextOccurrence(rule, new Date());
   }, [festival]);
 
   const formatDate = useCallback((date: Date): string => {
@@ -455,7 +484,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
             {/* Date Chip */}
             <Chip
               icon={<CalendarMonth />}
-              label={formatDate(nextOccurrence)}
+              label={nextOccurrence ? formatDate(nextOccurrence) : 'Date varies with the lunar calendar'}
               sx={{
                 px: { xs: 1.5, sm: 2 },
                 py: { xs: 2, sm: 3 },
@@ -545,7 +574,20 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                   Next {festival.name}
                 </Typography>
               </Box>
-              <CountdownTimer targetDate={nextOccurrence} />
+              {nextOccurrence ? (
+                <CountdownTimer targetDate={nextOccurrence} />
+              ) : (
+                <Typography
+                  sx={{
+                    color: 'text.secondary',
+                    textAlign: 'center',
+                    py: 2,
+                    fontSize: { xs: '0.9rem', sm: '1rem' },
+                  }}
+                >
+                  This observance follows the lunar calendar — see the Calendar screen for its next date.
+                </Typography>
+              )}
             </CardContent>
           </Card>
         </Fade>

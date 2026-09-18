@@ -259,8 +259,8 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 36,
-                height: 36,
+                width: 48,
+                height: 48,
                 borderRadius: '50%',
                 bgcolor: isDark
                   ? `${muiTheme.palette.primary.main}15`

@@ -5,7 +5,6 @@
  * - Clean sectioned layout
  * - Better visual hierarchy
  * - Intuitive controls
- * - Premium upgrade prompts
  * - Ad-free experience indicator
  */
 
@@ -54,7 +53,6 @@ import {
   Lock,
   Globe,
   Clock,
-  Crown,
   CheckCircle,
   X,
 } from 'lucide-react';
@@ -94,7 +92,6 @@ export default function SettingsScreen() {
     toggleNotification,
     sharePanchang,
     inviteFamilyMember,
-    premium,
   } = useAppStore();
 
   const { setImmediateThemeMode, resetImmediateThemeMode } = useThemeManager();
@@ -472,62 +469,6 @@ export default function SettingsScreen() {
             </List>
           </Paper>
         </Fade>
-
-        {/* Premium Features Section */}
-        {premium.isPremium && (
-          <Fade in timeout={1000}>
-            <Paper
-              elevation={0}
-              sx={{
-                mb: 2,
-                borderRadius: 2,
-                overflow: 'hidden',
-                bgcolor: 'rgba(199,91,18,0.04)',
-                border: '1px solid rgba(199,91,18,0.1)',
-              }}
-            >
-              <Box sx={{ px: 2, py: 1.5, bgcolor: 'rgba(199,91,18,0.06)' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Crown size={20} color={muiTheme.palette.primary.main} />
-                  <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
-                    {t('premium.title')}
-                  </Typography>
-                </Box>
-              </Box>
-              <List sx={{ p: 0 }}>
-                <ListItem>
-                  <ListItemIcon sx={{ minWidth: 40 }}>
-                    <CheckCircle size={20} color={muiTheme.palette.success.main} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={t('premium.features.noAds') || 'Ad-free Experience'}
-                    secondary={t('premium.features.noAdsDesc') || 'Browse without interruptions'}
-                  />
-                </ListItem>
-                <Divider />
-                <ListItem>
-                  <ListItemIcon sx={{ minWidth: 40 }}>
-                    <CheckCircle size={20} color={muiTheme.palette.success.main} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={t('premium.features.fullYearCalendar') || 'Full Year Calendar'}
-                    secondary={t('premium.features.fullYearCalendarDesc') || 'Navigate any month'}
-                  />
-                </ListItem>
-                <Divider />
-                <ListItem>
-                  <ListItemIcon sx={{ minWidth: 40 }}>
-                    <CheckCircle size={20} color={muiTheme.palette.success.main} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={t('premium.features.exportImport') || 'Export & Import'}
-                    secondary={t('premium.features.exportImportDesc') || 'Backup your data'}
-                  />
-                </ListItem>
-              </List>
-            </Paper>
-          </Fade>
-        )}
 
         {/* Data & Privacy Section */}
         <Fade in timeout={1100}>

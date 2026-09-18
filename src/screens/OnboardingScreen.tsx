@@ -323,7 +323,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
                     onClick={handleDetectLocation}
                     disabled={isDetecting}
                     startIcon={isDetecting ? <CircularProgress size={14} /> : undefined}
-                    sx={{ borderColor: 'primary.main', color: 'primary.main', borderRadius: 2, minWidth: 80 }}
+                    sx={{ borderColor: 'primary.main', color: 'primary.main', borderRadius: 2, minWidth: 80, minHeight: 48 }}
                   >
                     {isDetecting ? '' : (isHindiOnboarding ? 'अनुमति दें' : 'Allow')}
                   </Button>

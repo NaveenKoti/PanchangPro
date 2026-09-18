@@ -36,6 +36,7 @@ import {
   Calendar as CalendarIcon,
   Star,
   Bell,
+  Sun,
 } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import {
@@ -417,7 +418,7 @@ export const TodayScreen: React.FC = () => {
                       fontWeight: 500,
                       color: 'primary.main',
                       textTransform: 'none',
-                      minHeight: 28,
+                      minHeight: 48,
                       p: '2px 8px',
                       borderRadius: 1.5,
                       bgcolor: isDark
@@ -860,6 +861,44 @@ export const TodayScreen: React.FC = () => {
               </Typography>
               <Typography variant="body2" sx={{ mt: 0.25, opacity: 0.9, color: 'text.secondary' }}>
                 {panchang.festivals[0].significance}
+              </Typography>
+            </Alert>
+          )}
+
+          {/* Sankranti Alert — solar ingress computed by findSolarIngress */}
+          {panchang.sankranti && (
+            <Alert
+              icon={<Sun size={20} />}
+              severity="info"
+              sx={{
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: isDark
+                  ? `${muiTheme.palette.info.main}30`
+                  : `${muiTheme.palette.info.main}20`,
+                bgcolor: isDark
+                  ? `${muiTheme.palette.info.main}12`
+                  : `${muiTheme.palette.info.main}8`,
+                mb: 1.5,
+                '& .MuiAlert-icon': { color: muiTheme.palette.info.main },
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 500,
+                  fontFamily: '"Noto Sans", sans-serif',
+                  color: isDark ? muiTheme.palette.info.light : muiTheme.palette.info.dark,
+                }}
+              >
+                {preferences.language === 'hi'
+                  ? `${panchang.sankranti.nameHindi} संक्रांति`
+                  : `${panchang.sankranti.name} Sankranti`}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 0.25, opacity: 0.9, color: 'text.secondary' }}>
+                {preferences.language === 'hi' ? 'सूर्य का राशि परिवर्तन' : 'Solar ingress'}
+                {' · '}
+                {formatTime(panchang.sankranti.ingressTime)}
               </Typography>
             </Alert>
           )}

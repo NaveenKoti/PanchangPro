@@ -28,10 +28,6 @@ export function usePerformanceMemo<T>(
             `${label}-start`,
             `${label}-end`
           );
-          
-          if (measureRef.current.duration > 16 && import.meta.env.DEV) {
-            console.warn(`[Performance] Slow calculation in ${label}: ${measureRef.current.duration.toFixed(2)}ms`);
-          }
         } catch (e) {
           // Ignore measurement errors
         }
