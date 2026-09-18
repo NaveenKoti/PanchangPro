@@ -53,10 +53,12 @@
     "auspicious": "शुभ",
     "inauspicious": "अशुभ",
     "title": "पंचांग",
+    "timings": "समय",
     "dayLength": "प्रकाशकाल",
     "rahuKaalWarning": "महत्वपूर्ण कार्यों से बचें",
     "samvatsara": "संवत्सर",
-    "samvatsaraDesc": "हिंदू वर्ष (60 वर्षीय चक्र)"
+    "samvatsaraDesc": "हिंदू वर्ष (60 वर्षीय चक्र)",
+    "auspiciousTime": "शुभ समय"
   },
   "tithi": {
     "title": "तिथि",
@@ -114,7 +116,9 @@
     "clear": "हटाएं",
     "aboutApp": "VedaTime के बारे में",
     "aboutAppDesc": "संस्करण, सुविधाएं और क्रेडिट",
-    "locationUpdated": "स्थान अपडेट किया गया!"
+    "locationUpdated": "स्थान अपडेट किया गया!",
+    "aboutContent": "Your complete Hindu calendar companion",
+    "clearDataConfirm": "Clear all data? This cannot be undone."
   },
   "language": {
     "en": "English",
@@ -134,7 +138,9 @@
     "festivalDescription": "त्योहारों से पहले सूचना प्राप्त करें",
     "dinacharyaReminders": "दिनचर्या अनुस्मारक",
     "dinacharyaDescription": "दैनिक आयुर्वेदिक दिनचर्या अनुस्मारक",
-    "customTithiReminders": "कस्टम तिथि अनुस्मारक"
+    "customTithiReminders": "कस्टम तिथि अनुस्मारक",
+    "permissionDenied": "Notifications are blocked — enable them in browser settings to use reminders",
+    "permissionRequired": "Notification permission is required to schedule reminders"
   },
   "location": {
     "title": "स्थान",
@@ -248,7 +254,11 @@
     "export": "तिथियां एक्सपोर्ट करें",
     "import": "तिथियां इम्पोर्ट करें",
     "importTithis": "तिथियां इम्पोर्ट करें",
-    "importDescription": "JSON डेटा पेस्ट करें या फाइल अपलोड करें।"
+    "importDescription": "JSON डेटा पेस्ट करें या फाइल अपलोड करें।",
+    "exportCopied": "Export copied to clipboard",
+    "exportFailed": "Export failed",
+    "exported": "Tithis exported",
+    "reminderSet": "Reminder scheduled"
   },
   "about": {
     "title": "पंचांग प्रो परिचय",
@@ -267,7 +277,16 @@
     "title": "प्रीमियम सुविधाएं",
     "upgradeTitle": "प्रीमियम में अपग्रेड करें",
     "upgradeSubtitle": "विज्ञापन-मुक्त अनुभव + सभी सुविधाएं अनलॉक करें",
-    "upgradeNow": "अपग्रेड करें — ₹99/वर्ष"
+    "upgradeNow": "अपग्रेड करें — ₹99/वर्ष",
+    "features": {
+      "exportImport": "Export & Import",
+      "exportImportDesc": "Backup your data",
+      "fullYearCalendar": "Full Year Calendar",
+      "fullYearCalendarDesc": "Navigate any month",
+      "noAds": "Ad-free Experience",
+      "noAdsDesc": "Browse without interruptions"
+    },
+    "upgradeRequired": "Upgrade to premium to add more tithis"
   },
   "stories": {
     "title": "दैनिक ज्ञान",
@@ -285,7 +304,8 @@
     "sendInvite": "आमंत्रण भेजें",
     "familyMember": "परिवार के सदस्य को आमंत्रित करें",
     "phone": "फोन नंबर",
-    "send": "आमंत्रण भेजें"
+    "send": "आमंत्रण भेजें",
+    "sentSuccess": "Invitation sent successfully!"
   },
   "errors": {
     "locationDenied": "स्थान पहुंच अस्वीकृत। डिफ़ॉल्ट स्थान का उपयोग कर रहे हैं।",

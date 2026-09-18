@@ -53,10 +53,12 @@
     "auspicious": "शुभम्",
     "inauspicious": "अशुभम्",
     "title": "पञ्चाङ्गम्",
+    "timings": "समयाः",
     "dayLength": "प्रकाशकालः",
     "rahuKaalWarning": "महत्त्वपूर्णानि कार्याणि वर्जयतु",
     "samvatsara": "संवत्सरः",
-    "samvatsaraDesc": "हिन्दुवर्षम् (षष्टिवर्षीयचक्रम्)"
+    "samvatsaraDesc": "हिन्दुवर्षम् (षष्टिवर्षीयचक्रम्)",
+    "auspiciousTime": "शुभसमयः"
   },
   "tithi": {
     "title": "तिथिः",
@@ -114,7 +116,9 @@
     "clear": "निष्कासयतु",
     "aboutApp": "VedaTime-विषये",
     "aboutAppDesc": "संस्करणम्, सुविधाः, श्रेयश्च",
-    "locationUpdated": "स्थानम् अद्यतनीकृतम्!"
+    "locationUpdated": "स्थानम् अद्यतनीकृतम्!",
+    "aboutContent": "Your complete Hindu calendar companion",
+    "clearDataConfirm": "Clear all data? This cannot be undone."
   },
   "language": {
     "en": "आङ्ग्लम्",
@@ -134,7 +138,9 @@
     "festivalDescription": "उत्सवेभ्यः पूर्वं सूचयतु",
     "dinacharyaReminders": "दिनचर्या स्मारकाणि",
     "dinacharyaDescription": "दैनिक आयुर्वेदिक दिनचर्या स्मारकाणि",
-    "customTithiReminders": "वैयक्तिकी तिथि स्मारकाणि"
+    "customTithiReminders": "वैयक्तिकी तिथि स्मारकाणि",
+    "permissionDenied": "Notifications are blocked — enable them in browser settings to use reminders",
+    "permissionRequired": "Notification permission is required to schedule reminders"
   },
   "location": {
     "title": "स्थानम्",
@@ -258,7 +264,11 @@
     "recurring": "पुनरावर्तमानम्",
     "noReminder": "स्मारकं नास्ति",
     "nextOccurrences": "अग्रिमानि घटनानि",
-    "deleteConfirm": "एतां तिथिं नाशयामि वा?"
+    "deleteConfirm": "एतां तिथिं नाशयामि वा?",
+    "exportCopied": "Export copied to clipboard",
+    "exportFailed": "Export failed",
+    "exported": "Tithis exported",
+    "reminderSet": "Reminder scheduled"
   },
   "stories": {
     "title": "दैनिकज्ञानम्",
@@ -286,7 +296,16 @@
     "title": "प्रीमियम-सुविधाः",
     "upgradeTitle": "प्रीमियमं प्रति उन्नयतु",
     "upgradeSubtitle": "विज्ञापनरहितानुभवः सर्वसुविधाः च",
-    "upgradeNow": "उन्नयतु — ₹99/वर्षम्"
+    "upgradeNow": "उन्नयतु — ₹99/वर्षम्",
+    "features": {
+      "exportImport": "Export & Import",
+      "exportImportDesc": "Backup your data",
+      "fullYearCalendar": "Full Year Calendar",
+      "fullYearCalendarDesc": "Navigate any month",
+      "noAds": "Ad-free Experience",
+      "noAdsDesc": "Browse without interruptions"
+    },
+    "upgradeRequired": "Upgrade to premium to add more tithis"
   },
   "invite": {
     "title": "कुटुम्बसदस्यम् आह्वयत",
@@ -295,7 +314,8 @@
     "sendInvite": "आह्वानं प्रेषयतु",
     "familyMember": "कुटुम्बसदस्यम् आमन्त्रयतु",
     "phone": "दूरभाषसङ्ख्या",
-    "send": "आमन्त्रणं प्रेषयतु"
+    "send": "आमन्त्रणं प्रेषयतु",
+    "sentSuccess": "Invitation sent successfully!"
   },
   "errors": {
     "locationDenied": "स्थानप्रवेशः निषिद्धः। प्रारम्भिकस्थानं प्रयुञ्ज्महे।",

@@ -53,10 +53,12 @@
     "auspicious": "శుభం",
     "inauspicious": "అశుభం",
     "title": "పంచాంగం",
+    "timings": "సమయాలు",
     "dayLength": "పగలు",
     "rahuKaalWarning": "ముఖ్యమైన పనులను మానుకోండి",
     "samvatsara": "సంవత్సరం",
-    "samvatsaraDesc": "హిందూ సంవత్సరం (60 సంవత్సరాల చక్రం)"
+    "samvatsaraDesc": "హిందూ సంవత్సరం (60 సంవత్సరాల చక్రం)",
+    "auspiciousTime": "శుభ సమయం"
   },
   "tithi": {
     "title": "తిథి",
@@ -114,7 +116,9 @@
     "clear": "క్లియర్",
     "aboutApp": "వేదటైమ్ గురించి",
     "aboutAppDesc": "వెర్షన్, ఫీచర్లు మరియు క్రెడిట్స్",
-    "locationUpdated": "స్థానం నవీకరించబడింది!"
+    "locationUpdated": "స్థానం నవీకరించబడింది!",
+    "aboutContent": "Your complete Hindu calendar companion",
+    "clearDataConfirm": "Clear all data? This cannot be undone."
   },
   "language": {
     "en": "English",
@@ -137,7 +141,9 @@
     "festivalDescription": "పండుగలకు ముందు హెచ్చరిక పొందండి",
     "dinacharyaReminders": "దినచర్య రిమైండర్లు",
     "dinacharyaDescription": "రోజువారీ ఆయుర్వేద రొటీన్ రిమైండర్లు",
-    "customTithiReminders": "అనుకూల తిథి రిమైండర్లు"
+    "customTithiReminders": "అనుకూల తిథి రిమైండర్లు",
+    "permissionDenied": "Notifications are blocked — enable them in browser settings to use reminders",
+    "permissionRequired": "Notification permission is required to schedule reminders"
   },
   "location": {
     "title": "స్థానం",
@@ -261,7 +267,11 @@
     "recurring": "పునరావృతం",
     "noReminder": "రిమైండర్ లేదు",
     "nextOccurences": "తదుపరి సంఘటనలు",
-    "deleteConfirm": "ఈ తిథిని తొలగించాలా?"
+    "deleteConfirm": "ఈ తిథిని తొలగించాలా?",
+    "exportCopied": "Export copied to clipboard",
+    "exportFailed": "Export failed",
+    "exported": "Tithis exported",
+    "reminderSet": "Reminder scheduled"
   },
   "about": {
     "title": "వేదటైమ్ గురించి",
@@ -280,7 +290,16 @@
     "title": "ప్రీమియం ఫీచర్లు",
     "upgradeTitle": "ప్రీమియంకు అప్‌గ్రేడ్ చేయండి",
     "upgradeSubtitle": "ప్రకటన-రహిత అనుభవం + అన్ని ఫీచర్లను అన్‌లాక్ చేయండి",
-    "upgradeNow": "అప్‌గ్రేడ్ — ₹99/సంవత్సరం"
+    "upgradeNow": "అప్‌గ్రేడ్ — ₹99/సంవత్సరం",
+    "features": {
+      "exportImport": "Export & Import",
+      "exportImportDesc": "Backup your data",
+      "fullYearCalendar": "Full Year Calendar",
+      "fullYearCalendarDesc": "Navigate any month",
+      "noAds": "Ad-free Experience",
+      "noAdsDesc": "Browse without interruptions"
+    },
+    "upgradeRequired": "Upgrade to premium to add more tithis"
   },
   "stories": {
     "title": "రోజువారీ జ్ఞానం",
@@ -298,7 +317,8 @@
     "sendInvite": "ఆహ్వానం పంపు",
     "familyMember": "కుటుంబ సభ్యుడిని ఆహ్వానించండి",
     "phone": "ఫోన్ నంబర్",
-    "send": "ఆహ్వానం పంపు"
+    "send": "ఆహ్వానం పంపు",
+    "sentSuccess": "Invitation sent successfully!"
   },
   "errors": {
     "locationDenied": "స్థాన యాక్సెస్ నిరాకరించబడింది. డిఫాల్ట్ స్థానం ఉపయోగించబడుతోంది.",

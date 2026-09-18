@@ -53,10 +53,12 @@
     "auspicious": "Auspicious",
     "inauspicious": "Inauspicious",
     "title": "Panchang",
+    "timings": "Timings",
     "dayLength": "daylight",
     "rahuKaalWarning": "Avoid important tasks",
     "samvatsara": "Samvatsara",
-    "samvatsaraDesc": "Hindu Year (60-year cycle)"
+    "samvatsaraDesc": "Hindu Year (60-year cycle)",
+    "auspiciousTime": "Auspicious time"
   },
   "tithi": {
     "title": "Tithi",
@@ -114,7 +116,9 @@
     "clear": "Clear",
     "aboutApp": "About VedaTime",
     "aboutAppDesc": "Version, features & credits",
-    "locationUpdated": "Location updated!"
+    "locationUpdated": "Location updated!",
+    "aboutContent": "Your complete Hindu calendar companion",
+    "clearDataConfirm": "Clear all data? This cannot be undone."
   },
   "language": {
     "en": "English",
@@ -134,7 +138,9 @@
     "festivalDescription": "Get notified before festivals",
     "dinacharyaReminders": "Dinacharya Reminders",
     "dinacharyaDescription": "Daily Ayurvedic routine reminders",
-    "customTithiReminders": "Custom Tithi Reminders"
+    "customTithiReminders": "Custom Tithi Reminders",
+    "permissionDenied": "Notifications are blocked — enable them in browser settings to use reminders",
+    "permissionRequired": "Notification permission is required to schedule reminders"
   },
   "location": {
     "title": "Location",
@@ -258,7 +264,11 @@
     "recurring": "Recurring",
     "noReminder": "No reminder",
     "nextOccurrences": "Next Occurrences",
-    "deleteConfirm": "Delete this tithi?"
+    "deleteConfirm": "Delete this tithi?",
+    "exportCopied": "Export copied to clipboard",
+    "exportFailed": "Export failed",
+    "exported": "Tithis exported",
+    "reminderSet": "Reminder scheduled"
   },
   "about": {
     "title": "About VedaTime",
@@ -277,7 +287,16 @@
     "title": "Premium Features",
     "upgradeTitle": "Upgrade to Premium",
     "upgradeSubtitle": "Ad-free experience + unlock all features",
-    "upgradeNow": "Upgrade — ₹99/year"
+    "upgradeNow": "Upgrade — ₹99/year",
+    "features": {
+      "exportImport": "Export & Import",
+      "exportImportDesc": "Backup your data",
+      "fullYearCalendar": "Full Year Calendar",
+      "fullYearCalendarDesc": "Navigate any month",
+      "noAds": "Ad-free Experience",
+      "noAdsDesc": "Browse without interruptions"
+    },
+    "upgradeRequired": "Upgrade to premium to add more tithis"
   },
   "stories": {
     "title": "Daily Wisdom",
@@ -295,7 +314,8 @@
     "sendInvite": "Send Invite",
     "familyMember": "Invite Family Member",
     "phone": "Phone number",
-    "send": "Send Invite"
+    "send": "Send Invite",
+    "sentSuccess": "Invitation sent successfully!"
   },
   "errors": {
     "locationDenied": "Location access denied. Using default location.",

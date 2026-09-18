@@ -53,10 +53,12 @@
     "auspicious": "ಶುಭ",
     "inauspicious": "ಅಶುಭ",
     "title": "ಪಂಚಾಂಗ",
+    "timings": "ಸಮಯಗಳು",
     "dayLength": "ಹಗಲು",
     "rahuKaalWarning": "ಮುಖ್ಯ ಕೆಲಸಗಳನ್ನು ತಪ್ಪಿಸಿ",
     "samvatsara": "ಸಂವತ್ಸರ",
-    "samvatsaraDesc": "ಹಿಂದೂ ವರ್ಷ (60 ವರ್ಷಗಳ ಚಕ್ರ)"
+    "samvatsaraDesc": "ಹಿಂದೂ ವರ್ಷ (60 ವರ್ಷಗಳ ಚಕ್ರ)",
+    "auspiciousTime": "ಶುಭ ಸಮಯ"
   },
   "tithi": {
     "title": "ತಿಥಿ",
@@ -114,7 +116,9 @@
     "clear": "ತೆರವುಗೊಳಿಸಿ",
     "aboutApp": "ವೇಡ್‌ಟೈಮ್ ಕುರಿತು",
     "aboutAppDesc": "ಆವೃತ್ತಿ, ವೈಶಿಷ್ಟ್ಯಗಳು ಮತ್ತು ಸಲ್ಲುತ್ತದೆ",
-    "locationUpdated": "ಸ್ಥಳ ನವೀಕರಿಸಲಾಗಿದೆ!"
+    "locationUpdated": "ಸ್ಥಳ ನವೀಕರಿಸಲಾಗಿದೆ!",
+    "aboutContent": "Your complete Hindu calendar companion",
+    "clearDataConfirm": "Clear all data? This cannot be undone."
   },
   "language": {
     "en": "English",
@@ -137,7 +141,9 @@
     "festivalDescription": "ಹಬ್ಬಗಳ ಮೊದಲು ಎಚ್ಚರಿಕೆ ಪಡೆಯಿರಿ",
     "dinacharyaReminders": "ದಿನಚರ್ಯಾ ನೆನಪಿಸುವಿಕೆಗಳು",
     "dinacharyaDescription": "ದೈನಂದಿನ ಆಯುರ್ವೇದಿಕ ರೂಟಿನ್ ನೆನಪಿಸುವಿಕೆಗಳು",
-    "customTithiReminders": "ಕಸ್ಟಮ್ ತಿಥಿ ನೆನಪಿಸುವಿಕೆಗಳು"
+    "customTithiReminders": "ಕಸ್ಟಮ್ ತಿಥಿ ನೆನಪಿಸುವಿಕೆಗಳು",
+    "permissionDenied": "Notifications are blocked — enable them in browser settings to use reminders",
+    "permissionRequired": "Notification permission is required to schedule reminders"
   },
   "location": {
     "title": "ಸ್ಥಳ",
@@ -261,7 +267,11 @@
     "recurring": "ಪುನರಾವರ್ತಿತ",
     "noReminder": "ನೆನಪಿಸುವಿಕೆ ಇಲ್ಲ",
     "nextOccurences": "ಮುಂದಿನ ಸಂದರ್ಭಗಳು",
-    "deleteConfirm": "ಈ ತಿಥಿ ಅಳಿಸಬೇಕೇ?"
+    "deleteConfirm": "ಈ ತಿಥಿ ಅಳಿಸಬೇಕೇ?",
+    "exportCopied": "Export copied to clipboard",
+    "exportFailed": "Export failed",
+    "exported": "Tithis exported",
+    "reminderSet": "Reminder scheduled"
   },
   "about": {
     "title": "ವೇಡ್‌ಟೈಮ್ ಕುರಿತು",
@@ -280,7 +290,16 @@
     "title": "ಪ್ರೀಮಿಯಂ ವೈಶಿಷ್ಟ್ಯಗಳು",
     "upgradeTitle": "ಪ್ರೀಮಿಯಂಗೆ ಅಪ್‌ಗ್ರೇಡ್ ಮಾಡಿ",
     "upgradeSubtitle": "ಜಾಹೀರಾತು-ಮುಕ್ತ ಅನುಭವ + ಎಲ್ಲಾ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ",
-    "upgradeNow": "ಅಪ್‌ಗ್ರೇಡ್ — ₹99/ವರ್ಷ"
+    "upgradeNow": "ಅಪ್‌ಗ್ರೇಡ್ — ₹99/ವರ್ಷ",
+    "features": {
+      "exportImport": "Export & Import",
+      "exportImportDesc": "Backup your data",
+      "fullYearCalendar": "Full Year Calendar",
+      "fullYearCalendarDesc": "Navigate any month",
+      "noAds": "Ad-free Experience",
+      "noAdsDesc": "Browse without interruptions"
+    },
+    "upgradeRequired": "Upgrade to premium to add more tithis"
   },
   "stories": {
     "title": "ದೈನಂದಿನ ಜ್ಞಾನ",
@@ -298,7 +317,8 @@
     "sendInvite": "ಆಹ್ವಾನ ಕಳುಹಿಸಿ",
     "familyMember": "ಕುಟುಂಬ ಸದಸ್ಯರನ್ನು ಆಹ್ವಾನಿಸಿ",
     "phone": "ಫೋನ್ ಸಂಖ್ಯೆ",
-    "send": "ಆಹ್ವಾನ ಕಳುಹಿಸಿ"
+    "send": "ಆಹ್ವಾನ ಕಳುಹಿಸಿ",
+    "sentSuccess": "Invitation sent successfully!"
   },
   "errors": {
     "locationDenied": "ಸ್ಥಳ ಪ್ರವೇಶ ನಿರಾಕರಿಸಲಾಗಿದೆ. ಡಿಫಾಲ್ಟ್ ಸ್ಥಳ ಬಳಸಲಾಗುತ್ತಿದೆ.",

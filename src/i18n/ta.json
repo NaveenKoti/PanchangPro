@@ -53,10 +53,12 @@
     "auspicious": "சுபம்",
     "inauspicious": "அசுபம்",
     "title": "பஞ்சாங்கம்",
+    "timings": "நேரங்கள்",
     "dayLength": "பகல்",
     "rahuKaalWarning": "முக்கிய பணிகளைத் தவிர்க்கவும்",
     "samvatsara": "ஸம்வத்ஸரம்",
-    "samvatsaraDesc": "இந்து ஆண்டு (60 ஆண்டு சுழற்சி)"
+    "samvatsaraDesc": "இந்து ஆண்டு (60 ஆண்டு சுழற்சி)",
+    "auspiciousTime": "சுப நேரம்"
   },
   "tithi": {
     "title": "திதி",
@@ -114,7 +116,9 @@
     "clear": "அழி",
     "aboutApp": "வேதடைம் பற்றி",
     "aboutAppDesc": "பதிப்பு, அம்சங்கள் மற்றும் நன்றிகள்",
-    "locationUpdated": "இருப்பிடம் புதுப்பிக்கப்பட்டது!"
+    "locationUpdated": "இருப்பிடம் புதுப்பிக்கப்பட்டது!",
+    "aboutContent": "Your complete Hindu calendar companion",
+    "clearDataConfirm": "Clear all data? This cannot be undone."
   },
   "language": {
     "en": "English",
@@ -137,7 +141,9 @@
     "festivalDescription": "திருவிழாக்களுக்கு முன் எச்சரிக்கை பெறுங்கள்",
     "dinacharyaReminders": "தினசரி நினைவூட்டல்கள்",
     "dinacharyaDescription": "தினசரி ஆயுர்வேத வழக்கம் நினைவூட்டல்கள்",
-    "customTithiReminders": "தனிப்பயன் திதி நினைவூட்டல்கள்"
+    "customTithiReminders": "தனிப்பயன் திதி நினைவூட்டல்கள்",
+    "permissionDenied": "Notifications are blocked — enable them in browser settings to use reminders",
+    "permissionRequired": "Notification permission is required to schedule reminders"
   },
   "location": {
     "title": "இருப்பிடம்",
@@ -261,7 +267,11 @@
     "recurring": "மீண்டும் நிகழும்",
     "noReminder": "நினைவூட்டல் இல்லை",
     "nextOccurences": "அடுத்த நிகழ்வுகள்",
-    "deleteConfirm": "இந்த திதி நீக்கவா?"
+    "deleteConfirm": "இந்த திதி நீக்கவா?",
+    "exportCopied": "Export copied to clipboard",
+    "exportFailed": "Export failed",
+    "exported": "Tithis exported",
+    "reminderSet": "Reminder scheduled"
   },
   "about": {
     "title": "வேதடைம் பற்றி",
@@ -280,7 +290,16 @@
     "title": "பிரீமியம் அம்சங்கள்",
     "upgradeTitle": "பிரீமியத்திற்கு மேம்படுத்துங்கள்",
     "upgradeSubtitle": "விளம்பரம் இல்லாத அனுபவம் + அனைத்து அம்சங்களையும் திறக்கவும்",
-    "upgradeNow": "மேம்படுத்துங்கள் — ₹99/ஆண்டு"
+    "upgradeNow": "மேம்படுத்துங்கள் — ₹99/ஆண்டு",
+    "features": {
+      "exportImport": "Export & Import",
+      "exportImportDesc": "Backup your data",
+      "fullYearCalendar": "Full Year Calendar",
+      "fullYearCalendarDesc": "Navigate any month",
+      "noAds": "Ad-free Experience",
+      "noAdsDesc": "Browse without interruptions"
+    },
+    "upgradeRequired": "Upgrade to premium to add more tithis"
   },
   "stories": {
     "title": "தினசரி ஞானம்",
@@ -298,7 +317,8 @@
     "sendInvite": "அழைப்பு அனுப்பு",
     "familyMember": "குடும்ப உறுப்பினரை அழையுங்கள்",
     "phone": "தொலைபேசி எண்",
-    "send": "அழைப்பு அனுப்பு"
+    "send": "அழைப்பு அனுப்பு",
+    "sentSuccess": "Invitation sent successfully!"
   },
   "errors": {
     "locationDenied": "இருப்பிட அனுமதி மறுக்கப்பட்டது. இயல்புநிலை இருப்பிடம் பயன்படுத்தப்படுகிறது.",
