@@ -5,6 +5,8 @@
 
 import { Festival } from '../types';
 
+export type FestivalVyapti = 'udaya' | 'madhyahna' | 'pradosh' | 'nishita';
+
 export interface FestivalData {
   id: string;
   name: string;
@@ -17,6 +19,18 @@ export interface FestivalData {
   type: 'major' | 'minor' | 'regional';
   region?: string[];
   date?: Date;
+  /**
+   * Which moment of the day the tithi must prevail for observance:
+   * - udaya (default): tithi at sunrise — Ekadashi, Purnima, most festivals
+   * - madhyahna: tithi at midday — Ganesh Chaturthi (born at midday)
+   * - pradosh: tithi at sunset — Pradosh vrat (evening worship)
+   * - nishita: tithi at midnight — Maha Shivratri (great night of Shiva)
+   * Non-udaya rules are evaluated by the engine (panchang.ts vyapti pass),
+   * which can compute tithi at arbitrary moments. Keep this field in sync
+   * with shastra: a wrong vyapti shifts the festival by a day (e.g. Ganesh
+   * Chaturthi 2026: Udaya says Sep 15, Madhyahna correctly says Sep 14).
+   */
+  vyapti?: FestivalVyapti;
 }
 
 export const FESTIVALS: FestivalData[] = [
@@ -74,7 +88,8 @@ export const FESTIVALS: FestivalData[] = [
     tithiNumber: 4,
     paksha: 'Shukla',
     month: 6, // Bhadrapada (month 6 = index 5 + 1)
-    type: 'major'
+    type: 'major',
+    vyapti: 'madhyahna', // Born at midday: Chaturthi must prevail at noon (Sep 14, not 15, in 2026)
   },
   {
     id: 'janmashtami',
@@ -107,7 +122,8 @@ export const FESTIVALS: FestivalData[] = [
     tithiNumber: 14,
     paksha: 'Krishna',
     month: 11, // Magha (month 11 = index 10 + 1)
-    type: 'major'
+    type: 'major',
+    vyapti: 'nishita', // Great NIGHT: Chaturdashi must prevail at midnight (Feb 15, not 16, in 2026)
   },
   {
     id: 'raksha-bandhan',

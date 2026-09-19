@@ -117,13 +117,19 @@ describe('Fasting branches', () => {
     expect(p.fasting?.id).toBe('angarki-sankashti');
   });
 
-  it('Soma Pradosh naming on a Monday Trayodashi (Jun 9, 2025)', () => {
-    const p = engine.calculate(atMidnight(2025, 6, 9));
-    expect(p.tithi.number).toBe(13);
+  it('Soma Pradosh naming on a Monday Trayodashi evening (Jun 23, 2025)', () => {
+    // Times Now: Krishna Trayodashi Jun 23 01:21 → 22:09, Pradosh observed Jun 23.
+    const p = engine.calculate(atMidnight(2025, 6, 23));
     expect(p.date.getDay()).toBe(1);
     expect(p.fasting?.id).toBe('soma-pradosh');
     expect(p.fasting?.name).toBe('Soma Pradosh Vrat');
     expect(p.fasting?.type).toBe('pradosh');
+  });
+
+  it('Bhanu (plain) Pradosh on Sun Jun 8 2025, not Mon Jun 9 (Udaya-only was wrong)', () => {
+    // Times Now: Shukla Trayodashi Jun 8 07:17 → Jun 9 09:35; observed Jun 8.
+    expect(engine.calculate(atMidnight(2025, 6, 8)).fasting?.id).toBe('pradosh-vrat');
+    expect(engine.calculate(atMidnight(2025, 6, 9)).fasting?.id ?? 'none').not.toMatch(/pradosh/);
   });
 
   it('plain Pradosh keeps the base id on other weekdays', () => {

@@ -3,7 +3,7 @@
  * Why: Central class that orchestrates all panchang calculations
  */
 
-import { 
+import {
   GeoLocation, 
   Panchang, 
   Tithi, 
@@ -14,7 +14,8 @@ import {
   TimeRange,
   DinacharyaPhase,
   SankrantiInfo,
-  AdhikMaasInfo
+  AdhikMaasInfo,
+  Festival
 } from '../types';
 import {
   TITHI_NAMES,
@@ -29,7 +30,7 @@ import {
   LUNAR_MONTHS_HINDI,
   DINACHARYA_PHASES
 } from './constants';
-import { getFestivalsForDate } from '../data/festivals';
+import { getFestivalsForDate, FESTIVALS, FestivalVyapti } from '../data/festivals';
 import { OTHER_FASTS } from '../data/fastings';
 import { isVerifiedEkadashi } from '../data/verifiedEkadashis';
 import {
@@ -133,8 +134,18 @@ export class PanchangEngine {
     // Detect fasting day based on tithi (needs sunrise/sunset for parana windows)
     const fasting = this.detectFastingDay(tithi, localDate, sunrise, sunset);
 
-    // Detect festivals based on tithi, paksha, AND lunar month
-    const festivals = getFestivalsForDate(localDate, tithi.number, tithi.paksha, undefined, lunarMonth);
+    // Detect festivals based on tithi, paksha, AND lunar month, then correct
+    // for vyapti (Udaya matching alone misdates Madhyahna/Nishita festivals).
+    // The ADD path checks rule months against the true amanta month: the
+    // legacy sun-sign lunarMonth reads Phalguna in mid-Feb while the span is
+    // amanta Magha (Maha Shivratri's month).
+    const festivals = this.applyFestivalVyapti(
+      getFestivalsForDate(localDate, tithi.number, tithi.paksha, undefined, lunarMonth),
+      localDate,
+      sunrise,
+      sunset,
+      this.getAmantaMonthNumber(localDate)
+    );
 
     // Detect solar ingress (Sankranti) occurring during this civil day
     const ingress = this.findSolarIngress(localDate);
@@ -269,10 +280,15 @@ export class PanchangEngine {
       };
     }
 
-    // Pradosh (Trayodashi, either paksha) with weekday subtyping:
-    // Monday=Soma, Tuesday=Bhauma, Saturday=Shani. Content comes from the
+    // Pradosh: Trayodashi (either paksha) prevailing AT SUNSET, first evening
+    // only. Pradosh is an evening (pradosh-kaal) vrat, so Udaya matching is
+    // wrong in both directions: it fires when Trayodashi ends before sunset
+    // (e.g. Feb 26 2025) and misses when Trayodashi begins mid-day (e.g.
+    // Jan 11 2025 Shani Pradosh, Mar 11 2025 Bhauma Pradosh). When Trayodashi
+    // spans two sunsets the first evening is observed (purva). Monday=Soma,
+    // Tuesday=Bhauma, Saturday=Shani. Content comes from the
     // OTHER_FASTS['pradosh-vrat'] template; only the subtype name/id varies.
-    if (tithiName.includes('trayodashi')) {
+    if (this.isPradoshEvening(date, sunset)) {
       let id = 'pradosh-vrat';
       let name = 'Pradosh Vrat';
       let nameHindi = 'प्रदोष व्रत';
@@ -625,8 +641,11 @@ export class PanchangEngine {
   /**
    * Tithi index (0-29) at an arbitrary moment. Index 0 = Shukla Pratipada
    * (just after new moon); 29 = Krishna Amavasya (just before new moon).
+   * Public: the festival vyapti pass and tests evaluate tithi at
+   * midday/sunset/midnight through this (Udaya-only matching misdates
+   * Madhyahna-vyapini festivals like Ganesh Chaturthi by a day).
    */
-  private tithiIndexAt(at: Date): number {
+  tithiIndexAt(at: Date): number {
     const sunLong = toSidereal(getSunLongitude(at), getAyanamsa(at));
     const moonLong = toSidereal(getMoonLongitude(at), getAyanamsa(at));
     return calculateTithiIndex(sunLong, moonLong);
@@ -694,6 +713,28 @@ export class PanchangEngine {
   }
 
   /**
+   * Enclosing amanta lunar month: previous new moon, next new moon, and the
+   * solar ingresses strictly inside (prevNM, nextNM]. Shared primitive for
+   * Adhik detection and amanta month naming.
+   */
+  private getLunarMonthSpan(date: Date): {
+    prevNM: Date;
+    nextNM: Date;
+    ingresses: Array<{ ingressTime: Date; rashiIndex: number }>;
+  } | null {
+    const day = new Date(date);
+    day.setHours(0, 0, 0, 0);
+
+    const prevNM = this.findNewMoonMoment(day, -1);
+    if (!prevNM) return null;
+    // Step just past prevNM so the forward search cannot return the same moment.
+    const nextNM = this.findNewMoonMoment(new Date(prevNM.getTime() + 3600 * 1000), 1);
+    if (!nextNM || nextNM.getTime() <= prevNM.getTime()) return null;
+
+    return { prevNM, nextNM, ingresses: this.findIngressInSpan(prevNM, nextNM) };
+  }
+
+  /**
    * Adhik Maas (leap month) / Kshaya Maas (deleted month) for the lunar
    * month containing `date` (amanta: new-moon → new-moon span).
    *
@@ -706,16 +747,9 @@ export class PanchangEngine {
    * Additive only: the legacy sun-sign `lunarMonth` field is untouched.
    */
   getAdhikMaasInfo(date: Date): AdhikMaasInfo | null {
-    const day = new Date(date);
-    day.setHours(0, 0, 0, 0);
-
-    const prevNM = this.findNewMoonMoment(day, -1);
-    if (!prevNM) return null;
-    // Step just past prevNM so the forward search cannot return the same moment.
-    const nextNM = this.findNewMoonMoment(new Date(prevNM.getTime() + 3600 * 1000), 1);
-    if (!nextNM || nextNM.getTime() <= prevNM.getTime()) return null;
-
-    const ingresses = this.findIngressInSpan(prevNM, nextNM);
+    const span = this.getLunarMonthSpan(date);
+    if (!span) return null;
+    const { prevNM, nextNM, ingresses } = span;
     if (ingresses.length === 1) return null;
 
     if (ingresses.length === 0) {
@@ -754,6 +788,120 @@ export class PanchangEngine {
       spanStart: prevNM,
       spanEnd: nextNM,
     };
+  }
+
+  /**
+   * True amanta month number (1=Chaitra … 12=Phalguna) for `date`, from the
+   * enclosing new-moon span's sankranti (rashi R → month R+1, verified:
+   * Simha ingress → Shravana, Kumbha ingress → Magha). Adhik spans resolve
+   * to their Nija namesake's number. Null when spans cannot be found.
+   *
+   * NOTE: this differs from the legacy sun-sign `lunarMonth` near month
+   * boundaries (e.g. mid-Feb reads Phalguna by sun sign but is amanta
+   * Magha). Festival vyapti rules use this; legacy matching is untouched.
+   */
+  getAmantaMonthNumber(date: Date): number | null {
+    const span = this.getLunarMonthSpan(date);
+    if (!span) return null;
+    if (span.ingresses.length === 1) return span.ingresses[0].rashiIndex + 1;
+    const adhik = this.getAdhikMaasInfo(date);
+    return adhik ? adhik.monthNumber : null;
+  }
+
+  /**
+   * Civil moment a vyapti rule is evaluated at.
+   * Madhyahna = midday (sunrise–sunset midpoint, when Ganesh was born);
+   * pradosh = sunset (evening worship); nishita = midnight (Shiva's night).
+   */
+  private vyaptiMoment(
+    vyapti: FestivalVyapti,
+    localDate: Date,
+    sunrise: Date,
+    sunset: Date
+  ): Date {
+    if (vyapti === 'madhyahna') {
+      return new Date((sunrise.getTime() + sunset.getTime()) / 2);
+    }
+    if (vyapti === 'pradosh') return new Date(sunset);
+    // nishita: midnight ending this civil day.
+    return new Date(localDate.getTime() + 24 * 3600 * 1000);
+  }
+
+  /** Tithi index a (tithiNumber, paksha) rule corresponds to (0-29). */
+  private ruleTithiIndex(tithiNumber: number, paksha: 'Shukla' | 'Krishna'): number {
+    return paksha === 'Shukla' ? tithiNumber - 1 : 14 + tithiNumber;
+  }
+
+  /** True for Shukla/Krishna Trayodashi index (12/27). */
+  private isTrayodashiIndex(idx: number): boolean {
+    return idx === 12 || idx === 27;
+  }
+
+  /**
+   * Pradosh-evening test: Trayodashi (idx 12/27) prevails at this day's
+   * sunset AND did not prevail at the previous sunset (first evening wins
+   * when the tithi spans two sunsets). Previous sunset is recomputed with
+   * the location-aware sunset model — no fixed clock times.
+   */
+  private isPradoshEvening(date: Date, sunset: Date): boolean {
+    if (!this.isTrayodashiIndex(this.tithiIndexAt(sunset))) return false;
+    const prevDay = new Date(date);
+    prevDay.setDate(prevDay.getDate() - 1);
+    prevDay.setHours(0, 0, 0, 0);
+    const prevSunset = calculateSunset(prevDay, this.location);
+    return !this.isTrayodashiIndex(this.tithiIndexAt(prevSunset));
+  }
+
+  /**
+   * Vyapti correction pass over Udaya-matched festivals.
+   *
+   * Udaya matching misdates festivals whose shastra prescribes another
+   * moment: Ganesh Chaturthi 2026 matches Sep 15 at sunrise but prevails at
+   * midday only on Sep 14; Maha Shivratri 2026 matches Feb 16 at sunrise
+   * but Chaturdashi holds midnight ending Feb 15. So: drop Udaya matches
+   * whose vyapti moment fails, and add vyapti-rule festivals whose moment
+   * holds even when Udaya missed them. Rules without vyapti pass through
+   * untouched; unknown ids (custom lists) are kept, never dropped.
+   */
+  private applyFestivalVyapti(
+    udayaMatched: Festival[],
+    localDate: Date,
+    sunrise: Date,
+    sunset: Date,
+    amantaMonth: number | null
+  ): Festival[] {
+    const ruleById = new Map(FESTIVALS.map((r) => [r.id, r]));
+    const kept = udayaMatched.filter((f) => {
+      const rule = ruleById.get(f.id);
+      if (!rule || !rule.vyapti || rule.vyapti === 'udaya') return true;
+      const moment = this.vyaptiMoment(rule.vyapti, localDate, sunrise, sunset);
+      return this.tithiIndexAt(moment) === this.ruleTithiIndex(rule.tithiNumber, rule.paksha);
+    });
+
+    for (const rule of FESTIVALS) {
+      if (!rule.vyapti || rule.vyapti === 'udaya') continue;
+      if (kept.some((f) => f.id === rule.id)) continue;
+      // Month gate on the amanta month (null inside unresolvable spans,
+      // e.g. Adhik — skip rather than misassign).
+      if (amantaMonth === null) continue;
+      if (rule.month > 0 && rule.month !== amantaMonth) continue;
+      const moment = this.vyaptiMoment(rule.vyapti, localDate, sunrise, sunset);
+      if (this.tithiIndexAt(moment) !== this.ruleTithiIndex(rule.tithiNumber, rule.paksha)) continue;
+      kept.push({
+        id: rule.id,
+        name: rule.name,
+        nameHindi: rule.nameHindi,
+        description: rule.description,
+        significance: rule.significance,
+        date: new Date(localDate),
+        tithiNumber: rule.tithiNumber,
+        paksha: rule.paksha,
+        month: rule.month,
+        type: rule.type,
+        region: rule.region,
+      });
+    }
+    return kept;
   }
 
   /**
