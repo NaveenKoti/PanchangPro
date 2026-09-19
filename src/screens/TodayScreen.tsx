@@ -37,6 +37,9 @@ import {
   Star,
   Bell,
   Sun,
+  Sunrise,
+  Sunset,
+  Clock,
 } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import {
@@ -301,7 +304,7 @@ export const TodayScreen: React.FC = () => {
         <Paper
           elevation={0}
           sx={{
-            mb: 2,
+            mb: 1.5,
             borderRadius: 2,
             overflow: 'hidden',
             border: '1px solid',
@@ -499,9 +502,10 @@ export const TodayScreen: React.FC = () => {
             xs: '1fr',
             md: '1fr 0.618fr', // Golden ratio on tablet+
           },
-          gap: { xs: 2, md: 3 },
-          mb: 2,
+          gap: { xs: 1.5, md: 3 },
+          mb: 1.5,
           width: '100%',
+          maxWidth: '100%',
         }}
       >
         {/* LEFT (61.8%): Tithi Hero Card */}
@@ -557,9 +561,9 @@ export const TodayScreen: React.FC = () => {
                 sx={{
                   fontWeight: 500,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
+                  letterSpacing: '0.08em',
                   color: 'text.secondary',
-                  fontSize: '0.7rem',
+                  fontSize: '0.75rem',
                   display: 'block',
                   mb: 0.25,
                 }}
@@ -616,9 +620,9 @@ export const TodayScreen: React.FC = () => {
                 sx={{
                   fontWeight: 500,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
+                  letterSpacing: '0.08em',
                   color: 'text.secondary',
-                  fontSize: '0.7rem',
+                  fontSize: '0.75rem',
                   display: 'block',
                   mb: 0.25,
                 }}
@@ -676,9 +680,9 @@ export const TodayScreen: React.FC = () => {
                 sx={{
                   fontWeight: 500,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
+                  letterSpacing: '0.08em',
                   color: 'text.secondary',
-                  fontSize: '0.7rem',
+                  fontSize: '0.75rem',
                   display: 'block',
                   mb: 0.25,
                 }}
@@ -710,7 +714,7 @@ export const TodayScreen: React.FC = () => {
       {/* ========== "WHILE YOU WERE AWAY" CATCH-UP (custom tithis only) ========== */}
       {missedReminders.length > 0 && (
         <Fade in timeout={300}>
-          <Box sx={{ mb: 2 }}>
+          <Box sx={{ mb: 1.5 }}>
             <Alert
               icon={<Bell size={20} />}
               severity="info"
@@ -777,7 +781,7 @@ export const TodayScreen: React.FC = () => {
       {/* Guidance directly under hero — single timings source via props, times render once in Timings row below */}
       {/* ========== SEGMENT 2b. TODAY'S GUIDANCE CARD ========== */}
       <Fade in timeout={300}>
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 1.25, maxWidth: '100%' }}>
           <TodayGuidanceCard
             panchang={panchang}
             rahuKaal={panchang.rahuKaal}
@@ -791,7 +795,7 @@ export const TodayScreen: React.FC = () => {
           (moved up directly under guidance so sunrise/Rahu Kaal are visible without deep scroll;
           TodayGuidanceCard above already receives these as props; times live here once) ========== */}
       <Fade in timeout={325}>
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 1.5, maxWidth: '100%' }}>
           <Card
             elevation={0}
             sx={{
@@ -812,19 +816,104 @@ export const TodayScreen: React.FC = () => {
               },
             }}
           >
-            <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
-              <Typography variant="overline" sx={{ color: 'warning.main', fontWeight: 500, letterSpacing: '0.08em', fontSize: '0.7rem', display: 'block' }}>
+            <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+              <Typography variant="overline" sx={{ color: 'warning.main', fontWeight: 500, letterSpacing: '0.1em', fontSize: '0.75rem', display: 'block', mb: 1 }}>
                 {t('panchang.timings') || 'Timings'}
               </Typography>
-              <Typography variant="h5" sx={{ fontWeight: 500, color: 'text.primary', mt: 0.25, fontSize: { xs: '0.875rem', sm: '0.95rem' } }}>
-                {t('panchang.rahuKaal')}: {formatTime(panchang.rahuKaal.start)} - {formatTime(panchang.rahuKaal.end)}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-                {t('panchang.yamagandam') || 'Yamagandam'}: {formatTime(panchang.yamagandam.start)} - {formatTime(panchang.yamagandam.end)}
-                {'  ·  '}
-                {t('panchang.gulikaKaal') || 'Gulika'}: {formatTime(panchang.gulikaKaal.start)} - {formatTime(panchang.gulikaKaal.end)}
-              </Typography>
-              <Typography variant="caption" sx={{ color: 'warning.main', display: 'block', mt: 0.25 }}>
+              {/* Rahu Kaal — emphasized warning-tint row */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1.25,
+                  py: 0.75,
+                  px: 1,
+                  borderRadius: 1.5,
+                  bgcolor: isDark
+                    ? `${muiTheme.palette.warning.main}15`
+                    : `${muiTheme.palette.warning.main}10`,
+                  border: '1px solid',
+                  borderColor: isDark
+                    ? `${muiTheme.palette.warning.main}25`
+                    : `${muiTheme.palette.warning.main}15`,
+                  mb: 0.75,
+                  maxWidth: '100%',
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 1.5,
+                    bgcolor: isDark
+                      ? `${muiTheme.palette.warning.main}25`
+                      : `${muiTheme.palette.warning.main}15`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Clock size={18} color={muiTheme.palette.warning.main} />
+                </Box>
+                <Typography variant="caption" sx={{ fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.7rem', color: 'warning.main' }}>
+                  {t('panchang.rahuKaal')}
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8125rem', color: 'text.primary', ml: 'auto', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                  {formatTime(panchang.rahuKaal.start)} - {formatTime(panchang.rahuKaal.end)}
+                </Typography>
+              </Box>
+              {/* Yamagandam row */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, py: 0.5, px: 1, maxWidth: '100%' }}>
+                <Box
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 1.5,
+                    bgcolor: isDark
+                      ? `${muiTheme.palette.primary.main}20`
+                      : `${muiTheme.palette.primary.main}10`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Sunrise size={18} color={muiTheme.palette.primary.main} />
+                </Box>
+                <Typography variant="caption" sx={{ fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.7rem', color: 'text.secondary' }}>
+                  {t('panchang.yamagandam') || 'Yamagandam'}
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8125rem', color: 'text.primary', ml: 'auto', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                  {formatTime(panchang.yamagandam.start)} - {formatTime(panchang.yamagandam.end)}
+                </Typography>
+              </Box>
+              {/* Gulika Kaal row */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, py: 0.5, px: 1, maxWidth: '100%' }}>
+                <Box
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 1.5,
+                    bgcolor: isDark
+                      ? `${muiTheme.palette.info.main}20`
+                      : `${muiTheme.palette.info.main}10`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Sunset size={18} color={muiTheme.palette.info.main} />
+                </Box>
+                <Typography variant="caption" sx={{ fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.7rem', color: 'text.secondary' }}>
+                  {t('panchang.gulikaKaal') || 'Gulika'}
+                </Typography>
+                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8125rem', color: 'text.primary', ml: 'auto', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                  {formatTime(panchang.gulikaKaal.start)} - {formatTime(panchang.gulikaKaal.end)}
+                </Typography>
+              </Box>
+              <Typography variant="caption" sx={{ color: 'warning.main', display: 'block', mt: 0.75 }}>
                 {t('panchang.rahuKaalWarning')}
               </Typography>
               <AuspiciousIndicator
@@ -841,7 +930,7 @@ export const TodayScreen: React.FC = () => {
       {/* ========== 5. AUSPICIOUS TIMES BADGE ========== */}
       {panchang.isAuspiciousTime && (
         <Zoom in timeout={350}>
-          <Box sx={{ mb: 2 }}>
+          <Box sx={{ mb: 1.25 }}>
             <AuspiciousIndicator
               favorability="auspicious"
               size="large"
@@ -854,7 +943,7 @@ export const TodayScreen: React.FC = () => {
 
       {/* ========== 6. FESTIVAL & FASTING ALERTS (§2.2) ========== */}
       <Fade in timeout={350}>
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 1.5 }}>
           {/* Festival Alert */}
           {panchang.festivals.length > 0 && (
             <Alert
@@ -947,15 +1036,17 @@ export const TodayScreen: React.FC = () => {
 
       {/* ========== SEGMENT 3. DETAIL GRID — Stories rhythm (overline + h5 + body2) ========== */}
       <Fade in timeout={400}>
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 1.5 }}>
           <Typography
             variant="h5"
             sx={{
               fontWeight: 500,
-              mb: 1.5,
+              fontSize: '1.25rem',
+              mb: 1.25,
               pl: 0.5,
               fontFamily: '"Noto Sans", sans-serif',
-              letterSpacing: '-0.01em',
+              letterSpacing: '-0.02em',
+              lineHeight: 1.3,
               color: 'text.primary',
             }}
           >
@@ -970,8 +1061,9 @@ export const TodayScreen: React.FC = () => {
                 sm: 'repeat(2, 1fr)',
                 md: 'repeat(3, 1fr)',
               },
-              gap: 2,
+              gap: 1.5,
               width: '100%',
+              maxWidth: '100%',
             }}
           >
             {/* Nakshatra Section */}
@@ -1002,7 +1094,7 @@ export const TodayScreen: React.FC = () => {
                   '&:active': { transform: 'scale(0.98)' },
                 }}
               >
-                <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
                   <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
                     {panchang.nakshatra.name}
                   </Typography>
@@ -1051,7 +1143,7 @@ export const TodayScreen: React.FC = () => {
                   '&:active': { transform: 'scale(0.98)' },
                 }}
               >
-                <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
                   <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
                     {panchang.yoga.name}
                   </Typography>
@@ -1092,8 +1184,8 @@ export const TodayScreen: React.FC = () => {
                   },
                 }}
               >
-                <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.5px', fontSize: '0.7rem' }}>
+                <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>
                     {t('panchang.samvatsara') || 'Samvatsara'}
                   </Typography>
                   <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', mt: 0.25 }}>
@@ -1112,7 +1204,7 @@ export const TodayScreen: React.FC = () => {
 
       {/* ========== 8. AYURVEDIC CLOCK ========== */}
       <Fade in timeout={450}>
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 1.5 }}>
           <AyurvedicClock panchang={panchang} />
         </Box>
       </Fade>
@@ -1123,7 +1215,7 @@ export const TodayScreen: React.FC = () => {
           sx={{
             display: 'flex',
             justifyContent: 'center',
-            mb: 2,
+            mb: 1.5,
           }}
         >
           <Button

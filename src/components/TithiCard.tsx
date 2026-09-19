@@ -27,12 +27,23 @@ interface TithiCardProps {
 export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, onClick }) => {
   const theme = useTheme();
   const { isMobile } = useBreakpoints();
+  const isDark = theme.palette.mode === 'dark';
   const isShukla = tithi.paksha === 'Shukla';
 
   // Use primary (saffron) for Shukla, secondary (indigo) for Krishna
   const accent = isShukla ? theme.palette.primary : theme.palette.secondary;
   const accentLight = `${accent.main}15`;
   const accentBorder = `${accent.main}25`;
+
+  // Moon-phase illumination: 0 = new, 15 = full.
+  // Waxing (Shukla): lit fraction grows with tithi number; waning (Krishna): shrinks.
+  const tithiNum = Math.min(15, Math.max(1, tithi.number));
+  const litFraction = isShukla ? tithiNum / 15 : 1 - (tithiNum - 1) / 15;
+  const moonSize = 24;
+  const litWidth = Math.max(1, Math.round(moonSize * litFraction));
+  // Waxing lights the right limb, waning lights the left limb.
+  const litX = isShukla ? moonSize - litWidth : 0;
+  const clipId = `tithi-moon-${isShukla ? 'sh' : 'kr'}-${tithiNum}`;
 
   const handleClick = () => {
     if (onClick) {
@@ -63,6 +74,8 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
       sx={{
         borderRadius: 2,
         overflow: 'hidden',
+        // HERO exception: saffron-tinted gradient (low alpha, readable both modes)
+        background: `linear-gradient(135deg, ${theme.palette.primary.main}1F 0%, ${theme.palette.primary.light}14 45%, ${theme.palette.background.paper} 100%)`,
         bgcolor: 'background.paper',
         border: '1px solid',
         borderColor: 'divider',
@@ -85,29 +98,61 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
                 width: 48,
                 height: 48,
                 borderRadius: 2,
-                bgcolor: accentLight,
+                bgcolor: isDark ? `${accent.main}22` : accentLight,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 border: '1px solid',
                 borderColor: accentBorder,
+                flexShrink: 0,
               }}
             >
-              <Moon
-                size={24}
-                strokeWidth={isShukla ? 1.5 : 2}
-                color={accent.main}
-              />
+              {/* Deterministic moon-phase visual: dark disc + lit overlay via clip */}
+              <svg
+                width={moonSize}
+                height={moonSize}
+                viewBox={`0 0 ${moonSize} ${moonSize}`}
+                role="img"
+                aria-label={`${isShukla ? 'Waxing' : 'Waning'} moon, tithi ${tithi.number}`}
+              >
+                <defs>
+                  <clipPath id={clipId}>
+                    <rect x={litX} y={0} width={litWidth} height={moonSize} />
+                  </clipPath>
+                </defs>
+                <circle
+                  cx={moonSize / 2}
+                  cy={moonSize / 2}
+                  r={moonSize / 2 - 1}
+                  fill="none"
+                  stroke={accent.main}
+                  strokeWidth={1.5}
+                />
+                <circle
+                  cx={moonSize / 2}
+                  cy={moonSize / 2}
+                  r={moonSize / 2 - 2.5}
+                  fill={`${accent.main}30`}
+                />
+                <circle
+                  cx={moonSize / 2}
+                  cy={moonSize / 2}
+                  r={moonSize / 2 - 2.5}
+                  fill={accent.main}
+                  clipPath={`url(#${clipId})`}
+                />
+              </svg>
             </Box>
             <Box>
               <Typography
                 variant="h4"
                 sx={{
                   fontWeight: 500,
-                  fontSize: isMobile ? '1.75rem' : '2rem',
+                  fontSize: isMobile ? 'clamp(1.75rem, 7vw, 2rem)' : '2.25rem',
                   color: 'text.primary',
                   letterSpacing: '-0.02em',
                   mb: 0.25,
+                  lineHeight: 1.15,
                 }}
               >
                 {tithi.name}

@@ -86,6 +86,14 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
   const colorLight = isDark ? `${color}15` : `${color}08`;
   const colorBorder = isDark ? `${color}30` : `${color}20`;
 
+  // Thin SVG progress ring for the score (same value, favorability color).
+  const ringSize = 44;
+  const ringStroke = 3.5;
+  const ringRadius = (ringSize - ringStroke) / 2;
+  const ringCirc = 2 * Math.PI * ringRadius;
+  const ringValue = Math.min(100, Math.max(0, guidance.score));
+  const ringOffset = ringCirc * (1 - ringValue / 100);
+
   return (
     <Fade in timeout={500}>
       <Card
@@ -102,14 +110,14 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
           {/* Header - Always Visible */}
           <Box
             sx={{
-              p: 2,
+              p: 1.5,
               bgcolor: colorLight,
               cursor: 'pointer',
               transition: 'all 0.2s ease',
             }}
             onClick={() => setExpanded(!expanded)}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               {/* Icon */}
               <Box
                 sx={{
@@ -127,14 +135,14 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
               </Box>
 
               {/* Text */}
-              <Box sx={{ flex: 1 }}>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography
                   variant="subtitle1"
                   sx={{
                     fontWeight: 500,
-                    fontSize: '1rem',
+                    fontSize: '1.0625rem',
                     color: 'text.primary',
-                    mb: 0.5,
+                    mb: 0.25,
                     letterSpacing: '-0.01em',
                   }}
                 >
@@ -146,33 +154,62 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
                     fontWeight: 400,
                     fontSize: '0.875rem',
                     color: 'text.secondary',
+                    lineHeight: 1.45,
                   }}
                 >
                   {isHindi ? getGuidanceSummaryHindi(guidance) : getGuidanceSummary(guidance)}
                 </Typography>
               </Box>
 
-              {/* Score & Expand */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              {/* Score ring & Expand */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Box
+                  role="img"
+                  aria-label={`Guidance score ${guidance.score} out of 100`}
                   sx={{
-                    px: 1.5,
-                    py: 0.5,
-                    borderRadius: 1.5,
-                    bgcolor: color,
+                    position: 'relative',
+                    width: ringSize,
+                    height: ringSize,
+                    flexShrink: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
-              <Typography
-                variant="caption"
-                sx={{
-                  fontWeight: 500,
-                  fontSize: '0.75rem',
-                  color: theme.palette.primary.contrastText,
-                  letterSpacing: '0.02em',
-                }}
-              >
-                {guidance.score}
-              </Typography>
+                  <svg width={ringSize} height={ringSize} viewBox={`0 0 ${ringSize} ${ringSize}`}>
+                    <circle
+                      cx={ringSize / 2}
+                      cy={ringSize / 2}
+                      r={ringRadius}
+                      fill="none"
+                      stroke={`${color}25`}
+                      strokeWidth={ringStroke}
+                    />
+                    <circle
+                      cx={ringSize / 2}
+                      cy={ringSize / 2}
+                      r={ringRadius}
+                      fill="none"
+                      stroke={color}
+                      strokeWidth={ringStroke}
+                      strokeLinecap="round"
+                      strokeDasharray={ringCirc}
+                      strokeDashoffset={ringOffset}
+                      transform={`rotate(-90 ${ringSize / 2} ${ringSize / 2})`}
+                    />
+                  </svg>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      position: 'absolute',
+                      fontWeight: 500,
+                      fontSize: '0.7rem',
+                      color: 'text.primary',
+                      letterSpacing: '0.01em',
+                    }}
+                  >
+                    {guidance.score}
+                  </Typography>
                 </Box>
                 <IconButton
                   size="small"
@@ -192,10 +229,10 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
 
           {/* Expanded Content */}
           <Collapse in={expanded} timeout={300}>
-            <Box sx={{ p: 2 }}>
+            <Box sx={{ p: 1.5, pt: 1.25 }}>
               {/* Good For */}
               {guidance.goodFor.length > 0 && (
-                <Box sx={{ mb: 2.5 }}>
+                <Box sx={{ mb: 1.5 }}>
                   <Typography
                     variant="subtitle2"
                     sx={{
@@ -231,7 +268,7 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
 
               {/* Avoid */}
               {guidance.avoid.length > 0 && (
-                <Box sx={{ mb: 2.5 }}>
+                <Box sx={{ mb: 1.5 }}>
                   <Typography
                     variant="subtitle2"
                     sx={{
@@ -269,8 +306,8 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
               {guidance.reasons.length > 0 && (
                 <Box
                   sx={{
-                    mt: 2,
-                    p: 2,
+                    mt: 1.5,
+                    p: 1.5,
                     bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
                     borderRadius: 2,
                   }}
