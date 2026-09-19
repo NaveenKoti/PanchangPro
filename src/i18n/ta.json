@@ -164,7 +164,7 @@
     "upcoming": "வரவிருக்கும் விரதங்கள்",
     "type": "வகை",
     "ekadashi": "ஏகாதசி",
-    "ekadashiList": "அனைத்து 24 ஏகாதசி விரதங்கள்",
+    "ekadashiList": "அனைத்து 23 ஏகாதசி விரதங்கள்",
     "otherVrats": "பிற விரதங்கள்",
     "otherFasts": "பிற விரத நாட்கள்",
     "pradosh": "பிரதோஷம்",
@@ -251,7 +251,6 @@
     "reminder": "நினைவூட்டல் இயக்கு",
     "reminderTime": "நினைவூட்டல் நேரம்",
     "noTithis": "இன்னும் தனிப்பயன் திதிகள் சேர்க்கப்படவில்லை",
-    "freeLimit": "இலவச பயனர்கள் 5 திதிகள் வரை சேர்க்கலாம்.",
     "viewOccurrences": "அடுத்த நிகழ்வுகளை காண்க",
     "next5Occurrences": "அடுத்த 5 நிகழ்வுகள்",
     "export": "திதிகளை ஏற்றுமதி செய்",
@@ -260,7 +259,6 @@
     "importDescription": "JSON தரவை பேஸ்ட் செய்யவும் அல்லது தனிப்பயன் திதிகளை இறக்குமதி செய்ய ஃபைல் அப்லோட் செய்யவும்.",
     "uploadFile": "ஃபைல் அப்லோட்",
     "saved": "சேமிக்கப்பட்டது",
-    "remaining": "மீதமுள்ளவை",
     "addFirst": "உங்கள் முதல் திதி சேருங்கள்",
     "empty": "இன்னும் தனிப்பயன் திதிகள் இல்லை",
     "emptySubtitle": "உங்கள் குடும்ப சடங்குகள், பிராந்திய திருவிழாக்கள் அல்லது தனிப்பட்ட சடங்குகளை சேருங்கள்",
@@ -299,8 +297,7 @@
       "fullYearCalendarDesc": "Navigate any month",
       "noAds": "Ad-free Experience",
       "noAdsDesc": "Browse without interruptions"
-    },
-    "upgradeRequired": "Upgrade to premium to add more tithis"
+    }
   },
   "stories": {
     "title": "தினசரி ஞானம்",

@@ -164,7 +164,7 @@
     "upcoming": "ಮುಂಬರುವ ಉಪವಾಸಗಳು",
     "type": "ಪ್ರಕಾರ",
     "ekadashi": "ಏಕಾದಶಿ",
-    "ekadashiList": "ಎಲ್ಲಾ 24 ಏಕಾದಶಿ ಉಪವಾಸಗಳು",
+    "ekadashiList": "ಎಲ್ಲಾ 23 ಏಕಾದಶಿ ಉಪವಾಸಗಳು",
     "otherVrats": "ಇತರ ವ್ರತಗಳು",
     "otherFasts": "ಇತರ ಉಪವಾಸ ದಿನಗಳು",
     "pradosh": "ಪ್ರದೋಷ್",
@@ -251,7 +251,6 @@
     "reminder": "ನೆನಪಿಸುವಿಕೆ ಸಕ್ರಿಯಗೊಳಿಸಿ",
     "reminderTime": "ನೆನಪಿಸುವಿಕೆ ಸಮಯ",
     "noTithis": "ಇನ್ನೂ ಕಸ್ಟಮ್ ತಿಥಿಗಳನ್ನು ಸೇರಿಸಿಲ್ಲ",
-    "freeLimit": "ಉಚಿತ ಬಳಕೆದಾರರು 5 ತಿಥಿಗಳವರೆಗೆ ಸೇರಿಸಬಹುದು.",
     "viewOccurrences": "ಮುಂದಿನ ಸಂದರ್ಭಗಳನ್ನು ವೀಕ್ಷಿಸಿ",
     "next5Occurrences": "ಮುಂದಿನ 5 ಸಂದರ್ಭಗಳು",
     "export": "ತಿಥಿಗಳನ್ನು ರಫ್ತು ಮಾಡಿ",
@@ -260,7 +259,6 @@
     "importDescription": "JSON ಡೇಟಾವನ್ನು ಅಂಟಿಸಿ ಅಥವಾ ಕಸ್ಟಮ್ ತಿಥಿಗಳನ್ನು ಆಮದು ಮಾಡಲು ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.",
     "uploadFile": "ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
     "saved": "ಉಳಿಸಲಾಗಿದೆ",
-    "remaining": "ಉಳಿದಿವೆ",
     "addFirst": "ನಿಮ್ಮ ಮೊದಲ ತಿಥಿ ಸೇರಿಸಿ",
     "empty": "ಇನ್ನೂ ಕಸ್ಟಮ್ ತಿಥಿಗಳಿಲ್ಲ",
     "emptySubtitle": "ನಿಮ್ಮ ಕುಟುಂಬ ಆಚರಣೆಗಳು, ಪ್ರಾದೇಶಿಕ ಹಬ್ಬಗಳು ಅಥವಾ ವೈಯಕ್ತಿಕ ಆಚರಣೆಗಳನ್ನು ಸೇರಿಸಿ",
@@ -299,8 +297,7 @@
       "fullYearCalendarDesc": "Navigate any month",
       "noAds": "Ad-free Experience",
       "noAdsDesc": "Browse without interruptions"
-    },
-    "upgradeRequired": "Upgrade to premium to add more tithis"
+    }
   },
   "stories": {
     "title": "ದೈನಂದಿನ ಜ್ಞಾನ",

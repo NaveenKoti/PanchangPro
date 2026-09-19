@@ -66,7 +66,22 @@ const App: React.FC = () => {
     sharePanchang,
     calculatePanchang,
     selectedDate,
+    requestedTab,
+    clearTabRequest,
   } = useAppStore();
+
+  // Store-requested tab switch (e.g. Today digest "View My Tithis" CTA):
+  // map tab id → index, then clear the request. Subscribe-only; visuals untouched.
+  useEffect(() => {
+    if (!requestedTab) return;
+    const tabIndex: Record<string, number> = { today: 0, calendar: 1, muhurta: 2, myTithis: 3 };
+    const next = tabIndex[requestedTab];
+    if (next !== undefined) {
+      setInlineScreen(null);
+      setTab(next);
+    }
+    clearTabRequest();
+  }, [requestedTab, clearTabRequest]);
 
   // Calculate current panchang for sharing
   const panchang = calculatePanchang(selectedDate);
@@ -228,6 +243,7 @@ const App: React.FC = () => {
               <IconButton
                 onClick={handleSettingsBack}
                 edge="start"
+                aria-label="Back"
                 sx={{
                   mr: 1,
                   color: 'text.primary',
@@ -301,6 +317,7 @@ const App: React.FC = () => {
             {/* Action Menu */}
             <IconButton
               onClick={handleMenuOpen}
+              aria-label="More options"
               sx={{
                 color: 'text.primary',
                 width: 48,
@@ -373,6 +390,7 @@ const App: React.FC = () => {
           {/* Floating back button for inline screens */}
           {(inlineScreen || festivalDetail) && (
             <IconButton
+              aria-label="Back to previous screen"
               onClick={() => {
                 if (festivalDetail) {
                   setFestivalDetail(null);

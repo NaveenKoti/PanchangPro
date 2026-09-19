@@ -85,8 +85,8 @@ export const VRAT_OBSERVANCES: ObservanceEntry[] = [
     id: 'ahoi-ashtami',
     name: 'Ahoi Ashtami',
     nameHindi: 'अहोई अष्टमी',
-    meaning: 'Kartika Krishna Ashtami fast by mothers for children’s welfare.',
-    meaningHindi: 'संतान के कल्याण हेतु कार्तिक कृष्ण अष्टमी व्रत।',
+    meaning: 'Kartika Krishna Ashtami fast by mothers for children’s welfare. Observed when Ashtami holds the evening (2026: Nov 1, Ashtami from 14:51); the fast ends at star-sighting (tara darshan), not moonrise — the moon rises near midnight.',
+    meaningHindi: 'संतान के कल्याण हेतु कार्तिक कृष्ण अष्टमी व्रत। संध्या समय अष्टमी होने पर व्रत; तारा दर्शन के बाद पारण, चंद्रोदय पर नहीं — चंद्रमा आधी रात के आसपास उदय होता है।',
     rule: { kind: 'tithi', month: 8, paksha: 'Krishna', tithiNumber: 8 },
   },
   {
@@ -101,8 +101,8 @@ export const VRAT_OBSERVANCES: ObservanceEntry[] = [
     id: 'bhai-dooj',
     name: 'Bhai Dooj',
     nameHindi: 'भाई दूज',
-    meaning: 'Kartika Shukla Dwitiya — sisters bless brothers, Diwali’s close.',
-    meaningHindi: 'कार्तिक शुक्ल द्वितीया — बहनें भाइयों को आशीर्वाद, दीपावली समापन।',
+    meaning: 'Kartika Shukla Dwitiya — sisters bless brothers in the afternoon (Aparahna: sunrise + 0.7 × daylength), closing Diwali. Delhi reckoning 2026: Nov 11.',
+    meaningHindi: 'कार्तिक शुक्ल द्वितीया — अपराह्न काल में बहनें भाइयों को आशीर्वाद देती हैं, दीपावली समापन।',
     rule: { kind: 'tithi', month: 8, paksha: 'Shukla', tithiNumber: 2 },
   },
 ];

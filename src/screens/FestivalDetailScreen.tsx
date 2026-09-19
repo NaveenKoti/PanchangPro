@@ -269,6 +269,50 @@ function getRuleForFestivalStory(storyId: string): ObservanceRule | null {
 }
 
 // ============================================================================
+// PUJA MUHURAT DISPLAY BLOCK (vyapti moment from festivals.ts)
+// ============================================================================
+
+/**
+ * Observance-moment (vyapti) note for festivals whose shastra prescribes a
+ * moment other than sunrise: Lakshmi Puja at sunset, Bhai Dooj in the
+ * afternoon, Karva Chauth's fast ending at moonrise, and so on. Returns null
+ * for Udaya-based festivals (no special muhurat to display).
+ */
+function getVyaptiNote(storyId: string): { en: string; hi: string } | null {
+  const festival = getFestivalById(storyId);
+  if (!festival || !festival.vyapti || festival.vyapti === 'udaya') return null;
+  switch (festival.vyapti) {
+    case 'pradosh':
+      return {
+        en: 'Observed in Pradosh Kaal — after sunset, while the tithi prevails.',
+        hi: 'प्रदोष काल में — सूर्यास्त के बाद, तिथि व्याप्त होने पर मनाया जाता है।',
+      };
+    case 'madhyahna':
+      return {
+        en: 'Observed at midday (Madhyahna), while the tithi prevails.',
+        hi: 'मध्याह्न में, तिथि व्याप्त होने पर मनाया जाता है।',
+      };
+    case 'nishita':
+      return {
+        en: 'Observed at midnight (Nishita Kaal), while the tithi prevails.',
+        hi: 'मध्यरात्रि (निशिता काल) में, तिथि व्याप्त होने पर मनाया जाता है।',
+      };
+    case 'aparahna':
+      return {
+        en: 'Observed in the afternoon (Aparahna), while the tithi prevails.',
+        hi: 'अपराह्न काल में, तिथि व्याप्त होने पर मनाया जाता है।',
+      };
+    case 'moonrise':
+      return {
+        en: 'Observed on the Udaya-tithi day; the fast ends at moonrise.',
+        hi: 'उदया तिथि के दिन व्रत; चंद्रोदय पर पारण होता है।',
+      };
+    default:
+      return null;
+  }
+}
+
+// ============================================================================
 // FESTIVAL DETAIL SCREEN
 // ============================================================================
 
@@ -303,6 +347,11 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
     const rule = getRuleForFestivalStory(festival.id);
     if (!rule) return null;
     return findNextOccurrence(rule, new Date());
+  }, [festival]);
+
+  const vyaptiNote = useMemo(() => {
+    if (!festival) return null;
+    return getVyaptiNote(festival.id);
   }, [festival]);
 
   const formatDate = useCallback((date: Date): string => {
@@ -591,6 +640,25 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
             </CardContent>
           </Card>
         </Fade>
+
+        {/* ================================================================== */}
+        {/* PUJA MUHURAT (vyapti moment — only for non-Udaya festivals) */}
+        {/* ================================================================== */}
+        {vyaptiNote && (
+          <Fade in timeout={900}>
+            <SectionCard icon={<Timer sx={{ color: theme.palette.primary.light }} />} title={isHindi ? 'पूजा मुहूर्त' : 'Puja Muhurat'}>
+              <Typography
+                sx={{
+                  color: theme.palette.text.secondary,
+                  lineHeight: 1.8,
+                  fontSize: { xs: '0.95rem', sm: '1rem' },
+                }}
+              >
+                {isHindi ? vyaptiNote.hi : vyaptiNote.en}
+              </Typography>
+            </SectionCard>
+          </Fade>
+        )}
 
         {/* ================================================================== */}
         {/* SIGNIFICANCE SECTION */}

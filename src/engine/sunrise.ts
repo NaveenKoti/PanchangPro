@@ -6,6 +6,12 @@
 
 import { GeoLocation } from '../types';
 import { J2000 } from './constants';
+import {
+  getMoonLongitude,
+  getMoonMeanElongation,
+  getMoonMeanAnomaly,
+  getMoonArgumentOfLatitude,
+} from './astronomy';
 import { 
   getJulianDay, 
   toRadians, 
@@ -275,6 +281,114 @@ export function calculateSunset(date: Date, location: GeoLocation, elevation: nu
   return hoursToDate(date, sunsetHours);
 }
 
+/**
+ * Calculate moonrise time for a given date and location.
+ *
+ * Method: geocentric ecliptic longitude from the engine's own lunar theory
+ * (getMoonLongitude) plus a truncated lunar-latitude series, converted to
+ * RA/Dec with obliquity 23.44°, then an altitude scan over the civil day for
+ * the upward crossing of the rise threshold, refined by bisection.
+ *
+ * APPROXIMATION (±10 min, documented): lunar latitude uses only the four
+ * largest Meeus terms (residual <0.3° Dec); topocentric parallax (~1°) is
+ * folded into a fixed +0.125° rise threshold instead of an observer-distance
+ * correction; refraction uses the same horizon value as sunrise. Verified
+ * against Drik Panchang: Karva Chauth Oct 10 2025 Delhi moonrise 20:13 IST
+ * (Drik, via Indian Express Oct 10 2025) — see ritual-correctness.test.ts.
+ * Do NOT use for eclipse-grade work; Karva/Sankashti parana timing only.
+ *
+ * @param date Civil day (local) for which to find moonrise
+ * @param location Geographic location with latitude, longitude, timezone
+ * @returns Moonrise as Date, or null when the moon does not rise that day
+ */
+export function calculateMoonrise(date: Date, location: GeoLocation): Date | null {
+  if (!location || location.latitude === undefined || location.longitude === undefined) {
+    throw new Error('Invalid location: latitude and longitude required');
+  }
+
+  // Obliquity of the ecliptic for the RA/Dec conversion (task convention).
+  const OBLIQUITY = 23.44;
+
+  // Geocentric altitude of the moon's TRUE center at rise: parallax (~0.95°)
+  // lifts the required true altitude while refraction + semidiameter (~0.83°)
+  // lower it; +0.125° is the standard net compromise for simple almanacs.
+  const RISE_ALTITUDE = 0.125;
+
+  const moonAltitudeAt = (at: Date): number => {
+    const jd = getJulianDay(at);
+    const T = (jd - J2000) / 36525;
+
+    // Ecliptic longitude (tropical, geocentric) from the engine lunar theory.
+    const lambda = getMoonLongitude(at);
+
+    // Truncated lunar latitude (Meeus low-accuracy series, degrees).
+    const D = getMoonMeanElongation(T);
+    const Mp = getMoonMeanAnomaly(T);
+    const F = getMoonArgumentOfLatitude(T);
+    const beta =
+      5.128 * sinDeg(F) +
+      0.2806 * sinDeg(Mp + F) +
+      0.2777 * sinDeg(Mp - F) +
+      0.1732 * sinDeg(2 * D - F);
+
+    // Ecliptic (lambda, beta) -> equatorial (RA, Dec).
+    const sinDec = sinDeg(beta) * cosDeg(OBLIQUITY) + Math.cos(toRadians(beta)) * sinDeg(OBLIQUITY) * sinDeg(lambda);
+    const dec = toDegrees(Math.asin(Math.max(-1, Math.min(1, sinDec))));
+    const ra = normalizeAngle(
+      atan2Deg(
+        sinDeg(lambda) * cosDeg(OBLIQUITY) - Math.tan(toRadians(beta)) * sinDeg(OBLIQUITY),
+        Math.cos(toRadians(lambda))
+      )
+    );
+
+    // GMST in degrees (Meeus 12.4), LST with east longitude.
+    const gmst = normalizeAngle(
+      280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * T * T
+    );
+    const lst = normalizeAngle(gmst + location.longitude);
+    let hourAngle = normalizeAngle(lst - ra);
+    if (hourAngle > 180) hourAngle -= 360;
+
+    const latRad = toRadians(location.latitude);
+    const decRad = toRadians(dec);
+    const sinAlt =
+      Math.sin(latRad) * Math.sin(decRad) +
+      Math.cos(latRad) * Math.cos(decRad) * Math.cos(toRadians(hourAngle));
+    return toDegrees(Math.asin(Math.max(-1, Math.min(1, sinAlt))));
+  };
+
+  // Scan the civil day in 10-minute steps for the first upward crossing.
+  // (Absolute-ms arithmetic: DST-safe. 10 min steps cannot skip the moon —
+  // it moves ~15°/h at most, so threshold crossings always bracket a step.)
+  const dayStart = new Date(date);
+  dayStart.setHours(0, 0, 0, 0);
+  const stepMs = 10 * 60 * 1000;
+  const dayMs = 24 * 3600 * 1000;
+  let prevT = dayStart.getTime();
+  let prevAlt = moonAltitudeAt(new Date(prevT)) - RISE_ALTITUDE;
+  // Moon already above threshold at midnight and never sets before rising
+  // again: the day's moonrise already happened yesterday — keep scanning for
+  // a set-then-rise pair; only a -/+ crossing counts as this day's moonrise.
+  for (let t = prevT + stepMs; t <= prevT + dayMs + stepMs; t += stepMs) {
+    const alt = moonAltitudeAt(new Date(t)) - RISE_ALTITUDE;
+    if (prevAlt < 0 && alt >= 0) {
+      // Bisect the crossing to ~1-second precision.
+      let low = t - stepMs;
+      let high = t;
+      for (let i = 0; i < 40; i++) {
+        const mid = (low + high) / 2;
+        if (moonAltitudeAt(new Date(mid)) - RISE_ALTITUDE >= 0) {
+          high = mid;
+        } else {
+          low = mid;
+        }
+      }
+      return new Date(high);
+    }
+    prevAlt = alt;
+  }
+  return null;
+}
 /**
  * Convert hours (decimal) to Date object
  */

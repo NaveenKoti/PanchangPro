@@ -161,7 +161,7 @@
     "upcoming": "आगामिनः उपवासाः",
     "type": "प्रकारः",
     "ekadashi": "एकादशी",
-    "ekadashiList": "सर्वाः चतुर्विंशतिः एकादशीव्रतानि",
+    "ekadashiList": "सर्वाः त्रयोविंशतिः एकादशीव्रतानि",
     "otherVrats": "अन्य उपवासाः",
     "otherFasts": "अन्यानि उपवासदिनानि",
     "pradosh": "प्रदोषः",
@@ -248,7 +248,6 @@
     "reminder": "स्मारकम् सक्षमं कुरुत",
     "reminderTime": "स्मारकसमयः",
     "noTithis": "अद्यापि वैयक्तिकी तिथिः न योजिता",
-    "freeLimit": "मुफ्त सदस्याः 5 तिथयः योजयितुं शक्नुवन्ति।",
     "viewOccurrences": "आगामिनी तिथयः दृश्यताम्",
     "next5Occurrences": "आगामिन्यः 5 तिथयः",
     "export": "तिथयः निर्यातयतु",
@@ -257,7 +256,6 @@
     "importDescription": "JSON डेटा पेस्ट् कुरुत अथवा सञ्चिका अपलोड् कुरुत।",
     "uploadFile": "सञ्चिकां प्रकाशयतु",
     "saved": "रक्षितम्",
-    "remaining": "अवशिष्टम्",
     "addFirst": "स्वप्रथमां तिथिं योजयतु",
     "empty": "इदानीं काचिद् स्वकीया तिथिः नास्ति",
     "emptySubtitle": "कुलकृत्यानि प्रादेशिकोत्सवान् वा स्वकीयानुष्ठानानि वा योजयतु",
@@ -304,8 +302,7 @@
       "fullYearCalendarDesc": "Navigate any month",
       "noAds": "Ad-free Experience",
       "noAdsDesc": "Browse without interruptions"
-    },
-    "upgradeRequired": "Upgrade to premium to add more tithis"
+    }
   },
   "invite": {
     "title": "कुटुम्बसदस्यम् आह्वयत",

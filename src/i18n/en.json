@@ -161,7 +161,7 @@
     "upcoming": "Upcoming Fasts",
     "type": "Type",
     "ekadashi": "Ekadashi",
-    "ekadashiList": "All 24 Ekadashi Fasts",
+    "ekadashiList": "All 23 Ekadashi Fasts",
     "otherVrats": "Other Vrats",
     "otherFasts": "Other Fasting Days",
     "pradosh": "Pradosh",
@@ -248,7 +248,6 @@
     "reminder": "Enable Reminder",
     "reminderTime": "Reminder Time",
     "noTithis": "No custom tithis added yet",
-    "freeLimit": "Free users can add up to 5 tithis.",
     "viewOccurrences": "View next occurrences",
     "next5Occurrences": "Next 5 occurrences",
     "export": "Export Tithis",
@@ -257,7 +256,6 @@
     "importDescription": "Paste JSON data or upload a file to import custom tithis.",
     "uploadFile": "Upload File",
     "saved": "saved",
-    "remaining": "remaining",
     "addFirst": "Add Your First Tithi",
     "empty": "No Custom Tithis Yet",
     "emptySubtitle": "Add your family rituals, regional festivals, or personal observances",
@@ -295,8 +293,7 @@
       "fullYearCalendarDesc": "Navigate any month",
       "noAds": "Ad-free Experience",
       "noAdsDesc": "Browse without interruptions"
-    },
-    "upgradeRequired": "Upgrade to premium to add more tithis"
+    }
   },
   "stories": {
     "title": "Daily Wisdom",

@@ -1634,6 +1634,418 @@ The most significant ritual of Vishu is the Vishu Kani - the "first sight" on th
     durationHindi: '१ दिन',
     colors: ['Gold', 'Yellow', 'White', 'Green'],
   },
+
+  // ============================================================================
+  // CHHATH PUJA
+  // ============================================================================
+  {
+    id: 'chhath-puja',
+    name: 'Chhath Puja',
+    nameHindi: 'छठ पूजा',
+    emoji: '🌅',
+    story: `Chhath Puja is an ancient festival dedicated to Surya, the Sun God, and Chhathi Maiya, the goddess of the festival. It is one of the oldest living traditions of sun worship, observed with remarkable discipline and devotion.
+
+According to legend, Draupadi and the Pandavas observed this fast to regain their lost kingdom, and Karna — himself born of Surya — is said to have stood in river waters offering prayers to the rising sun. Devotees offer arghya (water offerings) to the setting sun and then to the rising sun, honouring the life-giving energy that sustains all creation.`,
+    storyHindi: `छठ पूजा सूर्य देव और छठी मैया को समर्पित एक प्राचीन पर्व है। यह सूर्य उपासना की सबसे पुरानी जीवित परंपराओं में से एक है, जिसे अत्यंत अनुशासन और भक्ति के साथ मनाया जाता है।
+
+कथाओं के अनुसार, द्रौपदी और पांडवों ने अपना खोया राज्य वापस पाने के लिए यह व्रत रखा था, और सूर्य के पुत्र कर्ण नदी के जल में खड़े होकर उगते सूर्य को अर्घ्य देते थे। भक्त डूबते सूर्य और फिर उगते सूर्य को अर्घ्य देते हैं, उस जीवनदायी ऊर्जा का सम्मान करते हुए जो समस्त सृष्टि का पालन करती है।`,
+    rituals: [
+      'Observe a strict fast, including abstaining from water during the main day',
+      'Offer arghya (water and milk) to the setting sun at a riverbank or pond',
+      'Offer arghya to the rising sun the following morning',
+      'Prepare thekuas and other offerings as prasad without tasting them',
+      'Stand in knee-deep water while offering prayers to Surya',
+      'Sing traditional Chhath folk songs through the night of vigil'
+    ],
+    ritualsHindi: [
+      'कठोर व्रत रखें, मुख्य दिन जल भी ग्रहण न करें',
+      'नदी या तालाब के किनारे डूबते सूर्य को अर्घ्य (जल और दूध) दें',
+      'अगली सुबह उगते सूर्य को अर्घ्य दें',
+      'ठेकुआ और अन्य प्रसाद बिना चखे तैयार करें',
+      'सूर्य को प्रार्थना देते समय घुटनों तक जल में खड़े रहें',
+      'रात्रि जागरण में पारंपरिक छठ लोकगीत गाएं'
+    ],
+    regionalVariations: [
+      {
+        region: 'Bihar and Jharkhand',
+        regionHindi: 'बिहार और झारखंड',
+        variation: 'The heartland of Chhath. Rivers and ponds are lined with devotees; entire villages gather at the ghats.',
+        variationHindi: 'छठ की मुख्य भूमि। नदियाँ और तालाब भक्तों से भरे रहते हैं; पूरे गाँव घाटों पर एकत्र होते हैं।'
+      },
+      {
+        region: 'Eastern Uttar Pradesh and Nepal Terai',
+        regionHindi: 'पूर्वी उत्तर प्रदेश और नेपाल तराई',
+        variation: 'Celebrated with equal fervour along the Ganges and in the Madhesh region of Nepal.',
+        variationHindi: 'गंगा के किनारे और नेपाल के मधेश क्षेत्र में समान श्रद्धा के साथ मनाया जाता है।'
+      }
+    ],
+    significance: 'Chhath Puja honours Surya, the visible source of life, and Chhathi Maiya, who blesses devotees with health and prosperity. The dual offering to the setting and rising sun teaches that endings and beginnings are both sacred, and the rigorous fast expresses gratitude for nature itself.',
+    significanceHindi: 'छठ पूजा जीवन के प्रत्यक्ष स्रोत सूर्य और स्वास्थ्य-समृद्धि देने वाली छठी मैया का सम्मान है। डूबते और उगते सूर्य को अर्घ्य यह सिखाता है कि अंत और आरंभ दोनों पवित्र हैं, और कठोर व्रत प्रकृति के प्रति कृतज्ञता व्यक्त करता है।',
+    duration: '4 days',
+    durationHindi: '४ दिन',
+    colors: ['Orange', 'Gold', 'Red', 'Yellow'],
+  },
+
+  // ============================================================================
+  // PITRU PAKSHA
+  // ============================================================================
+  {
+    id: 'pitru-paksha',
+    name: 'Pitru Paksha',
+    nameHindi: 'पितृ पक्ष',
+    emoji: '🙏',
+    story: `Pitru Paksha is the fortnight dedicated to honouring departed ancestors. Each day of this period is associated with offerings to forefathers, expressing the Hindu belief that the living owe a debt of gratitude to those who came before them.
+
+The tradition recalls Karna, who after his passing offered gold in the heavens but had never offered food to his ancestors on earth — so he was permitted to return and perform shraddha rites. Families offer tarpan (water offerings), pinda daan (rice-ball offerings), and meals to priests and the needy in the name of their ancestors.`,
+    storyHindi: `पितृ पक्ष दिवंगत पूर्वजों के सम्मान को समर्पित पखवाड़ा है। इस अवधि का प्रत्येक दिन पितरों को अर्पण से जुड़ा है, जो इस हिंदू विश्वास को व्यक्त करता है कि जीवित लोगों पर अपने पूर्वजों का ऋण होता है।
+
+यह परंपरा कर्ण की कथा से जुड़ी है, जिन्होंने स्वर्ग में स्वर्ण दान किया था पर पृथ्वी पर पितरों को अन्न नहीं दिया था — इसलिए उन्हें लौटकर श्राद्ध करने की अनुमति मिली। परिवार पितरों के नाम पर तर्पण (जल अर्पण), पिंड दान (चावल के गोले) और ब्राह्मणों व ज़रूरतमंदों को भोजन कराते हैं।`,
+    rituals: [
+      'Perform shraddha rites on the tithi associated with the departed ancestor',
+      'Offer tarpan — water mixed with sesame seeds and barley — facing south',
+      'Prepare pinda daan (cooked rice balls) as offerings to the ancestors',
+      'Feed priests, crows, cows, and the needy in the ancestor’s name',
+      'Avoid new beginnings, celebrations, and non-vegetarian food during the fortnight',
+      'Recite ancestral prayers and remember family lineage with reverence'
+    ],
+    ritualsHindi: [
+      'दिवंगत पूर्वज की तिथि पर श्राद्ध करें',
+      'दक्षिण की ओर मुख करके तिल और जौ मिले जल से तर्पण दें',
+      'पितरों को पिंड दान (पके चावल के गोले) अर्पित करें',
+      'पूर्वज के नाम पर ब्राह्मणों, कौओं, गायों और ज़रूरतमंदों को भोजन कराएं',
+      'पखवाड़े में नई शुरुआत, उत्सव और मांसाहार से बचें',
+      'पितृ प्रार्थनाएं करें और श्रद्धा से वंश का स्मरण करें'
+    ],
+    regionalVariations: [
+      {
+        region: 'North India',
+        regionHindi: 'उत्तर भारत',
+        variation: 'Shraddha meals are served to priests at home; the final day (Sarva Pitru Amavasya) covers all ancestors.',
+        variationHindi: 'घर पर ब्राह्मणों को श्राद्ध भोजन कराया जाता है; अंतिम दिन (सर्व पितृ अमावस्या) सभी पितरों के लिए होता है।'
+      },
+      {
+        region: 'Gaya (Bihar)',
+        regionHindi: 'गया (बिहार)',
+        variation: 'Pinda daan at the Vishnupad temple in Gaya is considered especially liberating for ancestors.',
+        variationHindi: 'गया के विष्णुपाद मंदिर में पिंड दान पितरों के लिए विशेष रूप से मुक्तिदायक माना जाता है।'
+      }
+    ],
+    significance: 'Pitru Paksha expresses shraddha — faith and remembrance — toward one’s lineage. By feeding others in the ancestors’ names, families acknowledge that present life rests on past generations, and seek blessings of peace and continuity for the household.',
+    significanceHindi: 'पितृ पक्ष अपने वंश के प्रति श्रद्धा और स्मरण व्यक्त करता है। पितरों के नाम पर दूसरों को भोजन कराकर परिवार स्वीकार करते हैं कि वर्तमान जीवन पिछली पीढ़ियों पर टिका है, और घर की शांति व निरंतरता का आशीर्वाद मांगते हैं।',
+    duration: '15 days',
+    durationHindi: '१५ दिन',
+    colors: ['White', 'Saffron', 'Beige'],
+  },
+
+  // ============================================================================
+  // SAWAN SOMVAR
+  // ============================================================================
+  {
+    id: 'sawan-somvar',
+    name: 'Sawan Somvar',
+    nameHindi: 'सावन सोमवार',
+    emoji: '🔱',
+    story: `Sawan Somvar refers to the Mondays of the sacred rainy-season month, each dedicated to Lord Shiva. Monday is Shiva’s own day, and when it falls in this holy season its merit is said to multiply.
+
+The observance recalls Goddess Parvati, who performed severe austerities on Mondays to win Shiva as her husband. Unmarried devotees fast seeking a worthy spouse like Shiva, while married devotees pray for the health and longevity of their families. Temples resound with the chant of Om Namah Shivaya and the pouring of water and milk over the Shivling.`,
+    storyHindi: `सावन सोमवार पवित्र वर्षा ऋतु के मास के सोमवारों को कहते हैं, जिनमें प्रत्येक भगवान शिव को समर्पित है। सोमवार शिव का अपना दिन है, और इस पवित्र मास में इसका पुण्य कई गुना कहा जाता है।
+
+यह व्रत देवी पार्वती की याद दिलाता है, जिन्होंने शिव को पति रूप में पाने के लिए सोमवारों को कठोर तप किया था। अविवाहित भक्त शिव जैसे योग्य जीवनसाथी के लिए व्रत रखते हैं, जबकि विवाहित भक्त परिवार के स्वास्थ्य और दीर्घायु की प्रार्थना करते हैं। मंदिरों में ॐ नमः शिवाय का जाप और शिवलिंग पर जल-दूध का अभिषेक गूंजता है।`,
+    rituals: [
+      'Fast on each Monday — full day or with a single sattvik meal after sunset',
+      'Offer water, milk, bel leaves, and white flowers to the Shivling',
+      'Chant Om Namah Shivaya and recite the Shiva Chalisa',
+      'Visit a Shiva temple, especially ancient Jyotirlinga shrines',
+      'Wear simple clothes and maintain calm, truthful conduct through the day',
+      'Break the fast in the evening with fruits, milk, and sattvik food'
+    ],
+    ritualsHindi: [
+      'प्रत्येक सोमवार व्रत रखें — पूरे दिन या सूर्यास्त के बाद एक बार सात्विक भोजन',
+      'शिवलिंग पर जल, दूध, बेलपत्र और श्वेत पुष्प अर्पित करें',
+      'ॐ नमः शिवाय का जाप और शिव चालीसा का पाठ करें',
+      'शिव मंदिर जाएं, विशेषकर प्राचीन ज्योतिर्लिंग धाम',
+      'सादे वस्त्र पहनें और दिन भर शांत, सत्यपूर्ण आचरण रखें',
+      'सांयकाल फल, दूध और सात्विक भोजन से व्रत खोलें'
+    ],
+    regionalVariations: [
+      {
+        region: 'North India',
+        regionHindi: 'उत्तर भारत',
+        variation: 'Kanwariyas carry holy river water on foot to offer at Shiva temples; Varanasi and Haridwar see vast crowds.',
+        variationHindi: 'कांवड़िए पैदल पवित्र नदी का जल लाकर शिव मंदिरों में चढ़ाते हैं; वाराणसी और हरिद्वार में भारी भीड़ होती है।'
+      },
+      {
+        region: 'Maharashtra and Central India',
+        regionHindi: 'महाराष्ट्र और मध्य भारत',
+        variation: 'Devotees throng Trimbakeshwar, Grishneshwar, and Mahakaleshwar; Monday abhishekams draw long queues.',
+        variationHindi: 'भक्त त्र्यंबकेश्वर, घृष्णेश्वर और महाकालेश्वर में उमड़ते हैं; सोमवार के अभिषेक में लंबी कतारें लगती हैं।'
+      }
+    ],
+    significance: 'Sawan Somvar deepens devotion to Lord Shiva, the ascetic and compassionate destroyer of ignorance. The Monday fasts teach patience and self-restraint, and Parvati’s example reminds devotees that sincere resolve eventually bears divine fruit.',
+    significanceHindi: 'सावन सोमवार तपस्वी और करुणामय अज्ञान-विनाशक भगवान शिव के प्रति भक्ति गहरी करता है। सोमवार के व्रत धैर्य और संयम सिखाते हैं, और पार्वती का उदाहरण याद दिलाता है कि सच्चा संकल्प अंततः दिव्य फल देता है।',
+    colors: ['White', 'Blue', 'Saffron'],
+  },
+
+  // ============================================================================
+  // PONGAL
+  // ============================================================================
+  {
+    id: 'pongal',
+    name: 'Pongal',
+    nameHindi: 'पोंगल',
+    emoji: '🍚',
+    story: `Pongal is the Tamil harvest festival, a joyful thanksgiving to Surya, the Sun God, and to the cattle and rains that make the harvest possible. Its name comes from the dish of newly harvested rice boiled with milk and jaggery until it overflows the pot — the overflow itself is the blessing.
+
+As the sweet pongal boils over, families shout "Pongalo Pongal!" — may there be abundance. The festival honours the sun’s journey, the farmer’s labour, and the animals who share the work of the fields.`,
+    storyHindi: `पोंगल तमिल फसल उत्सव है, सूर्य देव तथा फसल संभव बनाने वाले पशुओं और वर्षा के प्रति आनंदमय कृतज्ञता। इसका नाम नए चावल को दूध और गुड़ के साथ उबालने वाले व्यंजन से आया है, जो बर्तन से उफनता है — यही उफान आशीर्वाद है।
+
+जब मीठा पोंगल उफनता है, तो परिवार "पोंगलो पोंगल!" चिल्लाते हैं — समृद्धि हो। यह पर्व सूर्य की यात्रा, किसान के श्रम और खेतों का काम बांटने वाले पशुओं का सम्मान करता है।`,
+    rituals: [
+      'Cook sweet pongal in a new clay pot and let it boil over auspiciously',
+      'Offer the first serving to Surya, the Sun God, outdoors facing the sun',
+      'Decorate homes and cattle with kolam patterns, mango leaves, and turmeric',
+      'Honour cattle on Mattu Pongal with garlands, bells, and special feed',
+      'Share pongal, sugarcane, and sweets with neighbours and relatives',
+      'Thank farm workers and exchange gifts at the end of the harvest season'
+    ],
+    ritualsHindi: [
+      'नई मिट्टी की हांडी में मीठा पोंगल पकाएं और शुभ रूप से उफनने दें',
+      'पहला भोग घर के बाहर सूर्य की ओर मुख करके सूर्य देव को अर्पित करें',
+      'घरों और पशुओं को कोलम, आम के पत्तों और हल्दी से सजाएं',
+      'मट्टू पोंगल पर पशुओं को मालाओं, घंटियों और विशेष चारे से सम्मानित करें',
+      'पड़ोसियों और रिश्तेदारों के साथ पोंगल, गन्ना और मिठाई बांटें',
+      'फसल ऋतु के अंत में खेत मज़दूरों का आभार करें और उपहार दें'
+    ],
+    regionalVariations: [
+      {
+        region: 'Tamil Nadu',
+        regionHindi: 'तमिलनाडु',
+        variation: 'Four days — Bhogi, Surya Pongal, Mattu Pongal, and Kaanum Pongal — each with distinct rites and family reunions.',
+        variationHindi: 'चार दिन — भोगी, सूर्य पोंगल, मट्टू पोंगल और काणुम पोंगल — प्रत्येक के अलग अनुष्ठान और पारिवारिक मिलन।'
+      },
+      {
+        region: 'Tamil Diaspora',
+        regionHindi: 'तमिल प्रवासी',
+        variation: 'Celebrated in Sri Lanka, Singapore, and Malaysia with community pongal cooking and cultural programmes.',
+        variationHindi: 'श्रीलंका, सिंगापुर और मलेशिया में सामुदायिक पोंगल पाक और सांस्कृतिक कार्यक्रमों के साथ मनाया जाता है।'
+      }
+    ],
+    significance: 'Pongal celebrates gratitude — to the sun, the rain, the soil, and the animals. The overflowing pot is a prayer that prosperity should spill over to all, and the festival binds farming families, workers, and neighbours in shared thanksgiving.',
+    significanceHindi: 'पोंगल कृतज्ञता का उत्सव है — सूर्य, वर्षा, मिट्टी और पशुओं के प्रति। उफनती हांडी प्रार्थना है कि समृद्धि सभी तक छलके, और यह पर्व किसान परिवारों, मज़दूरों और पड़ोसियों को साझा कृतज्ञता में जोड़ता है।',
+    duration: '4 days',
+    durationHindi: '४ दिन',
+    colors: ['Yellow', 'Green', 'Red', 'Gold'],
+  },
+
+  // ============================================================================
+  // HANUMAN JAYANTI
+  // ============================================================================
+  {
+    id: 'hanuman-jayanti',
+    name: 'Hanuman Jayanti',
+    nameHindi: 'हनुमान जयंती',
+    emoji: '🐒',
+    story: `Hanuman Jayanti celebrates the birth of Lord Hanuman, the devoted servant of Rama and embodiment of strength, humility, and selfless service. Born of Anjana with the blessings of Vayu, the wind god, Hanuman could fly across oceans yet chose to kneel at Rama’s feet.
+
+Devotees recall his leap to Lanka, his carrying of the life-saving Sanjeevani herb, and his burning of Ravana’s city — every feat performed not for glory but out of love for Rama. Temples chant the Hanuman Chalisa through the day, and his vermilion-covered form reminds devotees that true power serves devotion.`,
+    storyHindi: `हनुमान जयंती राम के परम भक्त, बल, विनम्रता और निःस्वार्थ सेवा के प्रतीक भगवान हनुमान के जन्म का उत्सव है। अंजनी के पुत्र हनुमान को वायु देव का आशीर्वाद मिला; वे समुद्र लांघ सकते थे फिर भी राम के चरणों में नतमस्तक रहना चुना।
+
+भक्त उनकी लंका छलांग, संजीवनी बूटी लाने और रावण की नगरी जलाने की याद करते हैं — हर पराक्रम यश के लिए नहीं, राम प्रेम से किया गया। मंदिरों में दिन भर हनुमान चालीसा गूंजती है, और उनका सिंदूरी रूप याद दिलाता है कि सच्ची शक्ति भक्ति की सेवा करती है।`,
+    rituals: [
+      'Fast or take a single sattvik meal while chanting the Hanuman Chalisa',
+      'Offer vermilion (sindoor), jasmine oil, marigold garlands, and boondi ladoos',
+      'Recite the Sundara Kanda from the Ramayana in temples and homes',
+      'Visit Hanuman temples at dawn for aarti and prasad distribution',
+      'Serve the needy and practise brahmacharya (self-restraint) on the day',
+      'Apply a tilak of temple sindoor for courage and protection'
+    ],
+    ritualsHindi: [
+      'हनुमान चालीसा का जाप करते हुए व्रत रखें या एक बार सात्विक भोजन लें',
+      'सिंदूर, चमेली का तेल, गेंदा की माला और बूंदी के लड्डू चढ़ाएं',
+      'मंदिरों और घरों में रामायण के सुंदरकांड का पाठ करें',
+      'भोर में हनुमान मंदिर जाकर आरती और प्रसाद वितरण में भाग लें',
+      'दीन-दुखियों की सेवा करें और दिन भर ब्रह्मचर्य (संयम) रखें',
+      'साहस और रक्षा के लिए मंदिर के सिंदूर का तिलक लगाएं'
+    ],
+    regionalVariations: [
+      {
+        region: 'North and Central India',
+        regionHindi: 'उत्तर और मध्य भारत',
+        variation: 'Grand bhandaras (community feasts) and all-night Sundara Kanda recitations at major Hanuman temples.',
+        variationHindi: 'प्रमुख हनुमान मंदिरों में विशाल भंडारे और रात्रिभर सुंदरकांड पाठ।'
+      },
+      {
+        region: 'Maharashtra and South India',
+        regionHindi: 'महाराष्ट्र और दक्षिण भारत',
+        variation: 'Celebrated as Hanumath Jayanthi with abhishekam, processions, and martial-arts displays honouring his strength.',
+        variationHindi: 'हनुमत जयंती के रूप में अभिषेक, शोभायात्रा और उनके बल के सम्मान में शारीरिक प्रदर्शन के साथ मनाई जाती है।'
+      }
+    ],
+    significance: 'Hanuman Jayanti honours devotion that never seeks reward. Hanuman’s life shows that humility magnifies strength, and that service offered with a pure heart makes even the impossible — an ocean crossed, a mountain carried — achievable.',
+    significanceHindi: 'हनुमान जयंती उस भक्ति का सम्मान है जो कभी फल नहीं मांगती। हनुमान का जीवन दिखाता है कि विनम्रता शक्ति को बढ़ाती है, और शुद्ध हृदय से की गई सेवा असंभव को भी संभव करती है — समुद्र लांघना, पर्वत उठाना।',
+    duration: '1 day',
+    durationHindi: '१ दिन',
+    colors: ['Orange', 'Red', 'Saffron', 'Gold'],
+  },
+
+  // ============================================================================
+  // VARALAKSHMI VRATAM
+  // ============================================================================
+  {
+    id: 'varalakshmi-vratam',
+    name: 'Varalakshmi Vratam',
+    nameHindi: 'वरलक्ष्मी व्रतम्',
+    emoji: '🌺',
+    story: `Varalakshmi Vratam is observed by married women seeking the blessings of Goddess Lakshmi in her boon-granting form as Varalakshmi — she who fulfils righteous wishes. The vrat recalls Charumati, a devout woman who dreamt that worshipping Varalakshmi would bring prosperity to her household, and whose devotion was richly rewarded.
+
+Women invite the goddess into their homes with a decorated kalasha, tie sacred threads, and pray for the wellbeing of their husbands, children, and families. The fast honours Lakshmi not only as wealth but as grace, patience, and household harmony.`,
+    storyHindi: `वरलक्ष्मी व्रतम् विवाहित महिलाओं द्वारा वर देने वाली लक्ष्मी — वरलक्ष्मी — के आशीर्वाद हेतु रखा जाता है, जो धर्मपूर्ण इच्छाएं पूर्ण करती हैं। यह व्रत भक्त चारुमती की याद दिलाता है, जिन्होंने स्वप्न में देखा कि वरलक्ष्मी की पूजा से घर में समृद्धि आएगी, और जिनकी भक्ति का भरपूर फल मिला।
+
+महिलाएं सजे कलश से देवी का घर में आवाहन करती हैं, पवित्र धागे बांधती हैं और पति, संतान व परिवार के कल्याण की प्रार्थना करती हैं। यह व्रत लक्ष्मी का केवल धन के रूप में नहीं, कृपा, धैर्य और गृह शांति के रूप में सम्मान करता है।`,
+    rituals: [
+      'Fast during the day and decorate a kalasha as the goddess with turmeric and flowers',
+      'Tie the sacred yellow thread (toram) on the right wrist while chanting Lakshmi mantras',
+      'Offer nine varieties of flowers, fruits, and homemade sweets to the goddess',
+      'Invite married women home, honour them with haldi-kumkum and gifts',
+      'Recite the Varalakshmi Vratam katha (sacred story) in the evening',
+      'Conclude with aarti and share prasad with family and neighbours'
+    ],
+    ritualsHindi: [
+      'दिन में व्रत रखें और हल्दी-फूलों से कलश को देवी रूप में सजाएं',
+      'लक्ष्मी मंत्रों के साथ दाईं कलाई पर पवित्र पीला धागा (तोरम) बांधें',
+      'देवी को नौ प्रकार के फूल, फल और घर की मिठाई अर्पित करें',
+      'सुहागिन महिलाओं को घर बुलाकर हल्दी-कुमकुम और उपहार से सम्मानित करें',
+      'सांयकाल वरलक्ष्मी व्रत कथा का पाठ करें',
+      'आरती से समापन करें और परिवार-पड़ोस में प्रसाद बांटें'
+    ],
+    regionalVariations: [
+      {
+        region: 'Karnataka, Tamil Nadu, and Andhra Pradesh',
+        regionHindi: 'कर्नाटक, तमिलनाडु और आंध्र प्रदेश',
+        variation: 'The most elaborate observance — neighbourhood women gather, exchange gifts, and compare kalasha decorations.',
+        variationHindi: 'सबसे भव्य अनुष्ठान — मोहल्ले की महिलाएं एकत्र होती हैं, उपहार बांटती हैं और कलश सज्जा दिखाती हैं।'
+      },
+      {
+        region: 'Maharashtra',
+        regionHindi: 'महाराष्ट्र',
+        variation: 'Observed in similar spirit alongside Jyeshtha Gauri customs, with haldi-kumkum gatherings.',
+        variationHindi: 'ज्येष्ठा गौरी परंपराओं के साथ समान भाव से, हल्दी-कुमकुम समारोहों के साथ मनाया जाता है।'
+      }
+    ],
+    significance: 'Varalakshmi Vratam honours the feminine divine as the keeper of household welfare. It strengthens bonds among women, turns the home into a temple for a day, and teaches that prosperity follows discipline, generosity, and devotion.',
+    significanceHindi: 'वरलक्ष्मी व्रतम् गृह कल्याण की रक्षिका के रूप में दिव्य नारी शक्ति का सम्मान है। यह महिलाओं के बंधन मजबूत करता है, घर को एक दिन के लिए मंदिर बनाता है, और सिखाता है कि समृद्धि अनुशासन, उदारता और भक्ति के पीछे आती है।',
+    duration: '1 day',
+    durationHindi: '१ दिन',
+    colors: ['Red', 'Gold', 'Yellow', 'Green'],
+  },
+
+  // ============================================================================
+  // KARTIK PURNIMA
+  // ============================================================================
+  {
+    id: 'kartik-purnima',
+    name: 'Kartik Purnima',
+    nameHindi: 'कार्तिक पूर्णिमा',
+    emoji: '🌕',
+    story: `Kartik Purnima is the luminous full-moon night that closes the holy month, sacred to both Shiva and Vishnu. On this night Shiva destroyed the demon Tripurasura and his three flying cities, and the gods are said to have celebrated by lighting lamps — hence the name Deva Deepavali, the Diwali of the gods.
+
+Devotees recall Guru Nanak’s birth, also honoured on this day, and the vow of the month-long Kartik fasters who rise before dawn for holy baths. Rivers glow with thousands of floating diyas as the faithful offer light back to the heavens.`,
+    storyHindi: `कार्तिक पूर्णिमा पवित्र मास का समापन करने वाली उज्ज्वल पूर्णिमा रात्रि है, जो शिव और विष्णु दोनों को पावन है। इस रात शिव ने असुर त्रिपुरासुर और उसके तीन उड़ते नगरों का नाश किया, और कहा जाता है कि देवताओं ने दीप जलाकर उत्सव मनाया — इसलिए इसका नाम देव दीपावली, देवताओं की दीपावली पड़ा।
+
+भक्त इस दिन मनाए जाने वाले गुरु नानक के जन्म का भी स्मरण करते हैं, और मास भर के कार्तिक व्रतियों के संकल्प का, जो पवित्र स्नान हेतु भोर से पहले उठते हैं। नदियाँ हज़ारों तैरते दीयों से जगमगाती हैं जब श्रद्धालु आकाश को प्रकाश लौटाते हैं।`,
+    rituals: [
+      'Take a holy dip in a river or sacred water body before sunrise',
+      'Float earthen diyas on rivers and lakes in the evening',
+      'Observe a day-long fast and light a 365-wick lamp where possible',
+      'Worship Shiva and Vishnu together with tulsi and lotus offerings',
+      'Donate lamps, sesame oil, food, and warm clothes to the needy',
+      'Stay awake in bhajan and kirtan through part of the night'
+    ],
+    ritualsHindi: [
+      'सूर्योदय से पहले नदी या पवित्र जल में स्नान करें',
+      'सांयकाल नदियों और झीलों में मिट्टी के दीये तैराएं',
+      'दिन भर व्रत रखें और संभव हो तो 365 बत्तियों वाला दीप जलाएं',
+      'तुलसी और कमल अर्पित कर शिव-विष्णु दोनों की पूजा करें',
+      'दीप, तिल का तेल, भोजन और गर्म वस्त्र ज़रूरतमंदों को दान करें',
+      'रात्रि के कुछ भाग में भजन-कीर्तन में जागरण करें'
+    ],
+    regionalVariations: [
+      {
+        region: 'Varanasi',
+        regionHindi: 'वाराणसी',
+        variation: 'Dev Deepavali — the ghats blaze with over a million lamps; the grandest Kartik Purnima celebration in India.',
+        variationHindi: 'देव दीपावली — घाट दस लाख से अधिक दीयों से जगमगाते हैं; भारत का सबसे भव्य कार्तिक पूर्णिमा उत्सव।'
+      },
+      {
+        region: 'Punjab',
+        regionHindi: 'पंजाब',
+        variation: 'Guru Nanak Gurpurab — Gurudwaras hold processions, kirtans, and langars honouring Guru Nanak’s birth.',
+        variationHindi: 'गुरु नानक गुरपुरब — गुरु नानक के जन्म के सम्मान में गुरुद्वारों में शोभायात्रा, कीर्तन और लंगर।'
+      },
+      {
+        region: 'Odisha',
+        regionHindi: 'ओडिशा',
+        variation: 'Boita Bandana — miniature boats with lamps are floated, recalling ancient maritime voyages.',
+        variationHindi: 'बोइता बंदना — दीयों वाली छोटी नावें तैराई जाती हैं, प्राचीन समुद्री यात्राओं की याद में।'
+      }
+    ],
+    significance: 'Kartik Purnima celebrates light conquering darkness on the grandest scale — the gods’ own Diwali. Floating lamps on dark waters remind devotees that every small act of devotion joins a river of collective faith.',
+    significanceHindi: 'कार्तिक पूर्णिमा सबसे भव्य स्तर पर अंधकार पर प्रकाश की विजय का उत्सव है — देवताओं की अपनी दीपावली। काले जल पर तैरते दीप याद दिलाते हैं कि भक्ति का हर छोटा कार्य सामूहिक आस्था की नदी में मिलता है।',
+    duration: '1 day',
+    durationHindi: '१ दिन',
+    colors: ['Gold', 'White', 'Orange', 'Blue'],
+  },
+
+  // ============================================================================
+  // NAG PANCHAMI
+  // ============================================================================
+  {
+    id: 'nag-panchami',
+    name: 'Nag Panchami',
+    nameHindi: 'नाग पंचमी',
+    emoji: '🐍',
+    story: `Nag Panchami honours the serpent deities, ancient guardians of water, fertility, and hidden treasures. The observance recalls Krishna’s subduing of the venomous serpent Kaliya in the Yamuna — not by killing him, but by dancing on his hoods until he surrendered and was forgiven.
+
+It also recalls the rescue of Takshaka’s kin and the vow that serpents would never harm those who honour them on this day. Devotees offer milk to snake images and anthills, seeking protection from snakebite and blessings of fertility and prosperity.`,
+    storyHindi: `नाग पंचमी सर्प देवताओं का सम्मान है, जो जल, उर्वरता और छिपे खजानों के प्राचीन रक्षक हैं। यह व्रत यमुना में विषैले सर्प कालिया पर कृष्ण की विजय की याद दिलाता है — उसे मारकर नहीं, उसके फनों पर नृत्य करके जब तक उसने समर्पण नहीं किया और क्षमा नहीं पाई।
+
+यह तक्षक के वंश की रक्षा और उस वचन की भी याद है कि सर्प इस दिन उनका सम्मान करने वालों को कभी हानि नहीं पहुंचाएंगे। भक्त सर्प चित्रों और बांबियों को दूध चढ़ाते हैं, सर्पदंश से रक्षा और उर्वरता-समृद्धि का आशीर्वाद मांगते हैं।`,
+    rituals: [
+      'Offer milk, honey, and flowers to snake images or anthills',
+      'Fast for the day and avoid digging or tilling the earth',
+      'Draw serpent figures on walls or paper with turmeric and sandalwood paste',
+      'Recite the Nag Gayatri and stories of Kaliya and Takshaka',
+      'Feed Brahmins and donate to snake rescuers or forest conservancies',
+      'Women pray for the wellbeing of their brothers and family fertility'
+    ],
+    ritualsHindi: [
+      'सर्प चित्रों या बांबियों को दूध, शहद और फूल चढ़ाएं',
+      'दिन भर व्रत रखें और धरती खोदने या हल चलाने से बचें',
+      'हल्दी और चंदन से दीवारों या कागज़ पर सर्प चित्र बनाएं',
+      'नाग गायत्री और कालिया-तक्षक की कथाओं का पाठ करें',
+      'ब्राह्मणों को भोजन कराएं और सर्प रक्षकों या वन संरक्षण को दान दें',
+      'महिलाएं भाइयों के कल्याण और परिवार की उर्वरता की प्रार्थना करें'
+    ],
+    regionalVariations: [
+      {
+        region: 'Maharashtra and Karnataka',
+        regionHindi: 'महाराष्ट्र और कर्नाटक',
+        variation: 'Women gather at anthills and temples with milk offerings; village processions carry live serpents handled by sapera communities.',
+        variationHindi: 'महिलाएं दूध लेकर बांबियों और मंदिरों में एकत्र होती हैं; गाँवों में सपेरा समुदाय सर्पों के साथ शोभायात्रा निकालते हैं।'
+      },
+      {
+        region: 'Bengal and Assam',
+        regionHindi: 'बंगाल और असम',
+        variation: 'Worshipped as the goddess Manasa with songs recounting her legends and offerings of hibiscus.',
+        variationHindi: 'देवी मनसा के रूप में उनकी कथाओं के गीतों और गुड़हल के अर्पण के साथ पूजा होती है।'
+      }
+    ],
+    significance: 'Nag Panchami teaches reverence for creatures that inspire fear — honouring snakes as part of divine creation rather than enemies. It links water, earth, and fertility in one rite, and asks protection through respect instead of conflict.',
+    significanceHindi: 'नाग पंचमी भय पैदा करने वाले जीवों के प्रति श्रद्धा सिखाती है — सर्पों को शत्रु नहीं, दिव्य सृष्टि का अंग मानना। यह जल, धरती और उर्वरता को एक अनुष्ठान में जोड़ती है, और संघर्ष के बजाय सम्मान से रक्षा मांगती है।',
+    duration: '1 day',
+    durationHindi: '१ दिन',
+    colors: ['Green', 'Yellow', 'White', 'Gold'],
+  },
 ];
 
 /**

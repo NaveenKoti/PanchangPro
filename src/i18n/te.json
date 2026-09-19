@@ -164,7 +164,7 @@
     "upcoming": "రాబోయే ఉపవాసాలు",
     "type": "రకం",
     "ekadashi": "ఏకాదశి",
-    "ekadashiList": "అన్ని 24 ఏకాదశి ఉపవాసాలు",
+    "ekadashiList": "అన్ని 23 ఏకాదశి ఉపవాసాలు",
     "otherVrats": "ఇతర వ్రతాలు",
     "otherFasts": "ఇతర ఉపవాస రోజులు",
     "pradosh": "ప్రదోషం",
@@ -251,7 +251,6 @@
     "reminder": "రిమైండర్ ప్రారంభించు",
     "reminderTime": "రిమైండర్ సమయం",
     "noTithis": "ఇంకా అనుకూల తిథులు జోడించబడలేదు",
-    "freeLimit": "ఉచిత వినియోగదారులు 5 తిథుల వరకు జోడించవచ్చు.",
     "viewOccurrences": "తదుపరి సంఘటనలను చూడండి",
     "next5Occurrences": "తదుపరి 5 సంఘటనలు",
     "export": "తిథులను ఎగుమతి చేయి",
@@ -260,7 +259,6 @@
     "importDescription": "JSON డేటాను పేస్ట్ చేయండి లేదా అనుకూల తిథులను దిగుమతి చేయడానికి ఫైల్ అప్‌లోడ్ చేయండి.",
     "uploadFile": "ఫైల్ అప్‌లోడ్ చేయి",
     "saved": "సేవ్ చేయబడింది",
-    "remaining": "మిగిలి ఉన్నాయి",
     "addFirst": "మీ మొదటి తిథి జోడించండి",
     "empty": "ఇంకా అనుకూల తిథులు లేవు",
     "emptySubtitle": "మీ కుటుంబ ఆచారాలు, ప్రాంతీయ పండుగలు లేదా వ్యక్తిగత ఆచారాలను జోడించండి",
@@ -299,8 +297,7 @@
       "fullYearCalendarDesc": "Navigate any month",
       "noAds": "Ad-free Experience",
       "noAdsDesc": "Browse without interruptions"
-    },
-    "upgradeRequired": "Upgrade to premium to add more tithis"
+    }
   },
   "stories": {
     "title": "రోజువారీ జ్ఞానం",

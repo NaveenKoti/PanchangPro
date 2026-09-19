@@ -136,6 +136,12 @@ interface AppState {
   toggleNotification: (key: keyof UserPreferences['notifications']) => void;
   updateDinacharyaSettings: (enabled: boolean, showRecommendations: boolean) => void;
   
+  // Store-requested tab switch (e.g. Today digest CTA → My Tithis).
+  // App.tsx subscribes: on requestedTab, set tab index + clear.
+  requestedTab: string | null;
+  requestTab: (tab: string) => void;
+  clearTabRequest: () => void;
+
   // Custom Tithis
   customTithis: CustomTithi[];
   addCustomTithi: (data: Omit<CustomTithi, 'id' | 'createdAt' | 'nextOccurrence'>) => boolean;
@@ -195,6 +201,11 @@ export const useAppStore = create<AppState>()(
       // Date
       selectedDate: new Date(),
       setSelectedDate: (date: Date) => set({ selectedDate: date }),
+
+      // Store-requested tab switch
+      requestedTab: null,
+      requestTab: (tab: string) => set({ requestedTab: tab }),
+      clearTabRequest: () => set({ requestedTab: null }),
       
       // Preferences
       preferences: DEFAULT_PREFERENCES,
@@ -480,17 +491,41 @@ Shared from VedaTime — Sacred Rhythms of Time`;
 );
 
 // Clear all user data (for "Delete Everything" feature)
+// Removes veda-time storage + ALL panchangpro_* notification/catch-up keys
+// (scheduled, ids, enabled, last schedule date, last_seen_at, missed shown
+// ids, analytics) and best-effort clears the killed-app push subscription.
+// Engine math and notification scheduling logic are untouched — this only
+// removes persisted keys/subscription so "delete everything" is complete.
 export const clearAllData = () => {
   if (typeof window !== 'undefined') {
     // Clear all VedaTime-related localStorage keys
     const keysToRemove = [
       'veda-time-storage',
       'panchang-pro-storage',
+      'panchangpro_scheduled_notifications',
+      'panchangpro_scheduled_ids',
+      'panchangpro_last_schedule_date',
+      'panchangpro_notifications_enabled',
+      'panchangpro_last_seen_at',
+      'panchangpro_missed_tithi_shown_ids',
+      'panchangpro_analytics',
     ];
 
     keysToRemove.forEach(key => {
       try { localStorage.removeItem(key); } catch { /* ignore */ }
     });
+
+    // Best-effort: drop the killed-app push subscription too (user asked to
+    // delete everything). Local unsubscribe only — no scheduling logic here.
+    try {
+      if ('serviceWorker' in navigator && 'PushManager' in window) {
+        navigator.serviceWorker.ready.then((reg) => {
+          reg.pushManager.getSubscription().then((sub) => {
+            if (sub) sub.unsubscribe().catch(() => undefined);
+          }).catch(() => undefined);
+        }).catch(() => undefined);
+      }
+    } catch { /* ignore */ }
 
     // Reload to reset state
     setTimeout(() => {

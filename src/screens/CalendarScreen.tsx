@@ -46,16 +46,21 @@ interface GestureState {
  velocity: number;
 }
 
-const formatTime = (date: Date) =>
- date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
 export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }) => {
  const { t, currentLanguage } = useI18n();
  const muiTheme = useMuiTheme();
  const isDark = muiTheme.palette.mode === 'dark';
   const { isMobile, isTablet, isDesktop } = useBreakpoints();
 
-  const { getCalendarMonth, setSelectedDate } = useAppStore();
+  const { getCalendarMonth, setSelectedDate, preferences } = useAppStore();
+  // Sacred times render in the LOCATION timezone (engine instants are
+  // absolute; device-local formatting corrupts them when traveling).
+  const formatTime = (date: Date) =>
+    date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: preferences.location.timezone,
+    });
  const [currentMonth, setCurrentMonth] = useState(new Date());
  const [calendarDays, setCalendarDays] = useState<CalendarDay[]>([]);
  const [isLoading, setIsLoading] = useState(true);
@@ -75,18 +80,23 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  severity: 'info' | 'success' | 'error';
  }>({ open: false, message: '', severity: 'info' });
 
+  const firstMountRef = useRef(true);
+
   useEffect(() => {
- setIsLoading(true);
- setMonthTransition('none');
- const days = getCalendarMonth(
- currentMonth.getFullYear(),
- currentMonth.getMonth()
- );
- setCalendarDays(days);
- setSelectedDay(null);
- const timer = setTimeout(() => setIsLoading(false), 250);
- return () => clearTimeout(timer);
- }, [currentMonth, getCalendarMonth]);
+  setMonthTransition('none');
+  const days = getCalendarMonth(
+  currentMonth.getFullYear(),
+  currentMonth.getMonth()
+  );
+  setCalendarDays(days);
+  setSelectedDay(null);
+  // Skeleton ONLY on first mount: compute synchronously, no artificial
+  // timer (removes month-nav flicker). Never true again on month change.
+  if (firstMountRef.current) {
+  firstMountRef.current = false;
+  setIsLoading(false);
+  }
+  }, [currentMonth, getCalendarMonth]);
 
   const getTithiColors = (tithiName: string, day: CalendarDay) => {
     const isAuspicious = tithiName.includes('Purnima') || tithiName.includes('Ekadashi');
@@ -158,15 +168,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
     });
   }, [setSelectedDate]);
 
- const handleDayLongPress = (day: CalendarDay) => {
- setSnackbar({
- open: true,
- message: 'Custom tithi feature coming soon!',
- severity: 'info',
- });
- };
-
- const handleToday = () => {
+  const handleToday = () => {
  setMonthTransition('none');
  setCurrentMonth(new Date());
  setSelectedDay(null);
@@ -433,13 +435,9 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  <Paper
  key={day.date.toISOString()}
  onClick={() => handleDayClick(day)}
- onTouchStart={() => setGestureState({ isSwiping: false, direction: null, velocity: 0 })}
- onTouchMove={() => {}}
- onContextMenu={(e) => {
- e.preventDefault();
- handleDayLongPress(day);
- }}
- elevation={0}
+  onTouchStart={() => setGestureState({ isSwiping: false, direction: null, velocity: 0 })}
+  onTouchMove={() => {}}
+  elevation={0}
  role="button"
  tabIndex={0}
  aria-label={`${day.date.getDate()} ${day.panchang.tithi.name}`}

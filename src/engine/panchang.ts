@@ -30,7 +30,7 @@ import {
   LUNAR_MONTHS_HINDI,
   DINACHARYA_PHASES
 } from './constants';
-import { getFestivalsForDate, FESTIVALS, FestivalVyapti } from '../data/festivals';
+import { getFestivalsForDate, FESTIVALS, FestivalVyapti, FestivalData } from '../data/festivals';
 import { OTHER_FASTS } from '../data/fastings';
 import { isVerifiedEkadashi } from '../data/verifiedEkadashis';
 import {
@@ -48,6 +48,7 @@ import {
 import {
   calculateSunrise,
   calculateSunset,
+  calculateMoonrise,
   calculateRahuKaal,
   calculateYamagandam,
   calculateGulikaKaal
@@ -138,13 +139,25 @@ export class PanchangEngine {
     // for vyapti (Udaya matching alone misdates Madhyahna/Nishita festivals).
     // The ADD path checks rule months against the true amanta month: the
     // legacy sun-sign lunarMonth reads Phalguna in mid-Feb while the span is
-    // amanta Magha (Maha Shivratri's month).
+    // amanta Magha (Maha Shivratri's month). Purnimanta-basis rules (Diwali,
+    // Karva, Ahoi, Bhai Dooj) additionally match the purnimanta month, which
+    // the Udaya matcher accepts via the extra argument.
+    const amantaMonth = this.getAmantaMonthNumber(localDate);
     const festivals = this.applyFestivalVyapti(
-      getFestivalsForDate(localDate, tithi.number, tithi.paksha, undefined, lunarMonth),
+      getFestivalsForDate(
+        localDate,
+        tithi.number,
+        tithi.paksha,
+        undefined,
+        lunarMonth,
+        amantaMonth === null
+          ? undefined
+          : (this.purnimantaMonth(amantaMonth, tithi.paksha) ?? undefined)
+      ),
       localDate,
       sunrise,
       sunset,
-      this.getAmantaMonthNumber(localDate)
+      amantaMonth
     );
 
     // Detect solar ingress (Sankranti) occurring during this civil day
@@ -223,13 +236,66 @@ export class PanchangEngine {
    * and tithi boundaries for the user's location — never fixed clock times
    * (Delhi winter sunrise is ~07:15, so a fixed 06:30 parana would be wrong).
    * Ekadashi parana follows the Smarta convention: next morning after sunrise,
-   * while Dwadashi prevails. Sampradaya-specific rules (e.g. Vaishnava
-   * Dwadashi-observance, Hari-Vasara exclusion) are a known future refinement.
+   * while Dwadashi prevails.
+   *
+   * Dashami-viddha Ekadashi (isEkadashiViddha): Udaya Dashami but Ekadashi by
+   * midday — labelled 'Ekadashi (Smarta)' with the Vaishnava-Dwadashi note.
+   * Sankashti adds a moonrise catch (Chaturthi prevailing at the computed
+   * moonrise, sunset fallback) alongside the Udaya day, with Angarki kept.
    */
   private detectFastingDay(tithi: Tithi, date: Date, sunrise: Date, sunset: Date) {
     const tithiName = tithi.name.toLowerCase();
     const isShukla = tithi.paksha === 'Shukla';
     const weekday = date.getDay(); // 0=Sun, 1=Mon, 2=Tue, …, 6=Sat
+
+    // Dashami-viddha Ekadashi FIRST (before the verified-DB branch): Udaya
+    // Dashami but Ekadashi prevailing by midday. Smartas fast today (Ekadashi
+    // at midday); Vaishnavas observe the Dwadashi day. No second date is
+    // invented — tomorrow's verdict is computed on its own Udaya tithi.
+    // E.g. Nov 1 2025 (Prabodhini context): Udaya Dashami, midday Ekadashi.
+    if (this.isEkadashiViddhaAt(sunrise, sunset)) {
+      const midday = new Date((sunrise.getTime() + sunset.getTime()) / 2);
+      const midPaksha = getPaksha(this.tithiIndexAt(midday));
+      const midIsShukla = midPaksha === 'Shukla';
+      return {
+        id: 'ekadashi-smarta',
+        name: 'Ekadashi (Smarta)',
+        nameHindi: 'एकादशी (स्मार्त)',
+        type: 'ekadashi' as const,
+        significance: midIsShukla
+          ? 'Shukla Paksha Ekadashi (Dashami-viddha at sunrise) — Smarta fast today. Vaishnavas observe the Dwadashi day.'
+          : 'Krishna Paksha Ekadashi (Dashami-viddha at sunrise) — Smarta fast today. Vaishnavas observe the Dwadashi day.',
+        significanceHindi: midIsShukla
+          ? 'शुक्ल पक्ष एकादशी (सूर्योदय के समय दशमी-विद्धा) — आज स्मार्त व्रत। वैष्णव द्वादशी के दिन व्रत रखते हैं।'
+          : 'कृष्ण पक्ष एकादशी (सूर्योदय के समय दशमी-विद्धा) — आज स्मार्त व्रत। वैष्णव द्वादशी के दिन व्रत रखते हैं।',
+        benefits: [
+          'Spiritual purification',
+          'Removes sins',
+          'Pleases Lord Vishnu',
+          'Improves willpower'
+        ],
+        benefitsHindi: [
+          'आध्यात्मिक शुद्धि',
+          'पाप दूर',
+          'भगवान विष्णु को प्रसन्न',
+          'इच्छाशक्ति में सुधार'
+        ],
+        rules: [
+          'No grains, beans, or cereals',
+          'Fruits, milk, and nuts allowed',
+          'Some observe complete water fast',
+          'Break fast next day during Parana time'
+        ],
+        rulesHindi: [
+          'अनाज, फलियां या अनाज नहीं',
+          'फल, दूध और मेवे की अनुमति',
+          'कुछ पूर्ण निर्जल व्रत observance करते हैं',
+          'अगले दिन पारण के समय व्रत तोड़ें'
+        ],
+        date,
+        paranaTime: this.calculateEkadashiParana(date)
+      };
+    }
 
     // Ekadashi detection - use verified database first
     const verifiedEkadashi = isVerifiedEkadashi(date);
@@ -316,7 +382,18 @@ export class PanchangEngine {
     }
 
     // Sankashti (Krishna Chaturthi) with Angarki subtyping on Tuesday.
-    if (tithi.number === 4 && !isShukla) {
+    // Observed day = Udaya Chaturthi, PLUS the moonrise catch: when Chaturthi
+    // begins after sunrise but prevails at the computed moonrise, that evening
+    // is observed (mirrors the Pradosh first-evening logic). Moonrise comes
+    // from the engine model (sunrise.ts calculateMoonrise); when uncomputable
+    // (moonless civil day), the sunset moment is evaluated instead. Angarki
+    // (Tuesday) subtyping keys off the civil weekday either way.
+    const sankashtiMoonrise = calculateMoonrise(date, this.location);
+    const chaturthiMoment = sankashtiMoonrise ?? sunset;
+    const isSankashtiDay =
+      (tithi.number === 4 && !isShukla) ||
+      this.isKrishnaChaturthiIndex(this.tithiIndexAt(chaturthiMoment));
+    if (isSankashtiDay) {
       const isAngarki = weekday === 2;
       return this.buildFastingFromTemplate(
         'sankashti-chaturthi',
@@ -324,9 +401,9 @@ export class PanchangEngine {
           ? { id: 'angarki-sankashti', name: 'Angarki Sankashti Chaturthi', nameHindi: 'अंगारकी संकष्टी चतुर्थी' }
           : { id: 'sankashti-chaturthi', name: 'Sankashti Chaturthi', nameHindi: 'संकष्टी चतुर्थी' },
         date,
-        // Fast is broken after moonrise; the engine has no moonrise model,
-        // so the window opens at local sunset (conservative) for 2h.
-        { start: sunset, end: addMinutes(sunset, 120) }
+        // Fast is broken after moonrise (engine-computed); falls back to
+        // local sunset when the moon does not rise that civil day.
+        { start: sankashtiMoonrise ?? sunset, end: addMinutes(sankashtiMoonrise ?? sunset, 120) }
       );
     }
 
@@ -811,18 +888,27 @@ export class PanchangEngine {
   /**
    * Civil moment a vyapti rule is evaluated at.
    * Madhyahna = midday (sunrise–sunset midpoint, when Ganesh was born);
-   * pradosh = sunset (evening worship); nishita = midnight (Shiva's night).
+   * pradosh = sunset (evening worship); nishita = midnight (Shiva's night);
+   * aparahna = afternoon (sunrise + 0.7 x daylength — Bhai Dooj blessings);
+   * moonrise = calculated moonrise (Karva fast-breaking; null when the moon
+   * does not rise that civil day — callers treat null as no-match).
    */
   private vyaptiMoment(
     vyapti: FestivalVyapti,
     localDate: Date,
     sunrise: Date,
     sunset: Date
-  ): Date {
+  ): Date | null {
     if (vyapti === 'madhyahna') {
       return new Date((sunrise.getTime() + sunset.getTime()) / 2);
     }
     if (vyapti === 'pradosh') return new Date(sunset);
+    if (vyapti === 'aparahna') {
+      return new Date(sunrise.getTime() + 0.7 * (sunset.getTime() - sunrise.getTime()));
+    }
+    if (vyapti === 'moonrise') {
+      return calculateMoonrise(localDate, this.location);
+    }
     // nishita: midnight ending this civil day.
     return new Date(localDate.getTime() + 24 * 3600 * 1000);
   }
@@ -832,11 +918,82 @@ export class PanchangEngine {
     return paksha === 'Shukla' ? tithiNumber - 1 : 14 + tithiNumber;
   }
 
+  /** True for Shukla/Krishna Dashami index (9/24). */
+  private isDashamiIndex(idx: number): boolean {
+    return idx === 9 || idx === 24;
+  }
+
+  /** True for Shukla/Krishna Ekadashi index (10/25). */
+  private isEkadashiIndex(idx: number): boolean {
+    return idx === 10 || idx === 25;
+  }
+
+  /** True for Krishna Chaturthi index (18) — Karva/Sankashti tithi. */
+  private isKrishnaChaturthiIndex(idx: number): boolean {
+    return idx === 18;
+  }
+
+  /**
+   * Purnimanta month number (1=Chaitra … 12=Phalguna) from the amanta month
+   * and the prevailing paksha: Shukla fortnights share the amanta name;
+   * Krishna fortnights belong to the NEXT purnimanta month (Kartika Krishna
+   * = Ashwin Krishna in amanta terms). Null-safe wrapper returns null when
+   * the amanta month is unresolvable.
+   */
+  private purnimantaMonth(amantaMonth: number | null, paksha: 'Shukla' | 'Krishna'): number | null {
+    if (amantaMonth === null) return null;
+    return paksha === 'Shukla' ? amantaMonth : (amantaMonth % 12) + 1;
+  }
+
+  /**
+   * ADD-path month gate for a vyapti rule at the vyapti moment: the rule's
+   * month must equal the amanta month — or, for monthBasis 'purnimanta'
+   * rules (Diwali/Karva/Ahoi/Bhai Dooj), the purnimanta month derived from
+   * the moment's own paksha. month=0 means every month (Sankashti).
+   */
+  private vyaptiMonthOk(
+    rule: FestivalData,
+    amantaMonth: number | null,
+    pakshaAtMoment: 'Shukla' | 'Krishna'
+  ): boolean {
+    if (rule.month === 0) return true;
+    if (amantaMonth === null) return false;
+    if (rule.month === amantaMonth) return true;
+    return (
+      rule.monthBasis === 'purnimanta' &&
+      rule.month === this.purnimantaMonth(amantaMonth, pakshaAtMoment)
+    );
+  }
+
   /** True for Shukla/Krishna Trayodashi index (12/27). */
   private isTrayodashiIndex(idx: number): boolean {
     return idx === 12 || idx === 27;
   }
 
+  /**
+   * Dashami-viddha Ekadashi test: Udaya tithi is Dashami (idx 9/24) but
+   * Ekadashi (idx 10/25) already prevails by midday (sunrise–sunset
+   * midpoint). The Smarta fast belongs to this day; Vaishnavas observe the
+   * Dwadashi day. Public: tests and UI label the split without inventing a
+   * second date. E.g. Nov 1 2025 (Prabodhini context) is viddha; Mokshada
+   * Dec 1 2025 (clean Udaya Ekadashi) is not.
+   */
+  isEkadashiViddha(date: Date): boolean {
+    const day = new Date(date);
+    day.setHours(0, 0, 0, 0);
+    const sunrise = calculateSunrise(day, this.location);
+    const sunset = calculateSunset(day, this.location);
+    return this.isEkadashiViddhaAt(sunrise, sunset);
+  }
+
+  /** Viddha core over precomputed sunrise/sunset (used by detectFastingDay). */
+  private isEkadashiViddhaAt(sunrise: Date, sunset: Date): boolean {
+    const midday = new Date((sunrise.getTime() + sunset.getTime()) / 2);
+    return (
+      this.isDashamiIndex(this.tithiIndexAt(sunrise)) &&
+      this.isEkadashiIndex(this.tithiIndexAt(midday))
+    );
+  }
   /**
    * Pradosh-evening test: Trayodashi (idx 12/27) prevails at this day's
    * sunset AND did not prevail at the previous sunset (first evening wins
@@ -862,6 +1019,26 @@ export class PanchangEngine {
    * whose vyapti moment fails, and add vyapti-rule festivals whose moment
    * holds even when Udaya missed them. Rules without vyapti pass through
    * untouched; unknown ids (custom lists) are kept, never dropped.
+   *
+   * Three ritual-correctness extensions live here (all location-aware, no
+   * fixed clock times):
+   * (a) KSHAYA: rules WITHOUT vyapti also match when the MIDDAY tithi +
+   *     paksha + amanta month fit — covering tithis skipped at sunrise.
+   *     Guard: no ADD when an adjacent day already Udaya-matches the rule,
+   *     so a tithi merely beginning mid-morning does not pull the festival
+   *     a day early (Holi 2025: Purnima prevails midday Mar 13 but Udaya
+   *     Mar 14 — Holi stays Mar 14, per published calendars).
+   * (b) VRIDDHI: a second consecutive identical rule-id day is dropped
+   *     (single-day FESTIVALS rules only; date-range observances live in
+   *     ranges.ts and are unaffected). E.g. Chhath 2025 Udaya-matched both
+   *     Oct 27 and Oct 28 (vriddhi Shashthi) — only Oct 27 (Sandhya Arghya
+   *     eve) stands. Rules with keepUdayaMatch (Holika, Karva) are exempt:
+   *     their two-day span is the documented Drik exception, not vriddhi.
+   *     Aparahna rules (Bhai Dooj) use the mirror PARA-viddha preference:
+   *     when Dwitiya holds two consecutive aparahnas (Nov 10 + 11 2026),
+   *     the LATER day is observed — today is dropped if tomorrow also fires.
+   * (c) Month gates honour monthBasis 'purnimanta' (Diwali/Karva/Ahoi/
+   *     Bhai Dooj), since their Kartika-Krishna tithis fall in amanta Ashwin.
    */
   private applyFestivalVyapti(
     udayaMatched: Festival[],
@@ -874,34 +1051,158 @@ export class PanchangEngine {
     const kept = udayaMatched.filter((f) => {
       const rule = ruleById.get(f.id);
       if (!rule || !rule.vyapti || rule.vyapti === 'udaya') return true;
-      const moment = this.vyaptiMoment(rule.vyapti, localDate, sunrise, sunset);
-      return this.tithiIndexAt(moment) === this.ruleTithiIndex(rule.tithiNumber, rule.paksha);
+      // Drik exception (Holika "Pradosh without Udaya Vyapini Purnima";
+      // Karva parana-after-Udaya-day): the Udaya day itself stands.
+      if (rule.keepUdayaMatch) return true;
+      return this.vyaptiMatchesRule(rule, localDate, sunrise, sunset, amantaMonth);
     });
 
     for (const rule of FESTIVALS) {
-      if (!rule.vyapti || rule.vyapti === 'udaya') continue;
       if (kept.some((f) => f.id === rule.id)) continue;
-      // Month gate on the amanta month (null inside unresolvable spans,
-      // e.g. Adhik — skip rather than misassign).
-      if (amantaMonth === null) continue;
-      if (rule.month > 0 && rule.month !== amantaMonth) continue;
-      const moment = this.vyaptiMoment(rule.vyapti, localDate, sunrise, sunset);
-      if (this.tithiIndexAt(moment) !== this.ruleTithiIndex(rule.tithiNumber, rule.paksha)) continue;
-      kept.push({
-        id: rule.id,
-        name: rule.name,
-        nameHindi: rule.nameHindi,
-        description: rule.description,
-        significance: rule.significance,
-        date: new Date(localDate),
-        tithiNumber: rule.tithiNumber,
-        paksha: rule.paksha,
-        month: rule.month,
-        type: rule.type,
-        region: rule.region,
-      });
+      if (!rule.vyapti || rule.vyapti === 'udaya') {
+        // (a) Kshaya catch for non-vyapti rules: midday tithi + paksha +
+        // amanta month, guarded against pulling the festival a day early.
+        if (amantaMonth === null) continue;
+        if (!this.middayMatchesRule(rule, localDate, sunrise, sunset, amantaMonth)) continue;
+        if (this.neighborUdayaMatches(rule, localDate)) continue;
+      } else {
+        if (!this.vyaptiMatchesRule(rule, localDate, sunrise, sunset, amantaMonth)) continue;
+      }
+      kept.push(this.buildFestivalFromRule(rule, localDate));
     }
-    return kept;
+
+    // (b) Vriddhi dedupe: drop the second of two consecutive same-rule days.
+    // Yesterday's verdict is recomputed with the same pure helpers (sunrise/
+    // sunset/tithiIndexAt/moonrise/amanta — no calculate() recursion).
+    if (kept.length === 0) return kept;
+    const needsDedupe = kept.some((f) => {
+      const rule = ruleById.get(f.id);
+      return rule !== undefined && !rule.keepUdayaMatch;
+    });
+    if (!needsDedupe) return kept;
+    const yesterday = new Date(localDate);
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const yAmanta = this.getAmantaMonthNumber(yesterday);
+    return kept.filter((f) => {
+      const rule = ruleById.get(f.id);
+      if (!rule || rule.keepUdayaMatch) return true;
+      if (rule.vyapti === 'aparahna') {
+        // Para-viddha (Bhai Dooj): two consecutive aparahna-Dwitiyas keep
+        // the LATER day — drop today when tomorrow fires too.
+        const tomorrow = new Date(localDate);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(0, 0, 0, 0);
+        return !this.ruleFiresOnDay(rule, tomorrow, this.getAmantaMonthNumber(tomorrow));
+      }
+      return !this.ruleFiresOnDay(rule, yesterday, yAmanta);
+    });
+  }
+
+  /** Solar-sign lunar month (1-12) for a civil day — pure, no recursion. */
+  private solarMonthOf(day: Date): number {
+    const sr = calculateSunrise(day, this.location);
+    const sunLong = toSidereal(getSunLongitude(sr), getAyanamsa(sr));
+    return getHinduLunarMonth(sunLong);
+  }
+
+  /** Udaya tithi+paksha match with solar-month (or every-month) gating. */
+  private udayaMatchesRule(rule: FestivalData, day: Date, amantaMonth: number | null): boolean {
+    const sr = calculateSunrise(day, this.location);
+    const idx = this.tithiIndexAt(sr);
+    if (idx !== this.ruleTithiIndex(rule.tithiNumber, rule.paksha)) return false;
+    if (rule.month === 0) return true;
+    if (this.solarMonthOf(day) === rule.month) return true;
+    // Purnimanta-basis rules (Karva Oct 10 2025 reads solar month 7):
+    // match the purnimanta month derived from the Udaya paksha.
+    return (
+      rule.monthBasis === 'purnimanta' &&
+      amantaMonth !== null &&
+      this.purnimantaMonth(amantaMonth, getPaksha(idx)) === rule.month
+    );
+  }
+
+  /**
+   * Full single-rule verdict for one civil day (kept-logic + ADD-logic),
+   * used for the vriddhi yesterday-check. Pure: sunrise/sunset/tithiIndexAt/
+   * moonrise/amanta only — never calculate(), so no recursion.
+   */
+  private ruleFiresOnDay(rule: FestivalData, day: Date, amantaMonth: number | null): boolean {
+    const dayMidnight = new Date(day);
+    dayMidnight.setHours(0, 0, 0, 0);
+    const sr = calculateSunrise(dayMidnight, this.location);
+    const ss = calculateSunset(dayMidnight, this.location);
+    if (!rule.vyapti || rule.vyapti === 'udaya') {
+      return (
+        this.udayaMatchesRule(rule, dayMidnight, amantaMonth) ||
+        (amantaMonth !== null &&
+          this.middayMatchesRule(rule, dayMidnight, sr, ss, amantaMonth) &&
+          !this.neighborUdayaMatches(rule, dayMidnight))
+      );
+    }
+    if (rule.keepUdayaMatch && this.udayaMatchesRule(rule, dayMidnight, amantaMonth)) return true;
+    return this.vyaptiMatchesRule(rule, dayMidnight, sr, ss, amantaMonth);
+  }
+
+  /** Vyapti-moment tithi match + month gate (null moonrise = no-match). */
+  private vyaptiMatchesRule(
+    rule: FestivalData,
+    localDate: Date,
+    sunrise: Date,
+    sunset: Date,
+    amantaMonth: number | null
+  ): boolean {
+    const moment = this.vyaptiMoment(rule.vyapti as FestivalVyapti, localDate, sunrise, sunset);
+    if (moment === null) return false;
+    const idx = this.tithiIndexAt(moment);
+    if (idx !== this.ruleTithiIndex(rule.tithiNumber, rule.paksha)) return false;
+    return this.vyaptiMonthOk(rule, amantaMonth, getPaksha(idx));
+  }
+
+  /** Midday tithi+paksha+amanta-month match (kshaya ADD for non-vyapti rules). */
+  private middayMatchesRule(
+    rule: FestivalData,
+    _localDate: Date,
+    sunrise: Date,
+    sunset: Date,
+    amantaMonth: number
+  ): boolean {
+    const midday = new Date((sunrise.getTime() + sunset.getTime()) / 2);
+    const idx = this.tithiIndexAt(midday);
+    if (idx !== this.ruleTithiIndex(rule.tithiNumber, rule.paksha)) return false;
+    return rule.month === 0 || rule.month === amantaMonth;
+  }
+
+  /**
+   * Kshaya guard: true when the rule Udaya-matches (solar month) on the
+   * previous or next civil day — the festival already has its Udaya day, so
+   * a midday-only match today must not duplicate or pre-empt it.
+   */
+  private neighborUdayaMatches(rule: FestivalData, localDate: Date): boolean {
+    for (const delta of [-1, 1]) {
+      const neighbor = new Date(localDate);
+      neighbor.setDate(neighbor.getDate() + delta);
+      neighbor.setHours(0, 0, 0, 0);
+      if (this.udayaMatchesRule(rule, neighbor, this.getAmantaMonthNumber(neighbor))) return true;
+    }
+    return false;
+  }
+
+  /** Build an engine Festival object from a festivals.ts rule. */
+  private buildFestivalFromRule(rule: FestivalData, localDate: Date): Festival {
+    return {
+      id: rule.id,
+      name: rule.name,
+      nameHindi: rule.nameHindi,
+      description: rule.description,
+      significance: rule.significance,
+      date: new Date(localDate),
+      tithiNumber: rule.tithiNumber,
+      paksha: rule.paksha,
+      month: rule.month,
+      type: rule.type,
+      region: rule.region,
+    };
   }
 
   /**

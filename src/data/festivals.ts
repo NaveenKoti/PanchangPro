@@ -5,7 +5,7 @@
 
 import { Festival } from '../types';
 
-export type FestivalVyapti = 'udaya' | 'madhyahna' | 'pradosh' | 'nishita';
+export type FestivalVyapti = 'udaya' | 'madhyahna' | 'pradosh' | 'nishita' | 'aparahna' | 'moonrise';
 
 export interface FestivalData {
   id: string;
@@ -23,14 +23,52 @@ export interface FestivalData {
    * Which moment of the day the tithi must prevail for observance:
    * - udaya (default): tithi at sunrise — Ekadashi, Purnima, most festivals
    * - madhyahna: tithi at midday — Ganesh Chaturthi (born at midday)
-   * - pradosh: tithi at sunset — Pradosh vrat (evening worship)
+   * - pradosh: tithi at sunset — Pradosh vrat (evening worship), Lakshmi Puja
    * - nishita: tithi at midnight — Maha Shivratri (great night of Shiva)
+   * - aparahna: tithi in the afternoon (sunrise + 0.7 x daylength) — Bhai Dooj
+   *   (Dwitiya blessings are given in the afternoon, not at dawn)
+   * - moonrise: tithi at moonrise (sunrise.ts calculateMoonrise) — Karva Chauth
+   *   (fast broken at moonrise); null when the moon does not rise that day
+   *   (engine treats uncomputable moonrise as no-match on the ADD path)
    * Non-udaya rules are evaluated by the engine (panchang.ts vyapti pass),
    * which can compute tithi at arbitrary moments. Keep this field in sync
    * with shastra: a wrong vyapti shifts the festival by a day (e.g. Ganesh
    * Chaturthi 2026: Udaya says Sep 15, Madhyahna correctly says Sep 14).
    */
   vyapti?: FestivalVyapti;
+  /**
+   * Which lunar-month reckoning the rule's `month` is expressed in (engine
+   * ADD-path month gate; the legacy Udaya matcher in getFestivalsForDate
+   * stays solar-sign unless a purnimanta month is passed in):
+   * - 'amanta' (default): month ends with Amavasya (Dakshin/Maharashtra
+   *   convention). Correct for Shukla-paksha and most festivals.
+   * - 'purnimanta': month ends with Purnima (North Indian convention).
+   *   REQUIRED for Kartika-Krishna festivals (Diwali, Karva Chauth, Ahoi):
+   *   their Amavasya/Chaturthi/Ashtami falls in amanta Ashwin (month 7) but
+   *   purnimanta Kartika (month 8). For Shukla paksha both agree, so the
+   *   flag only changes Krishna-paksha gating. Computed as: Shukla -> amanta
+   *   month; Krishna -> amanta month + 1 (mod 12).
+   */
+  monthBasis?: 'amanta' | 'purnimanta';
+  /**
+   * Drik-style exception: ALSO keep the Udaya-matched day even when the
+   * vyapti moment fails there. Used by:
+   * - holika-dahan: Drik's "Pradosh without Udaya Vyapini Purnima" (TOI Feb
+   *   2026): 2026 Purnima ran Mar 2 17:55 -> Mar 3 17:07, but Bhadra covered
+   *   the Mar 2 pradosh, so Holika Dahan moved to the Mar 3 Udaya-Purnima
+   *   evening (muhurat 18:22-20:50). The pradosh-Purnima day (Mar 2) still
+   *   fires via the ADD path — matching the published regional split
+   *   (Maharashtra/MP/Rajasthan observe Mar 2, others Mar 3; News18 Mar 2026).
+   *   Vishti (Bhadra) windows are UNCOMPUTED — no Bhadra time is invented;
+   *   the flag only preserves both candidate days for the household calendar.
+   * - karwa-chauth: the vrat IS the Udaya-Chaturthi day (fast broken AT
+   *   moonrise, which usually falls in Panchami, e.g. Oct 10 2025: Chaturthi
+   *   ends 19:38, moonrise 20:13 per Drik). Moonrise remains the parana
+   *   moment and the ADD-path catch for post-sunrise Chaturthi onsets.
+   * Such rules are also exempt from the vriddhi consecutive-day dedupe, so
+   * the exception day is never erased (Holika Mar 2 + Mar 3 both stand).
+   */
+  keepUdayaMatch?: boolean;
 }
 
 export const FESTIVALS: FestivalData[] = [
@@ -40,11 +78,52 @@ export const FESTIVALS: FestivalData[] = [
     name: 'Diwali',
     nameHindi: 'दीपावली',
     description: 'Festival of Lights',
-    significance: 'Celebrates the return of Lord Rama to Ayodhya after 14 years of exile. Also associated with Goddess Lakshmi and the victory of light over darkness.',
+    significance: 'Celebrates the return of Lord Rama to Ayodhya after 14 years of exile. Also associated with Goddess Lakshmi and the victory of light over darkness. Lakshmi Puja is performed in Pradosh Kaal (after sunset) while Amavasya prevails — so the eve, not the Udaya-Amavasya morning, is Diwali (2026: Nov 8 eve, Amavasya 11:27 Nov 8 → 12:31 Nov 9 per Drik; Udaya Amavasya falls Nov 9). प्रदोष काल में अमावस्या व्याप्त होने पर लक्ष्मी पूजा होती है — उदया तिथि वाला दिन नहीं।',
     tithiNumber: 15,
     paksha: 'Krishna',
     month: 8, // Kartika (month 8 = index 7 + 1)
-    type: 'major'
+    type: 'major',
+    vyapti: 'pradosh', // Lakshmi Puja is an evening rite (Drik: Pradosh Kaal muhurat)
+    monthBasis: 'purnimanta', // Kartika Amavasya = amanta Ashwin; purnimanta Kartika
+  },
+  {
+    id: 'holika-dahan',
+    name: 'Holika Dahan',
+    nameHindi: 'होलिका दहन',
+    description: 'Bonfire on the eve of Holi',
+    significance: 'The ceremonial bonfire symbolising the burning of Holika and the victory of devotion (Prahlad) over evil. Performed in Pradosh Kaal while Purnima prevails, strictly after Bhadra ends — Bhadra occupies the first half of Purnima, so when it covers the pradosh the observance moves to the Udaya-Purnima evening (Drik 2026: Mar 3, muhurat 18:22–20:50; regional calendars observing the pradosh-Purnima light on Mar 2). No Bhadra/Vishti time is computed here — this rule keeps both candidate days; consult a panchang for the Bhadra window. भद्रा के बाद प्रदोष काल में होलिका दहन; भद्रा समय की गणना यहाँ नहीं की गई है।',
+    tithiNumber: 15,
+    paksha: 'Shukla',
+    month: 12, // Phalguna (month 12 = index 11 + 1)
+    type: 'major',
+    vyapti: 'pradosh',
+    keepUdayaMatch: true, // Drik "Pradosh without Udaya Vyapini Purnima" exception — see field docs
+  },
+  {
+    id: 'bhai-dooj',
+    name: 'Bhai Dooj',
+    nameHindi: 'भाई दूज',
+    description: 'Sisters bless brothers (Diwali close)',
+    significance: 'Kartika Shukla Dwitiya — sisters apply tilak and bless their brothers in the afternoon (Aparahna), closing the five-day Diwali festival. Dwitiya must prevail at Aparahna (sunrise + 0.7 × daylength), not merely at dawn (Delhi reckoning 2026: Nov 11). अपराह्न काल में द्वितीया होने पर भाई दूज मनाई जाती है।',
+    tithiNumber: 2,
+    paksha: 'Shukla',
+    month: 8, // Kartika
+    type: 'major',
+    vyapti: 'aparahna',
+    monthBasis: 'purnimanta',
+  },
+  {
+    id: 'ahoi-ashtami',
+    name: 'Ahoi Ashtami',
+    nameHindi: 'अहोई अष्टमी',
+    description: 'Mothers fast for children',
+    significance: 'Kartika Krishna Ashtami fast kept by mothers for their children’s welfare. The fast is broken at star-sighting (tara darshan) after the evening puja — NOT at moonrise, which falls near midnight (2026: Ashtami Nov 1 14:52 → Nov 2 13:11, moonrise ~23:52 IST per Prokerala/Drik listings; observance Nov 1, when Ashtami holds the sunset). व्रत तारों के दर्शन के बाद तोड़ा जाता है, चंद्रोदय पर नहीं।',
+    tithiNumber: 8,
+    paksha: 'Krishna',
+    month: 8, // Kartika (purnimanta; = amanta Ashwin Krishna Ashtami)
+    type: 'minor',
+    vyapti: 'pradosh', // Ashtami must hold the evening (sunset/twilight of Nov 1, not Udaya of Nov 2)
+    monthBasis: 'purnimanta',
   },
   {
     id: 'holi',
@@ -141,11 +220,14 @@ export const FESTIVALS: FestivalData[] = [
     name: 'Karwa Chauth',
     nameHindi: 'करवा चौथ',
     description: 'Festival for Married Women',
-    significance: 'Married women fast from sunrise to moonrise for the long life and well-being of their husbands.',
+    significance: 'Married women fast from sunrise to moonrise for the long life and well-being of their husbands. The vrat day is the Udaya Chaturthi (2025: Oct 10, Chaturthi Oct 9 22:54 → Oct 10 19:38 per Drik); the fast is broken at the computed moonrise (Delhi 20:13 IST per Drik). सूर्योदय की चतुर्थी को व्रत, चंद्रोदय पर पारण।',
     tithiNumber: 4,
     paksha: 'Krishna',
-    month: 8, // Kartika (month 8 = index 7 + 1)
-    type: 'major'
+    month: 8, // Kartika (purnimanta; = amanta Ashwin Krishna Chaturthi)
+    type: 'major',
+    vyapti: 'moonrise',
+    monthBasis: 'purnimanta',
+    keepUdayaMatch: true, // vrat day is Udaya Chaturthi; moonrise is the parana — see field docs
   },
   {
     id: 'sankashti-chaturthi',
@@ -473,14 +555,23 @@ export const FESTIVALS: FestivalData[] = [
  * Special case: Sankashti Chaturthi (month=0) is observed every month on
  * Krishna Paksha Chaturthi, so it does not filter by month.
  *
+ * Purnimanta rules (monthBasis 'purnimanta': Diwali, Karva, Ahoi, Bhai Dooj)
+ * additionally match the purnimanta month when it is passed in — their
+ * Kartika-Krishna tithis fall in amanta Ashwin but purnimanta Kartika, which
+ * the solar-sign month misses in some years (e.g. Karva Oct 10 2025 reads
+ * solar month 7). Rules without the flag keep exact solar-only behaviour.
+ *
  * @param lunarMonth - Current Hindu lunar month (1=Chaitra, 12=Phalguna)
+ * @param purnimantaMonth - Purnimanta month (Shukla: same as amanta;
+ *   Krishna: amanta + 1); only consulted for monthBasis 'purnimanta' rules
  */
 export function getFestivalsForDate(
   date: Date,
   tithiNumber: number,
   paksha: 'Shukla' | 'Krishna',
   festivals: FestivalData[] = FESTIVALS,
-  lunarMonth?: number
+  lunarMonth?: number,
+  purnimantaMonth?: number
 ): Festival[] {
   const matchingFestivals = festivals.filter(festival => {
     // For Sankashti Chaturthi (observed every Krishna Paksha Chaturthi)
@@ -496,7 +587,17 @@ export function getFestivalsForDate(
     // Must match lunar month (if available and festival has a specific month)
     // festival.month === 0 means "every month" (like Sankashti, handled above)
     if (lunarMonth !== undefined && festival.month > 0) {
-      return festival.month === lunarMonth;
+      if (festival.month === lunarMonth) return true;
+      // Purnimanta-basis rules (Kartika-Krishna set) also match the
+      // purnimanta month — same tithi, North Indian reckoning.
+      if (
+        festival.monthBasis === 'purnimanta' &&
+        purnimantaMonth !== undefined &&
+        festival.month === purnimantaMonth
+      ) {
+        return true;
+      }
+      return false;
     }
 
     // If no lunar month is provided, fall back to tithi+paksha only

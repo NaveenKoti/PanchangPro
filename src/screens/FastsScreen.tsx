@@ -4,7 +4,7 @@
  * Shows:
  * - Today's fast (if any)
  * - Upcoming fasts (next 30 days)
- * - All 24 Ekadashis
+ * - All 23 Ekadashis
  * - Other fasting days (Pradosh, Sankashti, Purnima, Amavasya)
  */
 
@@ -592,6 +592,11 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
         </Paper>
         </Fade>
       )}
+      {upcomingFasts.length === 0 && (
+        <Typography variant="body2" color="text.secondary" sx={{ px: 0.5, mb: 1.5, lineHeight: 1.6 }}>
+          {isHindi ? 'अगले 30 दिनों में कोई व्रत नहीं — एकादशी और प्रदोष यहाँ दिखेंगे।' : 'No fasts in the next 30 days — Ekadashi and Pradosh will appear here.'}
+        </Typography>
+      )}
 
       {/* Upcoming Festivals */}
       {upcomingFestivals.length > 0 && (
@@ -916,6 +921,11 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
         </Paper>
         </Fade>
       )}
+      {upcomingFestivals.length === 0 && (
+        <Typography variant="body2" color="text.secondary" sx={{ px: 0.5, mb: 1.5, lineHeight: 1.6 }}>
+          {isHindi ? 'अगले 60 दिनों में कोई त्योहार नहीं — तिथि अनुसार त्योहार यहाँ दिखेंगे।' : 'No festivals in the next 60 days — festivals appear here by tithi.'}
+        </Typography>
+      )}
 
       {/* Tabs */}
       <Zoom in timeout={450}>
@@ -968,7 +978,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
       {activeTab === 0 && (
         <Box sx={{ px: 0 }}>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.25, px: 1, fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-            {t('fasting.ekadashiList') || (isHindi ? 'सभी 24 एकादशी व्रत' : 'All 24 Ekadashi Fasts')}
+            {t('fasting.ekadashiList') || (isHindi ? 'सभी 23 एकादशी व्रत' : 'All 23 Ekadashi Fasts')}
           </Typography>
           {EKADASHIS.map((ekadashi) => (
             <Box

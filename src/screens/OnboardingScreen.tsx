@@ -36,6 +36,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
   const [detectedLocation, setDetectedLocation] = useState<GeoLocation | null>(null);
   const [isDetecting, setIsDetecting] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [locationTimedOut, setLocationTimedOut] = useState(false);
   // Default to Hindi when the browser locale is Hindi — Hindi-first users
   // then see Hindi from the very first explainer step, not just after setup.
   const [selectedLanguage, setSelectedLanguage] = useState<'en' | 'hi' | 'sa' | 'kn' | 'te' | 'ta'>(() =>
@@ -49,6 +50,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
   const handleDetectLocation = useCallback(() => {
     setIsDetecting(true);
     setLocationError(null);
+    setLocationTimedOut(false);
 
     if (!navigator.geolocation) {
       setLocationError(isHindiOnboarding ? 'स्थान सुविधा उपलब्ध नहीं है' : 'Geolocation not supported');
@@ -68,8 +70,15 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
         setLocation(loc);
         setIsDetecting(false);
       },
-      () => {
-        setLocationError(isHindiOnboarding ? 'स्थान की अनुमति नहीं मिली — Mumbai उपयोग हो रहा है' : 'Location access denied — using Mumbai');
+      (err: GeolocationPositionError) => {
+        // Timeout (code 3) is retryable — keep Allow mounted; denial is final.
+        const timedOut = err.code === err.TIMEOUT;
+        setLocationError(
+          timedOut
+            ? (isHindiOnboarding ? 'स्थान मिलने में समय लगा — पुनः प्रयास करें, या Mumbai उपयोग होगा' : 'Location timed out — try again, or Mumbai will be used')
+            : (isHindiOnboarding ? 'स्थान की अनुमति नहीं मिली — Mumbai उपयोग हो रहा है' : 'Location access denied — using Mumbai')
+        );
+        setLocationTimedOut(timedOut);
         setIsDetecting(false);
       },
       { timeout: 10000, enableHighAccuracy: false }
@@ -316,7 +325,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
                     </Typography>
                   </Box>
                 </Box>
-                {!locationError && (
+                {(!locationError || locationTimedOut) && (
                   <Button
                     size="small"
                     variant="outlined"
@@ -325,7 +334,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
                     startIcon={isDetecting ? <CircularProgress size={14} /> : undefined}
                     sx={{ borderColor: 'primary.main', color: 'primary.main', borderRadius: 2, minWidth: 80, minHeight: 48 }}
                   >
-                    {isDetecting ? '' : (isHindiOnboarding ? 'अनुमति दें' : 'Allow')}
+                    {isDetecting ? '' : (isHindiOnboarding ? (locationTimedOut ? 'पुनः प्रयास करें' : 'अनुमति दें') : (locationTimedOut ? 'Retry' : 'Allow'))}
                   </Button>
                 )}
               </Box>
@@ -349,10 +358,22 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           >
             <ToggleButton value="en" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>English</ToggleButton>
             <ToggleButton value="hi" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>हिंदी</ToggleButton>
-            <ToggleButton value="sa" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>संस्कृत</ToggleButton>
-            <ToggleButton value="kn" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>ಕನ್ನಡ</ToggleButton>
-            <ToggleButton value="te" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>తెలుగు</ToggleButton>
-            <ToggleButton value="ta" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>தமிழ்</ToggleButton>
+            <ToggleButton value="sa" disabled sx={{ minHeight: 48, py: 1, fontWeight: 500, flexDirection: 'column', lineHeight: 1.3 }}>
+              <span>संस्कृत</span>
+              <span style={{ fontSize: '0.65rem', fontWeight: 400, opacity: 0.7 }}>{isHindiOnboarding ? 'जल्द' : 'soon'}</span>
+            </ToggleButton>
+            <ToggleButton value="kn" disabled sx={{ minHeight: 48, py: 1, fontWeight: 500, flexDirection: 'column', lineHeight: 1.3 }}>
+              <span>ಕನ್ನಡ</span>
+              <span style={{ fontSize: '0.65rem', fontWeight: 400, opacity: 0.7 }}>{isHindiOnboarding ? 'जल्द' : 'soon'}</span>
+            </ToggleButton>
+            <ToggleButton value="te" disabled sx={{ minHeight: 48, py: 1, fontWeight: 500, flexDirection: 'column', lineHeight: 1.3 }}>
+              <span>తెలుగు</span>
+              <span style={{ fontSize: '0.65rem', fontWeight: 400, opacity: 0.7 }}>{isHindiOnboarding ? 'जल्द' : 'soon'}</span>
+            </ToggleButton>
+            <ToggleButton value="ta" disabled sx={{ minHeight: 48, py: 1, fontWeight: 500, flexDirection: 'column', lineHeight: 1.3 }}>
+              <span>தமிழ்</span>
+              <span style={{ fontSize: '0.65rem', fontWeight: 400, opacity: 0.7 }}>{isHindiOnboarding ? 'जल्द' : 'soon'}</span>
+            </ToggleButton>
           </ToggleButtonGroup>
 
           {/* Theme */}

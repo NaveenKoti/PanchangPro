@@ -161,7 +161,7 @@
     "upcoming": "आगामी व्रत",
     "type": "प्रकार",
     "ekadashi": "एकादशी",
-    "ekadashiList": "सभी 24 एकादशी व्रत",
+    "ekadashiList": "सभी 23 एकादशी व्रत",
     "otherVrats": "अन्य व्रत",
     "otherFasts": "अन्य उपवास के दिन",
     "pradosh": "प्रदोष",
@@ -248,7 +248,6 @@
     "reminder": "अनुस्मारक सक्षम करें",
     "reminderTime": "अनुस्मारक समय",
     "noTithis": "अभी तक कोई कस्टम तिथि नहीं जोड़ी गई",
-    "freeLimit": "फ्री यूजर 5 तिथियां ही जोड़ सकते हैं।",
     "viewOccurrences": "अगली तारीखें देखें",
     "next5Occurrences": "अगली 5 तारीखें",
     "export": "तिथियां एक्सपोर्ट करें",
@@ -294,8 +293,7 @@
       "fullYearCalendarDesc": "Navigate any month",
       "noAds": "Ad-free Experience",
       "noAdsDesc": "Browse without interruptions"
-    },
-    "upgradeRequired": "Upgrade to premium to add more tithis"
+    }
   },
   "stories": {
     "title": "दैनिक ज्ञान",

@@ -106,6 +106,7 @@ export default function SettingsScreen() {
   const [manualCoords, setManualCoords] = useState(false);
   const [lat, setLat] = useState('');
   const [lng, setLng] = useState('');
+  const [coordsError, setCoordsError] = useState('');
   const [notificationCenterOpen, setNotificationCenterOpen] = useState(false);
   const [notifGloballyEnabled, setNotifGloballyEnabled] = useState(false);
   const [pushStatus, setPushStatus] = useState<PushStatus>('off');
@@ -240,20 +241,30 @@ export default function SettingsScreen() {
   };
 
   const handleManualLocationSave = () => {
-    if (lat && lng) {
-      setLocation({
-        latitude: parseFloat(lat),
-        longitude: parseFloat(lng),
-        timezone: 'Asia/Kolkata',
-        name: `Custom (${lat}, ${lng})`,
-      });
-      setManualCoords(false);
-      setSnackbar({
-        open: true,
-        message: t('settings.locationUpdated') || 'Location updated!',
-        severity: 'success',
-      });
+    // Validate: reject empty/NaN/out-of-range; never store invalid coords.
+    const latNum = lat.trim() === '' ? NaN : Number(lat);
+    const lngNum = lng.trim() === '' ? NaN : Number(lng);
+    if (lat.trim() === '' || lng.trim() === '' || isNaN(latNum) || isNaN(lngNum)) {
+      setCoordsError(isHindi ? 'अक्षांश और देशांतर दोनों संख्याओं में भरें' : 'Enter both latitude and longitude as numbers');
+      return;
     }
+    if (latNum < -90 || latNum > 90 || lngNum < -180 || lngNum > 180) {
+      setCoordsError(isHindi ? 'अक्षांश ±90 और देशांतर ±180 के भीतर होना चाहिए' : 'Latitude must be within ±90 and longitude within ±180');
+      return;
+    }
+    setCoordsError('');
+    setLocation({
+      latitude: latNum,
+      longitude: lngNum,
+      timezone: 'Asia/Kolkata',
+      name: `Custom (${latNum}, ${lngNum})`,
+    });
+    setManualCoords(false);
+    setSnackbar({
+      open: true,
+      message: t('settings.locationUpdated') || 'Location updated!',
+      severity: 'success',
+    });
   };
 
   const handleClearData = () => {
@@ -325,6 +336,9 @@ export default function SettingsScreen() {
               {CITIES.map((city) => (
                 <ListItem
                   key={city.name}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setLocation({ latitude: city.latitude, longitude: city.longitude, timezone: city.timezone, name: city.name }); } }}
                   onClick={() => setLocation({ latitude: city.latitude, longitude: city.longitude, timezone: city.timezone, name: city.name })}
                   sx={{
                     cursor: 'pointer',
@@ -354,6 +368,9 @@ export default function SettingsScreen() {
               ))}
               <Divider />
               <ListItem
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setManualCoords(true); } }}
                 onClick={() => setManualCoords(true)}
                 sx={{
                   cursor: 'pointer',
@@ -443,7 +460,8 @@ export default function SettingsScreen() {
                 >
                   <MenuItem value="en">English</MenuItem>
                   <MenuItem value="hi">हिन्दी (Hindi)</MenuItem>
-                  <MenuItem value="sa">संस्कृत (Sanskrit)</MenuItem>
+                  {/* Sanskrit + Kannada/Telugu/Tamil deferred by owner decision — kept visible, disabled */}
+                  <MenuItem value="sa" disabled>संस्कृत (Sanskrit) — soon</MenuItem>
                 </Select>
               </ListItem>
             </List>
@@ -473,6 +491,9 @@ export default function SettingsScreen() {
             <List sx={{ p: 0 }}>
               {/* Manage Notifications row */}
               <ListItem
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setNotificationCenterOpen(true); } }}
                 onClick={() => setNotificationCenterOpen(true)}
                 sx={{
                   cursor: 'pointer',
@@ -543,6 +564,13 @@ export default function SettingsScreen() {
                   />
                 </ListItemSecondaryAction>
               </ListItem>
+              <Box sx={{ px: 2, py: 1 }}>
+                <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.6, display: 'block' }}>
+                  {isHindi
+                    ? 'ऐप-खुले रिमाइंडर के लिए ऐप खुला रखें; बंद-ऐप रिमाइंडर के लिए नीचे वाली पुश पंक्ति चालू करें।'
+                    : 'In-app reminders need the app open; push needs the killed-app row enabled.'}
+                </Typography>
+              </Box>
             </List>
           </Paper>
         </Fade>
@@ -640,6 +668,9 @@ export default function SettingsScreen() {
               </ListItem>
               <Divider />
               <ListItem
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setAboutDialog(true); } }}
                 onClick={() => setAboutDialog(true)}
                 sx={{ cursor: 'pointer', '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)' } }}
               >
@@ -653,6 +684,9 @@ export default function SettingsScreen() {
               </ListItem>
               <Divider />
               <ListItem
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPrivacyDialog(true); } }}
                 onClick={() => setPrivacyDialog(true)}
                 sx={{ cursor: 'pointer', minHeight: 48, '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)' } }}
               >
@@ -678,7 +712,8 @@ export default function SettingsScreen() {
         <DialogTitle sx={{ fontWeight: 500 }}>
           {t('settings.enterManual')}
           <IconButton
-            onClick={() => setManualCoords(false)}
+            aria-label={isHindi ? 'बंद करें' : 'Close'}
+            onClick={() => { setCoordsError(''); setManualCoords(false); }}
             sx={{ position: 'absolute', right: 16, top: 16 }}
           >
             <X size={20} />
@@ -693,6 +728,7 @@ export default function SettingsScreen() {
             onChange={(e) => setLat(e.target.value)}
             sx={{ mb: 2, mt: 1 }}
             placeholder="e.g., 19.0760"
+            error={!!coordsError}
           />
           <TextField
             fullWidth
@@ -702,10 +738,12 @@ export default function SettingsScreen() {
             onChange={(e) => setLng(e.target.value)}
             sx={{ mb: 1 }}
             placeholder="e.g., 72.8777"
+            error={!!coordsError}
+            helperText={coordsError}
           />
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setManualCoords(false)} variant="outlined" sx={{ borderRadius: 2 }}>
+          <Button onClick={() => { setCoordsError(''); setManualCoords(false); }} variant="outlined" sx={{ borderRadius: 2 }}>
             {t('common.cancel')}
           </Button>
           <Button 
@@ -727,6 +765,7 @@ export default function SettingsScreen() {
         <DialogTitle sx={{ fontWeight: 500, textAlign: 'center' }}>
           🙏 {t('common.appName')}
           <IconButton
+            aria-label={isHindi ? 'बंद करें' : 'Close'}
             onClick={() => setAboutDialog(false)}
             sx={{ position: 'absolute', right: 16, top: 16 }}
           >
@@ -784,6 +823,7 @@ export default function SettingsScreen() {
         <DialogTitle sx={{ fontWeight: 500, textAlign: 'center' }}>
           {isHindi ? 'गोपनीयता' : 'Privacy'}
           <IconButton
+            aria-label={isHindi ? 'बंद करें' : 'Close'}
             onClick={() => setPrivacyDialog(false)}
             sx={{ position: 'absolute', right: 16, top: 16 }}
           >
@@ -817,6 +857,7 @@ export default function SettingsScreen() {
         <DialogTitle sx={{ fontWeight: 500 }}>
           {t('invite.familyMember')}
           <IconButton
+            aria-label={isHindi ? 'बंद करें' : 'Close'}
             onClick={() => setInviteDialog(false)}
             sx={{ position: 'absolute', right: 16, top: 16 }}
           >

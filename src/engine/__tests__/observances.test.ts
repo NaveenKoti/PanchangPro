@@ -172,9 +172,9 @@ describe('Observance registry', () => {
     }
   });
 
-  it('seeds both navratris, pitru paksha, sawan somvar', () => {
-    expect(RANGE_OBSERVANCES).toHaveLength(4);
-    for (const id of ['chaitra-navratri', 'sharad-navratri', 'pitru-paksha', 'sawan-somvar']) {
+  it('seeds both navratris, pitru paksha, sawan somvar, mangala gauri, chhath', () => {
+    expect(RANGE_OBSERVANCES).toHaveLength(6);
+    for (const id of ['chaitra-navratri', 'sharad-navratri', 'pitru-paksha', 'sawan-somvar', 'mangala-gauri', 'chhath']) {
       expect(getObservance(id), id).toBeDefined();
     }
   });

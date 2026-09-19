@@ -72,4 +72,25 @@ export const RANGE_OBSERVANCES: ObservanceEntry[] = [
     meaningHindi: 'श्रावण का प्रत्येक सोमवार — पवित्र मास में शिव व्रत।',
     rule: { kind: 'weekday-in-month', lunarMonth: 5, weekday: 1 },
   },
+  {
+    id: 'mangala-gauri',
+    name: 'Mangala Gauri',
+    nameHindi: 'मंगला गौरी',
+    meaning: 'Every Tuesday of Shravana — married women worship Goddess Gauri for marital bliss.',
+    meaningHindi: 'श्रावण का प्रत्येक मंगलवार — अखंड सौभाग्य हेतु देवी गौरी की पूजा।',
+    rule: { kind: 'weekday-in-month', lunarMonth: 5, weekday: 2 },
+  },
+  {
+    id: 'chhath',
+    name: 'Chhath Puja (4-day)',
+    nameHindi: 'छठ पूजा (चार दिवसीय)',
+    meaning: 'Four-day Sun worship from Kartika Shukla Chaturthi (Nahay-Khay) to Saptami (Usha Arghya). 2026: Nov 13 Nahay-Khay, Nov 14 Kharna, Nov 15 Sandhya Arghya (Shashthi), Nov 16 Usha Arghya.',
+    meaningHindi: 'कार्तिक शुक्ल चतुर्थी (नहाय-खाय) से सप्तमी (उषा अर्घ्य) तक चार दिवसीय सूर्य उपासना।',
+    rule: {
+      kind: 'date-range',
+      startRule: { kind: 'tithi', month: 8, paksha: 'Shukla', tithiNumber: 4 },
+      endRule: { kind: 'tithi', month: 8, paksha: 'Shukla', tithiNumber: 7 },
+      maxSpanDays: 6,
+    },
+  },
 ];

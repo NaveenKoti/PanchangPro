@@ -104,12 +104,19 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
     preferences,
     calculatePanchang,
     addCustomTithi,
+    requestTab,
   } = useAppStore();
+  const isDigestHindi = preferences.language === 'hi';
 
   // "While you were away" catch-up: custom-tithi reminders due while the app
   // was closed are silently skipped by the in-page scheduler, so surface them
-  // here. Text-only banner (no "View My Tithis" CTA: tab state lives in
-  // App.tsx local useState with no store/hook to switch it from here).
+  // here with a "View My Tithis" CTA (store-requested tab → App subscribes).
+  // NOTE (device-TZ vs location-TZ): this banner lists day-precision labels
+  // only (Today/Yesterday + due MMM d), so no sacred-time instant renders
+  // here — engine instants untouched; no timeZone threading needed in this
+  // region. MyTithis occurrence dates render in location TZ (see
+  // MyTithisScreen formatOccurrence); Today timings/formatTime call sites are
+  // outside the owned digest region and intentionally left unchanged.
   const [missedReminders, setMissedReminders] = useState<MissedTithiReminder[]>([]);
 
   useEffect(() => {
@@ -267,8 +274,14 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
   }, [preferences.language]);
 
   const formatTime = useCallback((date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }, []);
+    // Render sacred times in the LOCATION timezone — engine instants are
+    // absolute, but device-local formatting corrupts them when traveling.
+    return date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: preferences.location.timezone,
+    });
+  }, [preferences.location.timezone]);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections((prev) => {
@@ -747,7 +760,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                   fontSize: '0.95rem',
                 }}
               >
-                While you were away
+                {isDigestHindi ? 'जब आप दूर थे' : 'While you were away'}
               </Typography>
               <Typography
                 variant="body2"
@@ -759,8 +772,8 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                 }}
               >
                 {missedReminders.length === 1
-                  ? 'You missed a reminder while the app was closed.'
-                  : `You missed ${missedReminders.length} reminders while the app was closed.`}
+                  ? (isDigestHindi ? 'ऐप बंद रहने के दौरान एक रिमाइंडर छूट गया।' : 'You missed a reminder while the app was closed.')
+                  : (isDigestHindi ? `ऐप बंद रहने के दौरान ${missedReminders.length} रिमाइंडर छूट गए।` : `You missed ${missedReminders.length} reminders while the app was closed.`)}
               </Typography>
               <Box component="ul" sx={{ m: 0, mt: 1, pl: 2.5 }}>
                 {missedReminders.map((m) => (
@@ -779,6 +792,14 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                   </Typography>
                 ))}
               </Box>
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={() => requestTab('myTithis')}
+                sx={{ mt: 1, borderRadius: 2, textTransform: 'none', fontWeight: 500, minHeight: 48 }}
+              >
+                {isDigestHindi ? 'मेरी तिथियाँ देखें' : 'View My Tithis'}
+              </Button>
             </Alert>
           </Box>
         </Fade>

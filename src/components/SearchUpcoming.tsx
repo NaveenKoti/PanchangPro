@@ -250,6 +250,7 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
         size="small"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        label={isHindi ? 'त्योहार खोजें' : 'Search festivals'}
         placeholder={isHindi ? 'जैसे: दीपावली, एकादशी…' : 'Try: Diwali, Ekadashi…'}
         InputProps={{
           startAdornment: <Search size={18} color={muiTheme.palette.text.secondary} />,

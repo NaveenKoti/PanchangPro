@@ -339,10 +339,11 @@ const StoriesScreen: React.FC = () => {
       {panchang?.sunrise && panchang?.sunset && (
         <Fade in timeout={700}>
         <Box sx={cardSx}>
-          <Box sx={cardHeaderSx(theme.palette.primary.light)}>
+          {/* Solar accent uses primary.main in light mode (primary.light fails contrast on paper) */}
+          <Box sx={cardHeaderSx(isDark ? theme.palette.primary.light : theme.palette.primary.main)}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Sun size={16} color={theme.palette.primary.light} />
-              <Typography variant="overline" sx={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: theme.palette.primary.light, lineHeight: 1 }}>
+              <Sun size={16} color={isDark ? theme.palette.primary.light : theme.palette.primary.main} />
+              <Typography variant="overline" sx={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: isDark ? theme.palette.primary.light : theme.palette.primary.main, lineHeight: 1 }}>
                 {t('stories.solarTimings') || "Solar Timings"}
               </Typography>
             </Box>
@@ -353,7 +354,7 @@ const StoriesScreen: React.FC = () => {
               <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary', mb: 0.25, fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                 {t('panchang.sunrise')}
               </Typography>
-              <Typography variant="h6" sx={{ fontWeight: 500, color: theme.palette.primary.light, fontSize: { xs: '1rem', sm: '1.1rem' } }}>
+              <Typography variant="h6" sx={{ fontWeight: 500, color: isDark ? theme.palette.primary.light : theme.palette.primary.main, fontSize: { xs: '1rem', sm: '1.1rem' } }}>
                 {panchang.sunrise.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </Typography>
             </Box>

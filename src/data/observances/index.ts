@@ -56,12 +56,24 @@ export function listObservances(): ObservanceEntry[] {
 }
 
 /** Day-granularity tithi matching shared by the scanner and range bounds. */
-export function matchesTithiRule(p: Panchang, rule: TithiObservanceRule): boolean {
+export function matchesTithiRule(
+  p: Panchang,
+  rule: TithiObservanceRule,
+  engine?: PanchangEngine
+): boolean {
   if (p.tithi.number !== rule.tithiNumber) return false;
   if (rule.paksha !== undefined && rule.paksha !== 'both' && p.tithi.paksha !== rule.paksha) {
     return false;
   }
-  if (rule.month !== undefined && rule.month !== 0 && p.lunarMonth !== rule.month) {
+  if (rule.month !== undefined && rule.month !== 0) {
+    if (p.lunarMonth === rule.month) return true;
+    // Amanta union: near month boundaries the solar-sign lunarMonth lags or
+    // leads the true amanta span (Pitru 2026: Bhadrapada Purnima Sep 26 reads
+    // solar month 7 but amanta month 6). Accepting either keeps both
+    // reckonings observable; forward-scan first matches are unchanged for all
+    // seeded rules (Bhai Dooj 2025 still Oct 23, Navratri 2025 still Sep 22).
+    // Without an engine only the legacy solar month is available.
+    if (engine && engine.getAmantaMonthNumber(p.date) === rule.month) return true;
     return false;
   }
   if (rule.weekday !== undefined && p.date.getDay() !== rule.weekday) {
@@ -81,14 +93,23 @@ function toIsoDay(d: Date): string {
  * so they are NOT matched here — use isInObservanceRange / findNextOccurrence
  * for those. Returns false for date-range by design.
  */
-export function matchesRule(p: Panchang, rule: ObservanceRule): boolean {
+export function matchesRule(p: Panchang, rule: ObservanceRule, engine?: PanchangEngine): boolean {
   switch (rule.kind) {
     case 'tithi':
-      return matchesTithiRule(p, rule);
+      return matchesTithiRule(p, rule, engine);
     case 'solar-ingress':
       return (p.sankranti?.rashiIndex ?? -1) === rule.rashiIndex;
-    case 'weekday-in-month':
-      return p.lunarMonth === rule.lunarMonth && p.date.getDay() === rule.weekday;
+    case 'weekday-in-month': {
+      if (p.date.getDay() !== rule.weekday) return false;
+      if (p.lunarMonth === rule.lunarMonth) return true;
+      // Amanta union (engine required): the solar-sign month (Karka sun =
+      // solar Shravana ~Jul 16–Aug 16) misses weeks the amanta span covers
+      // and vice versa (amanta Shravana 2026 ~Aug 14–Sep 12). Purnimanta
+      // households observe pre-ingress Mondays (Aug 3/10), Amanta ones
+      // post-ingress (Aug 17/24); accepting either covers all of them.
+      // Without an engine only the legacy solar month is available.
+      return engine !== undefined && engine.getAmantaMonthNumber(p.date) === rule.lunarMonth;
+    }
     case 'static':
       return rule.dates.includes(toIsoDay(p.date));
     case 'adhik':
@@ -130,7 +151,7 @@ function findRangeEnd(
   const span = rangeSpan(rule);
   for (let j = 0; j <= span; j++) {
     const candidate = addDays(start, j);
-    if (matchesTithiRule(engine.calculate(candidate), rule.endRule)) {
+    if (matchesTithiRule(engine.calculate(candidate), rule.endRule, engine)) {
       return candidate;
     }
   }
@@ -152,7 +173,7 @@ export function findRangeContaining(
   const target = addDays(day, 0);
   for (let back = 0; back <= span; back++) {
     const startCandidate = addDays(target, -back);
-    if (matchesTithiRule(engine.calculate(startCandidate), rule.startRule)) {
+    if (matchesTithiRule(engine.calculate(startCandidate), rule.startRule, engine)) {
       const end = findRangeEnd(engine, startCandidate, rule);
       if (startCandidate.getTime() <= target.getTime() && target.getTime() <= end.getTime()) {
         return { start: startCandidate, end };
@@ -195,7 +216,7 @@ export function findNextOccurrence(
     if (containing) return containing.start;
     for (let i = 1; i <= maxDays; i++) {
       const candidate = addDays(fromDay, i);
-      if (matchesTithiRule(engine.calculate(candidate), rule.startRule)) {
+      if (matchesTithiRule(engine.calculate(candidate), rule.startRule, engine)) {
         return candidate;
       }
     }
@@ -204,7 +225,7 @@ export function findNextOccurrence(
 
   for (let i = 1; i <= maxDays; i++) {
     const candidate = addDays(fromDay, i);
-    if (matchesRule(engine.calculate(candidate), rule)) {
+    if (matchesRule(engine.calculate(candidate), rule, engine)) {
       return candidate;
     }
   }
