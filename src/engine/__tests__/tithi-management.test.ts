@@ -590,50 +590,6 @@ describe('Tithi Management', () => {
       }
     });
 
-    it.skip('downgrading from premium to free keeps adding working (premium paused)', () => {
-      // Start with 1 tithi on premium (free tier limit is 1)
-      const tithis = [createTithi({ name: 'Tithi 1' })];
-      setPremiumState(tithis);
-
-      // Downgrade to free by setting state directly (set() doesn't work in jsdom)
-      useAppStore.setState({
-        premium: {
-          isPremium: false,
-          tier: 'free',
-          features: {
-            unlimitedCustomTithis: false,
-            fullYearCalendar: false,
-            advancedMuhurta: false,
-            allLanguages: false,
-            allThemes: false,
-            advancedNotifications: false,
-            noAds: false,
-            export: false,
-            familySharing: false,
-          },
-        },
-      });
-
-      const store = useAppStore.getState();
-      expect(store.premium.isPremium).toBe(false);
-      expect(store.premium.features.unlimitedCustomTithis).toBe(false);
-
-      // Existing tithis remain (they are not auto-deleted)
-      expect(store.customTithis).toHaveLength(1);
-
-      // But can still add more (no cap: premium paused)
-      const result = store.addCustomTithi({
-        name: 'New Tithi',
-        nameHindi: '',
-        tithiNumber: 1,
-        paksha: 'Shukla',
-        month: 0,
-        isRecurring: true,
-        reminderEnabled: false,
-      });
-      expect(result).toBe(true);
-    });
-
     it('canAddMoreTithis always returns true regardless of tier or count', () => {
       // Free tier, empty
       setFreeTierState([]);

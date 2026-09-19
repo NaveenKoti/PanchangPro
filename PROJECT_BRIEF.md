@@ -1,9 +1,9 @@
 # VedaTime — Project Brief
 
-**Package:** `veda-time` v3.7.0
+**Package:** `veda-time` v3.8.0
 **Tagline:** Sacred Rhythms of Time
 **Location:** `/Users/naveenkoti/Applications/myCode/myProjects/PanchangPro/`
-**Status (2026-04-20):** Deployment-ready. All blockers resolved. Post-launch features pending.
+**Status (2026-09-19):** Code-complete, awaiting deploy + device smoke test. See GO_LIVE_PLAN.md.
 
 ---
 

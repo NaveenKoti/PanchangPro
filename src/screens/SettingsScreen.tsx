@@ -666,7 +666,7 @@ export default function SettingsScreen() {
               : 'No account, no login — everything stays on your phone.'}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            Version 3.7.0
+            Version 3.8.0
           </Typography>
 
           {/* Permanent glossary reference — same copy as onboarding */}

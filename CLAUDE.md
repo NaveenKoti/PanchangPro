@@ -7,7 +7,7 @@ Extends root CLAUDE.md at `myProjects/CLAUDE.md`. All global rules apply.
 ## App Identity
 - **Name:** VedaTime (package: `veda-time`)
 - **Tagline:** Sacred Rhythms of Time
-- **Version:** 3.7.0
+- **Version:** 3.8.0
 - **Brand guide:** `VedaTime-Brand-Guide.docx` in project root
 
 ## Stack

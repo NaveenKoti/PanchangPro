@@ -1,119 +1,23 @@
-# PanchangPro - Test Suite Documentation
+# PanchangPro — Test Suite
 
-**Last Updated:** September 2026
-**Total Tests:** 1231 passing / 4 skipped / 0 failing (100% pass rate)
+**Updated:** Sep 19, 2026 · **Total:** 1411 passed / 3 skipped / 0 failing (19 files) · Run: `npm test` (TZ=Asia/Kolkata pinned — UTC environments shift Udaya-tithi by a day; see CI fix Sep 19)
 
----
+## Ground truth (Drik Panchang, Delhi)
+- `tithi-accuracy.test.ts` — 980 tests: tithi **490/490 exact**, sunrise/sunset 490/490 within ±5min. `KNOWN_TITHI_MISS` empty.
+- `graha-accuracy.test.ts` — nakshatra 105/105, yoga/karana 6/6.
+- Ratchets use `it.fails` only; never edit sunrise signs, JD, or ayanamsa without re-running this file.
 
-## 📊 Test Suite Overview
+## Feature suites (selected)
+- `vyapti.test.ts` (8) — Ganesh 2026 Sep 14∉15, 2025 Aug 27; Shivratri 2026 Feb 15∉16; Pradosh sunset rule Jan 11/Feb 25/Mar 11/Jun 8/Jun 23 2025. Each cites its published source.
+- `adhik-maas.test.ts` (8) — anchors 2023 Shravana, 2020 Ashwin, 2026 Jyeshtha; 2024/25 clean; span sanity.
+- `observances.test.ts` (23) — 12 ingresses monotonic, Somvati/Shani, Sankashti/Angarki, Soma Pradosh, Navratri/Pitru/Bhai Dooj starts, dedupe guards.
+- `missed-tithi-catchup.test.ts` (9) — digest window edges, dedupe ids, 7-day cap.
+- `tithi-management.test.ts` — no-cap behavior (cap removed 2026-09); 1 skip left: `Update Tithi (jsdom limitation)`.
+- `festival-detection.test.ts`, `panchang.test.ts` (incl. corrected Mauni Amavasya 2025-01-29 reference), E2E `critical-flows` + `offline-smoke`.
 
-### Engine & Accuracy Tests
-- **tithi-accuracy.test.ts** — 980-test Drik Panchang ground truth suite (490 Delhi days × 2 directions). Tithi exact on 482/490 days (98.4%); 8 known-miss days with ratchet mechanism (Δ ≤ 1 day, all within ±5 min sun tolerance). Sun rise/set all 490 days within ±5 min of Drik.
-- **sunrise.test.ts** — Sunrise/sunset vs Drik Panchang (±5 min tolerance). All 490 Delhi days pass.
-- **panchang-engine.test.ts** — Core panchang calculation structure.
-- **astronomy.test.ts** — Sun/moon longitude, ayanamsa, sidereal conversions, tithi/nakshatra/yoga/karana indices.
+## Skips (3, all intentional)
+- `Update Tithi` suite — jsdom limitation (documented in-test).
+- 2 legacy skips carried from tithi-management (non-behavioral).
 
-### Unit & Integration Tests
-- **festival-detection.test.ts** — 38 festivals, 24 Ekadashis, fasting detection, regional tags.
-- **panchang.test.ts** — Tithi validation, nakshatra, yoga, karana, var, festivals in panchang.
-- **utils.test.ts** — Math, date, Julian Day, formatting utilities.
-- **share.test.ts** — Share text generation, clipboard fallback.
-
-### Skipped Tests
-- 4 premium-gated tests in `tithi-management.test.ts` (premium is paused).
-
----
-
-## 🎯 Known-Miss Ratchet (tithi-accuracy)
-
-| Metric | Value |
-|--------|-------|
-| Total days tested | 490 (Delhi, Dec 2024 – May 2026) |
-| Exact tithi match | 482/490 (98.4%) |
-| Known-miss days | 8 |
-| Miss tolerance | Δ ≤ 1 tithi day |
-| Sun rise/set accuracy | ±5 min all 490 days |
-| Ground truth source | Drik Panchang |
-| Test file | `src/engine/__tests__/tithi-accuracy.test.ts` |
-| Truth data | `src/engine/__tests__/drikTruth.ts` |
-
-Known misses are ratcheted (clamped to nearest tithi) — never drift beyond 1 day. 8 days are boundary transitions where Drik and our Meeus JD differ by hours near tithi changeover.
-
----
-
-## 📈 Test Execution
-
-### Run All Tests
-```bash
-npm test
-```
-
-### Run Specific Test File
-```bash
-npm test -- festival-detection.test.ts
-npm test -- utils.test.ts
-npm test -- panchang-engine.test.ts
-npm test -- tithi-accuracy.test.ts
-```
-
-### Run with Coverage
-```bash
-npm run test:coverage
-```
-
----
-
-## ✅ Passing Tests Summary
-
-**Total Passing:** 1231/1235 (99.7% — 4 skipped premium tests)
-
-### By Category
-- ✅ **Festival Database:** All passing (100%)
-- ✅ **Astronomy:** All passing
-- ✅ **Sunrise/Sunset:** All passing (±5 min, 490 days)
-- ✅ **Tithi Accuracy:** 482/490 exact + 8 ratcheted (100% within tolerance)
-- ✅ **Utilities:** All passing
-- ✅ **Share:** All passing
-- ⏭️ **Premium tests:** 4 skipped (premium paused)
-
----
-
-## 📊 Accuracy Coverage
-
-| Feature | Accuracy | Status |
-|---------|----------|--------|
-| Tithi number | 482/490 exact + 8 ratcheted | ✅ |
-| Sunrise/Sunset | ±5 min all 490 days | ✅ |
-| Festival detection | 100% | ✅ |
-| Fasting detection | 100% | ✅ |
-| Nakshatra | Boundary edge cases | ✅ |
-| Yoga & Karana | 0/4 karana known bug | ⚠️ |
-
----
-
-## 🐛 Known Issues (Non-Blocking)
-
-1. **Karana 0/4** — Reported bug; all 4 karana values compute as 0. Root cause under investigation.
-2. **Lunar month ±1 day variance** — Approximation-based; Swiss Ephemeris would fix but increases bundle.
-3. **~200 remaining hardcoded color instances** — Gradual refactoring planned.
-
----
-
-## 📝 Test File Locations
-
-All tests are in `src/engine/__tests__/` and `src/engine/__tests__/` for accuracy ground truth.
-
-**Key test files:**
-1. `tithi-accuracy.test.ts` — 980-test Drik ground truth suite
-2. `drikTruth.ts` — 490-day Delhi ground truth data
-3. `festival-detection.test.ts` — Festival matching
-4. `panchang-engine.test.ts` — Core engine structure
-5. `sunrise.test.ts` — Sunrise/sunset accuracy
-6. `panchang.test.ts` — Panchang validation
-7. `astronomy.test.ts` — Astronomical calculations
-8. `utils.test.ts` — Utility functions
-9. `share.test.ts` — Share functionality
-
----
-
-**Test Suite Status:** 1231/1235 passing, 4 skipped premium tests, 0 failures ✅
+## Deleted (Sep 19 cleanup)
+- `drik-panchang-comparison.test.ts.obsolete`, dead `vedic/festivalData.ts` + `vedic/fastingData.ts` (zero importers), skipped premium-downgrade test (feature deleted).

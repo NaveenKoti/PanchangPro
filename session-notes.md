@@ -163,3 +163,11 @@ Rahu Kaal, Yamagandam, Gulika Kaal all shift correspondingly (derived from sunri
 | Premium paused | User wants full functional parity before monetization |
 | Noto Sans 400/500 only | VedaTime brand guide — no Inter, no bold/700 |
 | Privacy-first analytics (localStorage) | No external tracking; 7-day rolling window |
+
+## Session 7 (2026-09-19) — Vyapti, Adhik, launch cleanup, modern hero
+- **Vyapti fix (user-reported Ganesh bug)**: Udaya-only matching showed Sep 15 2026; Madhyahna rule → Sep 14. Added `FestivalData.vyapti` (udaya/madhyahna/pradosh/nishita), engine vyapti pass + amanta month, Pradosh sunset rule (Jun 8 not Jun 9 2025). 8 vyapti tests, all sourced.
+- **Adhik Maas engine**: new-moon spans + ingress counting; anchors 2023/2020/2026; month label in Today; registry `adhik` kind.
+- **Cleanup**: premium fully removed (no caps/upsells), dead data/tests deleted, 19 stale docs → `docs/archive/`, PROJECT_STATUS/TEST_SUMMARY/GO_LIVE_PLAN rewritten, version 3.8.0.
+- **CI fix**: TZ=Asia/Kolkata pinned (UTC runners red since Sep 18).
+- **Modern Today**: gradient hero + moon-phase visual, score ring, icon timings, tighter rhythm (light+dark verified).
+- Suite 1411 passed / 3 skipped. Pending: Vercel import, device smoke test (owner).

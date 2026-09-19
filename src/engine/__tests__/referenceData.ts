@@ -262,7 +262,7 @@ export const DAY_LENGTH_REFERENCES: DayLengthReference[] = [
 export interface FastingReference {
   dateISO: string;
   location: ReferenceLocation;
-  expectedFastType: 'ekadashi' | 'pradosh' | 'purnima' | undefined;
+  expectedFastType: 'ekadashi' | 'pradosh' | 'purnima' | 'amavasya' | 'sankashti' | undefined;
   label: string;
 }
 
@@ -270,8 +270,8 @@ export const FASTING_REFERENCES: FastingReference[] = [
   {
     dateISO: '2025-01-29',
     location: BANGALORE,
-    expectedFastType: 'ekadashi',
-    label: 'Shukla Ekadashi fast detected',
+    expectedFastType: 'amavasya',
+    label: 'Mauni Amavasya (plain Amavasya, Wednesday)',
   },
   {
     dateISO: '2025-02-12',
