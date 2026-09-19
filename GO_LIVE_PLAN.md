@@ -16,10 +16,10 @@ Validate `/og-image.png`, manifest, SW precache in prod build.
 - Timings vs Drik for that city; Hindi onboarding read-through (hi-IN browser).
 - Share link on WhatsApp → preview card renders.
 
-## 4. Pre-launch decisions (pick before announcing)
-- Placeholder ads (no publisher ID, never initializes): wire AdSense or remove AdPlacement/GoogleAdSlot.
-- Scheduler approximations vs engine finder rewire (works today, crude).
-- Purnimanta one-liner in Settings (amanta is the convention).
+## 4. Decided since (no longer open)
+- Placeholder ads: **deleted** (Sep 19) — GoogleAdSlot/AdCarousel/AdManager/AdBanner/InterstitialAd + usages removed.
+- Scheduler approximations vs engine finder rewire: finder ready, rewire deferred (works today).
+- Purnimanta one-liner in Settings: open (amanta is the convention).
 
 ## 5. Fast follows (v3.8+)
 Push backend (VAPID + scheduler + SW push) · nav IA from More-menu telemetry · Karva moonrise rule · Vaishnava Ekadashi nuances · Stories non-English content.

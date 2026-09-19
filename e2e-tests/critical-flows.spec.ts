@@ -92,7 +92,10 @@ test.describe('Critical User Flows', () => {
     });
 
     test('should navigate to Fasts screen', async ({ page }) => {
-      // Click Fasts button in bottom nav
+      // Fasts lives under More since the Muhurta tab swap — open More first
+      const moreBtn = page.getByRole('button', { name: /^more$/i });
+      await expect(moreBtn).toBeVisible();
+      await moreBtn.click();
       const fastsBtn = page.getByRole('button', { name: /fasts/i });
       await expect(fastsBtn).toBeVisible();
       await fastsBtn.click();
@@ -102,6 +105,18 @@ test.describe('Critical User Flows', () => {
 
       // Fasts screen heading should be visible
       const heading = page.getByText(/Fasting|Fasts|Ekadashi/i).first();
+      await expect(heading).toBeVisible({ timeout: 10000 });
+    });
+
+    test('should navigate to Muhurta tab', async ({ page }) => {
+      // Muhurta is a bottom-nav tab since the tab swap
+      const muhurtaBtn = page.getByRole('button', { name: /muhurta/i });
+      await expect(muhurtaBtn).toBeVisible();
+      await muhurtaBtn.click();
+
+      await page.waitForTimeout(1500);
+
+      const heading = page.getByText(/Muhurta|Choghadiya|Rahu/i).first();
       await expect(heading).toBeVisible({ timeout: 10000 });
     });
 
@@ -189,8 +204,9 @@ test.describe('Critical User Flows', () => {
 
   test.describe('Fasts Screen', () => {
     test.beforeEach(async ({ page }) => {
-      const fastsBtn = page.getByRole('button', { name: /fasts/i });
-      await fastsBtn.click();
+      // Fasts lives under More since the Muhurta tab swap
+      await page.getByRole('button', { name: /^more$/i }).click();
+      await page.getByRole('button', { name: /fasts/i }).click();
       await page.waitForTimeout(2000);
     });
 

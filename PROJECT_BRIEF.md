@@ -66,7 +66,7 @@ A single polished app a Hindu user opens every morning — like a Gita-meets-Cal
 No remaining blockers. The app can ship today as-is, with ads silently hidden.
 
 ### B. Pre-Launch Polish (optional, ~1–2 hours each)
-1. **Replace AdSense placeholder** (`src/components/GoogleAdSlot.tsx`) with real `ca-pub-*` ID once obtained from Google AdSense.
+1. **Ads** — placeholder system deleted Sep 19; reintroduce only with a real publisher ID.
 2. **Verify PWA install flow** on a real iOS and Android device.
 3. **Final Lighthouse pass** — target ≥90 on Performance, Accessibility, Best Practices, SEO, PWA.
 4. **Deploy target decision** — Vercel / Netlify / Cloudflare Pages. Configure custom domain + HTTPS.
