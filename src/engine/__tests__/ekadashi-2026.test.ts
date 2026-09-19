@@ -23,7 +23,7 @@ describe('Ekadashi 2026 Accuracy Tests', () => {
   // Dates corrected against drikTruth.ts ground truth
   const ekadashiDates = [
     { date: '2026-01-14', name: 'Shat Tila Ekadashi', paksha: 'Krishna', month: 'Pausha' },
-    { date: '2026-01-29', name: 'Putrada Ekadashi', paksha: 'Shukla', month: 'Pausha' },
+    { date: '2026-01-29', name: 'Vaikuntha Ekadashi', paksha: 'Shukla', month: 'Pausha' },
     { date: '2026-02-03', name: 'Jaya Ekadashi', paksha: 'Shukla', month: 'Magha' },
     { date: '2026-02-13', name: 'Vijaya Ekadashi', paksha: 'Krishna', month: 'Magha' },
     { date: '2026-02-27', name: 'Amalaki Ekadashi', paksha: 'Shukla', month: 'Phalguna' },

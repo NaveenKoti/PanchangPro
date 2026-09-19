@@ -978,7 +978,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
       {activeTab === 0 && (
         <Box sx={{ px: 0 }}>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.25, px: 1, fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-            {t('fasting.ekadashiList') || (isHindi ? 'सभी 23 एकादशी व्रत' : 'All 23 Ekadashi Fasts')}
+            {t('fasting.ekadashiList') || (isHindi ? 'सभी 24 एकादशी व्रत' : 'All 24 Ekadashi Fasts')}
           </Typography>
           {EKADASHIS.map((ekadashi) => (
             <Box

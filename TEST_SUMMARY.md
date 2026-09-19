@@ -1,6 +1,6 @@
 # PanchangPro — Test Suite
 
-**Updated:** Sep 19, 2026 · **Total:** 1411 passed / 3 skipped / 0 failing (19 files) · Run: `npm test` (TZ=Asia/Kolkata pinned — UTC environments shift Udaya-tithi by a day; see CI fix Sep 19)
+**Updated:** Sep 19, 2026 · **Total:** 1464 passed / 3 skipped / 0 failing (24 files) · Run: `npm test` (TZ=Asia/Kolkata pinned — UTC environments shift Udaya-tithi by a day; see CI fix Sep 19)
 
 ## Ground truth (Drik Panchang, Delhi)
 - `tithi-accuracy.test.ts` — 980 tests: tithi **490/490 exact**, sunrise/sunset 490/490 within ±5min. `KNOWN_TITHI_MISS` empty.

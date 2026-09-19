@@ -30,6 +30,12 @@ export interface FestivalStory {
   colors?: string[];
 }
 
+// Appended batches (separate files keep diffs reviewable; merged here by id).
+// NOTE: value imports (not `import type`) — the extra files import only the
+// *type* back from this module, so there is no runtime import cycle.
+import { EXTRA_STORIES_1 } from './festivalStories-extra1';
+import { EXTRA_STORIES_2 } from './festivalStories-extra2';
+
 export const FESTIVAL_STORIES: FestivalStory[] = [
   // ============================================================================
   // DIWALI
@@ -2046,6 +2052,9 @@ It also recalls the rescue of Takshaka’s kin and the vow that serpents would n
     durationHindi: '१ दिन',
     colors: ['Green', 'Yellow', 'White', 'Gold'],
   },
+  // Appended batches (ids verified unique vs the base list at merge time).
+  ...EXTRA_STORIES_1,
+  ...EXTRA_STORIES_2,
 ];
 
 /**

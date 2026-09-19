@@ -6,7 +6,7 @@
 |---|---|
 | TypeScript errors | 0 |
 | Build | clean, ~3.7s, PWA precache generated |
-| Tests | 1411 passed / 3 skipped, 19 files, 0 failing |
+| Tests | 1464 passed / 3 skipped, 24 files, 0 failing |
 | Drik ground truth (Delhi) | tithi 490/490 exact · sunrise/sunset 490/490 ±5min · nakshatra 105/105 · yoga/karana 6/6 |
 | i18n | 6 languages, 0 missing keys (131/131) |
 | CI | TZ=Asia/Kolkata pinned (UTC runners shifted Udaya-tithi) — confirm green on latest push |
@@ -21,6 +21,8 @@
 - **Premium fully removed** — no caps, no upsells, no fake upgrade (rule: paused = absent).
 - **Refined sacred minimal pass** — Today (gradient hero + moon phase, score ring, icon timings), Calendar, Fasts, Muhurta; tabs now Today/Calendar/**Muhurta**/My Tithis/More (Fasts→More).
 - **Festival search + coming-up strip** — 63-entry en+hi index, next-occurrence countdowns, valid taps open detail.
+- **Festival stories 28 → 45** — all 16 text-only FESTIVALS ids + Vaikuntha covered (en+hi); zero duplicate ids; Holika shows Puja Muhurat block.
+- **Vaikuntha Ekadashi (24th name)** — Padma + Bhavishya Purana basis; Jan 10 2025 plain, Dec 30 2025 viddha path; counts 23→24.
 - **Push scaffold (v3.8-ready)** — SW injectManifest + push handlers, `/api/subscribe|unsubscribe|cron`, KV store, Vercel Cron 01:00 UTC; needs keys + KV link (docs/PUSH_SETUP.md).
 - **Placeholder ads deleted** — GoogleAdSlot/AdCarousel/AdManager/AdBanner/InterstitialAd + all usages removed.
 

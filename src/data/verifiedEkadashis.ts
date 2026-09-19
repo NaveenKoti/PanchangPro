@@ -17,7 +17,7 @@ export interface VerifiedEkadashi {
 
 export const VERIFIED_EKADASHIS: VerifiedEkadashi[] = [
   // 2025 Ekadashis
-  { date: '2025-01-10', name: 'Putrada Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
+  { date: '2025-01-10', name: 'Vaikuntha Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
   { date: '2025-01-25', name: 'Shat Tila Ekadashi', paksha: 'Krishna', lunarMonth: 10 },
   { date: '2025-02-08', name: 'Jaya Ekadashi', paksha: 'Shukla', lunarMonth: 11 },
   { date: '2025-02-24', name: 'Vijaya Ekadashi', paksha: 'Krishna', lunarMonth: 11 },
@@ -44,7 +44,7 @@ export const VERIFIED_EKADASHIS: VerifiedEkadashi[] = [
 
   // 2026 Ekadashis
   { date: '2026-01-14', name: 'Shat Tila Ekadashi', paksha: 'Krishna', lunarMonth: 10 },
-  { date: '2026-01-29', name: 'Putrada Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
+  { date: '2026-01-29', name: 'Vaikuntha Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
   { date: '2026-02-03', name: 'Jaya Ekadashi', paksha: 'Shukla', lunarMonth: 11 },
   { date: '2026-02-13', name: 'Vijaya Ekadashi', paksha: 'Krishna', lunarMonth: 11 },
   { date: '2026-02-27', name: 'Amalaki Ekadashi', paksha: 'Shukla', lunarMonth: 12 },
@@ -69,7 +69,7 @@ export const VERIFIED_EKADASHIS: VerifiedEkadashi[] = [
   { date: '2026-12-20', name: 'Safala Ekadashi', paksha: 'Krishna', lunarMonth: 10 },
 
   // 2027 Ekadashis
-  { date: '2027-01-04', name: 'Putrada Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
+  { date: '2027-01-04', name: 'Vaikuntha Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
   { date: '2027-01-18', name: 'Shat Tila Ekadashi', paksha: 'Krishna', lunarMonth: 10 },
   { date: '2027-02-02', name: 'Jaya Ekadashi', paksha: 'Shukla', lunarMonth: 11 },
   { date: '2027-02-17', name: 'Vijaya Ekadashi', paksha: 'Krishna', lunarMonth: 11 },
@@ -95,7 +95,7 @@ export const VERIFIED_EKADASHIS: VerifiedEkadashi[] = [
   { date: '2027-12-08', name: 'Safala Ekadashi', paksha: 'Krishna', lunarMonth: 10 },
 
   // 2028 Ekadashis
-  { date: '2028-01-07', name: 'Putrada Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
+  { date: '2028-01-07', name: 'Vaikuntha Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
   { date: '2028-01-22', name: 'Shat Tila Ekadashi', paksha: 'Krishna', lunarMonth: 10 },
   { date: '2028-02-05', name: 'Jaya Ekadashi', paksha: 'Shukla', lunarMonth: 11 },
   { date: '2028-02-20', name: 'Vijaya Ekadashi', paksha: 'Krishna', lunarMonth: 11 },
@@ -121,7 +121,7 @@ export const VERIFIED_EKADASHIS: VerifiedEkadashi[] = [
   { date: '2028-12-09', name: 'Safala Ekadashi', paksha: 'Krishna', lunarMonth: 10 },
 
   // 2029 Ekadashis
-  { date: '2029-01-07', name: 'Putrada Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
+  { date: '2029-01-07', name: 'Vaikuntha Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
   { date: '2029-01-23', name: 'Shat Tila Ekadashi', paksha: 'Krishna', lunarMonth: 10 },
   { date: '2029-02-06', name: 'Jaya Ekadashi', paksha: 'Shukla', lunarMonth: 11 },
   { date: '2029-02-21', name: 'Vijaya Ekadashi', paksha: 'Krishna', lunarMonth: 11 },
@@ -147,7 +147,7 @@ export const VERIFIED_EKADASHIS: VerifiedEkadashi[] = [
   { date: '2029-12-12', name: 'Safala Ekadashi', paksha: 'Krishna', lunarMonth: 10 },
 
   // 2030 Ekadashis
-  { date: '2030-01-10', name: 'Putrada Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
+  { date: '2030-01-10', name: 'Vaikuntha Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
   { date: '2030-01-25', name: 'Shat Tila Ekadashi', paksha: 'Krishna', lunarMonth: 10 },
   { date: '2030-02-09', name: 'Jaya Ekadashi', paksha: 'Shukla', lunarMonth: 11 },
   { date: '2030-02-24', name: 'Vijaya Ekadashi', paksha: 'Krishna', lunarMonth: 11 },

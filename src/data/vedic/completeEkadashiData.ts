@@ -146,6 +146,67 @@ export const COMPLETE_EKADASHI_DATA: EkadashiData[] = [
     importance: 'major'
   },
 
+  // 2b. Vaikuntha Ekadashi (Pausha Shukla) - also called Mukkoti / Swargavathil / Pausha Putrada Ekadashi
+  // Sources: Padma Purana (Mura demon, Ekadashi Devi, Vaikuntha Dwara opening);
+  // Bhavishya Purana names Pausa-sukla Ekadasi Putrada (ISKCON Juhu citation).
+  {
+    id: 'vaikuntha',
+    name: 'Vaikuntha Ekadashi',
+    nameSanskrit: 'वैकुण्ठ एकादशी',
+    nameHindi: 'वैकुंठ एकादशी',
+    month: 10, // Pausha
+    monthName: 'Pausha',
+    paksha: 'Shukla',
+    tithiNumber: 11,
+    presidingDeity: 'Lord Vishnu (Sri Narayana) & Goddess Lakshmi',
+    presidingDeityHindi: 'भगवान विष्णु (श्री नारायण) और देवी लक्ष्मी',
+    significance: 'Vaikuntha Ekadashi is the Pausha Shukla Ekadashi on which the gates of Vaikuntha (Vaikuntha Dwara) open for devotees. Observing this fast carries the merit of all 24 Ekadashis and grants liberation (moksha).',
+    significanceHindi: 'वैकुंठ एकादशी पौष शुक्ल एकादशी है जिस दिन वैकुंठ के द्वार (वैकुंठ द्वारा) भक्तों के लिए खुलते हैं। इस व्रत को करने से सभी 24 एकादशी का पुण्य मिलता है और मोक्ष प्राप्त होता है।',
+    legend: 'According to Padma Purana, the demon Mura tormented the gods. Lord Vishnu battled him, and when Vishnu rested, Ekadashi Devi emerged from Him and slew Mura. Vishnu blessed her that this day be observed as Ekadashi vrata, and that the gates of Vaikuntha (Vaikuntha Dwara) open for those who fast on Pausha Shukla Ekadashi.',
+    legendHindi: 'पद्म पुराण के अनुसार, मुर नामक राक्षस ने देवताओं को सताया। भगवान विष्णु ने उससे युद्ध किया, और जब विष्णु विश्राम कर रहे थे, तो उनसे एकादशी देवी प्रकट हुईं और मुर का वध किया। विष्णु ने आशीर्वाद दिया कि यह दिन एकादशी व्रत के रूप में मनाया जाए, और पौष शुक्ल एकादशी को व्रत रखने वालों के लिए वैकुंठ के द्वार (वैकुंठ द्वारा) खुलें।',
+    fastingRules: [
+      'Complete fast or fruits/milk',
+      'Keep night vigil (jagran) with Vishnu kirtan',
+      'Worship Sri Narayana with Lakshmi and tulsi leaves',
+      'Pass through the Vaikuntha Dwara (temple sanctum doorway) where available',
+      'Break fast next day during parana time'
+    ],
+    fastingRulesHindi: [
+      'पूर्ण व्रत या फल/दूध',
+      'विष्णु कीर्तन के साथ रात्रि जागरण',
+      'लक्ष्मी सहित श्री नारायण की तुलसी पत्तों से पूजा',
+      'जहां उपलब्ध हो वहां वैकुंठ द्वारा (मंदिर गर्भगृह द्वार) से प्रवेश करें',
+      'अगले दिन पारण के समय व्रत तोड़ें'
+    ],
+    paranaTime: 'Next day after sunrise, during Dwadashi tithi',
+    paranaTimeHindi: 'अगले दिन सूर्योदय के बाद, द्वादशी तिथि के दौरान',
+    benefits: [
+      'Merit of all 24 Ekadashis',
+      'Opens the gates of Vaikuntha (moksha)',
+      'Removes all sins',
+      'Blessed with children and prosperity',
+      'Pleases Sri Narayana and Lakshmi'
+    ],
+    benefitsHindi: [
+      'सभी 24 एकादशी का पुण्य',
+      'वैकुंठ के द्वार खुलते हैं (मोक्ष)',
+      'सभी पाप दूर करता है',
+      'संतान और समृद्धि का आशीर्वाद',
+      'श्री नारायण और लक्ष्मी प्रसन्न होते हैं'
+    ],
+    specialObservances: [
+      'Also called Mukkoti Ekadashi, Swargavathil Ekadashi and Pausha Putrada Ekadashi',
+      'Vaikuntha Dwara (Paramapada Vasal) opening in temples',
+      'Grand celebrations at Tirupati, Srirangam and Guruvayur'
+    ],
+    specialObservancesHindi: [
+      'मुक्कोटि एकादशी, स्वर्गवातिल एकादशी और पौष पुत्रदा एकादशी भी कहलाती है',
+      'मंदिरों में वैकुंठ द्वारा (परमपद वासल) का उद्घाटन',
+      'तिरुपति, श्रीरंगम और गुरुवायूर में भव्य उत्सव'
+    ],
+    importance: 'major'
+  },
+
   // 3. Shattila Ekadashi (Magha Krishna)
   {
     id: 'shattila',
