@@ -10,11 +10,6 @@ export { default as TithiCard } from './TithiCard';
 export { default as AyurvedicClock } from './AyurvedicClock';
 export { ThemeProvider } from './ThemeProvider';
 
-// Ad Components
-export { AdBanner, InlineAd, StickyBottomAd, type AdSize } from './AdBanner';
-export { AdCarousel, AdCarouselCompact, type AdSlide } from './AdCarousel';
-export { InterstitialAd, useInterstitialAd } from './InterstitialAd';
-
 // Sharing Components
 export { default as PanchangShareCard } from './PanchangShareCard';
 

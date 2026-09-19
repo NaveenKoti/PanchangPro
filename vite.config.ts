@@ -6,6 +6,16 @@ import { visualizer } from 'rollup-plugin-visualizer';
 const isAnalyze = process.env.ANALYZE === 'true';
 
 const pwaOptions: VitePWAOptions = {
+  // injectManifest: custom SW lives in src/sw.ts (precache + runtime
+  // caching + push handler). Runtime caching that used to be in
+  // workbox.runtimeCaching below now lives in src/sw.ts — keep them in sync.
+  strategies: 'injectManifest',
+  srcDir: 'src',
+  filename: 'sw.ts',
+  injectManifest: {
+    globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+    maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4MB
+  },
   registerType: 'autoUpdate',
   includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
   manifest: {
@@ -57,61 +67,8 @@ const pwaOptions: VitePWAOptions = {
     prefer_related_applications: false,
     related_applications: []
   },
-  workbox: {
-    runtimeCaching: [
-      {
-        urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-        handler: 'CacheFirst',
-        options: {
-          cacheName: 'google-fonts-cache',
-          expiration: {
-            maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 365 // 365 days
-          },
-          cacheableResponse: {
-            statuses: [0, 200]
-          }
-        }
-      },
-      {
-        urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-        handler: 'CacheFirst',
-        options: {
-          cacheName: 'gstatic-fonts-cache',
-          expiration: {
-            maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 365 // 365 days
-          },
-          cacheableResponse: {
-            statuses: [0, 200]
-          }
-        }
-      },
-      {
-        urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/npm\/lottie-web\/.*/i,
-        handler: 'StaleWhileRevalidate',
-        options: {
-          cacheName: 'lottie-animations-cache',
-          expiration: {
-            maxEntries: 20,
-            maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
-          },
-          cacheableResponse: {
-            statuses: [0, 200]
-          }
-        }
-      }
-    ],
-    navigateFallback: '/index.html',
-    navigateFallbackDenylist: [ /^\/api\// ],
-    // Exclude dev server URLs from being cached
-    navigateFallbackAllowlist: [ /\// ],
-    skipWaiting: true,
-    clientsClaim: true,
-    cleanupOutdatedCaches: true,
-    globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-    maximumFileSizeToCacheInBytes: 4 * 1024 * 1024 // 4MB
-  },
+  // NOTE: workbox.runtimeCaching / navigateFallback are ignored under the
+  // injectManifest strategy — their equivalents live in src/sw.ts.
   devOptions: {
     enabled: false, // Disable service worker in development
     type: 'module'

@@ -60,6 +60,7 @@ import { useAppStore, clearAllData } from '../stores/appStore';
 import { useI18n } from '../hooks/useI18n';
 import { SupportedLanguage } from '../i18n';
 import { notificationService, notificationScheduler } from '../services/notificationService';
+import { buildPushReminders, disablePush, enablePush, getPushStatus, type PushStatus } from '../services/pushService';
 import { useThemeManager } from '../components/ThemeProvider';
 import { ScreenContainer } from '../components/ScreenContainer';
 import NotificationCenter from '../components/NotificationCenter';
@@ -86,6 +87,8 @@ export default function SettingsScreen() {
 
   const {
     preferences,
+    customTithis,
+    getNextOccurrences,
     setLocation,
     setLanguage,
     setTheme,
@@ -105,6 +108,8 @@ export default function SettingsScreen() {
   const [lng, setLng] = useState('');
   const [notificationCenterOpen, setNotificationCenterOpen] = useState(false);
   const [notifGloballyEnabled, setNotifGloballyEnabled] = useState(false);
+  const [pushStatus, setPushStatus] = useState<PushStatus>('off');
+  const [pushBusy, setPushBusy] = useState(false);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -131,6 +136,11 @@ export default function SettingsScreen() {
   // Sync notification global state
   React.useEffect(() => {
     setNotifGloballyEnabled(notificationService.isGloballyEnabled());
+  }, []);
+
+  // Sync killed-app push status
+  React.useEffect(() => {
+    getPushStatus().then(setPushStatus).catch(() => undefined);
   }, []);
 
   const handleLanguageChange = (language: SupportedLanguage) => {
@@ -185,6 +195,48 @@ export default function SettingsScreen() {
       }
     }
     toggleNotification(key);
+  };
+
+  const handlePushToggle = async () => {
+    if (pushBusy) return;
+    if (pushStatus === 'unsupported' || pushStatus === 'unconfigured') {
+      setSnackbar({
+        open: true,
+        message: pushStatus === 'unconfigured'
+          ? (isHindi ? 'पुश अभी सेटअप नहीं है' : 'Push is not set up yet')
+          : (isHindi ? 'इस डिवाइस पर समर्थित नहीं' : 'Not supported on this device'),
+        severity: 'info',
+      });
+      return;
+    }
+    setPushBusy(true);
+    if (pushStatus === 'on') {
+      const result = await disablePush();
+      if (result.ok) setPushStatus('off');
+      setSnackbar({
+        open: true,
+        message: result.ok
+          ? (isHindi ? 'बंद ऐप रिमाइंडर बंद' : 'Killed-app reminders off')
+          : (result.error || 'Error'),
+        severity: result.ok ? 'success' : 'error',
+      });
+    } else {
+      const buildDeviceReminders = () => {
+        const occurrences: Record<string, Date[]> = {};
+        for (const tithi of customTithis) occurrences[tithi.id] = getNextOccurrences(tithi.id);
+        return buildPushReminders(customTithis, occurrences);
+      };
+      const result = await enablePush(buildDeviceReminders);
+      if (result.ok) setPushStatus('on');
+      setSnackbar({
+        open: true,
+        message: result.ok
+          ? (isHindi ? 'बंद ऐप रिमाइंडर चालू' : 'Killed-app reminders on')
+          : (result.error || 'Error'),
+        severity: result.ok ? 'success' : 'error',
+      });
+    }
+    setPushBusy(false);
   };
 
   const handleManualLocationSave = () => {
@@ -466,6 +518,31 @@ export default function SettingsScreen() {
                   <Divider />
                 </React.Fragment>
               ))}
+              <Divider />
+              {/* Killed-app push reminders row */}
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  <Bell size={20} color={pushStatus === 'on' ? muiTheme.palette.info.main : muiTheme.palette.text.disabled} />
+                </ListItemIcon>
+                <ListItemText
+                  primary={isHindi ? 'बंद ऐप रिमाइंडर (पुश)' : 'Killed-app reminders (push)'}
+                  secondary={
+                    pushStatus === 'on' ? t('common.enabled')
+                      : pushStatus === 'unconfigured' ? (isHindi ? 'अभी सेटअप नहीं है' : 'Not set up yet')
+                      : pushStatus === 'unsupported' ? (isHindi ? 'इस डिवाइस पर समर्थित नहीं' : 'Not supported on this device')
+                      : t('common.disabled')
+                  }
+                />
+                <ListItemSecondaryAction>
+                  <Switch
+                    edge="end"
+                    checked={pushStatus === 'on'}
+                    disabled={pushBusy || pushStatus === 'unsupported' || pushStatus === 'unconfigured'}
+                    onChange={handlePushToggle}
+                    color="primary"
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
             </List>
           </Paper>
         </Fade>

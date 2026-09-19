@@ -43,7 +43,7 @@ const App: React.FC = () => {
   const [tab, setTab] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const [inlineScreen, setInlineScreen] = useState<'muhurta' | 'stories' | null>(null);
+  const [inlineScreen, setInlineScreen] = useState<'fasts' | 'stories' | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showShareCard, setShowShareCard] = useState(false);
   const [festivalDetail, setFestivalDetail] = useState<{ id: string } | null>(null);
@@ -414,9 +414,9 @@ const App: React.FC = () => {
           )}
 
           {/* Inline screens from More menu */}
-          {!festivalDetail && inlineScreen === 'muhurta' && (
-            <Suspense key="muhurta" fallback={<MuhurtaSkeleton />}>
-              <MuhurtaScreen />
+          {!festivalDetail && inlineScreen === 'fasts' && (
+            <Suspense key="fasts-inline" fallback={<FastsSkeleton />}>
+              <FastsScreen onFestivalOpen={(id) => setFestivalDetail({ id })} />
             </Suspense>
           )}
           {!festivalDetail && inlineScreen === 'stories' && (
@@ -428,15 +428,15 @@ const App: React.FC = () => {
           {/* Tab-based screens */}
           {!festivalDetail && !inlineScreen && !showSettings && (
             <>
-              {tab === 0 && <TodayScreen key="today" />}
+              {tab === 0 && <TodayScreen key="today" onFestivalOpen={(id) => setFestivalDetail({ id })} />}
               {tab === 1 && (
                 <Suspense key="calendar" fallback={<CalendarSkeleton />}>
                   <CalendarScreen onFestivalOpen={(id) => setFestivalDetail({ id })} />
                 </Suspense>
               )}
               {tab === 2 && (
-                <Suspense key="fasts" fallback={<FastsSkeleton />}>
-                  <FastsScreen onFestivalOpen={(id) => setFestivalDetail({ id })} />
+                <Suspense key="muhurta" fallback={<MuhurtaSkeleton />}>
+                  <MuhurtaScreen />
                 </Suspense>
               )}
               {tab === 3 && <MyTithisScreen key="mytithis" />}
@@ -462,7 +462,7 @@ const App: React.FC = () => {
           onSelectItem={(item) => {
             if (item === 'settings') {
               setShowSettings(true);
-            } else if (item === 'muhurta' || item === 'stories') {
+            } else if (item === 'fasts' || item === 'stories') {
               setInlineScreen(item);
               setTab(-1); // Deselect bottom nav
             }

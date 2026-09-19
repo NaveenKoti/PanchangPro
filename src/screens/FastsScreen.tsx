@@ -29,12 +29,10 @@ import {
   Zoom,
   Button,
 } from '@mui/material';
-import { Calendar, Clock, Sparkles, ChevronDown, X, Share2 } from 'lucide-react';
+import { Calendar, Clock, Sparkles, ChevronDown, X, Share2, Moon } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import { useI18n } from '../hooks/useI18n';
 import { EKADASHIS, OTHER_FASTS, FastingInfo } from '../data/fastings';
-import { AdCarousel } from '../components/AdCarousel';
-import { useAdManager } from '../components/AdManager';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { useBreakpoints } from '../hooks/useBreakpoints';
 import { PanchangShareCard } from '../components/PanchangShareCard';
@@ -48,15 +46,26 @@ interface FastsScreenProps {
   onFestivalOpen?: (festivalId: string) => void;
 }
 
+/**
+ * Fast-type icon + tint for upcoming-list rows.
+ * Mirrors the Today timings icon-led rows (36px tinted square + label + right value).
+ */
+const getFastTypeVisual = (
+  type: string,
+  palette: { primary: { main: string }; info: { main: string }; warning: { main: string } },
+): { Icon: React.ComponentType<{ size?: number | string; color?: string }>; color: string } => {
+  if (type === 'festival') return { Icon: Sparkles, color: palette.primary.main };
+  if (type === 'purnima' || type === 'amavasya') return { Icon: Moon, color: palette.info.main };
+  return { Icon: Clock, color: palette.warning.main };
+};
+
 export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
   const { t, currentLanguage } = useI18n();
   const muiTheme = useMuiTheme();
   const isDark = muiTheme.palette.mode === 'dark';
   const { isMobile } = useBreakpoints();
-  const { shouldShowAds } = useAdManager();
   const isHindi = currentLanguage === 'hi';
 
-  const showFastsAds = shouldShowAds('fasts');
   const { selectedDate, calculatePanchang, preferences } = useAppStore();
   const [activeTab, setActiveTab] = useState(0);
   const [fastsExpanded, setFastsExpanded] = useState(false);
@@ -224,20 +233,11 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
   return (
     <ScreenContainer
       maxWidth={800}
-      sx={{ pt: 2 }}
+      sx={{ pt: 1.5 }}
     >
-      {/* Top Ad */}
-      {showFastsAds && (
-        <Fade in timeout={200}>
-          <Box sx={{ mb: 2 }}>
-            <AdCarousel />
-          </Box>
-        </Fade>
-      )}
-
       {/* Header */}
       <Fade in timeout={250}>
-        <Box sx={{ mb: 2, textAlign: 'center', px: { xs: 1, sm: 2 } }}>
+        <Box sx={{ mb: 1.5, textAlign: 'center', px: { xs: 1, sm: 2 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 0.5 }}>
             <Typography
               variant="h5"
@@ -245,6 +245,8 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 fontWeight: 500,
                 color: 'text.primary',
                 fontSize: { xs: '1.25rem', sm: '1.5rem' },
+                letterSpacing: '-0.02em',
+                lineHeight: 1.3,
               }}
             >
               {t('fasting.title')}
@@ -295,17 +297,17 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
         <Paper
           elevation={0}
           sx={{
-            mb: 2,
+            mb: 1.5,
             borderRadius: 2,
-            p: 2,
+            p: 1.5,
             bgcolor: `${muiTheme.palette.success.main}12`,
             border: `1px solid ${muiTheme.palette.success.main}30`,
           }}
         >
-          <Typography variant="h6" sx={{ fontWeight: 500, mb: 1, color: 'success.main' }}>
+          <Typography variant="h6" sx={{ fontWeight: 500, mb: 0.5, color: 'success.main', letterSpacing: '-0.02em', lineHeight: 1.3 }}>
             {currentLanguage === 'hi' ? panchang.fasting.nameHindi : panchang.fasting.name}
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.5 }}>
             {panchang.fasting.significance?.substring(0, 200)}...
           </Typography>
         </Paper>
@@ -318,16 +320,16 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
         <Paper
           elevation={0}
           sx={{
-            mb: 2,
+            mb: 1.5,
             borderRadius: 2,
-            p: 2,
+            p: 1.5,
             bgcolor: `${muiTheme.palette.warning.main}08`,
             border: `1px solid ${muiTheme.palette.warning.main}20`,
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
             <Calendar size={18} color={muiTheme.palette.warning.main} />
-            <Typography variant="subtitle1" sx={{ fontWeight: 500, color: muiTheme.palette.warning.main }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 500, color: muiTheme.palette.warning.main, letterSpacing: '-0.02em', lineHeight: 1.3 }}>
               {t('fasting.upcoming') || 'Upcoming Fasts'}
             </Typography>
           </Box>
@@ -338,6 +340,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
             const matchedFasting = findFastingByName(upcomingFasts[0].name);
             const canViewStory = !!matchedStory && !!onFestivalOpen;
             const canViewDetails = !!matchedFasting;
+            const visual = getFastTypeVisual(upcomingFasts[0].type, muiTheme.palette);
             return (
             <Box
               onClick={() => {
@@ -349,11 +352,11 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 }
               }}
               sx={{
-                p: { xs: 1.5, sm: 2 },
+                p: { xs: 1.25, sm: 1.5 },
                 borderRadius: 1.5,
                 bgcolor: `${muiTheme.palette.warning.main}12`,
                 border: `1px solid ${muiTheme.palette.warning.main}25`,
-                mb: upcomingFasts.length > 1 ? 1 : 0,
+                mb: upcomingFasts.length > 1 ? 0.75 : 0,
                 cursor: (canViewStory || canViewDetails) ? 'pointer' : 'default',
                 transition: 'all 0.2s ease',
                 '&:hover': (canViewStory || canViewDetails) ? {
@@ -364,11 +367,29 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 } : {},
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.75, gap: 1, flexWrap: 'wrap' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1, minWidth: 0 }}>
-                  <Clock size={16} color={muiTheme.palette.warning.main} />
-                  <Typography variant="body1" sx={{ fontWeight: 500, color: muiTheme.palette.warning.main, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                <Box
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 1.5,
+                    bgcolor: isDark
+                      ? `${visual.color}25`
+                      : `${visual.color}15`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <visual.Icon size={18} color={visual.color} />
+                </Box>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography variant="body1" sx={{ fontWeight: 500, color: muiTheme.palette.warning.main, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3 }}>
                     {upcomingFasts[0].name}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', lineHeight: 1.4, display: 'block' }}>
+                    {upcomingFasts[0].date.toLocaleDateString('en-IN', { weekday: 'long', month: 'long', day: 'numeric' })}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0, alignItems: 'center' }}>
@@ -418,9 +439,6 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   />
                 </Box>
               </Box>
-              <Typography variant="caption" sx={{ color: 'text.secondary', lineHeight: 1.4 }}>
-                {upcomingFasts[0].date.toLocaleDateString('en-IN', { weekday: 'long', month: 'long', day: 'numeric' })}
-              </Typography>
             </Box>
             );
           })()}
@@ -441,7 +459,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               <AccordionSummary
                 expandIcon={<ChevronDown size={20} color={muiTheme.palette.warning.main} />}
                 sx={{
-                  minHeight: 44,
+                  minHeight: 48,
                   px: 1,
                   py: 0.5,
                   '& .MuiAccordionSummary-content': {
@@ -462,12 +480,13 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 0.5, pt: 0, pb: 0.5 }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
                   {upcomingFasts.slice(1).map((fast, index) => {
                     const matchedStory = findFestivalStoryByName(fast.name);
                     const matchedFasting = findFastingByName(fast.name);
                     const canViewStory = !!matchedStory && !!onFestivalOpen;
                     const canViewDetails = !!matchedFasting;
+                    const visual = getFastTypeVisual(fast.type, muiTheme.palette);
                     return (
                     <Box
                       key={index}
@@ -483,11 +502,12 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        p: { xs: 1, sm: 1.25 },
+                        gap: 1.25,
+                        px: 1,
+                        py: 0.75,
+                        minHeight: 48,
                         borderRadius: 1.5,
                         bgcolor: muiTheme.palette.action.hover,
-                        gap: 1,
-                        flexWrap: 'wrap',
                         cursor: (canViewStory || canViewDetails) ? 'pointer' : 'default',
                         transition: 'all 0.2s ease',
                         '&:hover': (canViewStory || canViewDetails) ? {
@@ -495,9 +515,24 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         } : {},
                       }}
                     >
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1, minWidth: 0 }}>
-                        <Clock size={14} color={muiTheme.palette.text.disabled} />
-                        <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
+                      <Box
+                        sx={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: 1.5,
+                          bgcolor: isDark
+                            ? `${visual.color}20`
+                            : `${visual.color}10`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                        }}
+                      >
+                        <visual.Icon size={18} color={visual.color} />
+                      </Box>
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3 }}>
                           {fast.name}
                         </Typography>
                       </Box>
@@ -564,16 +599,16 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
         <Paper
           elevation={0}
           sx={{
-            mb: 2,
+            mb: 1.5,
             borderRadius: 2,
-            p: 2,
+            p: 1.5,
             bgcolor: `${muiTheme.palette.primary.main}08`,
             border: `1px solid ${muiTheme.palette.primary.main}20`,
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
             <Sparkles size={18} color={muiTheme.palette.primary.main} />
-            <Typography variant="subtitle1" sx={{ fontWeight: 500, color: muiTheme.palette.primary.main }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 500, color: muiTheme.palette.primary.main, letterSpacing: '-0.02em', lineHeight: 1.3 }}>
               {t('festivals.upcoming') || 'Upcoming Festivals'}
             </Typography>
           </Box>
@@ -591,11 +626,11 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 }
               }}
               sx={{
-                p: { xs: 1.5, sm: 2 },
+                p: { xs: 1.25, sm: 1.5 },
                 borderRadius: 1.5,
                 bgcolor: `${muiTheme.palette.primary.main}12`,
                 border: `1px solid ${muiTheme.palette.primary.main}25`,
-                mb: upcomingFestivals.length > 1 ? 1 : 0,
+                mb: upcomingFestivals.length > 1 ? 0.75 : 0,
                 cursor: canViewStory ? 'pointer' : 'default',
                 transition: 'all 0.2s ease',
                 '&:hover': canViewStory ? {
@@ -606,7 +641,23 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 } : {},
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 0.75, gap: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+                <Box
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 1.5,
+                    bgcolor: isDark
+                      ? `${muiTheme.palette.primary.main}25`
+                      : `${muiTheme.palette.primary.main}15`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Sparkles size={18} color={muiTheme.palette.primary.main} />
+                </Box>
                 <Typography
                   variant="body1"
                   sx={{
@@ -659,7 +710,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     color: 'text.secondary',
                     lineHeight: 1.4,
                     display: 'block',
-                    mb: 0.75,
+                    mb: 0.5,
                   }}
                 >
                   {upcomingFestivals[0].description}
@@ -697,7 +748,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               <AccordionSummary
                 expandIcon={<ChevronDown size={20} color={muiTheme.palette.primary.main} />}
                 sx={{
-                  minHeight: 44,
+                  minHeight: 48,
                   px: 1,
                   py: 0.5,
                   '& .MuiAccordionSummary-content': {
@@ -718,7 +769,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 0.5, pt: 0, pb: 0.5 }}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
                   {upcomingFestivals.slice(1).map((festival, index) => {
                     const typeColors = {
                       major: {
@@ -751,7 +802,12 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                           }
                         }}
                         sx={{
-                          p: { xs: 1.25, sm: 1.5 },
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1.25,
+                          px: 1,
+                          py: 0.75,
+                          minHeight: 48,
                           borderRadius: 1.5,
                           bgcolor: muiTheme.palette.action.hover,
                           border: `1px solid ${muiTheme.palette.divider}`,
@@ -762,7 +818,23 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                           } : {},
                         }}
                       >
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 0.5, gap: 1 }}>
+                        <Box
+                          sx={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: 1.5,
+                            bgcolor: isDark
+                              ? `${muiTheme.palette.primary.main}20`
+                              : `${muiTheme.palette.primary.main}10`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                          }}
+                        >
+                          <Sparkles size={18} color={muiTheme.palette.primary.main} />
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1, flex: 1, minWidth: 0 }}>
                           <Typography
                             variant="body2"
                             sx={{
@@ -850,7 +922,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
       <Paper
         elevation={0}
         sx={{
-          mb: 2,
+          mb: 1.5,
           borderRadius: 2,
           overflow: 'hidden',
           bgcolor: muiTheme.palette.action.hover,
@@ -862,10 +934,18 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
           onChange={handleTabChange}
           variant="scrollable"
           scrollButtons="auto"
+          TabIndicatorProps={{
+            style: {
+              backgroundColor: muiTheme.palette.primary.main,
+              height: 3,
+              borderRadius: '3px 3px 0 0',
+            },
+          }}
           sx={{
             '& .MuiTab-root': {
               textTransform: 'none',
-              fontWeight: 500,
+              fontWeight: 400,
+              color: 'text.secondary',
               fontSize: { xs: '0.8rem', sm: '0.875rem' },
               minHeight: 48,
               minWidth: { xs: 80, sm: 120 },
@@ -873,6 +953,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
             },
             '& .Mui-selected': {
               color: 'primary.main !important',
+              fontWeight: 500,
             },
           }}
         >
@@ -886,7 +967,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
       {/* Tab Content */}
       {activeTab === 0 && (
         <Box sx={{ px: 0 }}>
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, px: 1 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.25, px: 1, fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
             {t('fasting.ekadashiList') || (isHindi ? 'सभी 24 एकादशी व्रत' : 'All 24 Ekadashi Fasts')}
           </Typography>
           {EKADASHIS.map((ekadashi) => (
@@ -903,7 +984,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
 
       {activeTab === 1 && (
         <Box sx={{ px: 0 }}>
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, px: 1 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.25, px: 1, fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
             {t('fasting.otherFasts') || (isHindi ? 'अन्य व्रत' : 'Other Fasting Days')}
           </Typography>
           {Object.values(OTHER_FASTS).map((fast) => (
@@ -920,7 +1001,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
 
       {activeTab === 2 && (
         <Box sx={{ px: 0 }}>
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, px: 1 }}>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.25, px: 1, fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
             {isHindi ? 'प्रमुख और क्षेत्रीय त्योहार' : 'Major and Regional Festivals'}
           </Typography>
 
@@ -940,7 +1021,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               <AccordionSummary
                 expandIcon={<ChevronDown size={20} color={muiTheme.palette.primary.main} />}
                 sx={{
-                  minHeight: 44,
+                  minHeight: 48,
                   px: 1,
                   py: 0.5,
                   borderRadius: 1.5,
@@ -964,7 +1045,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   {isHindi ? 'प्रमुख त्योहार' : 'Major Festivals'} ({festivalsByType.major.length})
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails sx={{ px: 0.5, pt: 1, pb: 0.5 }}>
+              <AccordionDetails sx={{ px: 0.5, pt: 0.75, pb: 0.5 }}>
                 {festivalsByType.major.map((festival) => {
                   const matchedStory = findFestivalStoryByName(festival.name);
                   const canViewStory = !!matchedStory && !!onFestivalOpen;
@@ -983,8 +1064,8 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         }
                       }}
                       sx={{
-                        mb: 1,
-                        p: { xs: 1.25, sm: 1.5 },
+                        mb: 0.75,
+                        p: { xs: 1, sm: 1.25 },
                         borderRadius: 1.5,
                         bgcolor: muiTheme.palette.action.hover,
                         border: `1px solid ${muiTheme.palette.divider}`,
@@ -1101,7 +1182,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               <AccordionSummary
                 expandIcon={<ChevronDown size={20} color={muiTheme.palette.success.main} />}
                 sx={{
-                  minHeight: 44,
+                  minHeight: 48,
                   px: 1,
                   py: 0.5,
                   borderRadius: 1.5,
@@ -1125,7 +1206,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   {isHindi ? 'लघु त्योहार' : 'Minor Festivals'} ({festivalsByType.minor.length})
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails sx={{ px: 0.5, pt: 1, pb: 0.5 }}>
+              <AccordionDetails sx={{ px: 0.5, pt: 0.75, pb: 0.5 }}>
                 {festivalsByType.minor.map((festival) => {
                   const matchedStory = findFestivalStoryByName(festival.name);
                   const canViewStory = !!matchedStory && !!onFestivalOpen;
@@ -1144,8 +1225,8 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         }
                       }}
                       sx={{
-                        mb: 1,
-                        p: { xs: 1.25, sm: 1.5 },
+                        mb: 0.75,
+                        p: { xs: 1, sm: 1.25 },
                         borderRadius: 1.5,
                         bgcolor: muiTheme.palette.action.hover,
                         border: `1px solid ${muiTheme.palette.divider}`,
@@ -1262,7 +1343,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               <AccordionSummary
                 expandIcon={<ChevronDown size={20} color={muiTheme.palette.info.main} />}
                 sx={{
-                  minHeight: 44,
+                  minHeight: 48,
                   px: 1,
                   py: 0.5,
                   borderRadius: 1.5,
@@ -1286,7 +1367,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   {isHindi ? 'क्षेत्रीय त्योहार' : 'Regional Festivals'} ({festivalsByType.regional.length})
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails sx={{ px: 0.5, pt: 1, pb: 0.5 }}>
+              <AccordionDetails sx={{ px: 0.5, pt: 0.75, pb: 0.5 }}>
                 {festivalsByType.regional.map((festival) => {
                   const matchedStory = findFestivalStoryByName(festival.name);
                   const canViewStory = !!matchedStory && !!onFestivalOpen;
@@ -1305,8 +1386,8 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         }
                       }}
                       sx={{
-                        mb: 1,
-                        p: { xs: 1.25, sm: 1.5 },
+                        mb: 0.75,
+                        p: { xs: 1, sm: 1.25 },
                         borderRadius: 1.5,
                         bgcolor: muiTheme.palette.action.hover,
                         border: `1px solid ${muiTheme.palette.divider}`,
@@ -1429,7 +1510,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
             <DialogTitle
               sx={{
                 m: 0,
-                p: 2,
+                p: 1.5,
                 bgcolor: `${muiTheme.palette.primary.main}08`,
                 borderBottom: `1px solid ${muiTheme.palette.divider}`,
               }}
@@ -1458,6 +1539,8 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         fontWeight: 500,
                         color: 'text.primary',
                         fontSize: { xs: '1rem', sm: '1.25rem' },
+                        letterSpacing: '-0.02em',
+                        lineHeight: 1.3,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
@@ -1482,7 +1565,10 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 </Box>
                 <IconButton
                   onClick={handleFastingDialogClose}
+                  aria-label="close fasting details"
                   sx={{
+                    width: 48,
+                    height: 48,
                     color: 'text.secondary',
                     bgcolor: muiTheme.palette.action.hover,
                     '&:hover': {
@@ -1494,12 +1580,12 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 </IconButton>
               </Box>
             </DialogTitle>
-            <DialogContent sx={{ p: { xs: 2, sm: 3 } }}>
+            <DialogContent sx={{ p: { xs: 1.5, sm: 2 } }}>
               {/* Deity */}
               <Box
                 sx={{
-                  mb: 2,
-                  p: 1.5,
+                  mb: 1.5,
+                  p: 1.25,
                   borderRadius: 2,
                   bgcolor: `${muiTheme.palette.info.main}08`,
                   border: `1px solid ${muiTheme.palette.info.main}20`,
@@ -1514,7 +1600,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     mb: 0.5,
                     fontSize: '0.7rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.03em',
+                    letterSpacing: '0.08em',
                   }}
                 >
                   {isHindi ? 'अधिष्ठाता देवता' : 'Presiding Deity'}
@@ -1525,6 +1611,8 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     fontWeight: 500,
                     color: 'text.primary',
                     fontSize: '1rem',
+                    letterSpacing: '-0.02em',
+                    lineHeight: 1.3,
                   }}
                 >
                   {isHindi ? selectedFasting.deityHindi : selectedFasting.deity}
@@ -1532,7 +1620,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               </Box>
 
               {/* Significance */}
-              <Box sx={{ mb: 2.5 }}>
+              <Box sx={{ mb: 1.75 }}>
                 <Typography
                   variant="caption"
                   sx={{
@@ -1542,7 +1630,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     mb: 0.75,
                     fontSize: '0.7rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.03em',
+                    letterSpacing: '0.08em',
                   }}
                 >
                   {isHindi ? 'महत्व' : 'Significance'}
@@ -1551,7 +1639,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   variant="body2"
                   sx={{
                     color: 'text.secondary',
-                    lineHeight: 1.7,
+                    lineHeight: 1.6,
                     fontSize: '0.9rem',
                   }}
                 >
@@ -1560,7 +1648,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               </Box>
 
               {/* Benefits */}
-              <Box sx={{ mb: 2.5 }}>
+              <Box sx={{ mb: 1.75 }}>
                 <Typography
                   variant="caption"
                   sx={{
@@ -1570,12 +1658,12 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     mb: 0.75,
                     fontSize: '0.7rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.03em',
+                    letterSpacing: '0.08em',
                   }}
                 >
                   {isHindi ? 'लाभ' : 'Benefits'}
                 </Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                   {(isHindi ? selectedFasting.benefitsHindi : selectedFasting.benefits).map((benefit, index) => (
                     <Box
                       key={index}
@@ -1621,7 +1709,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               </Box>
 
               {/* Rules */}
-              <Box sx={{ mb: 2.5 }}>
+              <Box sx={{ mb: 1.75 }}>
                 <Typography
                   variant="caption"
                   sx={{
@@ -1631,7 +1719,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     mb: 0.75,
                     fontSize: '0.7rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.03em',
+                    letterSpacing: '0.08em',
                   }}
                 >
                   {isHindi ? 'व्रत के नियम' : 'Fasting Rules'}
@@ -1644,7 +1732,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         display: 'flex',
                         alignItems: 'flex-start',
                         gap: 1,
-                        p: 1,
+                        p: 0.75,
                         borderRadius: 1,
                         bgcolor: `${muiTheme.palette.warning.main}08`,
                       }}
@@ -1683,7 +1771,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 <Box
                   sx={{
                     mb: 1,
-                    p: 1.5,
+                    p: 1.25,
                     borderRadius: 2,
                     bgcolor: `${muiTheme.palette.success.main}12`,
                     border: `1px solid ${muiTheme.palette.success.main}25`,
@@ -1698,7 +1786,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                       mb: 0.5,
                       fontSize: '0.7rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.03em',
+                      letterSpacing: '0.08em',
                     }}
                   >
                     {isHindi ? 'पारण का समय' : 'Parana Time (Fast Breaking)'}
@@ -1721,7 +1809,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               {selectedFasting.specialNotes && (
                 <Box
                   sx={{
-                    p: 1.5,
+                    p: 1.25,
                     borderRadius: 2,
                     bgcolor: `${muiTheme.palette.info.main}08`,
                     border: `1px solid ${muiTheme.palette.info.main}20`,
@@ -1736,7 +1824,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                       mb: 0.5,
                       fontSize: '0.7rem',
                       textTransform: 'uppercase',
-                      letterSpacing: '0.03em',
+                      letterSpacing: '0.08em',
                     }}
                   >
                     {isHindi ? 'विशेष नोट' : 'Special Notes'}
@@ -1757,15 +1845,6 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
           </>
         )}
       </Dialog>
-
-      {/* Bottom Ad */}
-      {showFastsAds && (
-        <Fade in timeout={600}>
-          <Box sx={{ mt: 2 }}>
-            <AdCarousel />
-          </Box>
-        </Fade>
-      )}
 
       {/* Share Card Dialog */}
       <PanchangShareCard

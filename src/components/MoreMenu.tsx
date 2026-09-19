@@ -22,7 +22,7 @@ import {
   useTheme,
   Slide,
 } from '@mui/material';
-import { Clock, BookOpen, Settings, X } from 'lucide-react';
+import { Leaf, BookOpen, Settings, X } from 'lucide-react';
 import { useI18n } from '../hooks/useI18n';
 import { useBreakpoints } from '../theme/breakpoints';
 import { triggerHapticIfSupported } from '../utils/haptics';
@@ -31,7 +31,7 @@ import { trackFeatureUse } from '../services/analytics';
 interface MoreMenuProps {
   open: boolean;
   onClose: () => void;
-  onSelectItem: (item: 'muhurta' | 'stories' | 'settings') => void;
+  onSelectItem: (item: 'fasts' | 'stories' | 'settings') => void;
 }
 
 const Transition = React.forwardRef(function Transition(
@@ -46,7 +46,7 @@ export const MoreMenu: React.FC<MoreMenuProps> = ({ open, onClose, onSelectItem 
   const theme = useTheme();
   const { isMobile } = useBreakpoints();
 
-  const handleSelect = (item: 'muhurta' | 'stories' | 'settings') => {
+  const handleSelect = (item: 'fasts' | 'stories' | 'settings') => {
     triggerHapticIfSupported('selection');
     // Local-only tap telemetry (no network) — informs future nav IA decisions
     trackFeatureUse('more_menu_select', { item });
@@ -56,10 +56,10 @@ export const MoreMenu: React.FC<MoreMenuProps> = ({ open, onClose, onSelectItem 
 
   const menuItems = [
     {
-      key: 'muhurta' as const,
-      label: t('navigation.muhurta'),
-      icon: Clock,
-      description: t('muhurta.subtitle') || 'Auspicious timings & periods',
+      key: 'fasts' as const,
+      label: t('navigation.fasts'),
+      icon: Leaf,
+      description: t('fasting.subtitle') || 'Ekadashi, Pradosh & fasting days',
     },
     {
       key: 'stories' as const,

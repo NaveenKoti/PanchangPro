@@ -19,7 +19,10 @@
 - **First-time UX** — "What is Panchang?" onboarding (en+hi, hi-IN locale default), tap-to-explain glossary (Tithi/Nakshatra/Yoga/Karana/Maas), Settings About reference.
 - **Honest reminders** — no-login, foreground + on-open missed digest ("While you were away"); killed-app push deferred to v3.8.
 - **Premium fully removed** — no caps, no upsells, no fake upgrade (rule: paused = absent).
-- **Hygiene** — zero `console.*` prod, bold→500, 48px targets, dead data/docs deleted, `og:image` share card, local-only More-menu telemetry.
+- **Refined sacred minimal pass** — Today (gradient hero + moon phase, score ring, icon timings), Calendar, Fasts, Muhurta; tabs now Today/Calendar/**Muhurta**/My Tithis/More (Fasts→More).
+- **Festival search + coming-up strip** — 63-entry en+hi index, next-occurrence countdowns, valid taps open detail.
+- **Push scaffold (v3.8-ready)** — SW injectManifest + push handlers, `/api/subscribe|unsubscribe|cron`, KV store, Vercel Cron 01:00 UTC; needs keys + KV link (docs/PUSH_SETUP.md).
+- **Placeholder ads deleted** — GoogleAdSlot/AdCarousel/AdManager/AdBanner/InterstitialAd + all usages removed.
 
 ## Known limitations (documented, not defects)
 - Amanta month convention (purnimanta users see boundaries a fortnight early).

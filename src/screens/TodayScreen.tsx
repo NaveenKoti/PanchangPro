@@ -64,6 +64,7 @@ import { GlossaryDialog } from '../components/GlossaryDialog';
 import type { GlossaryEntry } from '../data/panchangGlossary';
 import { LUNAR_MONTHS, LUNAR_MONTHS_HINDI } from '../engine/constants';
 import { ScreenContainer } from '../components/ScreenContainer';
+import { SearchUpcoming } from '../components/SearchUpcoming';
 import { FastingChip } from '../components/FastingChip';
 import { useBreakpoints } from '../hooks/useBreakpoints';
 import { triggerHapticIfSupported } from '../utils/haptics';
@@ -86,7 +87,12 @@ function formatDueDate(date: Date): string {
   return date.toLocaleDateString([], { day: 'numeric', month: 'short' });
 }
 
-export const TodayScreen: React.FC = () => {
+export interface TodayScreenProps {
+  /** Opens a festival detail overlay (provided by App; used by search results). */
+  onFestivalOpen?: (id: string) => void;
+}
+
+export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
   const { t } = useI18n();
   const muiTheme = useMuiTheme();
   const { isMobile } = useBreakpoints();
@@ -1033,6 +1039,9 @@ export const TodayScreen: React.FC = () => {
           )}
         </Box>
       </Fade>
+
+      {/* ========== SEARCH + COMING UP (festival search & 15-day strip) ========== */}
+      <SearchUpcoming onFestivalOpen={onFestivalOpen} />
 
       {/* ========== SEGMENT 3. DETAIL GRID — Stories rhythm (overline + h5 + body2) ========== */}
       <Fade in timeout={400}>

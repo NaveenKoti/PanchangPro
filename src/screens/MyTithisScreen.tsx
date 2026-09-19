@@ -62,9 +62,7 @@ import { useAppStore } from '../stores/appStore';
 import { notificationService } from '../services/notificationService';
 import { useI18n } from '../hooks/useI18n';
 import { CustomTithi } from '../types';
-import { AdCarousel } from '../components/AdCarousel';
 import { ScreenContainer } from '../components/ScreenContainer';
-import { useAdManager } from '../components/AdManager';
 import { format, differenceInDays } from 'date-fns';
 
 export const MyTithisScreen: React.FC = () => {
@@ -72,11 +70,7 @@ export const MyTithisScreen: React.FC = () => {
   const muiTheme = useMuiTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(muiTheme.breakpoints.up('sm'));
-  const { showAds, shouldShowAds } = useAdManager();
   const isHindi = currentLanguage === 'hi';
-  
-  // My Tithis ads are disabled (premium feature area)
-  const showMyTithisAds = shouldShowAds('myTithis');
 
   const {
     customTithis, 
@@ -275,15 +269,6 @@ export const MyTithisScreen: React.FC = () => {
 
   return (
     <ScreenContainer maxWidth={isTablet ? 900 : undefined} sx={{ pt: 2 }}>
-      {/* Top Ad */}
-      {showAds && (
-        <Fade in timeout={600}>
-          <Box sx={{ mb: 2 }}>
-            <AdCarousel />
-          </Box>
-        </Fade>
-      )}
-
       {/* Header */}
       <Zoom in timeout={500}>
         <Box sx={{ mb: 2 }}>
@@ -665,15 +650,6 @@ export const MyTithisScreen: React.FC = () => {
             );
           })}
         </List>
-      )}
-
-      {/* Bottom Ad - Disabled for My Tithis (premium feature) */}
-      {showMyTithisAds && (
-        <Fade in timeout={600}>
-          <Box sx={{ mt: 2 }}>
-            <AdCarousel />
-          </Box>
-        </Fade>
       )}
 
       {/* Add/Edit Dialog */}

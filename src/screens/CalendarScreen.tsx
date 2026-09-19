@@ -31,8 +31,6 @@ import {
 import { useAppStore } from '../stores/appStore';
 import { useI18n } from '../hooks/useI18n';
 import { CalendarDay } from '../types';
-import { AdCarousel } from '../components/AdCarousel';
-import { useAdManager } from '../components/AdManager';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { triggerHapticIfSupported } from '../utils/haptics';
 import { useBreakpoints } from '../hooks/useBreakpoints';
@@ -56,8 +54,6 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  const muiTheme = useMuiTheme();
  const isDark = muiTheme.palette.mode === 'dark';
   const { isMobile, isTablet, isDesktop } = useBreakpoints();
- const { shouldShowAds } = useAdManager();
- const showCalendarAds = shouldShowAds('calendar');
 
   const { getCalendarMonth, setSelectedDate } = useAppStore();
  const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -101,7 +97,6 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
         bg: isDark ? `${muiTheme.palette.primary.main}40` : `${muiTheme.palette.primary.main}30`,
         color: muiTheme.palette.primary.main,
         borderColor: `${muiTheme.palette.primary.main}80`,
-        icon: '🪔',
       };
     }
 
@@ -110,7 +105,6 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
         bg: `${muiTheme.palette.success.main}25`,
         color: muiTheme.palette.success.main,
         borderColor: `${muiTheme.palette.success.main}60`,
-        icon: '🍃',
       };
     }
 
@@ -271,46 +265,40 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  }
  );  if (isLoading) {
     return (
-      <ScreenContainer maxWidth={isDesktop ? 900 : isTablet ? 720 : undefined} sx={{ pt: 2.5 }}>
-        <Skeleton variant="text" width={200} height={40} sx={{ mb: 2, mx: 'auto' }} animation="wave" />
+      <ScreenContainer maxWidth={isDesktop ? 900 : isTablet ? 720 : undefined} sx={{ pt: 1.5 }}>
+        <Skeleton variant="text" width={200} height={40} sx={{ mb: 1.5, mx: 'auto' }} animation="wave" />
         <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2, maxHeight: '70vh' }} animation="wave" />
       </ScreenContainer>
     );
   }
 
- return (    <ScreenContainer
+  return (    <ScreenContainer
       maxWidth={isDesktop ? 900 : isTablet ? 720 : undefined}
-      sx={{ pt: 2.5 }}
- >      {showCalendarAds && (
-        <Fade in timeout={200}>
-          <Box sx={{ mb: 2 }}>
-            <AdCarousel />
-          </Box>
-        </Fade>
-      )}
-
- <Zoom in timeout={400}>
+      sx={{ pt: 1.5 }}
+  >
+  <Zoom in timeout={400}>
  <Paper
  elevation={0}
- sx={{
- mb: 2,
- borderRadius: 2,
- bgcolor: 'background.paper',
- border: '1px solid',
- borderColor: 'divider',
- overflow: 'hidden',
- }}
- >
- <Box
- sx={{
- px: 2,
- py: 1.5,
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'space-between',
- bgcolor: `${muiTheme.palette.primary.main}10`,
- }}
- >
+  sx={{
+  mb: 1.5,
+  borderRadius: 2,
+  bgcolor: 'background.paper',
+  background: `linear-gradient(135deg, ${muiTheme.palette.primary.main}1F 0%, ${muiTheme.palette.primary.light}14 45%, ${muiTheme.palette.background.paper} 100%)`,
+  border: '1px solid',
+  borderColor: 'divider',
+  overflow: 'hidden',
+  }}
+  >
+  <Box
+  sx={{
+  px: 1.5,
+  py: 1.25,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  bgcolor: 'transparent',
+  }}
+  >
   <IconButton
   onClick={handlePrevMonth}
   size="small"
@@ -325,11 +313,11 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  </IconButton>
 
       <Box sx={{ textAlign: 'center', flex: 1 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-          <CalendarIcon size={17} color={muiTheme.palette.primary.main} />
- <Typography
- variant="h6"
-  sx={{ fontWeight: 500, fontSize: { xs: '0.95rem', sm: '1.05rem' }, color: 'text.primary' }}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.75 }}>
+          <CalendarIcon size={18} color={muiTheme.palette.primary.main} />
+  <Typography
+  variant="h6"
+   sx={{ fontWeight: 500, fontSize: { xs: '1.1rem', sm: '1.25rem' }, color: 'text.primary', letterSpacing: '-0.02em', lineHeight: 1.3, fontFamily: '"Noto Sans", sans-serif' }}
  >
  {getMonthName(currentMonth)}
  </Typography>
@@ -390,13 +378,13 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  borderBottomColor: 'divider',
  }}
  >
- {getWeekdays().map((day, index) => (
- <Box
- key={index}
- sx={{
- py: 1.25,
- minWidth: 0,
- textAlign: 'center',
+  {getWeekdays().map((day, index) => (
+  <Box
+  key={index}
+  sx={{
+  py: 1,
+  minWidth: 0,
+  textAlign: 'center',
  color:
  index === 0
  ? 'error.main'
@@ -469,21 +457,23 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  minWidth: 0,
  width: '100%',
  borderRadius: 2,
- bgcolor: isSelected
- ? `${muiTheme.palette.primary.main}30`
- : isTodayDate
- ? `${muiTheme.palette.primary.main}10`
- : tithiColors.bg,
- border: isSelected
- ? `2.5px solid ${muiTheme.palette.primary.main}`
- : isTodayDate
- ? `2px solid ${tithiColors.color}`
- : `1px solid ${tithiColors.borderColor}`,
- transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
- transform: isSelected ? 'scale(1.04)' : 'scale(1)',
- boxShadow: isSelected
- ? (isDark ? `0 0 12px ${muiTheme.palette.primary.main}60, 0 4px 12px rgba(0,0,0,0.3)` : `0 0 12px ${muiTheme.palette.primary.main}40, 0 4px 12px rgba(0,0,0,0.12)`)
- : undefined,
+  bgcolor: isSelected
+  ? `${muiTheme.palette.primary.main}30`
+  : isTodayDate
+  ? `${muiTheme.palette.primary.main}1A`
+  : tithiColors.bg,
+  border: isSelected
+  ? `2px solid ${muiTheme.palette.primary.main}`
+  : isTodayDate
+  ? `2px solid ${muiTheme.palette.primary.main}`
+  : `1px solid ${tithiColors.borderColor}`,
+  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+  transform: isSelected ? 'scale(1.04)' : 'scale(1)',
+  boxShadow: isSelected
+  ? (isDark ? `0 0 12px ${muiTheme.palette.primary.main}60, 0 4px 12px rgba(0,0,0,0.3)` : `0 0 12px ${muiTheme.palette.primary.main}40, 0 4px 12px rgba(0,0,0,0.12)`)
+  : isTodayDate
+  ? (isDark ? `0 2px 8px ${muiTheme.palette.primary.main}40` : `0 2px 8px ${muiTheme.palette.primary.main}30`)
+  : undefined,
  overflow: 'hidden',
  '&:hover': {
  bgcolor: isSelected
@@ -498,31 +488,29 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  },
  }}
  >
- {/* Festival indicator - top left badge */}
- {day.isFestival && (
- <Typography
- sx={{
- position: 'absolute',
- top: 1,
- left: 2,
- fontSize: isMobile ? '0.45rem' : '0.6rem',
- fontWeight: 500,
- color: muiTheme.palette.success.main,
- lineHeight: 1,
- }}
- >
- 🪔
- </Typography>
- )}
+  {/* Festival dot — theme-token saffron marker */}
+  {day.isFestival && (
+  <Box
+  sx={{
+  position: 'absolute',
+  top: 4,
+  left: 4,
+  width: 6,
+  height: 6,
+  borderRadius: '50%',
+  bgcolor: 'primary.main',
+  }}
+  />
+  )}
 
- {/* Day number */}
- <Typography
- sx={{
- fontWeight: 500,
- fontSize: dayNumberFontSize,
- lineHeight: 1,
- mt: day.isFestival ? 1 : 0,
- mb: 0.25,
+  {/* Day number */}
+  <Typography
+  sx={{
+  fontWeight: 500,
+  fontSize: dayNumberFontSize,
+  lineHeight: 1,
+  mt: 0,
+  mb: 0.25,
  color: isTodayDate
  ? muiTheme.palette.primary.main
  : isSunday
@@ -539,9 +527,9 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  {day.isFestival && festivalName && (
  <Typography
  sx={{
- fontSize: festivalTextFontSize,
- fontWeight: 500,
- color: muiTheme.palette.success.main,
+  fontSize: festivalTextFontSize,
+  fontWeight: 500,
+  color: muiTheme.palette.primary.main,
  lineHeight: 1.1,
  textAlign: 'center',
  maxWidth: '100%',
@@ -584,30 +572,25 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  right: 3,
  width: 6,
  height: 6,
- borderRadius: '50%',
- bgcolor: muiTheme.palette.warning.main,
+  borderRadius: '50%',
+  bgcolor: 'warning.main',
  }}
  />
  )}
 
- {day.isFasting && !day.isFestival && (
- <Box
- sx={{
- position: 'absolute',
- top: 3,
- right: 3,
- width: 8,
- height: 8,
- borderRadius: '50%',
- bgcolor: muiTheme.palette.success.main,
- animation: 'pulse 1.5s infinite',
- '@keyframes pulse': {
- '0%, 100%': { opacity: 1 },
- '50%': { opacity: 0.6 },
- },
- }}
- />
- )}
+  {day.isFasting && !day.isFestival && (
+  <Box
+  sx={{
+  position: 'absolute',
+  top: 4,
+  right: 4,
+  width: 6,
+  height: 6,
+  borderRadius: '50%',
+  bgcolor: 'success.main',
+  }}
+  />
+  )}
  </Paper>
  );
  })}
@@ -625,8 +608,8 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  bottom: isMobile ? 0 : 'auto',
  left: isMobile ? 0 : 'auto',
  right: isMobile ? 0 : 'auto',
- zIndex: isMobile ? 1300 : 'auto',
- mt: { sm: 2 },
+  zIndex: isMobile ? 1300 : 'auto',
+  mt: { sm: 1.5 },
  mx: { sm: 0 },
  maxHeight: isMobile ? '85vh' : { sm: '70vh', md: '75vh' },
  overflowY: 'auto',
@@ -686,11 +669,11 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  {/* Sticky header - stays visible while scrolling */}
  <Box
  sx={{
- position: 'sticky',
- top: 0,
- zIndex: 10,
- px: { xs: 2, sm: 2.5 },
- py: { xs: 1.25, sm: 1.5 },
+  position: 'sticky',
+  top: 0,
+  zIndex: 10,
+  px: { xs: 1.5, sm: 2 },
+  py: { xs: 1, sm: 1.25 },
  display: 'flex',
  alignItems: 'center',
  justifyContent: 'space-between',
@@ -703,9 +686,9 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  }}
  >
  <Box sx={{ minWidth: 0, flex: 1 }}>
- <Typography
- variant="h6"
- sx={{ fontWeight: 500, color: 'text.primary', fontSize: { xs: '0.95rem', sm: '1.05rem' }, wordBreak: 'break-word' }}
+  <Typography
+  variant="h6"
+  sx={{ fontWeight: 500, color: 'text.primary', fontSize: { xs: '1rem', sm: '1.15rem' }, wordBreak: 'break-word', letterSpacing: '-0.02em', lineHeight: 1.3, fontFamily: '"Noto Sans", sans-serif' }}
  >
  {selectedDay.date.toLocaleDateString('en-IN', {
  weekday: 'long',
@@ -746,8 +729,8 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  </Box>
  </Box>
 
- {/* Scrollable content */}
- <Box sx={{ px: { xs: 2, sm: 2.5 }, py: { xs: 2, sm: 2.5 } }}>
+  {/* Scrollable content */}
+  <Box sx={{ px: { xs: 1.5, sm: 2 }, py: { xs: 1.5, sm: 1.5 } }}>
  {/* Auspiciousness badge */}
  {(() => {
  const tithiName = selectedDay.panchang?.tithi?.name || '';
@@ -770,10 +753,10 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  <Chip
  label={badgeLabel}
  size="small"
- sx={{
- mb: 2,
- height: 24,
- fontSize: '0.7rem',
+  sx={{
+  mb: 1.5,
+  height: 24,
+  fontSize: '0.7rem',
  fontWeight: 500,
  bgcolor: badgeColor,
  color: badgeTextColor,
@@ -784,37 +767,38 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  );
  })()}
 
- {/* Tithi & Nakshatra */}
- <Box
- sx={{
- display: 'grid',
- gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
- gap: { xs: 1.5, sm: 2 },
- mb: 2,
- }}
- >
- <Box
- sx={{
- p: { xs: 1.5, sm: 2 },
- bgcolor: `${muiTheme.palette.primary.main}08`,
- borderRadius: 2,
- border: '1px solid',
- borderColor: 'divider',
- }}
- >
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.75 }}>
- <Box
- sx={{
- width: 28,
- height: 28,
- borderRadius: '50%',
- bgcolor: `${muiTheme.palette.primary.main}20`,
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'center',
- }}
- >
- <MoonIcon size={14} color={muiTheme.palette.primary.main} />
+  {/* Tithi & Nakshatra — icon-led rows matching Today timings pattern */}
+  <Box
+  sx={{
+  display: 'grid',
+  gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+  gap: { xs: 1, sm: 1.5 },
+  mb: 1.5,
+  }}
+  >
+  <Box
+  sx={{
+  p: 1.5,
+  bgcolor: `${muiTheme.palette.primary.main}08`,
+  borderRadius: 2,
+  border: '1px solid',
+  borderColor: 'divider',
+  }}
+  >
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+  <Box
+  sx={{
+  width: 36,
+  height: 36,
+  borderRadius: 1.5,
+  bgcolor: `${muiTheme.palette.primary.main}20`,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0,
+  }}
+  >
+  <MoonIcon size={18} color={muiTheme.palette.primary.main} />
  </Box>
  <Typography
  sx={{ fontSize: '0.7rem', letterSpacing: '0.08em', color: 'primary.main', fontWeight: 500, textTransform: 'uppercase' }}
@@ -848,28 +832,29 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  )}
  </Box>
 
- <Box
- sx={{
- p: { xs: 1.5, sm: 2 },
- bgcolor: `${muiTheme.palette.secondary.main}08`,
- borderRadius: 2,
- border: '1px solid',
- borderColor: 'divider',
- }}
- >
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.75 }}>
- <Box
- sx={{
- width: 28,
- height: 28,
- borderRadius: '50%',
- bgcolor: `${muiTheme.palette.secondary.main}20`,
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'center',
- }}
- >
- <StarIcon size={14} color={muiTheme.palette.secondary.main} />
+  <Box
+  sx={{
+  p: 1.5,
+  bgcolor: `${muiTheme.palette.secondary.main}08`,
+  borderRadius: 2,
+  border: '1px solid',
+  borderColor: 'divider',
+  }}
+  >
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+  <Box
+  sx={{
+  width: 36,
+  height: 36,
+  borderRadius: 1.5,
+  bgcolor: `${muiTheme.palette.secondary.main}20`,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0,
+  }}
+  >
+  <StarIcon size={18} color={muiTheme.palette.secondary.main} />
  </Box>
  <Typography
  sx={{ fontSize: '0.7rem', letterSpacing: '0.08em', color: 'secondary.main', fontWeight: 500, textTransform: 'uppercase' }}
@@ -904,32 +889,34 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  </Box>
  </Box>
 
- {/* Yoga, Karana & Solar */}
- <Box
- sx={{
- display: 'grid',
- gridTemplateColumns: { xs: '1fr 1fr', sm: '1fr 1fr 1fr' },
- gap: { xs: 1.5, sm: 2 },
- mb: 2,
- }}
- >
- <Box
- sx={{
- p: { xs: 1.25, sm: 1.5 },
- bgcolor: `${muiTheme.palette.warning.main}08`,
- borderRadius: 2,
- border: '1px solid',
- borderColor: 'divider',
- }}
- >
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
- <SunIcon size={13} color={muiTheme.palette.warning.main} />
- <Typography
- sx={{ fontSize: '0.65rem', letterSpacing: '0.08em', color: 'warning.main', fontWeight: 500, textTransform: 'uppercase' }}
- >
- {t('panchang.yoga') || 'Yoga'}
- </Typography>
- </Box>
+  {/* Yoga, Karana & Solar — icon-led, Today timings rhythm */}
+  <Box
+  sx={{
+  display: 'grid',
+  gridTemplateColumns: { xs: '1fr 1fr', sm: '1fr 1fr 1fr' },
+  gap: { xs: 1, sm: 1.5 },
+  mb: 1.5,
+  }}
+  >
+  <Box
+  sx={{
+  p: 1.25,
+  bgcolor: `${muiTheme.palette.warning.main}08`,
+  borderRadius: 2,
+  border: '1px solid',
+  borderColor: 'divider',
+  }}
+  >
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
+  <Box sx={{ width: 32, height: 32, borderRadius: 1.5, bgcolor: `${muiTheme.palette.warning.main}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+  <SunIcon size={16} color={muiTheme.palette.warning.main} />
+  </Box>
+  <Typography
+  sx={{ fontSize: '0.65rem', letterSpacing: '0.08em', color: 'warning.main', fontWeight: 500, textTransform: 'uppercase' }}
+  >
+  {t('panchang.yoga') || 'Yoga'}
+  </Typography>
+  </Box>
  <Typography
  variant="body2"
  sx={{ fontWeight: 500, color: 'text.primary', fontSize: '0.85rem' }}
@@ -943,23 +930,25 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  )}
  </Box>
 
- <Box
- sx={{
- p: { xs: 1.25, sm: 1.5 },
- bgcolor: `${muiTheme.palette.info.main}08`,
- borderRadius: 2,
- border: '1px solid',
- borderColor: 'divider',
- }}
- >
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
- <ClockIcon size={13} color={muiTheme.palette.info.main} />
- <Typography
- sx={{ fontSize: '0.65rem', letterSpacing: '0.08em', color: 'info.main', fontWeight: 500, textTransform: 'uppercase' }}
- >
- {t('panchang.karana') || 'Karana'}
- </Typography>
- </Box>
+  <Box
+  sx={{
+  p: 1.25,
+  bgcolor: `${muiTheme.palette.info.main}08`,
+  borderRadius: 2,
+  border: '1px solid',
+  borderColor: 'divider',
+  }}
+  >
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
+  <Box sx={{ width: 32, height: 32, borderRadius: 1.5, bgcolor: `${muiTheme.palette.info.main}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+  <ClockIcon size={16} color={muiTheme.palette.info.main} />
+  </Box>
+  <Typography
+  sx={{ fontSize: '0.65rem', letterSpacing: '0.08em', color: 'info.main', fontWeight: 500, textTransform: 'uppercase' }}
+  >
+  {t('panchang.karana') || 'Karana'}
+  </Typography>
+  </Box>
  <Typography
  variant="body2"
  sx={{ fontWeight: 500, color: 'text.primary', fontSize: '0.85rem' }}
@@ -978,24 +967,26 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  )}
  </Box>
 
- <Box
- sx={{
- p: { xs: 1.25, sm: 1.5 },
- gridColumn: { xs: 'span 2', sm: 'span 1' },
- bgcolor: `${muiTheme.palette.warning.main}10`,
- borderRadius: 2,
- border: '1px solid',
- borderColor: `${muiTheme.palette.warning.main}30`,
- }}
- >
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
- <SunIcon size={13} color={muiTheme.palette.warning.main} />
- <Typography
- sx={{ fontSize: '0.65rem', letterSpacing: '0.08em', color: 'warning.main', fontWeight: 500, textTransform: 'uppercase' }}
- >
- {t('calendar.solar') || 'Solar'}
- </Typography>
- </Box>
+  <Box
+  sx={{
+  p: 1.25,
+  gridColumn: { xs: 'span 2', sm: 'span 1' },
+  bgcolor: `${muiTheme.palette.warning.main}10`,
+  borderRadius: 2,
+  border: '1px solid',
+  borderColor: `${muiTheme.palette.warning.main}30`,
+  }}
+  >
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
+  <Box sx={{ width: 32, height: 32, borderRadius: 1.5, bgcolor: `${muiTheme.palette.warning.main}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+  <SunIcon size={16} color={muiTheme.palette.warning.main} />
+  </Box>
+  <Typography
+  sx={{ fontSize: '0.65rem', letterSpacing: '0.08em', color: 'warning.main', fontWeight: 500, textTransform: 'uppercase' }}
+  >
+  {t('calendar.solar') || 'Solar'}
+  </Typography>
+  </Box>
  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
  <Box>
  <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem', display: 'block' }}>Sunrise</Typography>
@@ -1013,11 +1004,11 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  </Box>
  </Box>
 
- {/* Festivals */}
- {selectedDay.panchang?.festivals && selectedDay.panchang.festivals.length > 0 && (
- <>
- <Divider sx={{ my: 2, borderColor: 'divider' }} />
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1.5 }}>
+  {/* Festivals — icon-led rows */}
+  {selectedDay.panchang?.festivals && selectedDay.panchang.festivals.length > 0 && (
+  <>
+  <Divider sx={{ my: 1.5, borderColor: 'divider' }} />
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
  <Typography sx={{ fontSize: '0.7rem', letterSpacing: '0.08em', color: 'success.main', fontWeight: 500, textTransform: 'uppercase' }}>
  Festivals
  </Typography>
@@ -1041,10 +1032,10 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
           return (
  <Box
  key={festivalId}
- sx={{
- mb: 1.5,
- p: 1.5,
- bgcolor: `${muiTheme.palette.primary.main}08`,
+  sx={{
+  mb: 1,
+  p: 1.5,
+  bgcolor: `${muiTheme.palette.primary.main}08`,
  borderRadius: 2,
  border: '1px solid',
  borderColor: isExpanded
@@ -1063,22 +1054,21 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  }}
  sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 0.5, cursor: hasFullStory ? 'pointer' : 'default' }}
  >
- <Box
- sx={{
- width: 32,
- height: 32,
- borderRadius: 2,
- bgcolor: `${muiTheme.palette.primary.main}12`,
- border: `1px solid ${muiTheme.palette.primary.main}25`,
- display: 'flex',
- alignItems: 'center',
- justifyContent: 'center',
- fontSize: '1rem',
- flexShrink: 0,
- }}
- >
- 🪔
- </Box>
+  <Box
+  sx={{
+  width: 36,
+  height: 36,
+  borderRadius: 1.5,
+  bgcolor: `${muiTheme.palette.primary.main}12`,
+  border: `1px solid ${muiTheme.palette.primary.main}25`,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0,
+  }}
+  >
+  <StarIcon size={18} color={muiTheme.palette.primary.main} />
+  </Box>
  <Box sx={{ flex: 1, minWidth: 0 }}>
  <Typography variant="body2" sx={{ fontWeight: 500, color: 'primary.main', lineHeight: 1.3 }}>
  {festival.name}
@@ -1184,16 +1174,18 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  </>
  )}
 
- {/* Fasting */}
- {selectedDay.panchang?.fasting && (
- <>
- <Divider sx={{ my: 2, borderColor: 'divider' }} />
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1.5 }}>
- <LeafIcon size={14} color={muiTheme.palette.success.main} />
- <Typography sx={{ fontSize: '0.7rem', letterSpacing: '0.08em', color: 'success.main', fontWeight: 500, textTransform: 'uppercase' }}>
- Fasting
- </Typography>
- </Box>
+  {/* Fasting — icon-led header */}
+  {selectedDay.panchang?.fasting && (
+  <>
+  <Divider sx={{ my: 1.5, borderColor: 'divider' }} />
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
+  <Box sx={{ width: 32, height: 32, borderRadius: 1.5, bgcolor: `${muiTheme.palette.success.main}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+  <LeafIcon size={16} color={muiTheme.palette.success.main} />
+  </Box>
+  <Typography sx={{ fontSize: '0.7rem', letterSpacing: '0.08em', color: 'success.main', fontWeight: 500, textTransform: 'uppercase' }}>
+  Fasting
+  </Typography>
+  </Box>
  <Box
  sx={{
  p: 1.5,
@@ -1229,80 +1221,80 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  </>
  )}
 
- {/* Rahu Kaal, Yamagandam, Gulika - Inauspicious Periods */}
- <Divider sx={{ my: 2, borderColor: 'divider' }} />
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1.5 }}>
- <Typography sx={{ fontSize: '0.7rem', letterSpacing: '0.08em', color: 'error.main', fontWeight: 500, textTransform: 'uppercase' }}>
- Inauspicious Periods
- </Typography>
- </Box>
- <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: { xs: 1, sm: 1.5 } }}>
- <Box
- sx={{
- p: { xs: 1.25, sm: 1.5 },
- bgcolor: `${muiTheme.palette.error.main}08`,
- borderRadius: 2,
- border: '1px solid',
- borderColor: `${muiTheme.palette.error.main}25`,
- flex: '1 1 calc(50% - 8px)',
- minWidth: { xs: 120, sm: 140 },
- }}
- >
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
- <Box
- sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'error.main' }}
- />
- <Typography variant="caption" sx={{ color: 'error.main', fontSize: '0.65rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
- Rahu Kaal
- </Typography>
- </Box>
+  {/* Rahu Kaal, Yamagandam, Gulika — icon-led timings rows (Today pattern) */}
+  <Divider sx={{ my: 1.5, borderColor: 'divider' }} />
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
+  <Typography sx={{ fontSize: '0.7rem', letterSpacing: '0.08em', color: 'error.main', fontWeight: 500, textTransform: 'uppercase' }}>
+  Inauspicious Periods
+  </Typography>
+  </Box>
+  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: { xs: 0.75, sm: 1 } }}>
+  <Box
+  sx={{
+  p: 1.25,
+  bgcolor: `${muiTheme.palette.error.main}08`,
+  borderRadius: 2,
+  border: '1px solid',
+  borderColor: `${muiTheme.palette.error.main}25`,
+  flex: '1 1 calc(50% - 8px)',
+  minWidth: { xs: 120, sm: 140 },
+  }}
+  >
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
+  <Box sx={{ width: 32, height: 32, borderRadius: 1.5, bgcolor: `${muiTheme.palette.error.main}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+  <ClockIcon size={16} color={muiTheme.palette.error.main} />
+  </Box>
+  <Typography variant="caption" sx={{ color: 'error.main', fontSize: '0.65rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+  Rahu Kaal
+  </Typography>
+  </Box>
  <Typography variant="body2" sx={{ fontWeight: 500, color: 'error.main', fontSize: '0.85rem' }}>
  {selectedDay.panchang?.rahuKaal ? `${formatTime(selectedDay.panchang.rahuKaal.start)} – ${formatTime(selectedDay.panchang.rahuKaal.end)}` : '--'}
  </Typography>
  </Box>
- <Box
- sx={{
- p: { xs: 1.25, sm: 1.5 },
- bgcolor: muiTheme.palette.action.hover,
- borderRadius: 2,
- border: '1px solid',
- borderColor: 'divider',
- flex: '1 1 calc(50% - 8px)',
- minWidth: { xs: 120, sm: 140 },
- }}
- >
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
- <Box
- sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'text.disabled' }}
- />
- <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
- Yamagandam
- </Typography>
- </Box>
+  <Box
+  sx={{
+  p: 1.25,
+  bgcolor: muiTheme.palette.action.hover,
+  borderRadius: 2,
+  border: '1px solid',
+  borderColor: 'divider',
+  flex: '1 1 calc(50% - 8px)',
+  minWidth: { xs: 120, sm: 140 },
+  }}
+  >
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
+  <Box sx={{ width: 32, height: 32, borderRadius: 1.5, bgcolor: `${muiTheme.palette.text.secondary}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+  <ClockIcon size={16} color={muiTheme.palette.text.secondary} />
+  </Box>
+  <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+  Yamagandam
+  </Typography>
+  </Box>
  <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.secondary', fontSize: '0.85rem' }}>
  {selectedDay.panchang?.yamagandam ? `${formatTime(selectedDay.panchang.yamagandam.start)} – ${formatTime(selectedDay.panchang.yamagandam.end)}` : '--'}
  </Typography>
  </Box>
- {selectedDay.panchang?.gulikaKaal && (
- <Box
- sx={{
- p: { xs: 1.25, sm: 1.5 },
- bgcolor: `${muiTheme.palette.secondary.main}08`,
- borderRadius: 2,
- border: '1px solid',
- borderColor: `${muiTheme.palette.secondary.main}25`,
- flex: '1 1 calc(50% - 8px)',
- minWidth: { xs: 120, sm: 140 },
- }}
- >
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
- <Box
- sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'secondary.main' }}
- />
- <Typography variant="caption" sx={{ color: 'secondary.main', fontSize: '0.65rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
- Gulika Kaal
- </Typography>
- </Box>
+  {selectedDay.panchang?.gulikaKaal && (
+  <Box
+  sx={{
+  p: 1.25,
+  bgcolor: `${muiTheme.palette.secondary.main}08`,
+  borderRadius: 2,
+  border: '1px solid',
+  borderColor: `${muiTheme.palette.secondary.main}25`,
+  flex: '1 1 calc(50% - 8px)',
+  minWidth: { xs: 120, sm: 140 },
+  }}
+  >
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
+  <Box sx={{ width: 32, height: 32, borderRadius: 1.5, bgcolor: `${muiTheme.palette.secondary.main}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+  <ClockIcon size={16} color={muiTheme.palette.secondary.main} />
+  </Box>
+  <Typography variant="caption" sx={{ color: 'secondary.main', fontSize: '0.65rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+  Gulika Kaal
+  </Typography>
+  </Box>
  <Typography variant="body2" sx={{ fontWeight: 500, color: 'secondary.main', fontSize: '0.85rem' }}>
  {formatTime(selectedDay.panchang.gulikaKaal.start)} – {formatTime(selectedDay.panchang.gulikaKaal.end)}
  </Typography>
@@ -1310,9 +1302,9 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  )}
  </Box>
 
- {/* Close button on mobile */}
- {isMobile && (
- <Box sx={{ mt: 2, pb: 1 }}>
+  {/* Close button on mobile */}
+  {isMobile && (
+  <Box sx={{ mt: 1.5, pb: 1 }}>
  <Box
  onClick={() => setSelectedDay(null)}
  sx={{
@@ -1346,23 +1338,23 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  <Fade in timeout={600}>
  <Paper
  elevation={0}
- sx={{
- mt: 2,
- px: 2.5,
- py: 2,
- borderRadius: 2,
- bgcolor: 'background.paper',
- border: '1px solid',
- borderColor: 'divider',
- }}
- >
- <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
- <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: muiTheme.palette.primary.main }} />
- <Typography variant="caption" color="text.secondary">{t('calendar.legend.festival') || 'Festival'}</Typography>
- </Box>
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
- <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: muiTheme.palette.success.main }} />
+  sx={{
+  mt: 1.5,
+  px: 2,
+  py: 1.5,
+  borderRadius: 2,
+  bgcolor: 'background.paper',
+  border: '1px solid',
+  borderColor: 'divider',
+  }}
+  >
+  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, alignItems: 'center' }}>
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+  <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'primary.main' }} />
+  <Typography variant="caption" color="text.secondary">{t('calendar.legend.festival') || 'Festival'}</Typography>
+  </Box>
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+  <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'success.main' }} />
  <Typography variant="caption" color="text.secondary">{t('calendar.legend.fast') || 'Fast'}</Typography>
  </Box>
  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
@@ -1405,18 +1397,10 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  {t('calendar.legend.tapForDetails') || 'Tap a day for details'}
  </Typography>
  </Box>
- </Paper>
- </Fade>
+  </Paper>
+  </Fade>
 
- {showCalendarAds && (
- <Fade in timeout={{ enter: 600, exit: 400 }}>
- <Box sx={{ mt: 2 }}>
- <AdCarousel />
- </Box>
- </Fade>
- )}
-
- <Snackbar
+  <Snackbar
  open={snackbar.open}
  autoHideDuration={4000}
  onClose={() => setSnackbar({ ...snackbar, open: false })}

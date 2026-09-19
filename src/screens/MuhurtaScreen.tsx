@@ -316,33 +316,41 @@ const MuhurtaScreen: React.FC = () => {
     if (newMode !== null) setDayNightMode(newMode);
   };
 
-  // Timeline segment component
+  // Timeline segment component — icon-led band rows (Today Timings language):
+  // 36px tinted tile + uppercase label + right-aligned time, 48px min-height,
+  // auspicious/inauspicious coding via the existing MUHURTA_BORDER scheme.
   const renderTimelineSegment = (muhurta: Muhurta, index: number, total: number) => {
     const isCurrent = isCurrentMuhurta(muhurta, visibleMuhurtas);
     const color = MUHURTA_BORDER[muhurta.name];
-    const widthPercent = 100 / total;
+    void index;
+    void total;
 
     return (
       <Box
         key={`${muhurta.name}-${index}`}
         sx={{
-          flex: 1,
-          height: { xs: 40, sm: 48 },
-          bgcolor: isDark ? MUHURTA_BG[muhurta.name] : `${color}18`,
-          border: `1px solid ${color}40`,
-          borderRight: index < total - 1 ? 'none' : undefined,
-          borderRadius: index === 0 ? '12px 0 0 12px' : index === total - 1 ? '0 12px 12px 0' : undefined,
-          position: 'relative',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
+          gap: 1.25,
+          py: 0.75,
+          px: 1,
+          minHeight: 48,
+          maxWidth: '100%',
+          borderRadius: 1.5,
+          bgcolor: isDark ? MUHURTA_BG[muhurta.name] : `${color}14`,
+          border: '1px solid',
+          borderColor: isCurrent ? color : `${color}40`,
+          position: 'relative',
           overflow: 'hidden',
-          transition: 'all 0.3s ease',
+          transition: 'all 0.2s ease',
           cursor: 'pointer',
+          ...(isCurrent && {
+            boxShadow: isDark
+              ? '0 2px 8px rgba(0,0,0,0.2)'
+              : '0 1px 3px rgba(0,0,0,0.04)',
+          }),
           '&:hover': {
-            transform: 'scaleY(1.1)',
-            zIndex: 1,
+            transform: 'translateY(-1px)',
           },
         }}
       >
@@ -374,28 +382,62 @@ const MuhurtaScreen: React.FC = () => {
             }}
           />
         )}
+        <Box
+          sx={{
+            width: 36,
+            height: 36,
+            borderRadius: 1.5,
+            bgcolor: `${color}1A`,
+            border: '1px solid',
+            borderColor: `${color}40`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          <Box
+            sx={{
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              bgcolor: color,
+              ...(isCurrent && {
+                animation: 'pulseDot 1.5s ease-in-out infinite',
+              }),
+            }}
+          />
+        </Box>
         <Typography
           variant="caption"
           sx={{
-            fontSize: { xs: '0.5rem', sm: '0.6rem' },
-                  fontWeight: 500,
-            color: isCurrent ? color : 'text.primary',
+            fontSize: '0.7rem',
+            fontWeight: 500,
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            color: isCurrent ? color : 'text.secondary',
             position: 'relative',
             zIndex: 1,
-            lineHeight: 1,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }}
         >
           {getLocalizedName(muhurta.name)}
         </Typography>
         <Typography
-          variant="caption"
+          variant="body2"
           sx={{
-            fontSize: { xs: '0.45rem', sm: '0.5rem' },
-            color: 'text.secondary',
+            fontSize: '0.8125rem',
+            fontWeight: 500,
+            color: 'text.primary',
+            ml: 'auto',
+            textAlign: 'right',
+            whiteSpace: 'nowrap',
             position: 'relative',
             zIndex: 1,
-            lineHeight: 1,
-            mt: 0.25,
           }}
         >
           {formatMuhurtaTime(muhurta.startTime)}
@@ -404,22 +446,31 @@ const MuhurtaScreen: React.FC = () => {
     );
   };
 
-  // Full timeline showing all muhurtas
+  // Full timeline showing all muhurtas — stacked scannable bands
   const renderTimeline = (muhurtas: Muhurta[], label: string, icon: React.ReactNode) => (
-    <Box sx={{ mb: 3 }}>
+    <Box sx={{ mb: 1.5, maxWidth: '100%' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
         {icon}
-        <Typography variant="caption" sx={{ fontWeight: 500, color: 'text.secondary' }}>
+        <Typography
+          variant="overline"
+          sx={{
+            fontWeight: 500,
+            letterSpacing: '0.1em',
+            fontSize: '0.75rem',
+            color: 'text.secondary',
+          }}
+        >
           {label}
         </Typography>
       </Box>
       <Box
         sx={{
           display: 'flex',
-          gap: 0,
+          flexDirection: 'column',
+          gap: 0.75,
           borderRadius: 2,
           overflow: 'hidden',
-          boxShadow: isDark ? '0 1px 3px rgba(0,0,0,0.3)' : '0 1px 3px rgba(0,0,0,0.04)',
+          maxWidth: '100%',
         }}
       >
         {muhurtas.map((m, i) => renderTimelineSegment(m, i, muhurtas.length))}
@@ -439,19 +490,24 @@ const MuhurtaScreen: React.FC = () => {
         key={`${name}-${startTime.getTime()}`}
         elevation={0}
         sx={{
-          p: { xs: 1.5, sm: 2 },
-          mb: 1,
+          p: { xs: 1.25, sm: 1.5 },
+          mb: 0.75,
           background: isCurrent
             ? `${border}15`
             : bg,
-          border: `2px solid ${isCurrent ? border : `${border}40`}`,
+          border: '1px solid',
+          borderColor: isCurrent ? border : `${border}40`,
           borderRadius: 2,
-          transition: 'all 0.3s ease',
+          transition: 'all 0.2s ease',
           position: 'relative',
           overflow: 'hidden',
-          ...(isCurrent && {
-            animation: 'currentCardGlow 2s ease-in-out infinite',
-          }),
+          maxWidth: '100%',
+          '&:hover': {
+            transform: 'translateY(-1px)',
+            boxShadow: isDark
+              ? '0 4px 12px rgba(0,0,0,0.3)'
+              : '0 4px 12px rgba(0,0,0,0.08)',
+          },
         }}
       >
         {isCurrent && (
@@ -468,42 +524,49 @@ const MuhurtaScreen: React.FC = () => {
         )}
 
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 0, flex: 1 }}>
-            {/* Pulsing dot for current */}
-            {isCurrent && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, minWidth: 0, flex: 1 }}>
+            {/* Icon-led tile (Today Timings language) with live pulse for current */}
+            <Box
+              sx={{
+                width: 36,
+                height: 36,
+                borderRadius: 1.5,
+                bgcolor: `${border}1A`,
+                border: '1px solid',
+                borderColor: `${border}40`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
               <Box
                 sx={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: '50%',
-                  bgcolor: border,
-                  flexShrink: 0,
-                  animation: 'pulseDot 1.5s ease-in-out infinite',
-                }}
-              />
-            )}
-            {!isCurrent && (
-              <Box
-                sx={{
-                  width: 8,
-                  height: 8,
+                  width: isCurrent ? 10 : 8,
+                  height: isCurrent ? 10 : 8,
                   borderRadius: '50%',
                   bgcolor: isAuspicious ? muiTheme.palette.success.main : muiTheme.palette.error.main,
                   flexShrink: 0,
+                  ...(isCurrent && {
+                    animation: 'pulseDot 1.5s ease-in-out infinite',
+                  }),
                 }}
               />
-            )}
-            <Box>
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
               <Typography
                 variant={isCurrent ? 'subtitle1' : 'body2'}
                 sx={{
             fontWeight: 500,
-                  color: textColor,
+                  color: isCurrent ? textColor : 'text.primary',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {getLocalizedName(name)}
               </Typography>
-              <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', whiteSpace: 'nowrap' }}>
                 {formatMuhurtaTime(startTime)} - {formatMuhurtaTime(endTime)}
               </Typography>
             </Box>
@@ -545,7 +608,7 @@ const MuhurtaScreen: React.FC = () => {
         </Box>
 
         {isCurrent && (
-          <Box sx={{ mt: 1.5 }}>
+          <Box sx={{ mt: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
               <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>
                 Progress
@@ -573,7 +636,7 @@ const MuhurtaScreen: React.FC = () => {
         )}
 
         <Collapse in={isExpanded}>
-          <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px solid', borderColor: 'divider' }}>
+          <Box sx={{ mt: 1, pt: 1, borderTop: '1px solid', borderColor: 'divider' }}>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               {getMuhurtaDescription(name)}
             </Typography>
@@ -589,11 +652,40 @@ const MuhurtaScreen: React.FC = () => {
     muhurtas: Muhurta[],
     accentColor: string,
   ) => (
-    <Box sx={{ mb: 3 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-        {icon}
-        <Typography variant="subtitle1" sx={{ fontWeight: 500, color: accentColor }}>
+    <Box sx={{ mb: 1.5, maxWidth: '100%' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+        <Box
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: 1.5,
+            bgcolor: isDark ? `${accentColor}20` : `${accentColor}10`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          {icon}
+        </Box>
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 500,
+            fontSize: '1.1rem',
+            fontFamily: '"Noto Sans", sans-serif',
+            letterSpacing: '-0.02em',
+            lineHeight: 1.3,
+            color: 'text.primary',
+          }}
+        >
           {title}
+        </Typography>
+        <Typography
+          variant="caption"
+          sx={{ color: 'text.secondary', ml: 'auto', fontSize: '0.7rem' }}
+        >
+          {muhurtas.length}
         </Typography>
       </Box>
       {muhurtas.map((m) => {
@@ -619,21 +711,22 @@ const MuhurtaScreen: React.FC = () => {
   return (
     <ScreenContainer
       maxWidth={800}
-      sx={{ pt: 2 }}
+      sx={{ pt: 1.5 }}
     >
       {/* Live Clock Header */}
       <Fade in timeout={400}>
         <Box
           sx={{
             textAlign: 'center',
-            mb: 2,
-            p: { xs: 1.5, sm: 2 },
+            mb: 1.25,
+            p: { xs: 1.25, sm: 1.5 },
             borderRadius: 2,
             bgcolor: isDark
               ? `${muiTheme.palette.primary.main}14`
               : `${muiTheme.palette.primary.main}0A`,
             border: '1px solid',
             borderColor: isDark ? `${muiTheme.palette.primary.main}4D` : `${muiTheme.palette.primary.main}26`,
+            maxWidth: '100%',
           }}
         >
           <Typography
@@ -669,56 +762,32 @@ const MuhurtaScreen: React.FC = () => {
         </Box>
       </Fade>
 
-      {/* Current Muhurta Hero with Countdown */}
+      {/* Current Muhurta Hero with Countdown — saffron-gradient wash (Today hero language) */}
       {currentMuhurta.muhurta && (
         <Zoom in={!isTransitioning} timeout={500}>
           <Paper
             elevation={0}
             sx={{
-              p: { xs: 2, sm: 3 },
-              mb: 3,
+              p: { xs: 1.5, sm: 2 },
+              mb: 1.5,
               borderRadius: 2,
-              background: isDark
-                ? MUHURTA_GRADIENTS[currentMuhurta.muhurta.name].dark
-                : MUHURTA_GRADIENTS[currentMuhurta.muhurta.name].light,
-              border: `2px solid ${MUHURTA_BORDER[currentMuhurta.muhurta.name]}`,
+              background: `linear-gradient(135deg, ${MUHURTA_BORDER[currentMuhurta.muhurta.name]}1F 0%, ${MUHURTA_BORDER[currentMuhurta.muhurta.name]}14 45%, ${muiTheme.palette.background.paper} 100%)`,
+              bgcolor: 'background.paper',
+              border: '1px solid',
+              borderColor: `${MUHURTA_BORDER[currentMuhurta.muhurta.name]}40`,
               position: 'relative',
               overflow: 'hidden',
-              transition: 'all 0.5s ease',
+              maxWidth: '100%',
+              boxShadow: isDark
+                ? '0 2px 8px rgba(0,0,0,0.2)'
+                : '0 1px 3px rgba(0,0,0,0.04)',
+              transition: 'all 0.25s ease',
               ...(isTransitioning && {
                 animation: 'heroTransition 1.5s ease-in-out',
               }),
             }}
           >
-            {/* Animated glow orbs */}
-            <Box
-              sx={{
-                position: 'absolute',
-                top: -60,
-                right: -60,
-                width: 180,
-                height: 180,
-                borderRadius: '50%',
-                bgcolor: `${MUHURTA_BORDER[currentMuhurta.muhurta.name]}12`,
-                filter: 'blur(50px)',
-                animation: 'glowOrb 4s ease-in-out infinite',
-              }}
-            />
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: -40,
-                left: -40,
-                width: 120,
-                height: 120,
-                borderRadius: '50%',
-                bgcolor: `${MUHURTA_BORDER[currentMuhurta.muhurta.name]}08`,
-                filter: 'blur(30px)',
-                animation: 'glowOrb 4s ease-in-out infinite 2s',
-              }}
-            />
-
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: { xs: 1.5, sm: 2 }, position: 'relative', flexWrap: { xs: 'wrap', sm: 'nowrap' } }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: { xs: 1.25, sm: 1.5 }, position: 'relative', flexWrap: { xs: 'wrap', sm: 'nowrap' } }}>
               {/* Animated icon ring */}
               <Box
                 sx={{
@@ -755,28 +824,57 @@ const MuhurtaScreen: React.FC = () => {
                 </Box>
               </Box>
 
-              <Box sx={{ flex: 1 }}>
-                {/* Muhurta name */}
-                <Typography
-                  variant="caption"
-                  sx={{
-                    fontWeight: 500,
-                    color: 'text.secondary',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.08em',
-                  }}
-                >
-                  {currentMuhurta.isDaytime ? t('muhurta.day') : t('muhurta.night')} {t('muhurta.current').toLowerCase()}
-                </Typography>
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                {/* Live-ness: pulsing LIVE dot + day/night context */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                    <Box
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        bgcolor: MUHURTA_BORDER[currentMuhurta.muhurta.name],
+                        animation: 'pulseDot 1.5s ease-in-out infinite',
+                      }}
+                    />
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        fontWeight: 500,
+                        color: MUHURTA_BORDER[currentMuhurta.muhurta.name],
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em',
+                        fontSize: '0.7rem',
+                      }}
+                    >
+                      Live
+                    </Typography>
+                  </Box>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontWeight: 400,
+                      color: 'text.secondary',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.08em',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    {currentMuhurta.isDaytime ? t('muhurta.day') : t('muhurta.night')} {t('muhurta.current').toLowerCase()}
+                  </Typography>
+                </Box>
 
                 <Typography
                   variant="h3"
                   sx={{
                     fontWeight: 500,
+                    fontFamily: '"Noto Sans", sans-serif',
                     color: MUHURTA_BORDER[currentMuhurta.muhurta.name],
-                    lineHeight: 1.1,
+                    letterSpacing: '-0.02em',
+                    lineHeight: 1.15,
                     my: 0.5,
-                    fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+                    fontSize: { xs: '1.75rem', sm: '2.25rem' },
+                    overflowWrap: 'break-word',
                   }}
                 >
                   {getLocalizedName(currentMuhurta.muhurta.name)}
@@ -792,7 +890,7 @@ const MuhurtaScreen: React.FC = () => {
                 </Typography>
 
                 {/* Badges */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', mb: 1.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 1 }}>
                   <Chip
                     label={
                       currentMuhurta.muhurta.isAuspicious
@@ -811,7 +909,7 @@ const MuhurtaScreen: React.FC = () => {
                       border: `1px solid ${currentMuhurta.muhurta.isAuspicious ? muiTheme.palette.success.main : muiTheme.palette.error.main}`,
                     }}
                   />
-                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', whiteSpace: 'nowrap' }}>
                     {formatMuhurtaTime(currentMuhurta.muhurta.startTime)} -{' '}
                     {formatMuhurtaTime(currentMuhurta.muhurta.endTime)}
                   </Typography>
@@ -823,12 +921,13 @@ const MuhurtaScreen: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 1,
-                    mb: 1.5,
-                    p: { xs: 0.75, sm: 1 },
-                    borderRadius: 2,
+                    mb: 1,
+                    p: 0.75,
+                    borderRadius: 1.5,
                     bgcolor: muiTheme.palette.action.hover,
                     justifyContent: 'center',
                     flexWrap: 'wrap',
+                    maxWidth: '100%',
                   }}
                 >
                   <Timer size={16} color={MUHURTA_BORDER[currentMuhurta.muhurta.name]} />
@@ -839,7 +938,7 @@ const MuhurtaScreen: React.FC = () => {
                       fontFamily: '"Noto Sans", sans-serif',
                       color: MUHURTA_BORDER[currentMuhurta.muhurta.name],
                       letterSpacing: '0.05em',
-                      fontSize: { xs: '1.2rem', sm: '1.8rem', md: '2.1rem' },
+                      fontSize: { xs: '1.2rem', sm: '1.8rem' },
                     }}
                   >
                     {countdown}
@@ -863,7 +962,7 @@ const MuhurtaScreen: React.FC = () => {
                     variant="determinate"
                     value={progressPercent}
                     sx={{
-                      height: 8,
+                      height: 6,
                       borderRadius: 4,
                       bgcolor: muiTheme.palette.action.hover,
                       '& .MuiLinearProgress-bar': {
@@ -881,14 +980,15 @@ const MuhurtaScreen: React.FC = () => {
         </Zoom>
       )}
 
-      {/* Solar timing info */}
+      {/* Solar timing info — icon-led rows (Today Timings language) */}
       <Fade in timeout={600}>
         <Box
           sx={{
             display: 'flex',
-            gap: { xs: 1.5, sm: 2 },
-            mb: 3,
+            gap: { xs: 1, sm: 1.5 },
+            mb: 1.5,
             flexWrap: 'wrap',
+            maxWidth: '100%',
           }}
         >
           <Paper
@@ -896,22 +996,37 @@ const MuhurtaScreen: React.FC = () => {
             sx={{
               flex: '1 1 140px',
               minWidth: 140,
-              p: { xs: 1.25, sm: 1.5 },
+              p: 1.25,
               borderRadius: 2,
               bgcolor: muiTheme.palette.action.hover,
               border: '1px solid',
               borderColor: 'divider',
               display: 'flex',
               alignItems: 'center',
-              gap: 1,
+              gap: 1.25,
             }}
           >
-            <Sunrise size={18} color={muiTheme.palette.warning.main} />
-            <Box>
-              <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
+            <Box
+              sx={{
+                width: 36,
+                height: 36,
+                borderRadius: 1.5,
+                bgcolor: isDark
+                  ? `${muiTheme.palette.warning.main}25`
+                  : `${muiTheme.palette.warning.main}15`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <Sunrise size={18} color={muiTheme.palette.warning.main} />
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block' }}>
                 {t('panchang.sunrise')}
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: { xs: '0.85rem', sm: '0.95rem' } }}>
+              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8125rem' }}>
                 {formatMuhurtaTime(sunrise)}
               </Typography>
             </Box>
@@ -921,22 +1036,37 @@ const MuhurtaScreen: React.FC = () => {
             sx={{
               flex: '1 1 140px',
               minWidth: 140,
-              p: { xs: 1.25, sm: 1.5 },
+              p: 1.25,
               borderRadius: 2,
               bgcolor: muiTheme.palette.action.hover,
               border: '1px solid',
               borderColor: 'divider',
               display: 'flex',
               alignItems: 'center',
-              gap: 1,
+              gap: 1.25,
             }}
           >
-            <Moon size={18} color={muiTheme.palette.info.main} />
-            <Box>
-              <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: { xs: '0.65rem', sm: '0.75rem' } }}>
+            <Box
+              sx={{
+                width: 36,
+                height: 36,
+                borderRadius: 1.5,
+                bgcolor: isDark
+                  ? `${muiTheme.palette.info.main}20`
+                  : `${muiTheme.palette.info.main}10`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <Moon size={18} color={muiTheme.palette.info.main} />
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block' }}>
                 {t('panchang.sunset')}
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: { xs: '0.85rem', sm: '0.95rem' } }}>
+              <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8125rem' }}>
                 {formatMuhurtaTime(sunset)}
               </Typography>
             </Box>
@@ -944,9 +1074,9 @@ const MuhurtaScreen: React.FC = () => {
         </Box>
       </Fade>
 
-      {/* Day/Night Toggle */}
+      {/* Day/Night Toggle — refined pill, 48px targets */}
       <Fade in timeout={500}>
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3, px: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1.5, px: 1, maxWidth: '100%' }}>
           <ToggleButtonGroup
             value={dayNightMode}
             exclusive
@@ -956,14 +1086,21 @@ const MuhurtaScreen: React.FC = () => {
             sx={{
               bgcolor: muiTheme.palette.action.hover,
               borderRadius: 2,
+              border: '1px solid',
+              borderColor: 'divider',
+              p: 0.5,
+              maxWidth: '100%',
               '& .MuiToggleButton-root': {
                 px: { xs: 1.5, sm: 3 },
-                py: { xs: 1, sm: 1 },
+                py: 1,
                 border: 'none',
-                borderRadius: 2,
+                borderRadius: 1.5,
                 color: 'text.secondary',
                 fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                minHeight: 44,
+                fontWeight: 500,
+                minHeight: 48,
+                minWidth: 48,
+                textTransform: 'none',
                 '&.Mui-selected': {
                   bgcolor: 'primary.main',
                   color: muiTheme.palette.common.white,
@@ -1043,17 +1180,44 @@ const MuhurtaScreen: React.FC = () => {
         <Paper
           elevation={0}
           sx={{
-            p: 2,
-            mt: 2,
+            p: 1.5,
+            mt: 1.5,
+            mb: 1.5,
             borderRadius: 2,
             bgcolor: muiTheme.palette.action.hover,
             border: '1px solid',
             borderColor: 'divider',
+            maxWidth: '100%',
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-            <Info size={18} color={muiTheme.palette.primary.main} />
-            <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+            <Box
+              sx={{
+                width: 32,
+                height: 32,
+                borderRadius: 1.5,
+                bgcolor: isDark
+                  ? `${muiTheme.palette.primary.main}20`
+                  : `${muiTheme.palette.primary.main}10`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <Info size={18} color={muiTheme.palette.primary.main} />
+            </Box>
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 500,
+                fontSize: '1.1rem',
+                fontFamily: '"Noto Sans", sans-serif',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.3,
+                color: 'text.primary',
+              }}
+            >
               {t('muhurta.legend')}
             </Typography>
           </Box>
@@ -1066,7 +1230,7 @@ const MuhurtaScreen: React.FC = () => {
                 sm: 'repeat(2, 1fr)',
                 md: 'repeat(3, 1fr)',
               },
-              gap: 1,
+              gap: 0.75,
             }}
           >
             {legendItems.map(({ type, meaning }) => (
@@ -1075,23 +1239,39 @@ const MuhurtaScreen: React.FC = () => {
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 1,
-                  p: 1,
+                  gap: 1.25,
+                  p: 0.75,
                   borderRadius: 1.5,
                   bgcolor: MUHURTA_BG[type],
+                  border: '1px solid',
+                  borderColor: `${MUHURTA_BORDER[type]}40`,
+                  minHeight: 48,
                 }}
               >
                 <Box
                   sx={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: '50%',
-                    bgcolor: MUHURTA_BORDER[type],
+                    width: 36,
+                    height: 36,
+                    borderRadius: 1.5,
+                    bgcolor: `${MUHURTA_BORDER[type]}1A`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     flexShrink: 0,
                   }}
-                />
-                <Box>
-                  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
+                >
+                  <Box
+                    sx={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: '50%',
+                      bgcolor: MUHURTA_BORDER[type],
+                      flexShrink: 0,
+                    }}
+                  />
+                </Box>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {getLocalizedName(type)}
                   </Typography>
                   <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>
@@ -1107,10 +1287,6 @@ const MuhurtaScreen: React.FC = () => {
       {/* Keyframe animations */}
       <style>{`
 
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.05); opacity: 0.9; }
-        }
         @keyframes pulseDot {
           0%, 100% { transform: scale(1); opacity: 1; }
           50% { transform: scale(1.3); opacity: 0.7; }
@@ -1122,14 +1298,6 @@ const MuhurtaScreen: React.FC = () => {
         @keyframes timelinePulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
-        }
-        @keyframes glowOrb {
-          0%, 100% { transform: scale(1); opacity: 0.6; }
-          50% { transform: scale(1.2); opacity: 0.3; }
-        }
-        @keyframes currentCardGlow {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(199, 91, 18, 0.2); }
-          50% { box-shadow: 0 0 20px 4px rgba(199, 91, 18, 0.15); }
         }
         @keyframes heroTransition {
           0% { transform: scale(1); }
