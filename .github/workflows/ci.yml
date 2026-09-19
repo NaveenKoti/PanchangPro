@@ -8,6 +8,11 @@ jobs:
   test-build:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # Panchang dates are IST-anchored: `new Date(y,m,d)` means IST midnight
+    # in tests. Without this, UTC runners shift Udaya-tithi by a day (red CI
+    # on all pushes Sep 18-19). Belt-and-braces with the TZ in `npm test`.
+    env:
+      TZ: Asia/Kolkata
     steps:
       - uses: actions/checkout@v4
 
