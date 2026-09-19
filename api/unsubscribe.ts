@@ -5,8 +5,7 @@
  * → 503 when @vercel/kv env is missing.
  */
 
-import { kv } from '@vercel/kv';
-import { keyForEndpoint, isKvNotConfigured, KV_SETUP_HINT } from './subscribe';
+import { keyForEndpoint, isKvNotConfigured, getKv, KV_SETUP_HINT } from './subscribe';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default async function handler(req: any, res: any): Promise<void> {
@@ -22,6 +21,11 @@ export default async function handler(req: any, res: any): Promise<void> {
   }
 
   try {
+    const kv = await getKv();
+    if (!kv) {
+      res.status(503).json({ error: 'KV not configured', hint: KV_SETUP_HINT });
+      return;
+    }
     await kv.del(keyForEndpoint(endpoint));
   } catch (err) {
     if (isKvNotConfigured(err)) {

@@ -63,6 +63,7 @@ import { notificationService } from '../services/notificationService';
 import { useI18n } from '../hooks/useI18n';
 import { CustomTithi } from '../types';
 import { ScreenContainer } from '../components/ScreenContainer';
+import { LUNAR_MONTHS, LUNAR_MONTHS_HINDI } from '../engine/constants';
 import { format, differenceInDays } from 'date-fns';
 
 export const MyTithisScreen: React.FC = () => {
@@ -81,6 +82,7 @@ export const MyTithisScreen: React.FC = () => {
     exportCustomTithis, 
     importCustomTithis,
     preferences,
+    calculatePanchang,
   } = useAppStore();
   const locationTimeZone = preferences.location.timezone;
   
@@ -111,6 +113,44 @@ export const MyTithisScreen: React.FC = () => {
     severity: 'success' | 'error' | 'info';
   }>({ open: false, message: '', severity: 'info' });
   const [formErrors, setFormErrors] = useState<{ name?: string; customDate?: string }>({});
+  // "Pick from date": user chose a past/present/future Gregorian date instead
+  // of knowing the tithi — resolved summary shown under the picker.
+  const [pickDate, setPickDate] = useState('');
+  const [pickedSummary, setPickedSummary] = useState<string | null>(null);
+
+  const handlePickDate = (value: string) => {
+    setPickDate(value);
+    if (!value) {
+      setPickedSummary(null);
+      return;
+    }
+    try {
+      const d = new Date(value + 'T12:00:00');
+      if (isNaN(d.getTime())) {
+        setPickedSummary(null);
+        return;
+      }
+      const p = calculatePanchang(d);
+      setFormData((f) => ({
+        ...f,
+        tithiNumber: p.tithi.number,
+        paksha: p.tithi.paksha,
+        month: (p.lunarMonth ?? 1) - 1,
+        customDate: value,
+      }));
+      const monthName = isHindi
+        ? LUNAR_MONTHS_HINDI[(p.lunarMonth ?? 1) - 1]
+        : LUNAR_MONTHS[(p.lunarMonth ?? 1) - 1];
+      const tithiName = isHindi ? p.tithi.nameHindi : p.tithi.name;
+      setPickedSummary(
+        isHindi
+          ? `उस दिन: ${p.tithi.paksha === 'Shukla' ? 'शुक्ल' : 'कृष्ण'} ${tithiName}, ${monthName} मास`
+          : `That day: ${p.tithi.paksha} ${tithiName}, ${monthName} Maas`
+      );
+    } catch {
+      setPickedSummary(null);
+    }
+  };
 
   // Sacred times render in the LOCATION timezone (never the device default):
   // engine instants are untouched; only this display formatter threads
@@ -162,6 +202,9 @@ export const MyTithisScreen: React.FC = () => {
 
   const handleOpen = (tithi?: CustomTithi) => {
     setFormErrors({});
+    // Reset the date-picker helper (edit mode pre-fills it from customDate).
+    setPickDate(tithi?.customDate ? new Date(tithi.customDate).toISOString().split('T')[0] : '');
+    setPickedSummary(null);
     if (tithi) {
       setEditing(tithi);
       setFormData({
@@ -764,6 +807,26 @@ export const MyTithisScreen: React.FC = () => {
               helperText={formErrors.name ?? (isHindi ? 'जिसके नाम का आयोजन है' : 'In whose name is this observance?')}
             />
             
+            {/* Pick from date — for users who know the Gregorian date but not the tithi */}
+            <Box sx={{ mb: 2, p: 1.5, borderRadius: 1.5, bgcolor: 'action.hover' }}>
+              <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
+                {isHindi ? 'तारीख से चुनें (तिथि पता न हो तो)' : 'Pick from a date (if you don’t know the tithi)'}
+              </Typography>
+              <TextField
+                fullWidth
+                type="date"
+                value={pickDate}
+                onChange={(e) => handlePickDate(e.target.value)}
+                sx={{ bgcolor: 'background.paper', borderRadius: 1 }}
+                inputProps={{ 'aria-label': isHindi ? 'तारीख चुनें' : 'Pick a date' }}
+              />
+              {pickedSummary && (
+                <Typography variant="body2" color="primary.main" sx={{ mt: 1, fontWeight: 500, lineHeight: 1.6 }}>
+                  {pickedSummary}
+                </Typography>
+              )}
+            </Box>
+
             {/* Date Selection */}
             <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
               <TextField

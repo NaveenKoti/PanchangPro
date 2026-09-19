@@ -10,7 +10,23 @@
  * → 503 { error: 'KV not configured', hint } when @vercel/kv env is missing
  */
 
-import { kv } from '@vercel/kv';
+/**
+ * Lazily loads the @vercel/kv client.
+ *
+ * A top-level `import { kv }` throws during module evaluation when KV env
+ * vars are absent, crashing the function before the handler runs
+ * (FUNCTION_INVOCATION_FAILED on prod). Dynamic import keeps that failure
+ * inside the handler, where it becomes a controlled 503/skipped response.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function getKv(): Promise<any | null> {
+  try {
+    const mod = await import('@vercel/kv');
+    return mod.kv;
+  } catch {
+    return null;
+  }
+}
 
 export interface ClientReminder {
   id: string;
@@ -83,6 +99,11 @@ export default async function handler(req: any, res: any): Promise<void> {
   };
 
   try {
+    const kv = await getKv();
+    if (!kv) {
+      res.status(503).json({ error: 'KV not configured', hint: KV_SETUP_HINT });
+      return;
+    }
     await kv.set(keyForEndpoint(subscription.endpoint), record);
   } catch (err) {
     if (isKvNotConfigured(err)) {

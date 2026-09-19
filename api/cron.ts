@@ -8,9 +8,8 @@
  * → 200 { sent: number, errors: number, skipped?: string }
  */
 
-import { kv } from '@vercel/kv';
 import webpush from 'web-push';
-import { isKvNotConfigured, type StoredPushRecord } from './subscribe';
+import { isKvNotConfigured, getKv, type StoredPushRecord } from './subscribe';
 
 export const SEND_WINDOW_MINUTES = 10;
 /** Reminders older than this are dropped without sending (stale-blast guard). */
@@ -39,6 +38,12 @@ export default async function handler(req: any, res: any): Promise<void> {
   }
   webpush.setVapidDetails(subject, publicKey, privateKey);
 
+  const kv = await getKv();
+  if (!kv) {
+    res.status(200).json({ sent: 0, errors: 0, skipped: 'kv-not-configured' });
+    return;
+  }
+
   let keys: string[];
   try {
     keys = await kv.keys('push:*');
@@ -59,7 +64,7 @@ export default async function handler(req: any, res: any): Promise<void> {
   for (const key of keys) {
     let record: StoredPushRecord | null;
     try {
-      record = await kv.get<StoredPushRecord>(key);
+      record = (await kv.get(key)) as StoredPushRecord | null;
     } catch {
       errorDetails.push(`read-failed:${key}`);
       continue;
