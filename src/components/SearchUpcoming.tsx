@@ -279,7 +279,6 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
               borderColor: 'divider',
               borderRadius: 2,
               bgcolor: 'background.paper',
-              overflow: 'hidden',
               mb: 1.5,
               maxWidth: '100%',
             }}

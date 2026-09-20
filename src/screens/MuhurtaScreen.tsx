@@ -470,7 +470,6 @@ const MuhurtaScreen: React.FC = () => {
           flexDirection: 'column',
           gap: 0.75,
           borderRadius: 2,
-          overflow: 'hidden',
           maxWidth: '100%',
         }}
       >

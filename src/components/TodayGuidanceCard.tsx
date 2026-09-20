@@ -100,7 +100,6 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
         elevation={0}
         sx={{
           borderRadius: 2,
-          overflow: 'hidden',
           bgcolor: 'background.paper',
           border: `1px solid ${colorBorder}`,
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',

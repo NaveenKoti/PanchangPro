@@ -61,7 +61,6 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
       PaperProps={{
         sx: {
           borderRadius: 3,
-          overflow: 'hidden',
         },
       }}
     >

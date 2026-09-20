@@ -141,8 +141,7 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
       fullWidth
       PaperProps={{
         sx: {
-          background: `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.background.paper} 100%)`,
-          overflow: 'hidden'
+          background: `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.background.paper} 100%)`
         }
       }}
       className="pwa-install-dialog"

@@ -296,7 +296,6 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   background: `linear-gradient(135deg, ${muiTheme.palette.primary.main}1F 0%, ${muiTheme.palette.primary.light}14 45%, ${muiTheme.palette.background.paper} 100%)`,
   border: '1px solid',
   borderColor: 'divider',
-  overflow: 'hidden',
   }}
   >
   <Box

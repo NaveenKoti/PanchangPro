@@ -64,7 +64,6 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
       PaperProps={{
         sx: {
           borderRadius: 3,
-          overflow: 'hidden',
         },
       }}
     >

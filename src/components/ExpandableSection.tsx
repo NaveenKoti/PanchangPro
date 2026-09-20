@@ -89,8 +89,7 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
         elevation={0}
         sx={{
           borderRadius: 2,
-          overflow: 'hidden',
-          bgcolor: 'background.paper',
+                    bgcolor: 'background.paper',
           border: '1px solid',
           borderColor: 'divider',          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           '&:hover': {
@@ -169,8 +168,7 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
           className="expandable-content-wrapper"
           sx={{
             maxHeight: currentExpanded ? `${maxHeight}px` : '0px',
-            overflow: 'hidden',
-            transition: `max-height ${animationDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+                        transition: `max-height ${animationDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`,
           }}
         >
           <Box

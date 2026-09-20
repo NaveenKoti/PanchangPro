@@ -43,7 +43,6 @@ export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi
       sx={{
         mb: 1.5,
         borderRadius: 2,
-        overflow: 'hidden',
         bgcolor: 'background.paper',
         border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
         transition: 'all 0.2s ease',

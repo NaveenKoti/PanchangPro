@@ -143,7 +143,6 @@ export const AyurvedicClock: React.FC<AyurvedicClockProps> = ({ panchang }) => {
         sx={{
           borderRadius: 3,
           mb: 2,
-          overflow: 'hidden',
           bgcolor: 'background.paper',
           border: `1px solid ${getBorder()}`,
         }}
@@ -242,7 +241,6 @@ export const AyurvedicClock: React.FC<AyurvedicClockProps> = ({ panchang }) => {
       sx={{
         borderRadius: 3,
         mb: 2,
-        overflow: 'hidden',
         bgcolor: 'background.paper',
         border: `1px solid ${getBorder()}`,
       }}

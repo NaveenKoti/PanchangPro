@@ -48,7 +48,6 @@ export const GlossaryDialog: React.FC<GlossaryDialogProps> = ({
       PaperProps={{
         sx: {
           borderRadius: 3,
-          overflow: 'hidden',
         },
       }}
     >

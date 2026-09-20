@@ -352,7 +352,6 @@ export default function NotificationCenter({ open, onClose }: NotificationCenter
                   sx={{
                     mb: 2,
                     borderRadius: 2,
-                    overflow: 'hidden',
                     border: (t) => `1px solid ${t.palette.divider}`,
                   }}
                 >

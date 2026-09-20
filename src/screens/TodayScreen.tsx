@@ -426,7 +426,6 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
           sx={{
             mb: 1.5,
             borderRadius: 2,
-            overflow: 'hidden',
             border: '1px solid',
             borderColor: 'divider',
             position: 'sticky',

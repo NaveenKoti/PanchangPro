@@ -642,7 +642,7 @@ Shared from VedaTime - vedatime.app`;
       maxWidth="sm"
       fullWidth
       PaperProps={{
-        sx: { borderRadius: 3, overflow: 'hidden' }
+        sx: { borderRadius: 3 }
       }}
     >
       <DialogTitle sx={{ fontWeight: 500, pb: 1 }}>
