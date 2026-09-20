@@ -36,7 +36,6 @@ export const SectionCard = React.forwardRef<HTMLDivElement, SectionCardProps>(fu
         borderRadius: theme.shape.borderRadius * 2,
         bgcolor: 'background.paper',
         mb: 1.5,
-        overflow: 'hidden',
       }}
     >
       {(title || action) && (
