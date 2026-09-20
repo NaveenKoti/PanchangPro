@@ -202,7 +202,7 @@ export const FastingChip: React.FC<FastingChipProps> = ({
                   fontWeight: 500,
                   color: theme.palette.success.main,
                   fontSize: '0.7rem',
-                  fontFamily: '"Noto Sans", sans-serif',
+
                 }}
               >
                 {countdown.value} {countdown.unit}

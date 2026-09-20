@@ -58,7 +58,9 @@
     "rahuKaalWarning": "ముఖ్యమైన పనులను మానుకోండి",
     "samvatsara": "సంవత్సరం",
     "samvatsaraDesc": "హిందూ సంవత్సరం (60 సంవత్సరాల చక్రం)",
-    "auspiciousTime": "శుభ సమయం"
+    "auspiciousTime": "శుభ సమయం",
+    "detailsTab": "వివరాలు",
+    "dayTab": "రోజు"
   },
   "tithi": {
     "title": "తిథి",

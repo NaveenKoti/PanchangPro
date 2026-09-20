@@ -110,6 +110,7 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
           <IconButton
             onClick={onClose}
             size="small"
+            aria-label="Close tithi explanation"
             sx={{
               color: 'text.secondary',
               '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' },
@@ -296,7 +297,7 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
             py: 1.25,
             fontWeight: 500,
             bgcolor: theme.palette.primary.main,
-            '&:hover': { bgcolor: theme.palette.mode === 'dark' ? theme.palette.primary.dark : '#7A3008' },
+            '&:hover': { bgcolor: theme.palette.primary.dark },
           }}
         >
           {isHindi ? 'बंद करें' : 'Close'}

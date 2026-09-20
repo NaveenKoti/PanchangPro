@@ -107,6 +107,7 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
           <IconButton
             onClick={onClose}
             size="small"
+            aria-label="Close nakshatra explanation"
             sx={{
               color: 'text.secondary',
               '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' },

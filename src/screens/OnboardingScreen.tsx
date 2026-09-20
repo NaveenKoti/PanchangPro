@@ -12,12 +12,12 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   useTheme,
-  useMediaQuery,
 } from '@mui/material';
 import { MapPin, CheckCircle, Sun, Moon, Monitor, ShieldCheck } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import { GeoLocation } from '../types';
 import { OnboardingLayout } from '../components/OnboardingLayout';
+import { useBreakpoints } from '../hooks/useBreakpoints';
 import { PANCHANG_GLOSSARY } from '../data/panchangGlossary';
 
 type Step = 0 | 1 | 2 | 3;
@@ -28,7 +28,7 @@ interface OnboardingScreenProps {
 
 const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { isMobile } = useBreakpoints();
 
   const { setLocation, setLanguage, setTheme: setAppTheme } = useAppStore();
 
@@ -118,7 +118,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
               mb: 4,
             }}
           >
-            <Typography sx={{ fontSize: '2.8rem', lineHeight: 1 }}>🕉️</Typography>
+            <Sun size={48} color={theme.palette.primary.contrastText} strokeWidth={1.5} />
           </Box>
 
           <Typography

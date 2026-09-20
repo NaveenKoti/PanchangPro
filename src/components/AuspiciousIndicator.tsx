@@ -92,7 +92,7 @@ export const AuspiciousIndicator: React.FC<AuspiciousIndicatorProps> = ({
           border: `1px solid ${colors.border}`,
           borderRadius: 2,
           padding: '12px 16px',
-          fontFamily: '"Noto Sans", sans-serif',
+          
           fontWeight: 500,
           ...sx,
         }}
@@ -119,7 +119,7 @@ export const AuspiciousIndicator: React.FC<AuspiciousIndicatorProps> = ({
         py: 0.75,
         fontSize: sizeStyles.fontSize,
         fontWeight: 500,
-        fontFamily: '"Noto Sans", sans-serif',
+        
         ...sx,
       }}
       {...props}

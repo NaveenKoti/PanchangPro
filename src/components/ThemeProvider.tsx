@@ -13,7 +13,7 @@ import {
   Theme
 } from '@mui/material';
 import { useAppStore } from '../stores/appStore';
-import { getThemeColors, themeOptions, darkThemeOptions } from '../theme/vedaTheme';
+import { getThemeColors, themeOptions, darkThemeOptions, metaThemeColors } from '../theme/vedaTheme';
 
 // Theme mode type
 export type ThemeMode = 'light' | 'dark' | 'system';
@@ -123,52 +123,15 @@ export const useThemeManager = () => {
 };
 
 /**
- * Create light theme - uses canonical vedaTheme tokens
+ * Create light theme — palette comes ONLY from themeOptions (vedaTheme.ts).
+ * Do NOT re-declare hex values here; this file must stay hex-free.
  */
-const createLightTheme = (colors: ReturnType<typeof getThemeColors>): Theme =>
-  createTheme({
-    palette: {
-      mode: 'light',
-      ...colors,
-      primary: {
-        main: '#C75B12',
-        light: '#E8944A',
-        dark: '#7A3008',
-        contrastText: '#FFFFFF',
-      },
-      secondary: {
-        main: '#4A55A8',
-        light: '#7B8CDE',
-        dark: '#37427A',
-        contrastText: '#FFFFFF',
-      },
-    },
-    ...themeOptions,
-  });
+const createLightTheme = (): Theme => createTheme({ ...themeOptions });
 
 /**
- * Create dark theme
+ * Create dark theme — palette comes ONLY from darkThemeOptions (vedaTheme.ts).
  */
-const createDarkTheme = (colors: ReturnType<typeof getThemeColors>): Theme =>
-  createTheme({
-    palette: {
-      mode: 'dark',
-      ...colors,
-      primary: {
-        main: '#E8944A',
-        light: '#FDDCB5',
-        dark: '#C75B12',
-        contrastText: '#FFFFFF',
-      },
-      secondary: {
-        main: '#7B8CDE',
-        light: '#A3B1F0',
-        dark: '#4A55A8',
-        contrastText: '#FFFFFF',
-      },
-    },
-    ...darkThemeOptions,
-  });
+const createDarkTheme = (): Theme => createTheme({ ...darkThemeOptions });
 
 /**
  * Global styles for smooth theme transitions
@@ -194,9 +157,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const { effectiveMode } = useImmediateThemeMode();
 
   const theme = useMemo(() => {
-    const isLight = effectiveMode === 'light';
-    const colors = getThemeColors(isLight);
-    return isLight ? createLightTheme(colors) : createDarkTheme(colors);
+    return effectiveMode === 'light' ? createLightTheme() : createDarkTheme();
   }, [effectiveMode]);
 
   // Update document attributes for CSS and meta theme-color
@@ -206,6 +167,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     }
 
     const root = document.documentElement;
+    const isDark = effectiveMode === 'dark';
 
     // Remove existing theme classes
     root.classList.remove('light', 'dark');
@@ -216,10 +178,16 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     // Set data-theme attribute for Tailwind/styling compatibility
     root.setAttribute('data-theme', effectiveMode);
 
+    // Sync CSS vars with the MUI palette exactly (single source: vedaTheme)
+    const colors = getThemeColors(isDark);
+    for (const [key, value] of Object.entries(colors)) {
+      root.style.setProperty(key, value);
+    }
+
     // Update meta theme-color for mobile browsers
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', effectiveMode === 'dark' ? '#1A1612' : '#FAF6F1');
+      metaThemeColor.setAttribute('content', isDark ? metaThemeColors.dark : metaThemeColors.light);
     }
 
     // Update color-scheme for system UI elements

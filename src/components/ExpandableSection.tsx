@@ -143,7 +143,7 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
               variant="h6"
               className="header-title"
               sx={{
-                fontFamily: '"Noto Sans", sans-serif',
+                
                 fontWeight: 500,
                 color: 'text.primary',
                 letterSpacing: '-0.01em',
@@ -155,6 +155,7 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
           <IconButton
             className={`expand-button ${currentExpanded ? 'expanded' : ''}`}
             size="small"
+            aria-label={currentExpanded ? 'Collapse section' : 'Expand section'}
             sx={{
               transition: `transform ${animationDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`,
               transform: currentExpanded ? 'rotate(180deg)' : 'rotate(0deg)',

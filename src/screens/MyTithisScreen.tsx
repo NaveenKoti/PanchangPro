@@ -13,8 +13,6 @@ import React, { useState, useRef } from 'react';
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
   TextField,
   Button,
   List,
@@ -35,9 +33,7 @@ import {
   Fab,
   Zoom,
   Fade,
-  useMediaQuery,
   useTheme as useMuiTheme,
-  Paper,
   Divider,
   Collapse,
   Snackbar,
@@ -63,14 +59,19 @@ import { notificationService } from '../services/notificationService';
 import { useI18n } from '../hooks/useI18n';
 import { CustomTithi } from '../types';
 import { ScreenContainer } from '../components/ScreenContainer';
+import { SectionCard } from '../components/layout/SectionCard';
+import { AlertStack } from '../components/layout/AlertStack';
+import { useBreakpoints } from '../hooks/useBreakpoints';
 import { LUNAR_MONTHS, LUNAR_MONTHS_HINDI } from '../engine/constants';
 import { format, differenceInDays } from 'date-fns';
 
 export const MyTithisScreen: React.FC = () => {
   const { t, currentLanguage } = useI18n();
   const muiTheme = useMuiTheme();
-  const isMobile = useMediaQuery(muiTheme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(muiTheme.breakpoints.up('sm'));
+  const { isMobile } = useBreakpoints();
+  // Preserve legacy up('sm') semantics (>=600) previously read via useMediaQuery.
+  const isTablet = !isMobile;
+  void isMobile;
   const isHindi = currentLanguage === 'hi';
 
   const {
@@ -357,7 +358,7 @@ export const MyTithisScreen: React.FC = () => {
   };
 
   return (
-    <ScreenContainer maxWidth={isTablet ? 900 : undefined} sx={{ pt: 2 }}>
+    <ScreenContainer sx={{ pt: 2 }}>
       {/* Header */}
       <Zoom in timeout={500}>
         <Box sx={{ mb: 2 }}>
@@ -453,17 +454,8 @@ export const MyTithisScreen: React.FC = () => {
       {/* Tithi List */}
       {customTithis.length === 0 ? (
         <Fade in timeout={500}>
-          <Paper
-            elevation={0}
-            sx={{
-              p: 2,
-              textAlign: 'center',
-              borderRadius: 2,
-              bgcolor: 'background.paper',
-              border: '1px solid',
-              borderColor: 'divider',
-            }}
-          >
+          <SectionCard>
+            <Box sx={{ textAlign: 'center' }}>
             <Box
               sx={{
                 width: 80,
@@ -504,7 +496,8 @@ export const MyTithisScreen: React.FC = () => {
             >
               {t('myTithis.addFirst')}
             </Button>
-          </Paper>
+            </Box>
+          </SectionCard>
         </Fade>
       ) : (
         <List sx={{ px: 0 }}>
@@ -514,22 +507,7 @@ export const MyTithisScreen: React.FC = () => {
 
             return (
               <Fade in timeout={500 + (index * 50)} key={tithi.id}>
-                <Card
-                  elevation={0}
-                  sx={{
-                    mb: 1.5,
-                    borderRadius: 2,
-                    bgcolor: 'background.paper',
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    transition: 'all 0.2s ease',
-                    '&:hover': {
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                      transform: 'translateY(-2px)',
-                    },
-                  }}
-                >
-                  <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                <SectionCard>
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
                       {/* Icon */}
                       <Box
@@ -700,8 +678,8 @@ export const MyTithisScreen: React.FC = () => {
                             size="small"
                             onClick={() => handleToggleReminder(tithi)}
                             sx={{
-                              width: 32,
-                              height: 32,
+                              width: 48,
+                              height: 48,
                               color: tithi.reminderEnabled ? 'primary.main' : 'text.secondary',
                             }}
                           >
@@ -714,7 +692,7 @@ export const MyTithisScreen: React.FC = () => {
                             aria-label={isExpanded ? 'Show less' : 'Show more'}
                             size="small"
                             onClick={() => setExpandedId(isExpanded ? null : tithi.id)}
-                            sx={{ width: 32, height: 32 }}
+                            sx={{ width: 48, height: 48 }}
                           >
                             {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                           </IconButton>
@@ -725,7 +703,7 @@ export const MyTithisScreen: React.FC = () => {
                             aria-label="Edit tithi"
                             size="small"
                             onClick={() => handleOpen(tithi)}
-                            sx={{ width: 32, height: 32, color: 'info.main' }}
+                            sx={{ width: 48, height: 48, color: 'info.main' }}
                           >
                             <Edit size={16} />
                           </IconButton>
@@ -736,15 +714,14 @@ export const MyTithisScreen: React.FC = () => {
                             aria-label="Delete tithi"
                             size="small"
                             onClick={() => handleDelete(tithi.id)}
-                            sx={{ width: 32, height: 32, color: 'error.main' }}
+                            sx={{ width: 48, height: 48, color: 'error.main' }}
                           >
                             <Delete size={16} />
                           </IconButton>
                         </Tooltip>
                       </Box>
                     </Box>
-                  </CardContent>
-                </Card>
+                </SectionCard>
               </Fade>
             );
           })}
@@ -1020,14 +997,17 @@ export const MyTithisScreen: React.FC = () => {
         <DialogContent>
           <Box sx={{ pt: 1 }}>
             {importResult && (
-              <Alert 
-                severity={importResult.success ? 'success' : 'error'} 
-                sx={{ mb: 2 }}
-              >
-                {importResult.success
-                  ? `${isHindi ? 'सफलतापूर्वक आयात' : 'Successfully imported'} ${importResult.imported} ${isHindi ? 'तिथियाँ' : 'tithis'}${importResult.errors.length > 0 ? ` (${importResult.errors.length} ${isHindi ? 'छूटी' : 'skipped'}: ${importResult.errors[0]})` : ''}`
-                  : importResult.errors.slice(0, 2).join(', ')}
-              </Alert>
+              <AlertStack
+                alerts={
+                  importResult.success
+                    ? [{
+                        key: 'import-success',
+                        severity: 'success',
+                        children: `${isHindi ? 'सफलतापूर्वक आयात' : 'Successfully imported'} ${importResult.imported} ${isHindi ? 'तिथियाँ' : 'tithis'}${importResult.errors.length > 0 ? ` (${importResult.errors.length} ${isHindi ? 'छूटी' : 'skipped'}: ${importResult.errors[0]})` : ''}`,
+                      }]
+                    : importResult.errors.map((e, i) => ({ key: `import-error-${i}`, severity: 'error' as const, children: e }))
+                }
+              />
             )}
             <TextField
               fullWidth

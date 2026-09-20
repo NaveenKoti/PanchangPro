@@ -29,7 +29,6 @@ import {
   CircularProgress,
   Fade,
   useTheme as useMuiTheme,
-  useMediaQuery,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -54,6 +53,7 @@ import {
   NotificationPermission,
   ScheduleResult,
 } from '../services/notificationService';
+import { useBreakpoints } from '../hooks/useBreakpoints';
 
 // Type labels and icons
 const getTYPE_CONFIG = (theme: any): Record<ScheduledNotification['type'], { icon: typeof Sun; color: string; label: string }> => ({
@@ -95,7 +95,7 @@ interface NotificationCenterProps {
 
 export default function NotificationCenter({ open, onClose }: NotificationCenterProps) {
   const muiTheme = useMuiTheme();
-  const isMobile = useMediaQuery(muiTheme.breakpoints.down('sm'));
+  const { isMobile } = useBreakpoints();
   const TYPE_CONFIG = getTYPE_CONFIG(muiTheme);
 
   const [notifications, setNotifications] = useState<ScheduledNotification[]>([]);
@@ -241,7 +241,7 @@ export default function NotificationCenter({ open, onClose }: NotificationCenter
             <Bell size={22} color={muiTheme.palette.primary.main} />
             Notification Center
           </Box>
-          <IconButton onClick={onClose} size="small" sx={{ ml: 1 }}>
+          <IconButton onClick={onClose} size="small" sx={{ ml: 1 }} aria-label="Close notifications">
             <X size={20} />
           </IconButton>
         </DialogTitle>
@@ -397,6 +397,7 @@ export default function NotificationCenter({ open, onClose }: NotificationCenter
                             edge="end"
                             size="small"
                             onClick={() => handleCancelNotification(notif.id)}
+                            aria-label="Cancel notification"
                             sx={{ color: 'text.disabled' }}
                           >
                             <X size={16} />

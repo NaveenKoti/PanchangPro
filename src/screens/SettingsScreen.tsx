@@ -29,10 +29,8 @@ import {
   Snackbar,
   Alert,
   TextField,
-  Paper,
   Fade,
   Zoom,
-  useMediaQuery,
   useTheme as useMuiTheme,
   Chip,
   IconButton,
@@ -63,6 +61,8 @@ import { notificationService, notificationScheduler } from '../services/notifica
 import { buildPushReminders, disablePush, enablePush, getPushStatus, type PushStatus } from '../services/pushService';
 import { useThemeManager } from '../components/ThemeProvider';
 import { ScreenContainer } from '../components/ScreenContainer';
+import { SectionCard } from '../components/layout/SectionCard';
+import { useBreakpoints } from '../hooks/useBreakpoints';
 import NotificationCenter from '../components/NotificationCenter';
 import { PANCHANG_GLOSSARY } from '../data/panchangGlossary';
 
@@ -82,8 +82,10 @@ export default function SettingsScreen() {
   const { t, currentLanguage } = useI18n();
   const isHindi = currentLanguage === 'hi';
   const muiTheme = useMuiTheme();
-  const isMobile = useMediaQuery(muiTheme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(muiTheme.breakpoints.up('sm'));
+  const { isMobile } = useBreakpoints();
+  // Preserve legacy up('sm') semantics (>=600) previously read via useMediaQuery.
+  const isTablet = !isMobile;
+  void isTablet;
 
   const {
     preferences,
@@ -275,7 +277,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScreenContainer maxWidth={800} sx={{ pt: 2 }}>
+    <ScreenContainer sx={{ pt: 2 }}>
       {/* Header */}
       <Zoom in timeout={500}>
         <Box sx={{ mb: 3, textAlign: 'center', px: { xs: 1, sm: 2 } }}>
@@ -314,24 +316,16 @@ export default function SettingsScreen() {
       <List sx={{ px: 0 }}>
         {/* Location Section */}
         <Fade in timeout={700}>
-          <Paper
-            elevation={0}
-            sx={{
-              mb: 2,
-              borderRadius: 2,
-              overflow: 'hidden',
-              bgcolor: 'background.paper',
-              border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)'}`,
-            }}
-          >
-            <Box sx={{ px: 2, py: 1.5, bgcolor: 'rgba(199, 91, 18, 0.04)' }}>
+          <SectionCard
+            title={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <MapPin size={20} color={muiTheme.palette.primary.main} />
                 <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                   {t('settings.location')}
                 </Typography>
               </Box>
-            </Box>
+            }
+          >
             <List sx={{ p: 0 }}>
               {CITIES.map((city) => (
                 <ListItem
@@ -386,29 +380,21 @@ export default function SettingsScreen() {
                 />
               </ListItem>
             </List>
-          </Paper>
+          </SectionCard>
         </Fade>
 
         {/* Appearance Section */}
         <Fade in timeout={800}>
-          <Paper
-            elevation={0}
-            sx={{
-              mb: 2,
-              borderRadius: 2,
-              overflow: 'hidden',
-              bgcolor: 'background.paper',
-              border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)'}`,
-            }}
-          >
-            <Box sx={{ px: 2, py: 1.5, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(144, 164, 215, 0.06)' : 'rgba(44, 62, 107, 0.04)' }}>
+          <SectionCard
+            title={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Palette size={20} color={muiTheme.palette.info.main} />
                 <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                   {t('settings.appearance')}
                 </Typography>
               </Box>
-            </Box>
+            }
+          >
             <List sx={{ p: 0 }}>
               {/* Theme */}
               <ListItem>
@@ -465,29 +451,21 @@ export default function SettingsScreen() {
                 </Select>
               </ListItem>
             </List>
-          </Paper>
+          </SectionCard>
         </Fade>
 
         {/* Notifications Section */}
         <Fade in timeout={900}>
-          <Paper
-            elevation={0}
-            sx={{
-              mb: 2,
-              borderRadius: 2,
-              overflow: 'hidden',
-              bgcolor: 'background.paper',
-              border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)'}`,
-            }}
-          >
-            <Box sx={{ px: 2, py: 1.5, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(144, 164, 215, 0.06)' : 'rgba(44,62,107,0.04)' }}>
+          <SectionCard
+            title={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Bell size={20} color={muiTheme.palette.info.main} />
                 <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                   {t('settings.notifications')}
                 </Typography>
               </Box>
-            </Box>
+            }
+          >
             <List sx={{ p: 0 }}>
               {/* Manage Notifications row */}
               <ListItem
@@ -572,29 +550,21 @@ export default function SettingsScreen() {
                 </Typography>
               </Box>
             </List>
-          </Paper>
+          </SectionCard>
         </Fade>
 
         {/* Data & Privacy Section */}
         <Fade in timeout={1100}>
-          <Paper
-            elevation={0}
-            sx={{
-              mb: 2,
-              borderRadius: 2,
-              overflow: 'hidden',
-              bgcolor: 'background.paper',
-              border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)'}`,
-            }}
-          >
-            <Box sx={{ px: 2, py: 1.5, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(239, 154, 154, 0.06)' : 'rgba(244, 67, 54, 0.04)' }}>
+          <SectionCard
+            title={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <AlertTriangle size={20} color={muiTheme.palette.error.main} />
                 <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                   {t('settings.dataPrivacy')}
                 </Typography>
               </Box>
-            </Box>
+            }
+          >
             <List sx={{ p: 0 }}>
               <ListItem>
                 <ListItemIcon sx={{ minWidth: 40 }}>
@@ -633,29 +603,21 @@ export default function SettingsScreen() {
                 </Button>
               </ListItem>
             </List>
-          </Paper>
+          </SectionCard>
         </Fade>
 
         {/* About Section */}
         <Fade in timeout={1200}>
-          <Paper
-            elevation={0}
-            sx={{
-              mb: 2,
-              borderRadius: 2,
-              overflow: 'hidden',
-              bgcolor: 'background.paper',
-              border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)'}`,
-            }}
-          >
-            <Box sx={{ px: 2, py: 1.5, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(158, 158, 158, 0.06)' : 'rgba(158, 158, 158, 0.04)' }}>
+          <SectionCard
+            title={
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Info size={20} color={muiTheme.palette.text.secondary} />
                 <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                   {t('settings.about')}
                 </Typography>
               </Box>
-            </Box>
+            }
+          >
             <List sx={{ p: 0 }}>
               <ListItem>
                 <ListItemIcon sx={{ minWidth: 40 }}>
@@ -699,7 +661,7 @@ export default function SettingsScreen() {
                 />
               </ListItem>
             </List>
-          </Paper>
+          </SectionCard>
         </Fade>
       </List>
 

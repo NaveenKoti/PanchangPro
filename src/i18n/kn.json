@@ -58,7 +58,9 @@
     "rahuKaalWarning": "ಮುಖ್ಯ ಕೆಲಸಗಳನ್ನು ತಪ್ಪಿಸಿ",
     "samvatsara": "ಸಂವತ್ಸರ",
     "samvatsaraDesc": "ಹಿಂದೂ ವರ್ಷ (60 ವರ್ಷಗಳ ಚಕ್ರ)",
-    "auspiciousTime": "ಶುಭ ಸಮಯ"
+    "auspiciousTime": "ಶುಭ ಸಮಯ",
+    "detailsTab": "ವಿವರಗಳು",
+    "dayTab": "ದಿನ"
   },
   "tithi": {
     "title": "ತಿಥಿ",

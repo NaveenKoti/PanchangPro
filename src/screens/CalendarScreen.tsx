@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
  Box,
  Typography,
@@ -27,11 +27,12 @@ import {
   XIcon,
   Share2Icon,
   PlusIcon,
-} from '../utils/icons';
+} from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import { useI18n } from '../hooks/useI18n';
 import { CalendarDay } from '../types';
 import { ScreenContainer } from '../components/ScreenContainer';
+import { SectionCard } from '../components/layout/SectionCard';
 import { triggerHapticIfSupported } from '../utils/haptics';
 import { useBreakpoints } from '../hooks/useBreakpoints';
 
@@ -50,7 +51,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  const { t, currentLanguage } = useI18n();
  const muiTheme = useMuiTheme();
  const isDark = muiTheme.palette.mode === 'dark';
-  const { isMobile, isTablet, isDesktop } = useBreakpoints();
+  const { isMobile, isTablet } = useBreakpoints();
 
   const { getCalendarMonth, setSelectedDate, preferences } = useAppStore();
   // Sacred times render in the LOCATION timezone (engine instants are
@@ -216,7 +217,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  t('vaar.friday'),
  t('vaar.saturday'),
  ];
- return weekdays.map((d) => d.slice(0, isMobile ? 1 : 2));
+  return weekdays.map((d) => d.slice(0, 2));
  };
 
  const getMonthName = (date: Date) => {
@@ -229,13 +230,21 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  return date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
  };
 
- const containerMaxWidth = isDesktop ? 900 : isTablet ? 720 : '100%';
-  const paddingX = { xs: 1, sm: 2, md: 3 };
-  const calendarCellMinHeight = isMobile ? 52 : isTablet ? 72 : 88;
-  const calendarCellPadding = isMobile ? 0.5 : isTablet ? 0.75 : 1;
-  const dayNumberFontSize = isMobile ? '0.75rem' : isTablet ? '0.9rem' : '1rem';
-  const tithiTextFontSize = isMobile ? '0.48rem' : isTablet ? '0.6rem' : '0.7rem';
-  const festivalTextFontSize = isMobile ? '0.45rem' : isTablet ? '0.55rem' : '0.65rem';
+  const calendarCellMinHeight = isTablet ? 72 : 88;
+  const calendarCellPadding = isTablet ? 0.75 : 1;
+  const dayNumberFontSize = isTablet ? '0.9rem' : '1rem';
+  const tithiTextFontSize = isTablet ? '0.6rem' : '0.7rem';
+  const festivalTextFontSize = isTablet ? '0.55rem' : '0.65rem';
+
+  // Agenda for xs: next 3 upcoming days with markers (replaces crushed 7-col grid).
+  const agendaDays = useMemo(() => {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    return calendarDays
+      .filter((d) => d.date.getTime() >= start.getTime())
+      .sort((a, b) => a.date.getTime() - b.date.getTime())
+      .slice(0, 3);
+  }, [calendarDays]);
 
  const monthAnimation = useSpring({
  transform: monthTransition === 'left' ? 'translateX(-100%)' :
@@ -267,7 +276,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  }
  );  if (isLoading) {
     return (
-      <ScreenContainer maxWidth={isDesktop ? 900 : isTablet ? 720 : undefined} sx={{ pt: 1.5 }}>
+      <ScreenContainer sx={{ pt: 1.5 }}>
         <Skeleton variant="text" width={200} height={40} sx={{ mb: 1.5, mx: 'auto' }} animation="wave" />
         <Skeleton variant="rectangular" height={300} sx={{ borderRadius: 2, maxHeight: '70vh' }} animation="wave" />
       </ScreenContainer>
@@ -275,7 +284,6 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   }
 
   return (    <ScreenContainer
-      maxWidth={isDesktop ? 900 : isTablet ? 720 : undefined}
       sx={{ pt: 1.5 }}
   >
   <Zoom in timeout={400}>
@@ -304,6 +312,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   <IconButton
   onClick={handlePrevMonth}
   size="small"
+  aria-label="previous month"
   sx={{
   width: 48,
   height: 48,
@@ -319,7 +328,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
           <CalendarIcon size={18} color={muiTheme.palette.primary.main} />
   <Typography
   variant="h6"
-   sx={{ fontWeight: 500, fontSize: { xs: '1.1rem', sm: '1.25rem' }, color: 'text.primary', letterSpacing: '-0.02em', lineHeight: 1.3, fontFamily: '"Noto Sans", sans-serif' }}
+   sx={{ fontWeight: 500, fontSize: { xs: '1.1rem', sm: '1.25rem' }, color: 'text.primary', letterSpacing: '-0.02em', lineHeight: 1.3 }}
  >
  {getMonthName(currentMonth)}
  </Typography>
@@ -332,7 +341,8 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
           size="small"
           onClick={handleToday}
           sx={{
-            height: 28,
+            minHeight: 48,
+            minWidth: 48,
             fontSize: '0.72rem',
             fontWeight: 500,
             cursor: 'pointer',
@@ -345,6 +355,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   <IconButton
   onClick={handleNextMonth}
   size="small"
+  aria-label="next month"
   sx={{
   width: 48,
   height: 48,
@@ -370,12 +381,13 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  border: '1px solid',
  borderColor: 'divider',
  }}
- >
- <Box
- sx={{
- display: 'grid',
- gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
- bgcolor: `${muiTheme.palette.primary.main}08`,
+  >
+  {!isMobile && (
+  <Box
+  sx={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
+  bgcolor: `${muiTheme.palette.primary.main}08`,
  borderBottom: '1px solid',
  borderBottomColor: 'divider',
  }}
@@ -393,30 +405,120 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  : index === 6
  ? muiTheme.palette.primary.main
  : 'text.secondary',
- fontWeight: 500,
- fontSize: isMobile ? '0.7rem' : '0.75rem',
- letterSpacing: '0.03em',
- }}
- >
- {day}
- </Box>
- ))}
- </Box>
+  fontWeight: 500,
+  fontSize: '0.75rem',
+  letterSpacing: '0.03em',
+  }}
+  >
+  {day}
+  </Box>
+  ))}
+  </Box>
+  )}
 
- <Box
- sx={{
- display: 'grid',
- gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
- gap: { xs: '4px', sm: '6px', md: '8px' },
- p: { xs: '4px', sm: '6px', md: '8px' },
- width: '100%',
- overflow: 'hidden',
- boxSizing: 'border-box',
- }}
- >
- {emptyDays.map((_, i) => (
- <Box key={`empty-${i}`} />
-        ))}
+  {isMobile ? (
+  <Box
+  sx={{
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 0.75,
+  p: 1,
+  width: '100%',
+  boxSizing: 'border-box',
+  }}
+  >
+  {agendaDays.map((day) => {
+  const tithiName = day.panchang.tithi.name;
+  const tithiColors = getTithiColors(tithiName, day);
+  const isSelected =
+  selectedDay?.date.toDateString() === day.date.toDateString();
+  const festivalName = day.panchang?.festivals?.[0]?.name || '';
+  return (
+  <Paper
+  key={day.date.toISOString()}
+  onClick={() => handleDayClick(day)}
+  elevation={0}
+  role="button"
+  tabIndex={0}
+  aria-label={`${day.date.getDate()} ${day.panchang.tithi.name}`}
+  aria-pressed={isSelected}
+  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleDayClick(day); }}
+  sx={{
+  display: 'flex',
+  alignItems: 'center',
+  gap: 1.25,
+  p: 1,
+  minHeight: 48,
+  width: '100%',
+  boxSizing: 'border-box',
+  borderRadius: 2,
+  cursor: 'pointer',
+  bgcolor: isSelected
+  ? `${muiTheme.palette.primary.main}30`
+  : day.isToday
+  ? `${muiTheme.palette.primary.main}1A`
+  : tithiColors.bg,
+  border: isSelected || day.isToday
+  ? `2px solid ${muiTheme.palette.primary.main}`
+  : `1px solid ${tithiColors.borderColor}`,
+  }}
+  >
+  <Box
+  sx={{
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  minWidth: 48,
+  minHeight: 48,
+  justifyContent: 'center',
+  flexShrink: 0,
+  }}
+  >
+  <Typography sx={{ fontWeight: 500, fontSize: '1rem', lineHeight: 1.2, color: 'text.primary' }}>
+  {day.date.getDate()}
+  </Typography>
+  <Typography sx={{ fontSize: '0.65rem', color: 'text.secondary', lineHeight: 1.2 }}>
+  {day.date.toLocaleDateString('en-IN', { month: 'short' })}
+  </Typography>
+  </Box>
+  <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0, minWidth: 48, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}>
+  {day.isFestival && (
+  <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'primary.main' }} />
+  )}
+  {day.isFasting && (
+  <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'success.main' }} />
+  )}
+  {!day.isFestival && !day.isFasting && (
+  <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: tithiColors.color }} />
+  )}
+  </Box>
+  <Box sx={{ flex: 1, minWidth: 0 }}>
+  <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3 }}>
+  {day.date.toLocaleDateString('en-IN', { weekday: 'long' })}
+  </Typography>
+  <Typography variant="caption" sx={{ color: tithiColors.color, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+  {festivalName || tithiName}
+  </Typography>
+  </Box>
+  </Paper>
+  );
+  })}
+  </Box>
+  ) : (
+  <Box
+  sx={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
+  gap: { sm: '6px', md: '8px' },
+  p: { sm: '6px', md: '8px' },
+  width: '100%',
+  overflow: 'visible',
+  boxSizing: 'border-box',
+  }}
+  >
+  {emptyDays.map((_, i) => (
+  <Box key={`empty-${i}`} />
+         ))}
 
         {calendarDays.map((day) => {
  const tithiName = day.panchang.tithi.name;
@@ -537,7 +639,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  mb: 0.25,
  }}
  >
- {isMobile ? festivalName.slice(0, 8) + (festivalName.length > 8 ? '..' : '') : festivalName}
+  {festivalName}
  </Typography>
  )}
 
@@ -559,7 +661,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  textAlign: 'center',
  }}
  >
- {isMobile ? tithiName.slice(0, 4) : tithiName.split(' ')[0]}
+  {tithiName.split(' ')[0]}
  </Typography>
 
  {day.customTithis.length > 0 && (
@@ -590,12 +692,13 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   />
   )}
  </Paper>
- );
- })}
- </Box>
- </Paper>
- </animated.div>
- </Fade>
+  );
+  })}
+  </Box>
+  )}
+  </Paper>
+  </animated.div>
+  </Fade>
 
  {/* Day Details Panel - bottom sheet on mobile, inline panel on desktop */}
  {selectedDay && (
@@ -606,14 +709,15 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  bottom: isMobile ? 0 : 'auto',
  left: isMobile ? 0 : 'auto',
  right: isMobile ? 0 : 'auto',
-  zIndex: isMobile ? 1300 : 'auto',
-  mt: { sm: 1.5 },
- mx: { sm: 0 },
- maxHeight: isMobile ? '85vh' : { sm: '70vh', md: '75vh' },
- overflowY: 'auto',
- overflowX: 'hidden',
- }}
- >
+   zIndex: isMobile ? 1300 : 'auto',
+   mt: { sm: 1.5 },
+  mx: { sm: 0 },
+  // No nested scroller on desktop: the page scrolls, so the sticky header
+  // below sticks to the viewport. Single scroller only in the mobile sheet.
+  maxHeight: isMobile ? '85vh' : 'none',
+  overflow: 'visible',
+  }}
+  >
  {/* Backdrop on mobile */}
  {isMobile && (
  <Box
@@ -638,12 +742,12 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  bgcolor: 'background.paper',
  border: '1px solid',
  borderColor: 'divider',
- maxHeight: isMobile ? '85vh' : { sm: '70vh', md: '75vh' },
- overflowY: 'auto',
- overflowX: 'hidden',
- pb: isMobile ? 'env(safe-area-inset-bottom, 8px)' : 0,
- }}
- >
+  maxHeight: isMobile ? '85vh' : 'none',
+  overflowY: isMobile ? 'auto' : 'visible',
+  overflowX: 'clip',
+  pb: isMobile ? 'env(safe-area-inset-bottom, 8px)' : 0,
+  }}
+  >
  {/* Drag handle on mobile */}
  {isMobile && (
  <Box
@@ -664,11 +768,13 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  />
  </Box>
  )}
- {/* Sticky header - stays visible while scrolling */}
- <Box
- sx={{
-  position: 'sticky',
-  top: 0,
+  {/* Sticky header - stays visible while scrolling */}
+  <Box
+  sx={{
+   position: 'sticky',
+   // Token-derived offset: 0 inside the mobile bottom sheet (own scroller),
+   // theme.spacing(7) (= AppBar Toolbar minHeight) on sm+ where the page scrolls.
+   top: { xs: 0, sm: muiTheme.spacing(7) },
   zIndex: 10,
   px: { xs: 1.5, sm: 2 },
   py: { xs: 1, sm: 1.25 },
@@ -686,7 +792,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  <Box sx={{ minWidth: 0, flex: 1 }}>
   <Typography
   variant="h6"
-  sx={{ fontWeight: 500, color: 'text.primary', fontSize: { xs: '1rem', sm: '1.15rem' }, wordBreak: 'break-word', letterSpacing: '-0.02em', lineHeight: 1.3, fontFamily: '"Noto Sans", sans-serif' }}
+  sx={{ fontWeight: 500, color: 'text.primary', fontSize: { xs: '1rem', sm: '1.15rem' }, wordBreak: 'break-word', letterSpacing: '-0.02em', lineHeight: 1.3 }}
  >
  {selectedDay.date.toLocaleDateString('en-IN', {
  weekday: 'long',
@@ -703,6 +809,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  <IconButton
  size="medium"
  onClick={handleShareDay}
+ aria-label="Share selected day"
  sx={{
   color: 'success.main',
   minWidth: 48,
@@ -715,6 +822,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  <IconButton
  size="medium"
  onClick={() => setSelectedDay(null)}
+ aria-label="Close day details"
  sx={{
   color: 'error.main',
   minWidth: 48,
@@ -1050,8 +1158,8 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  onFestivalOpen!(festivalId);
  }
  }}
- sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 0.5, cursor: hasFullStory ? 'pointer' : 'default' }}
- >
+  sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 0.5, minHeight: 48, cursor: hasFullStory ? 'pointer' : 'default' }}
+  >
   <Box
   sx={{
   width: 36,
@@ -1096,13 +1204,13 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  triggerHapticIfSupported('light');
  onFestivalOpen!(festivalId);
  }}
- sx={{
- height: 24,
- fontSize: '0.65rem',
- fontWeight: 500,
- flexShrink: 0,
- mt: 0.25,
- cursor: 'pointer',
+  sx={{
+  minHeight: 48,
+  fontSize: '0.65rem',
+  fontWeight: 500,
+  flexShrink: 0,
+  mt: 0.25,
+  cursor: 'pointer',
  bgcolor: `${muiTheme.palette.primary.main}25`,
  color: 'primary.main',
  border: `1px solid ${muiTheme.palette.primary.main}40`,
@@ -1333,70 +1441,62 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  </Fade>
  )}
 
- <Fade in timeout={600}>
- <Paper
- elevation={0}
+  <Fade in timeout={600}>
+  <Box sx={{ mt: 1.5 }}>
+  <SectionCard>
+   {/* Legend wraps (and scrolls horizontally if needed) — never clips. */}
+   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center', overflow: 'visible', maxWidth: '100%' }}>
+   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minHeight: 48, minWidth: 48 }}>
+   <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'primary.main' }} />
+   <Typography variant="caption" color="text.secondary">{t('calendar.legend.festival') || 'Festival'}</Typography>
+   </Box>
+   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minHeight: 48, minWidth: 48 }}>
+   <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'success.main' }} />
+  <Typography variant="caption" color="text.secondary">{t('calendar.legend.fast') || 'Fast'}</Typography>
+  </Box>
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minHeight: 48, minWidth: 48 }}>
+  <Box
   sx={{
-  mt: 1.5,
-  px: 2,
-  py: 1.5,
-  borderRadius: 2,
-  bgcolor: 'background.paper',
-  border: '1px solid',
-  borderColor: 'divider',
+  px: 0.75,
+  py: 0.1,
+  borderRadius: 0.75,
+  bgcolor: `${muiTheme.palette.warning.main}20`,
   }}
   >
-  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, alignItems: 'center' }}>
-  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-  <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'primary.main' }} />
-  <Typography variant="caption" color="text.secondary">{t('calendar.legend.festival') || 'Festival'}</Typography>
+  <Typography sx={{ fontSize: '0.55rem', fontWeight: 500, color: 'warning.main' }}>{t('calendar.legend.purnima') || 'Purnima'}</Typography>
   </Box>
-  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-  <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'success.main' }} />
- <Typography variant="caption" color="text.secondary">{t('calendar.legend.fast') || 'Fast'}</Typography>
- </Box>
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
- <Box
- sx={{
- px: 0.75,
- py: 0.1,
- borderRadius: 0.75,
- bgcolor: `${muiTheme.palette.warning.main}20`,
- }}
- >
- <Typography sx={{ fontSize: '0.55rem', fontWeight: 500, color: 'warning.main' }}>{t('calendar.legend.purnima') || 'Purnima'}</Typography>
- </Box>
- </Box>
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
- <Box
- sx={{
- px: 0.75,
- py: 0.1,
- borderRadius: 0.75,
- bgcolor: `${muiTheme.palette.secondary.main}20`,
- }}
- >
- <Typography sx={{ fontSize: '0.55rem', fontWeight: 500, color: 'secondary.main' }}>{t('calendar.legend.amavasya') || 'Amavasya'}</Typography>
- </Box>
- </Box>
- <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
- <Box
- sx={{
- px: 0.75,
- py: 0.1,
- borderRadius: 0.75,
- bgcolor: `${muiTheme.palette.success.main}15`,
- }}
- >
- <Typography sx={{ fontSize: '0.55rem', fontWeight: 500, color: 'success.main' }}>{t('calendar.legend.ekadashi') || 'Ekadashi'}</Typography>
- </Box>
- </Box>
- <Typography variant="caption" color="text.secondary" sx={{ ml: 'auto', fontStyle: 'italic' }}>
- {t('calendar.legend.tapForDetails') || 'Tap a day for details'}
- </Typography>
- </Box>
-  </Paper>
-  </Fade>
+  </Box>
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minHeight: 48, minWidth: 48 }}>
+  <Box
+  sx={{
+  px: 0.75,
+  py: 0.1,
+  borderRadius: 0.75,
+  bgcolor: `${muiTheme.palette.secondary.main}20`,
+  }}
+  >
+  <Typography sx={{ fontSize: '0.55rem', fontWeight: 500, color: 'secondary.main' }}>{t('calendar.legend.amavasya') || 'Amavasya'}</Typography>
+  </Box>
+  </Box>
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, minHeight: 48, minWidth: 48 }}>
+  <Box
+  sx={{
+  px: 0.75,
+  py: 0.1,
+  borderRadius: 0.75,
+  bgcolor: `${muiTheme.palette.success.main}15`,
+  }}
+  >
+  <Typography sx={{ fontSize: '0.55rem', fontWeight: 500, color: 'success.main' }}>{t('calendar.legend.ekadashi') || 'Ekadashi'}</Typography>
+  </Box>
+  </Box>
+  <Typography variant="caption" color="text.secondary" sx={{ ml: 'auto', fontStyle: 'italic' }}>
+  {t('calendar.legend.tapForDetails') || 'Tap a day for details'}
+  </Typography>
+  </Box>
+   </SectionCard>
+   </Box>
+   </Fade>
 
   <Snackbar
  open={snackbar.open}

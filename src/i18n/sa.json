@@ -58,7 +58,9 @@
     "rahuKaalWarning": "महत्त्वपूर्णानि कार्याणि वर्जयतु",
     "samvatsara": "संवत्सरः",
     "samvatsaraDesc": "हिन्दुवर्षम् (षष्टिवर्षीयचक्रम्)",
-    "auspiciousTime": "शुभसमयः"
+    "auspiciousTime": "शुभसमयः",
+    "detailsTab": "विवरणम्",
+    "dayTab": "दिनम्"
   },
   "tithi": {
     "title": "तिथिः",

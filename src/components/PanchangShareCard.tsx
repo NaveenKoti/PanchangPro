@@ -521,6 +521,7 @@ Shared from VedaTime - vedatime.app`;
         {isHindi ? 'साझा करें' : 'Share Panchang'}
         <IconButton
           onClick={onClose}
+          aria-label="Close share card"
           sx={{ position: 'absolute', right: 16, top: 16 }}
         >
           <X size={20} />

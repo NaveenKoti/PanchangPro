@@ -1,12 +1,6 @@
 /**
- * TodayScreen - Redesigned with Sacred Minimalism
- *
- * Implements REDESIGN_SPECIFICATION.md:
- * - §4.2 Asymmetric Layout: Golden ratio (1:0.618) hero grid
- * - §2.2 Content Priority Hierarchy: Above-the-fold content first
- * - §8.1 ScreenContainer: Responsive layout with safe areas
- * - §9.2 Page transitions & staggered entrance animations
- * - §4.4 Micro-interactions: Hover lifts, press effects
+ * TodayScreen - TODAY-IA stage: slim date bar + hero + sun line +
+ * inauspicious strip above the fold; Details/Day tabs below; ONE AlertStack.
  */
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
@@ -23,23 +17,21 @@ import {
   Skeleton,
   Paper,
   Snackbar,
-  useTheme as useMuiTheme,
+  Tabs,
+  Tab,
   Button,
+  useTheme as useMuiTheme,
 } from '@mui/material';
 import {
   MapPin,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
-  PartyPopper,
-  Heart,
   Calendar as CalendarIcon,
   Star,
-  Bell,
-  Sun,
   Sunrise,
   Sunset,
   Clock,
+  Heart,
 } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import {
@@ -56,7 +48,6 @@ import { useI18n } from '../hooks/useI18n';
 import { AyurvedicClock } from '../components/AyurvedicClock';
 import { TithiCard } from '../components/TithiCard';
 import { TodayGuidanceCard } from '../components/TodayGuidanceCard';
-import { AuspiciousIndicator } from '../components/AuspiciousIndicator';
 import { ExpandableSection } from '../components/ExpandableSection';
 import { TithiExplanationDialog } from '../components/TithiExplanationDialog';
 import { NakshatraExplanationDialog } from '../components/NakshatraExplanationDialog';
@@ -65,7 +56,8 @@ import type { GlossaryEntry } from '../data/panchangGlossary';
 import { LUNAR_MONTHS, LUNAR_MONTHS_HINDI } from '../engine/constants';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { SearchUpcoming } from '../components/SearchUpcoming';
-import { FastingChip } from '../components/FastingChip';
+import { SectionCard } from '../components/layout/SectionCard';
+import { AlertStack, type AlertItem } from '../components/layout/AlertStack';
 import { useBreakpoints } from '../hooks/useBreakpoints';
 import { triggerHapticIfSupported } from '../utils/haptics';
 import './TodayScreen.css';
@@ -92,11 +84,12 @@ export interface TodayScreenProps {
   onFestivalOpen?: (id: string) => void;
 }
 
+type TodayTab = 'details' | 'day';
+
 export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
   const { t } = useI18n();
   const muiTheme = useMuiTheme();
   const { isMobile } = useBreakpoints();
-  const isDark = muiTheme.palette.mode === 'dark';
 
   const {
     selectedDate,
@@ -203,6 +196,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
   const [isNakshatraDialogOpen, setIsNakshatraDialogOpen] = useState(false);
   const [glossaryLimb, setGlossaryLimb] = useState<GlossaryEntry['id'] | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState<TodayTab>('details');
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -316,9 +310,116 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
     );
   }
 
+  // ---- ONE AlertStack: all conditional alerts render as items here ----
+  const alerts: AlertItem[] = [];
+  if (missedReminders.length > 0) {
+    alerts.push({
+      key: 'missed-reminders',
+      severity: 'warning',
+      children: (
+        <Box>
+          <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+            {isDigestHindi ? 'जब आप दूर थे' : 'While you were away'}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            {missedReminders.length === 1
+              ? (isDigestHindi ? 'ऐप बंद रहने के दौरान एक रिमाइंडर छूट गया।' : 'You missed a reminder while the app was closed.')
+              : (isDigestHindi ? `ऐप बंद रहने के दौरान ${missedReminders.length} रिमाइंडर छूट गए।` : `You missed ${missedReminders.length} reminders while the app was closed.`)}
+          </Typography>
+          <Box component="ul" sx={{ m: 0, mt: 0.5, pl: 2.5 }}>
+            {missedReminders.map((m) => (
+              <Typography key={m.id} component="li" variant="body2" sx={{ color: 'text.primary' }}>
+                {relativeDayLabel(m.fireTime, new Date())} — {m.tithiName}
+                {m.daysBefore > 0 ? ` (due ${formatDueDate(m.occurrenceDate)})` : ''}
+              </Typography>
+            ))}
+          </Box>
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={() => requestTab('myTithis')}
+            sx={{ mt: 1, borderRadius: 2, textTransform: 'none', fontWeight: 500, minHeight: 48 }}
+          >
+            {isDigestHindi ? 'मेरी तिथियाँ देखें' : 'View My Tithis'}
+          </Button>
+        </Box>
+      ),
+    });
+  }
+  if (panchang.isAuspiciousTime) {
+    alerts.push({
+      key: 'auspicious',
+      severity: 'success',
+      children: (
+        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+          {t('panchang.auspiciousTime')}
+        </Typography>
+      ),
+    });
+  }
+  if (panchang.festivals.length > 0) {
+    alerts.push({
+      key: 'festival',
+      severity: 'success',
+      children: (
+        <Box>
+          <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+            {preferences.language === 'hi'
+              ? panchang.festivals[0].nameHindi
+              : panchang.festivals[0].name}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            {panchang.festivals[0].significance}
+          </Typography>
+        </Box>
+      ),
+    });
+  }
+  if (panchang.sankranti) {
+    alerts.push({
+      key: 'sankranti',
+      severity: 'info',
+      children: (
+        <Box>
+          <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+            {preferences.language === 'hi'
+              ? `${panchang.sankranti.nameHindi} संक्रांति`
+              : `${panchang.sankranti.name} Sankranti`}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            {preferences.language === 'hi' ? 'सूर्य का राशि परिवर्तन' : 'Solar ingress'}
+            {' · '}
+            {formatTime(panchang.sankranti.ingressTime)}
+          </Typography>
+        </Box>
+      ),
+    });
+  }
+  if (panchang.fasting) {
+    alerts.push({
+      key: 'fasting',
+      severity: 'info',
+      children: (
+        <Box>
+          <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+            {preferences.language === 'hi'
+              ? panchang.fasting.nameHindi
+              : panchang.fasting.name}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            {panchang.fasting.significance}
+            {panchang.fasting.paranaTime
+              ? ` · Parana ${formatTime(panchang.fasting.paranaTime.start)} - ${formatTime(panchang.fasting.paranaTime.end)}`
+              : ''}
+          </Typography>
+        </Box>
+      ),
+    });
+  }
+
   return (
     <ScreenContainer>
-      {/* ========== SEGMENT 1. STICKY DATE BAR — location + date nav merged, mobile-first ========== */}
+      {/* ========== 1. SLIM STICKY DATE BAR (offset via theme token) ========== */}
       <Zoom in timeout={250}>
         <Paper
           elevation={0}
@@ -329,94 +430,25 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
             border: '1px solid',
             borderColor: 'divider',
             position: 'sticky',
-            top: 56,
+            top: muiTheme.mixins.toolbar.minHeight,
             zIndex: 500,
             bgcolor: 'background.paper',
-            boxShadow: isDark
-              ? '0 2px 8px rgba(0,0,0,0.2)'
-              : '0 1px 3px rgba(0,0,0,0.04)',
-            transition: 'box-shadow 0.25s ease',
-            '&:hover': {
-              boxShadow: isDark
-                ? '0 4px 12px rgba(0,0,0,0.3)'
-                : '0 4px 12px rgba(0,0,0,0.08)',
-            },
           }}
         >
           <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-            {/* Merged header row: location + sunrise (was standalone header) */}
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <MapPin size={16} color={muiTheme.palette.primary.main} />
-                <Box>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      lineHeight: 1,
-                      fontSize: '0.7rem',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                      color: 'text.secondary',
-                      display: 'block',
-                    }}
-                  >
-                    {t('common.location')}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: 500, color: 'text.primary', fontSize: '0.9rem' }}
-                  >
-                    {preferences.location.name}
-                  </Typography>
-                </Box>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                <Sparkles size={16} color={muiTheme.palette.primary.light} />
-                <Typography
-                  variant="caption"
-                  sx={{ fontWeight: 500, fontSize: '0.75rem', color: 'primary.main' }}
-                >
-                  {formatTime(panchang.sunrise)}
-                </Typography>
-              </Box>
-            </Box>
-            <Divider sx={{ mb: 1, borderColor: 'divider' }} />
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 1,
-                flexWrap: 'wrap',
-              }}
-            >
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
               <IconButton
                 onClick={handlePrevDay}
                 size="small"
                 aria-label="previous day"
-                sx={{
-                  width: 48,
-                  height: 48,
-                  flexShrink: 0,
-                  bgcolor: isDark
-                    ? `${muiTheme.palette.primary.main}15`
-                    : `${muiTheme.palette.primary.main}8`,
-                  color: 'primary.main',
-                  '&:hover': {
-                    bgcolor: isDark
-                      ? `${muiTheme.palette.primary.main}25`
-                      : `${muiTheme.palette.primary.main}15`,
-                  },
-                  '&:active': { transform: 'scale(0.92)' },
-                  transition: 'all 0.2s ease',
-                }}
+                sx={{ width: 48, height: 48, flexShrink: 0, color: 'primary.main' }}
               >
-                <ChevronLeft size={22} />
+                <ChevronLeft size={20} />
               </IconButton>
 
-              <Box sx={{ textAlign: 'center', flex: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.75, mb: 0.25 }}>
-                  <CalendarIcon size={16} color={muiTheme.palette.primary.main} />
+              <Box sx={{ textAlign: 'center', flex: 1, minWidth: 0 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.75 }}>
+                  <CalendarIcon size={20} color={muiTheme.palette.primary.main} />
                   <Typography
                     variant="h6"
                     sx={{
@@ -431,31 +463,37 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                     {formatDate(selectedDate)}
                   </Typography>
                 </Box>
-                {/* Lunar month (+ Adhik qualifier), tappable → glossary */}
-                {panchang.lunarMonth !== undefined && (
-                  <Typography
-                    variant="caption"
-                    onClick={() => {
-                      triggerHapticIfSupported('light');
-                      setGlossaryLimb(panchang.adhikMaas?.isAdhik ? 'adhik' : 'maas');
-                    }}
-                    sx={{
-                      display: 'block',
-                      color: panchang.adhikMaas?.isAdhik ? 'primary.main' : 'text.secondary',
-                      fontSize: '0.75rem',
-                      fontWeight: 500,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {preferences.language === 'hi'
-                      ? panchang.adhikMaas?.isAdhik
-                        ? `अधिक ${panchang.adhikMaas.nameHindi} मास`
-                        : `${LUNAR_MONTHS_HINDI[panchang.lunarMonth - 1]} मास`
-                      : panchang.adhikMaas?.isAdhik
-                        ? `Adhik ${panchang.adhikMaas.name} Maas`
-                        : `${LUNAR_MONTHS[panchang.lunarMonth - 1]} Maas`}
+                {/* Location + lunar month, tappable → glossary */}
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5, mt: 0.25 }}>
+                  <MapPin size={16} color={muiTheme.palette.text.secondary} />
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
+                    {preferences.location.name}
                   </Typography>
-                )}
+                  {panchang.lunarMonth !== undefined && (
+                    <Typography
+                      variant="caption"
+                      onClick={() => {
+                        triggerHapticIfSupported('light');
+                        setGlossaryLimb(panchang.adhikMaas?.isAdhik ? 'adhik' : 'maas');
+                      }}
+                      sx={{
+                        color: panchang.adhikMaas?.isAdhik ? 'primary.main' : 'text.secondary',
+                        fontSize: '0.75rem',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {' · '}
+                      {preferences.language === 'hi'
+                        ? panchang.adhikMaas?.isAdhik
+                          ? `अधिक ${panchang.adhikMaas.nameHindi} मास`
+                          : `${LUNAR_MONTHS_HINDI[panchang.lunarMonth - 1]} मास`
+                        : panchang.adhikMaas?.isAdhik
+                          ? `Adhik ${panchang.adhikMaas.name} Maas`
+                          : `${LUNAR_MONTHS[panchang.lunarMonth - 1]} Maas`}
+                    </Typography>
+                  )}
+                </Box>
                 {new Date().toDateString() !== selectedDate.toDateString() && (
                   <Button
                     size="small"
@@ -468,16 +506,6 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                       textTransform: 'none',
                       minHeight: 48,
                       p: '2px 8px',
-                      borderRadius: 1.5,
-                      bgcolor: isDark
-                        ? `${muiTheme.palette.primary.main}15`
-                        : `${muiTheme.palette.primary.main}10`,
-                      '&:hover': {
-                        bgcolor: isDark
-                          ? `${muiTheme.palette.primary.main}25`
-                          : `${muiTheme.palette.primary.main}20`,
-                      },
-                      '&:active': { transform: 'scale(0.95)' },
                     }}
                   >
                     {t('calendar.goToToday')}
@@ -489,797 +517,248 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                 onClick={handleNextDay}
                 size="small"
                 aria-label="next day"
-                sx={{
-                  width: 48,
-                  height: 48,
-                  flexShrink: 0,
-                  bgcolor: isDark
-                    ? `${muiTheme.palette.primary.main}15`
-                    : `${muiTheme.palette.primary.main}8`,
-                  color: 'primary.main',
-                  '&:hover': {
-                    bgcolor: isDark
-                      ? `${muiTheme.palette.primary.main}25`
-                      : `${muiTheme.palette.primary.main}15`,
-                  },
-                  '&:active': { transform: 'scale(0.92)' },
-                  transition: 'all 0.2s ease',
-                }}
+                sx={{ width: 48, height: 48, flexShrink: 0, color: 'primary.main' }}
               >
-                <ChevronRight size={22} />
+                <ChevronRight size={20} />
               </IconButton>
             </Box>
           </CardContent>
         </Paper>
       </Zoom>
 
-      {/* ========== SEGMENT 2. HERO + GUIDANCE (guidance directly under hero) ========== */}
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: {
-            xs: '1fr',
-            md: '1fr 0.618fr', // Golden ratio on tablet+
-          },
-          gap: { xs: 1.5, md: 3 },
-          mb: 1.5,
-          width: '100%',
-          maxWidth: '100%',
-        }}
-      >
-        {/* LEFT (61.8%): Tithi Hero Card */}
-        <Box sx={{ minWidth: 0 }}>
-          <TithiCard
-            tithi={panchang.tithi}
-            onClick={() => {
-              triggerHapticIfSupported('light');
-              setIsTithiDialogOpen(true);
-            }}
-            style={{ height: '100%' }}
-          />
-        </Box>
-
-        {/* RIGHT (38.2%): Nakshatra, Yoga, Karana Summary */}
-        <Box
-          sx={{ display: { xs: 'none', md: 'block' }, minWidth: 0 }}
-        >
-          <Paper
-            elevation={0}
-            sx={{
-              height: '100%',
-              p: 2,
-              borderRadius: 2,
-              border: '1px solid',
-              borderColor: 'divider',
-              bgcolor: 'background.paper',
-              boxShadow: isDark
-                ? '0 2px 8px rgba(0,0,0,0.2)'
-                : '0 1px 3px rgba(0,0,0,0.04)',
-            }}
-          >
-            {/* Nakshatra */}
-            <Box sx={{ py: 1 }}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 32,
-                  height: 32,
-                  borderRadius: 1.5,
-                  bgcolor: isDark
-                    ? `${muiTheme.palette.primary.main}20`
-                    : `${muiTheme.palette.primary.main}10`,
-                  mb: 0.75,
-                }}
-              >
-                <Star size={18} color={muiTheme.palette.primary.main} />
-              </Box>
-              <Typography
-                variant="caption"
-                sx={{
-                  fontWeight: 500,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                  color: 'text.secondary',
-                  fontSize: '0.75rem',
-                  display: 'block',
-                  mb: 0.25,
-                }}
-              >
-                {t('panchang.nakshatra')}
-              </Typography>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 500,
-                  color: 'text.primary',
-                  fontFamily: '"Noto Sans", sans-serif',
-                  fontSize: { xs: '1rem', sm: '1.1rem' },
-                }}
-              >
-                {panchang.nakshatra.name}
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{ color: 'text.secondary', fontSize: '0.7rem' }}
-              >
-                Ends {formatTime(panchang.nakshatra.endTime)}
-              </Typography>
-            </Box>
-
-            <Divider sx={{ my: 1, borderColor: 'divider' }} />
-
-            {/* Yoga */}
-            <Box
-              sx={{ py: 1, cursor: 'pointer' }}
-              onClick={() => {
-                triggerHapticIfSupported('light');
-                setGlossaryLimb('yoga');
-              }}
-            >
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 32,
-                  height: 32,
-                  borderRadius: 1.5,
-                  bgcolor: isDark
-                    ? `${muiTheme.palette.secondary.main}20`
-                    : `${muiTheme.palette.secondary.main}10`,
-                  mb: 0.75,
-                }}
-              >
-                <Sparkles size={18} color={muiTheme.palette.secondary.main} />
-              </Box>
-              <Typography
-                variant="caption"
-                sx={{
-                  fontWeight: 500,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                  color: 'text.secondary',
-                  fontSize: '0.75rem',
-                  display: 'block',
-                  mb: 0.25,
-                }}
-              >
-                {t('panchang.yoga')}
-              </Typography>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 500,
-                  color: 'text.primary',
-                  fontFamily: '"Noto Sans", sans-serif',
-                  fontSize: { xs: '1rem', sm: '1.1rem' },
-                }}
-              >
-                {panchang.yoga.name}
-              </Typography>
-              {panchang.yoga.favorability && (
-                <AuspiciousIndicator
-                  favorability={panchang.yoga.favorability}
-                  size="small"
-                  sx={{ mt: 0.5 }}
-                />
-              )}
-            </Box>
-
-            <Divider sx={{ my: 1, borderColor: 'divider' }} />
-
-            {/* Karana */}
-            <Box
-              sx={{ py: 1, cursor: 'pointer' }}
-              onClick={() => {
-                triggerHapticIfSupported('light');
-                setGlossaryLimb('karana');
-              }}
-            >
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  width: 32,
-                  height: 32,
-                  borderRadius: 1.5,
-                  bgcolor: isDark
-                    ? `${muiTheme.palette.info.main}20`
-                    : `${muiTheme.palette.info.main}10`,
-                  mb: 0.75,
-                }}
-              >
-                <CalendarIcon size={18} color={muiTheme.palette.info.main} />
-              </Box>
-              <Typography
-                variant="caption"
-                sx={{
-                  fontWeight: 500,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                  color: 'text.secondary',
-                  fontSize: '0.75rem',
-                  display: 'block',
-                  mb: 0.25,
-                }}
-              >
-                {t('panchang.karana')}
-              </Typography>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 500,
-                  color: 'text.primary',
-                  fontFamily: '"Noto Sans", sans-serif',
-                  fontSize: { xs: '1rem', sm: '1.1rem' },
-                }}
-              >
-                {panchang.karana.name}
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{ color: 'text.secondary', fontSize: '0.7rem' }}
-              >
-                {panchang.karana.type}
-              </Typography>
-            </Box>
-          </Paper>
-        </Box>
+      {/* ========== 2. TITHI HERO ========== */}
+      <Box sx={{ mb: 1.5, minWidth: 0 }}>
+        <TithiCard
+          tithi={panchang.tithi}
+          onClick={() => {
+            triggerHapticIfSupported('light');
+            setIsTithiDialogOpen(true);
+          }}
+          style={{ height: '100%' }}
+        />
       </Box>
 
-      {/* ========== "WHILE YOU WERE AWAY" CATCH-UP (custom tithis only) ========== */}
-      {missedReminders.length > 0 && (
-        <Fade in timeout={300}>
-          <Box sx={{ mb: 1.5 }}>
-            <Alert
-              icon={<Bell size={20} />}
-              severity="info"
-              onClose={() => setMissedReminders([])}
+      {/* ========== 3. SINGLE SUNRISE/SUNSET LINE ========== */}
+      <SectionCard dense>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+            <Sunrise size={16} color={muiTheme.palette.primary.main} />
+            <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
+              {formatTime(panchang.sunrise)}
+            </Typography>
+          </Box>
+          <Divider orientation="vertical" flexItem />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+            <Sunset size={16} color={muiTheme.palette.primary.main} />
+            <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
+              {formatTime(panchang.sunset)}
+            </Typography>
+          </Box>
+        </Box>
+      </SectionCard>
+
+      {/* ========== 4. SINGLE INAUSPICIOUS-PERIODS STRIP (one neutral line) ========== */}
+      <SectionCard dense>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.75, flexWrap: 'wrap' }}>
+          <Clock size={16} color={muiTheme.palette.text.secondary} />
+          <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
+            {t('panchang.rahuKaal')} {formatTime(panchang.rahuKaal.start)}–{formatTime(panchang.rahuKaal.end)}
+            {' · '}
+            {t('panchang.yamagandam') || 'Yamagandam'} {formatTime(panchang.yamagandam.start)}–{formatTime(panchang.yamagandam.end)}
+            {' · '}
+            {t('panchang.gulikaKaal') || 'Gulika'} {formatTime(panchang.gulikaKaal.start)}–{formatTime(panchang.gulikaKaal.end)}
+          </Typography>
+        </Box>
+      </SectionCard>
+
+      {/* ========== 5. ADD TO MY TITHIS (stays visible) ========== */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1.5 }}>
+        <Button
+          variant="outlined"
+          size="medium"
+          startIcon={<Heart size={20} />}
+          onClick={handleQuickAddTithi}
+          sx={{
+            borderColor: 'primary.main',
+            color: 'primary.main',
+            borderRadius: 2,
+            py: 1,
+            px: 3,
+            fontWeight: 500,
+            fontSize: '0.875rem',
+            textTransform: 'none',
+          }}
+        >
+          {t('myTithis.addNew') || 'Add to My Tithis'}
+        </Button>
+      </Box>
+
+      {/* ========== 6. ONE ALERT STACK (max 2 visible + expander) ========== */}
+      <Fade in timeout={350}>
+        <Box>
+          <AlertStack alerts={alerts} />
+        </Box>
+      </Fade>
+
+      {/* ========== 7. DETAILS / DAY TABS ========== */}
+      <Tabs
+        value={activeTab}
+        onChange={(_, v) => setActiveTab(v)}
+        variant="fullWidth"
+        sx={{ mb: 1.5, minHeight: 48 }}
+      >
+        <Tab label={t('panchang.detailsTab')} value="details" sx={{ minHeight: 48, textTransform: 'none', fontWeight: 500 }} />
+        <Tab label={t('panchang.dayTab')} value="day" sx={{ minHeight: 48, textTransform: 'none', fontWeight: 500 }} />
+      </Tabs>
+
+      {activeTab === 'details' && (
+        <Fade in timeout={400}>
+          <Box>
+            <Typography
+              variant="h5"
               sx={{
-                borderRadius: 2,
-                border: '1px solid',
-                borderColor: isDark
-                  ? `${muiTheme.palette.info.main}30`
-                  : `${muiTheme.palette.info.main}20`,
-                bgcolor: isDark
-                  ? `${muiTheme.palette.info.main}12`
-                  : `${muiTheme.palette.info.main}8`,
-                '& .MuiAlert-icon': { color: muiTheme.palette.info.main },
-                '& .MuiAlert-action .MuiIconButton-root': { width: 48, height: 48 },
+                fontWeight: 500,
+                fontSize: '1.25rem',
+                mb: 1.25,
+                pl: 0.5,
+                letterSpacing: '-0.02em',
+                lineHeight: 1.3,
+                color: 'text.primary',
               }}
             >
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 500,
-                  fontFamily: '"Noto Sans", sans-serif',
-                  color: 'text.primary',
-                  fontSize: '0.95rem',
-                }}
+              {t('panchang.title')}
+            </Typography>
+
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 1.5, width: '100%', maxWidth: '100%' }}>
+              {/* Nakshatra Section */}
+              <ExpandableSection
+                title={t('panchang.nakshatra')}
+                icon={<Star size={20} />}
+                expanded={isExpanded('nakshatra')}
+                onToggle={() => toggleSection('nakshatra')}
               >
-                {isDigestHindi ? 'जब आप दूर थे' : 'While you were away'}
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{
-                  mt: 0.25,
-                  fontWeight: 400,
-                  fontFamily: '"Noto Sans", sans-serif',
-                  color: 'text.secondary',
-                }}
+                <Card
+                  elevation={0}
+                  onClick={() => {
+                    triggerHapticIfSupported('light');
+                    setIsNakshatraDialogOpen(true);
+                  }}
+                  sx={{ borderRadius: 2, cursor: 'pointer', border: '1px solid', borderColor: 'divider' }}
+                >
+                  <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                      {panchang.nakshatra.name}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.25 }}>
+                      {panchang.nakshatra.nameHindi}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
+                      Ruler: {panchang.nakshatra.ruler}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </ExpandableSection>
+
+              {/* Yoga Section */}
+              <ExpandableSection
+                title={t('panchang.yoga')}
+                icon={<Star size={20} />}
+                expanded={isExpanded('yoga')}
+                onToggle={() => toggleSection('yoga')}
               >
-                {missedReminders.length === 1
-                  ? (isDigestHindi ? 'ऐप बंद रहने के दौरान एक रिमाइंडर छूट गया।' : 'You missed a reminder while the app was closed.')
-                  : (isDigestHindi ? `ऐप बंद रहने के दौरान ${missedReminders.length} रिमाइंडर छूट गए।` : `You missed ${missedReminders.length} reminders while the app was closed.`)}
-              </Typography>
-              <Box component="ul" sx={{ m: 0, mt: 1, pl: 2.5 }}>
-                {missedReminders.map((m) => (
+                <Card
+                  elevation={0}
+                  onClick={() => {
+                    triggerHapticIfSupported('light');
+                    setGlossaryLimb('yoga');
+                  }}
+                  sx={{ borderRadius: 2, cursor: 'pointer', border: '1px solid', borderColor: 'divider' }}
+                >
+                  <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                      {panchang.yoga.name}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.25 }}>
+                      {panchang.yoga.nameHindi}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
+                      #{panchang.yoga.number}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </ExpandableSection>
+
+              {/* Karana Section */}
+              <SectionCard
+                dense
+                title={
                   <Typography
-                    key={m.id}
-                    component="li"
-                    variant="body2"
-                    sx={{
-                      fontWeight: 400,
-                      fontFamily: '"Noto Sans", sans-serif',
-                      color: 'text.primary',
+                    variant="caption"
+                    sx={{ color: 'text.secondary', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}
+                    onClick={() => {
+                      triggerHapticIfSupported('light');
+                      setGlossaryLimb('karana');
                     }}
                   >
-                    {relativeDayLabel(m.fireTime, new Date())} — {m.tithiName}
-                    {m.daysBefore > 0 ? ` (due ${formatDueDate(m.occurrenceDate)})` : ''}
+                    {t('panchang.karana')}
                   </Typography>
-                ))}
-              </Box>
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={() => requestTab('myTithis')}
-                sx={{ mt: 1, borderRadius: 2, textTransform: 'none', fontWeight: 500, minHeight: 48 }}
+                }
               >
-                {isDigestHindi ? 'मेरी तिथियाँ देखें' : 'View My Tithis'}
-              </Button>
-            </Alert>
-          </Box>
-        </Fade>
-      )}
+                <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
+                  {panchang.karana.name}
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
+                  {panchang.karana.type}
+                </Typography>
+              </SectionCard>
 
-      {/* Guidance directly under hero — single timings source via props, times render once in Timings row below */}
-      {/* ========== SEGMENT 2b. TODAY'S GUIDANCE CARD ========== */}
-      <Fade in timeout={300}>
-        <Box sx={{ mb: 1.25, maxWidth: '100%' }}>
-          <TodayGuidanceCard
-            panchang={panchang}
-            rahuKaal={panchang.rahuKaal}
-            yamagandam={panchang.yamagandam}
-            gulikaKaal={panchang.gulikaKaal}
-          />
-        </Box>
-      </Fade>
-
-      {/* ========== SEGMENT 2c. TIMINGS ROW — single source for Rahu Kaal / Yamagandam / Gulika
-          (moved up directly under guidance so sunrise/Rahu Kaal are visible without deep scroll;
-          TodayGuidanceCard above already receives these as props; times live here once) ========== */}
-      <Fade in timeout={325}>
-        <Box sx={{ mb: 1.5, maxWidth: '100%' }}>
-          <Card
-            elevation={0}
-            sx={{
-              borderRadius: 2,
-              border: '1px solid',
-              borderColor: isDark
-                ? `${muiTheme.palette.warning.main}30`
-                : `${muiTheme.palette.warning.main}20`,
-              bgcolor: isDark
-                ? `${muiTheme.palette.warning.main}8`
-                : `${muiTheme.palette.warning.main}5`,
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                boxShadow: isDark
-                  ? '0 4px 12px rgba(0,0,0,0.3)'
-                  : '0 4px 12px rgba(0,0,0,0.08)',
-                transform: 'translateY(-1px)',
-              },
-            }}
-          >
-            <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-              <Typography variant="overline" sx={{ color: 'warning.main', fontWeight: 500, letterSpacing: '0.1em', fontSize: '0.75rem', display: 'block', mb: 1 }}>
-                {t('panchang.timings') || 'Timings'}
-              </Typography>
-              {/* Rahu Kaal — emphasized warning-tint row */}
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1.25,
-                  py: 0.75,
-                  px: 1,
-                  borderRadius: 1.5,
-                  bgcolor: isDark
-                    ? `${muiTheme.palette.warning.main}15`
-                    : `${muiTheme.palette.warning.main}10`,
-                  border: '1px solid',
-                  borderColor: isDark
-                    ? `${muiTheme.palette.warning.main}25`
-                    : `${muiTheme.palette.warning.main}15`,
-                  mb: 0.75,
-                  maxWidth: '100%',
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 1.5,
-                    bgcolor: isDark
-                      ? `${muiTheme.palette.warning.main}25`
-                      : `${muiTheme.palette.warning.main}15`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
+              {/* Samvatsara Section */}
+              {panchang.samvatsara && (
+                <SectionCard
+                  dense
+                  title={
+                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>
+                      {t('panchang.samvatsara') || 'Samvatsara'}
+                    </Typography>
+                  }
                 >
-                  <Clock size={18} color={muiTheme.palette.warning.main} />
-                </Box>
-                <Typography variant="caption" sx={{ fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.7rem', color: 'warning.main' }}>
-                  {t('panchang.rahuKaal')}
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8125rem', color: 'text.primary', ml: 'auto', textAlign: 'right', whiteSpace: 'nowrap' }}>
-                  {formatTime(panchang.rahuKaal.start)} - {formatTime(panchang.rahuKaal.end)}
-                </Typography>
-              </Box>
-              {/* Yamagandam row */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, py: 0.5, px: 1, maxWidth: '100%' }}>
-                <Box
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 1.5,
-                    bgcolor: isDark
-                      ? `${muiTheme.palette.primary.main}20`
-                      : `${muiTheme.palette.primary.main}10`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Sunrise size={18} color={muiTheme.palette.primary.main} />
-                </Box>
-                <Typography variant="caption" sx={{ fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.7rem', color: 'text.secondary' }}>
-                  {t('panchang.yamagandam') || 'Yamagandam'}
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8125rem', color: 'text.primary', ml: 'auto', textAlign: 'right', whiteSpace: 'nowrap' }}>
-                  {formatTime(panchang.yamagandam.start)} - {formatTime(panchang.yamagandam.end)}
-                </Typography>
-              </Box>
-              {/* Gulika Kaal row */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, py: 0.5, px: 1, maxWidth: '100%' }}>
-                <Box
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 1.5,
-                    bgcolor: isDark
-                      ? `${muiTheme.palette.info.main}20`
-                      : `${muiTheme.palette.info.main}10`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Sunset size={18} color={muiTheme.palette.info.main} />
-                </Box>
-                <Typography variant="caption" sx={{ fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.7rem', color: 'text.secondary' }}>
-                  {t('panchang.gulikaKaal') || 'Gulika'}
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8125rem', color: 'text.primary', ml: 'auto', textAlign: 'right', whiteSpace: 'nowrap' }}>
-                  {formatTime(panchang.gulikaKaal.start)} - {formatTime(panchang.gulikaKaal.end)}
-                </Typography>
-              </Box>
-              <Typography variant="caption" sx={{ color: 'warning.main', display: 'block', mt: 0.75 }}>
-                {t('panchang.rahuKaalWarning')}
-              </Typography>
-              <AuspiciousIndicator
-                favorability="challenging"
-                size="small"
-                sx={{ mt: 1 }}
-              />
-            </CardContent>
-          </Card>
-        </Box>
-      </Fade>
-
-      {/* ========== SEGMENT 4. ALERTS / CLOCK / ACTIONS (all data kept, reorganized) ========== */}
-      {/* ========== 5. AUSPICIOUS TIMES BADGE ========== */}
-      {panchang.isAuspiciousTime && (
-        <Zoom in timeout={350}>
-          <Box sx={{ mb: 1.25 }}>
-            <AuspiciousIndicator
-              favorability="auspicious"
-              size="large"
-              message={t('panchang.auspiciousTime')}
-              sx={{ width: '100%' }}
-            />
-          </Box>
-        </Zoom>
-      )}
-
-      {/* ========== 6. FESTIVAL & FASTING ALERTS (§2.2) ========== */}
-      <Fade in timeout={350}>
-        <Box sx={{ mb: 1.5 }}>
-          {/* Festival Alert */}
-          {panchang.festivals.length > 0 && (
-            <Alert
-              icon={<PartyPopper size={20} />}
-              severity="success"
-              sx={{
-                borderRadius: 2,
-                border: '1px solid',
-                borderColor: isDark
-                  ? `${muiTheme.palette.success.main}30`
-                  : `${muiTheme.palette.success.main}20`,
-                bgcolor: isDark
-                  ? `${muiTheme.palette.success.main}12`
-                  : `${muiTheme.palette.success.main}8`,
-                mb: 1.5,
-                '& .MuiAlert-icon': { color: muiTheme.palette.success.main },
-              }}
-            >
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 500,
-                  fontFamily: '"Noto Sans", sans-serif',
-                  color: isDark ? muiTheme.palette.success.light : muiTheme.palette.success.dark,
-                }}
-              >
-                {preferences.language === 'hi'
-                  ? panchang.festivals[0].nameHindi
-                  : panchang.festivals[0].name}
-              </Typography>
-              <Typography variant="body2" sx={{ mt: 0.25, opacity: 0.9, color: 'text.secondary' }}>
-                {panchang.festivals[0].significance}
-              </Typography>
-            </Alert>
-          )}
-
-          {/* Sankranti Alert — solar ingress computed by findSolarIngress */}
-          {panchang.sankranti && (
-            <Alert
-              icon={<Sun size={20} />}
-              severity="info"
-              sx={{
-                borderRadius: 2,
-                border: '1px solid',
-                borderColor: isDark
-                  ? `${muiTheme.palette.info.main}30`
-                  : `${muiTheme.palette.info.main}20`,
-                bgcolor: isDark
-                  ? `${muiTheme.palette.info.main}12`
-                  : `${muiTheme.palette.info.main}8`,
-                mb: 1.5,
-                '& .MuiAlert-icon': { color: muiTheme.palette.info.main },
-              }}
-            >
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 500,
-                  fontFamily: '"Noto Sans", sans-serif',
-                  color: isDark ? muiTheme.palette.info.light : muiTheme.palette.info.dark,
-                }}
-              >
-                {preferences.language === 'hi'
-                  ? `${panchang.sankranti.nameHindi} संक्रांति`
-                  : `${panchang.sankranti.name} Sankranti`}
-              </Typography>
-              <Typography variant="body2" sx={{ mt: 0.25, opacity: 0.9, color: 'text.secondary' }}>
-                {preferences.language === 'hi' ? 'सूर्य का राशि परिवर्तन' : 'Solar ingress'}
-                {' · '}
-                {formatTime(panchang.sankranti.ingressTime)}
-              </Typography>
-            </Alert>
-          )}
-
-          {/* Fasting Card — using new FastingChip component (§8.1) */}
-          {panchang.fasting && (
-            <FastingChip
-              fasting={{
-                name: preferences.language === 'hi'
-                  ? panchang.fasting.nameHindi
-                  : panchang.fasting.name,
-                significance: panchang.fasting.significance,
-                paranaTime: panchang.fasting.paranaTime,
-              }}
-              detailed
-            />
-          )}
-        </Box>
-      </Fade>
-
-      {/* ========== SEARCH + COMING UP (festival search & 15-day strip) ========== */}
-      <SearchUpcoming onFestivalOpen={onFestivalOpen} />
-
-      {/* ========== SEGMENT 3. DETAIL GRID — Stories rhythm (overline + h5 + body2) ========== */}
-      <Fade in timeout={400}>
-        <Box sx={{ mb: 1.5 }}>
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: 500,
-              fontSize: '1.25rem',
-              mb: 1.25,
-              pl: 0.5,
-              fontFamily: '"Noto Sans", sans-serif',
-              letterSpacing: '-0.02em',
-              lineHeight: 1.3,
-              color: 'text.primary',
-            }}
-          >
-            {t('panchang.title')}
-          </Typography>
-
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: {
-                xs: '1fr',
-                sm: 'repeat(2, 1fr)',
-                md: 'repeat(3, 1fr)',
-              },
-              gap: 1.5,
-              width: '100%',
-              maxWidth: '100%',
-            }}
-          >
-            {/* Nakshatra Section */}
-            <ExpandableSection
-              title={t('panchang.nakshatra')}
-              icon={<Star size={20} />}
-              expanded={isExpanded('nakshatra')}
-              onToggle={() => toggleSection('nakshatra')}
-            >
-              <Card
-                elevation={0}
-                onClick={() => {
-                  triggerHapticIfSupported('light');
-                  setIsNakshatraDialogOpen(true);
-                }}
-                sx={{
-                  borderRadius: 2,
-                  cursor: 'pointer',
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    boxShadow: isDark
-                      ? '0 4px 12px rgba(0,0,0,0.3)'
-                      : '0 4px 12px rgba(0,0,0,0.08)',
-                    transform: 'translateY(-1px)',
-                  },
-                  '&:active': { transform: 'scale(0.98)' },
-                }}
-              >
-                <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
                   <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                    {panchang.nakshatra.name}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.25 }}>
-                    {panchang.nakshatra.nameHindi}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
-                    Ruler: {panchang.nakshatra.ruler}
-                  </Typography>
-                  {panchang.nakshatra.favorability && (
-                    <AuspiciousIndicator
-                      favorability={panchang.nakshatra.favorability}
-                      size="small"
-                      sx={{ mt: 1 }}
-                    />
-                  )}
-                </CardContent>
-              </Card>
-            </ExpandableSection>
-
-            {/* Yoga Section */}
-            <ExpandableSection
-              title={t('panchang.yoga')}
-              icon={<Sparkles size={20} />}
-              expanded={isExpanded('yoga')}
-              onToggle={() => toggleSection('yoga')}
-            >
-              <Card
-                elevation={0}
-                onClick={() => {
-                  triggerHapticIfSupported('light');
-                  setGlossaryLimb('yoga');
-                }}
-                sx={{
-                  borderRadius: 2,
-                  cursor: 'pointer',
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    boxShadow: isDark
-                      ? '0 4px 12px rgba(0,0,0,0.3)'
-                      : '0 4px 12px rgba(0,0,0,0.08)',
-                    transform: 'translateY(-1px)',
-                  },
-                  '&:active': { transform: 'scale(0.98)' },
-                }}
-              >
-                <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-                  <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                    {panchang.yoga.name}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.25 }}>
-                    {panchang.yoga.nameHindi}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
-                    #{panchang.yoga.number}
-                  </Typography>
-                  {panchang.yoga.favorability && (
-                    <AuspiciousIndicator
-                      favorability={panchang.yoga.favorability}
-                      size="small"
-                      sx={{ mt: 1 }}
-                    />
-                  )}
-                </CardContent>
-              </Card>
-            </ExpandableSection>
-
-            {/* Samvatsara Section */}
-            {panchang.samvatsara && (
-              <Card
-                elevation={0}
-                sx={{
-                  borderRadius: 2,
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  bgcolor: isDark
-                    ? 'rgba(255,255,255,0.03)'
-                    : 'rgba(0,0,0,0.02)',
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    boxShadow: isDark
-                      ? '0 4px 12px rgba(0,0,0,0.3)'
-                      : '0 4px 12px rgba(0,0,0,0.08)',
-                    transform: 'translateY(-1px)',
-                  },
-                }}
-              >
-                <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>
-                    {t('panchang.samvatsara') || 'Samvatsara'}
-                  </Typography>
-                  <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', mt: 0.25 }}>
                     {panchang.samvatsara}
                   </Typography>
                   <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.25 }}>
                     {t('panchang.samvatsaraDesc') || 'Hindu Year (60-year cycle)'}
                   </Typography>
-                </CardContent>
-              </Card>
-            )}
+                </SectionCard>
+              )}
+            </Box>
 
+            {/* Search + coming up lives under Details */}
+            <Box sx={{ mt: 1.5 }}>
+              <SearchUpcoming onFestivalOpen={onFestivalOpen} />
+            </Box>
           </Box>
-        </Box>
-      </Fade>
+        </Fade>
+      )}
 
-      {/* ========== 8. AYURVEDIC CLOCK ========== */}
-      <Fade in timeout={450}>
-        <Box sx={{ mb: 1.5 }}>
-          <AyurvedicClock panchang={panchang} />
-        </Box>
-      </Fade>
+      {activeTab === 'day' && (
+        <Fade in timeout={400}>
+          <Box>
+            <Box sx={{ mb: 1.25, maxWidth: '100%' }}>
+              <TodayGuidanceCard
+                panchang={panchang}
+                rahuKaal={panchang.rahuKaal}
+                yamagandam={panchang.yamagandam}
+                gulikaKaal={panchang.gulikaKaal}
+              />
+            </Box>
+            <Box sx={{ mb: 1.5 }}>
+              <AyurvedicClock panchang={panchang} />
+            </Box>
+          </Box>
+        </Fade>
+      )}
 
-      {/* ========== 9. QUICK ACTION: Add to My Tithis ========== */}
-      <Fade in timeout={500}>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            mb: 1.5,
-          }}
-        >
-          <Button
-            variant="outlined"
-            size="medium"
-            startIcon={<Heart size={18} />}
-            onClick={handleQuickAddTithi}
-            sx={{
-              borderColor: 'primary.main',
-              color: 'primary.main',
-              borderRadius: 2,
-              py: 1,
-              px: 3,
-              fontWeight: 500,
-              fontSize: '0.875rem',
-              textTransform: 'none',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                borderColor: 'primary.dark',
-                bgcolor: isDark
-                  ? `${muiTheme.palette.primary.main}15`
-                  : `${muiTheme.palette.primary.main}8`,
-                transform: 'translateY(-1px)',
-                boxShadow: `0 4px 12px ${muiTheme.palette.primary.main}30`,
-              },
-              '&:active': { transform: 'scale(0.97)' },
-            }}
-          >
-            {t('myTithis.addNew') || 'Add to My Tithis'}
-          </Button>
-        </Box>
-      </Fade>
-
-      {/* ========== SNACKBAR ========== */}
+      {/* ========== SNACKBAR (as-is) ========== */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}

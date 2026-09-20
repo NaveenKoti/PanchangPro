@@ -26,6 +26,7 @@ import {
   ToggleButtonGroup,
 } from '@mui/material';
 import { ScreenContainer } from '../components/ScreenContainer';
+import { SectionCard } from '../components/layout/SectionCard';
 import {
   Sunrise,
   Moon,
@@ -575,7 +576,7 @@ const MuhurtaScreen: React.FC = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0, flexWrap: 'wrap' }}>
             {isCurrent && (
               <Chip
-                icon={<Timer size={12} />}
+                icon={<Timer size={16} />}
                 label={isMuhurtaActive ? `${timeRemainingShort} left` : timeRemainingShort}
                 size="small"
                 sx={{
@@ -596,12 +597,13 @@ const MuhurtaScreen: React.FC = () => {
             <IconButton
               size="small"
               onClick={() => toggleDesc(name)}
+              aria-label={isExpanded ? `Collapse ${name} details` : `Expand ${name} details`}
               sx={{ p: 0.75, minWidth: 48, minHeight: 48 }}
             >
               {isExpanded ? (
-                <ChevronUp size={16} />
+                <ChevronUp size={20} />
               ) : (
-                <ChevronDown size={16} />
+                <ChevronDown size={20} />
               )}
             </IconButton>
           </Box>
@@ -673,7 +675,7 @@ const MuhurtaScreen: React.FC = () => {
           sx={{
             fontWeight: 500,
             fontSize: '1.1rem',
-            fontFamily: '"Noto Sans", sans-serif',
+            
             letterSpacing: '-0.02em',
             lineHeight: 1.3,
             color: 'text.primary',
@@ -710,7 +712,6 @@ const MuhurtaScreen: React.FC = () => {
 
   return (
     <ScreenContainer
-      maxWidth={800}
       sx={{ pt: 1.5 }}
     >
       {/* Live Clock Header */}
@@ -743,14 +744,14 @@ const MuhurtaScreen: React.FC = () => {
               fontSize: { xs: '0.65rem', sm: '0.75rem' },
             }}
           >
-            <Clock size={14} />
+            <Clock size={16} />
             {t('muhurta.current')}
           </Typography>
           <Typography
             variant="h3"
             sx={{
               fontWeight: 500,
-              fontFamily: '"Noto Sans", sans-serif',
+              
               color: 'primary.main',
               lineHeight: 1.2,
               my: 0.5,
@@ -868,7 +869,7 @@ const MuhurtaScreen: React.FC = () => {
                   variant="h3"
                   sx={{
                     fontWeight: 500,
-                    fontFamily: '"Noto Sans", sans-serif',
+                    
                     color: MUHURTA_BORDER[currentMuhurta.muhurta.name],
                     letterSpacing: '-0.02em',
                     lineHeight: 1.15,
@@ -935,7 +936,7 @@ const MuhurtaScreen: React.FC = () => {
                     variant="h4"
                     sx={{
                       fontWeight: 500,
-                      fontFamily: '"Noto Sans", sans-serif',
+                      
                       color: MUHURTA_BORDER[currentMuhurta.muhurta.name],
                       letterSpacing: '0.05em',
                       fontSize: { xs: '1.2rem', sm: '1.8rem' },
@@ -1020,7 +1021,7 @@ const MuhurtaScreen: React.FC = () => {
                 flexShrink: 0,
               }}
             >
-              <Sunrise size={18} color={muiTheme.palette.warning.main} />
+              <Sunrise size={20} color={muiTheme.palette.warning.main} />
             </Box>
             <Box sx={{ minWidth: 0 }}>
               <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block' }}>
@@ -1060,7 +1061,7 @@ const MuhurtaScreen: React.FC = () => {
                 flexShrink: 0,
               }}
             >
-              <Moon size={18} color={muiTheme.palette.info.main} />
+              <Moon size={20} color={muiTheme.palette.info.main} />
             </Box>
             <Box sx={{ minWidth: 0 }}>
               <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block' }}>
@@ -1177,50 +1178,41 @@ const MuhurtaScreen: React.FC = () => {
 
       {/* Legend */}
       <Fade in timeout={900}>
-        <Paper
-          elevation={0}
-          sx={{
-            p: 1.5,
-            mt: 1.5,
-            mb: 1.5,
-            borderRadius: 2,
-            bgcolor: muiTheme.palette.action.hover,
-            border: '1px solid',
-            borderColor: 'divider',
-            maxWidth: '100%',
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-            <Box
-              sx={{
-                width: 32,
-                height: 32,
-                borderRadius: 1.5,
-                bgcolor: isDark
-                  ? `${muiTheme.palette.primary.main}20`
-                  : `${muiTheme.palette.primary.main}10`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <Info size={18} color={muiTheme.palette.primary.main} />
+        <Box sx={{ mt: 1.5 }}>
+        <SectionCard
+          title={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 1.5,
+                  bgcolor: isDark
+                    ? `${muiTheme.palette.primary.main}20`
+                    : `${muiTheme.palette.primary.main}10`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Info size={20} color={muiTheme.palette.primary.main} />
+              </Box>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 500,
+                  fontSize: '1.1rem',
+                  letterSpacing: '-0.02em',
+                  lineHeight: 1.3,
+                  color: 'text.primary',
+                }}
+              >
+                {t('muhurta.legend')}
+              </Typography>
             </Box>
-            <Typography
-              variant="h5"
-              sx={{
-                fontWeight: 500,
-                fontSize: '1.1rem',
-                fontFamily: '"Noto Sans", sans-serif',
-                letterSpacing: '-0.02em',
-                lineHeight: 1.3,
-                color: 'text.primary',
-              }}
-            >
-              {t('muhurta.legend')}
-            </Typography>
-          </Box>
+          }
+        >
 
           <Box
             sx={{
@@ -1281,7 +1273,8 @@ const MuhurtaScreen: React.FC = () => {
               </Box>
             ))}
           </Box>
-        </Paper>
+        </SectionCard>
+        </Box>
       </Fade>
 
       {/* Keyframe animations */}

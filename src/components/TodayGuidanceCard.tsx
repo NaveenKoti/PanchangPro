@@ -213,6 +213,7 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
                 </Box>
                 <IconButton
                   size="small"
+                  aria-label={expanded ? 'Collapse guidance details' : 'Expand guidance details'}
                   sx={{
                     width: 32,
                     height: 32,

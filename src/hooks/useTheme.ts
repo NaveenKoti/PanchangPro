@@ -5,6 +5,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAppStore } from '../stores/appStore';
+import { metaThemeColors } from '../theme/vedaTheme';
 
 export type ThemeValue = 'light' | 'dark' | 'system';
 
@@ -106,7 +107,7 @@ export function useTheme(): UseThemeReturn {
     // Update meta theme-color for mobile browsers
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
-      metaThemeColor.setAttribute('content', isDarkMode ? '#1a1a1a' : '#ffffff');
+      metaThemeColor.setAttribute('content', isDarkMode ? metaThemeColors.dark : metaThemeColors.light);
     }
   }, [isDarkMode]);
 

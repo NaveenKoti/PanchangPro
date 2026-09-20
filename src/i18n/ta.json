@@ -58,7 +58,9 @@
     "rahuKaalWarning": "முக்கிய பணிகளைத் தவிர்க்கவும்",
     "samvatsara": "ஸம்வத்ஸரம்",
     "samvatsaraDesc": "இந்து ஆண்டு (60 ஆண்டு சுழற்சி)",
-    "auspiciousTime": "சுப நேரம்"
+    "auspiciousTime": "சுப நேரம்",
+    "detailsTab": "விவரங்கள்",
+    "dayTab": "நாள்"
   },
   "tithi": {
     "title": "திதி",

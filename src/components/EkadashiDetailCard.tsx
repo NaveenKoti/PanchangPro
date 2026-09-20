@@ -131,6 +131,7 @@ export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi
           <IconButton
             size="small"
             onClick={() => setExpanded(!expanded)}
+            aria-label={expanded ? 'Collapse details' : 'Expand details'}
             sx={{
               width: 32,
               height: 32,

@@ -10,7 +10,7 @@ import { useBreakpoints } from '../../hooks/useBreakpoints';
 export const MuhurtaSkeleton: React.FC = React.memo(() => {
   const theme = useTheme();
   const { isMobile } = useBreakpoints();
-  const saffronBase = theme.palette.primary?.main || '#E8722A';
+  const saffronBase = theme.palette.primary.main;
   const shimmerBg = `${saffronBase}20`;
 
   return (

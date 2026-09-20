@@ -239,7 +239,7 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
           display: 'block',
           mb: 1,
           pl: 0.5,
-          fontFamily: '"Noto Sans", sans-serif',
+          
         }}
       >
         {isHindi ? 'त्योहार और व्रत खोजें' : 'Search festivals & vrats'}
@@ -261,11 +261,11 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
             minHeight: 48,
             borderRadius: 2,
             bgcolor: 'background.paper',
-            fontFamily: '"Noto Sans", sans-serif',
+            
           },
           '& .MuiOutlinedInput-input': {
             fontWeight: 400,
-            fontFamily: '"Noto Sans", sans-serif',
+            
           },
         }}
       />
@@ -309,13 +309,13 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
                     secondary={label}
                     primaryTypographyProps={{
                       fontWeight: 500,
-                      fontFamily: '"Noto Sans", sans-serif',
+                      
                       color: 'text.primary',
                       noWrap: true,
                     }}
                     secondaryTypographyProps={{
                       fontWeight: 400,
-                      fontFamily: '"Noto Sans", sans-serif',
+                      
                       color: 'text.secondary',
                       noWrap: true,
                     }}
@@ -330,7 +330,7 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
             sx={{
               color: 'text.secondary',
               fontWeight: 400,
-              fontFamily: '"Noto Sans", sans-serif',
+              
               pl: 0.5,
               mb: 1.5,
             }}
@@ -350,7 +350,7 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
           display: 'block',
           mb: 1,
           pl: 0.5,
-          fontFamily: '"Noto Sans", sans-serif',
+          
         }}
       >
         {isHindi ? 'आगे · अगले 15 दिन' : 'Coming up · next 15 days'}
@@ -403,7 +403,7 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
                   display: 'block',
                   color: 'text.secondary',
                   fontWeight: 400,
-                  fontFamily: '"Noto Sans", sans-serif',
+                  
                   whiteSpace: 'nowrap',
                 }}
               >
@@ -413,7 +413,7 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
                 variant="body2"
                 sx={{
                   fontWeight: 500,
-                  fontFamily: '"Noto Sans", sans-serif',
+                  
                   color: 'text.primary',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -428,7 +428,7 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
                   display: 'block',
                   color: 'primary.main',
                   fontWeight: 400,
-                  fontFamily: '"Noto Sans", sans-serif',
+                  
                   whiteSpace: 'nowrap',
                 }}
               >

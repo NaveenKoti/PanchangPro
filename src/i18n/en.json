@@ -58,7 +58,9 @@
     "rahuKaalWarning": "Avoid important tasks",
     "samvatsara": "Samvatsara",
     "samvatsaraDesc": "Hindu Year (60-year cycle)",
-    "auspiciousTime": "Auspicious time"
+    "auspiciousTime": "Auspicious time",
+    "detailsTab": "Details",
+    "dayTab": "Day"
   },
   "tithi": {
     "title": "Tithi",

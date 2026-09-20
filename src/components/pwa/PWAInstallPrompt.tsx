@@ -141,9 +141,7 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
       fullWidth
       PaperProps={{
         sx: {
-          background: theme.palette.mode === 'dark'
-            ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'
-            : 'linear-gradient(135deg, #F5F3F0 0%, #FEFEFE 100%)',
+          background: `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.background.paper} 100%)`,
           overflow: 'hidden'
         }
       }}
@@ -217,7 +215,7 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
                   Add VedaTime to your home screen for the best experience
                 </Typography>
               </Box>
-              <IconButton onClick={handleDismiss} size="small">
+              <IconButton onClick={handleDismiss} size="small" aria-label="Dismiss install prompt">
                 <CloseIcon />
               </IconButton>
             </Box>
@@ -260,7 +258,7 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
                 }}
               >
                 <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Box component="span" sx={{ color: theme.palette.primary.main }}>⚡</Box>
+                  <Box component="span" sx={{ color: theme.palette.primary.main, display: 'flex' }}><SpeedIcon fontSize="small" /></Box>
                   One-click installation • Takes only 2 seconds
                 </Typography>
               </Paper>
@@ -288,7 +286,7 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
                 fontWeight: 500,
                 color: theme.palette.getContrastText(theme.palette.primary.main),
                 '&:hover': { background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})` },
-                '&:disabled': { background: 'linear-gradient(135deg, #ccc, #999)' }
+                '&:disabled': { background: theme.palette.action.disabledBackground }
               }}
             >
               {installInProgress ? 'Installing...' : 'Install Now'}
@@ -392,6 +390,7 @@ export const PWAInstallButton: React.FC<{
       <IconButton
         onClick={onClick}
         className="pwa-install-icon"
+        aria-label="Install app"
         sx={{
           color: theme.palette.primary.main,
           '&:hover': {

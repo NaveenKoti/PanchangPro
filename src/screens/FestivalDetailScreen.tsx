@@ -26,7 +26,6 @@ import {
   Paper,
   Button,
   useTheme as useMuiTheme,
-  Container,
   Fade,
   Breadcrumbs,
   Link,
@@ -48,6 +47,7 @@ import {
 } from '@mui/icons-material';
 import { Share2 } from 'lucide-react';
 import { ScreenContainer } from '../components/ScreenContainer';
+import { SectionCard as LayoutSectionCard } from '../components/layout/SectionCard';
 import { useI18n } from '../hooks/useI18n';
 import { getFestivalStory, FESTIVAL_STORIES, findFestivalStoryByName, FestivalStory } from '../data/festivalStories';
 import { getFestivalById } from '../data/festivals';
@@ -110,7 +110,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
         sx={{
           fontWeight: 500,
           color: isDark ? theme.palette.primary.light : theme.palette.primary.main,
-          fontFamily: '"Noto Sans", sans-serif',
+          
           fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' },
         }}
       >
@@ -217,7 +217,7 @@ const SectionCard = React.forwardRef<HTMLDivElement, SectionCardProps>(({ icon, 
             variant="h6"
             sx={{
               fontWeight: 500,
-              fontFamily: '"Noto Sans", sans-serif',
+              
               color: theme.palette.text.primary,
               fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
               wordBreak: 'break-word',
@@ -388,7 +388,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
 
   if (!festival) {
     return (
-      <Container maxWidth="md" sx={{ py: 8, textAlign: 'center' }}>
+      <Box sx={{ py: 8, textAlign: 'center' }}>
         <Typography variant="h5" sx={{ color: 'text.secondary', mb: 3 }}>
           Festival not found
         </Typography>
@@ -399,7 +399,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
         >
           Go Back
         </Button>
-      </Container>
+      </Box>
     );
   }
 
@@ -407,7 +407,6 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
 
   return (
     <ScreenContainer
-      maxWidth={undefined}
       sx={{
         minHeight: '100vh',
         bgcolor: 'background.default',
@@ -421,7 +420,8 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
       <Box
         sx={{
           position: 'sticky',
-          top: 0,
+          // Token-derived: clears the AppBar Toolbar (minHeight = spacing(7)).
+          top: (theme) => theme.spacing(7),
           zIndex: 100,
           backdropFilter: 'blur(12px)',
           background: isDark ? 'rgba(26,22,18,0.9)' : 'rgba(254,252,249,0.9)',
@@ -455,6 +455,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
             <IconButton
               onClick={handleBookmark}
               size="small"
+              aria-label={isBookmarked ? 'Remove bookmark' : 'Bookmark festival'}
               sx={{ color: isBookmarked ? 'warning.main' : 'text.secondary', minWidth: 48, minHeight: 48 }}
             >
               {isBookmarked ? <Bookmark /> : <BookmarkBorder />}
@@ -462,6 +463,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
             <IconButton
               onClick={handleShare}
               size="small"
+              aria-label="Share festival"
               sx={{ color: 'text.secondary', minWidth: 48, minHeight: 48 }}
             >
               <Share />
@@ -478,7 +480,8 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
         </Box>
       </Box>
 
-      <Container maxWidth="md">
+      {/* Single measure system: ScreenContainer owns width; no nested Container. */}
+      <Box sx={{ width: '100%' }}>
         {/* ================================================================== */}
         {/* HERO SECTION */}
         {/* ================================================================== */}
@@ -507,7 +510,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
               variant="h2"
               sx={{
                 fontWeight: 500,
-                fontFamily: '"Noto Sans", sans-serif',
+                
                 color: 'primary.main',
                 fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem', lg: '3.5rem' },
                 mb: 1,
@@ -521,7 +524,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
             <Typography
               variant="h4"
               sx={{
-                fontFamily: '"Noto Sans Devanagari", sans-serif',
+                
                 color: theme.palette.text.secondary,
                 fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' },
                 mb: 3,
@@ -599,30 +602,22 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
         {/* COUNTDOWN SECTION */}
         {/* ================================================================== */}
         <Fade in timeout={800}>
-          <Card
-            sx={{
-              bgcolor: 'background.paper',
-              border: '1px solid',
-              borderColor: 'divider',
-              borderRadius: 2,
-              mb: 3,
-              boxShadow: isDark ? '0 1px 3px rgba(0,0,0,0.3)' : '0 1px 3px rgba(0,0,0,0.04)',
-            }}
-          >
-            <CardContent sx={{ p: { xs: 2, sm: 2 } }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+          <LayoutSectionCard
+            title={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <Timer sx={{ color: theme.palette.primary.light }} />
                 <Typography
                   variant="h6"
                   sx={{
                     fontWeight: 500,
-                    fontFamily: '"Noto Sans", sans-serif',
                     color: theme.palette.text.primary,
                   }}
                 >
                   Next {festival.name}
                 </Typography>
               </Box>
+            }
+          >
               {nextOccurrence ? (
                 <CountdownTimer targetDate={nextOccurrence} />
               ) : (
@@ -637,8 +632,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                   This observance follows the lunar calendar — see the Calendar screen for its next date.
                 </Typography>
               )}
-            </CardContent>
-          </Card>
+          </LayoutSectionCard>
         </Fade>
 
         {/* ================================================================== */}
@@ -963,7 +957,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
             Back to All Festivals
           </Button>
         </Box>
-      </Container>
+      </Box>
 
       {/* Global animation keyframes */}
       <style>{`

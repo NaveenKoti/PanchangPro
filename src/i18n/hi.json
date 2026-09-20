@@ -58,7 +58,9 @@
     "rahuKaalWarning": "महत्वपूर्ण कार्यों से बचें",
     "samvatsara": "संवत्सर",
     "samvatsaraDesc": "हिंदू वर्ष (60 वर्षीय चक्र)",
-    "auspiciousTime": "शुभ समय"
+    "auspiciousTime": "शुभ समय",
+    "detailsTab": "विवरण",
+    "dayTab": "दिन"
   },
   "tithi": {
     "title": "तिथि",

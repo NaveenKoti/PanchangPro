@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { Box, AppBar, Toolbar, Typography, Snackbar, Alert, IconButton, Menu, MenuItem, Fade, CssBaseline, useTheme } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, Snackbar, Alert, IconButton, Menu, MenuItem, Fade, CssBaseline, useTheme, alpha } from '@mui/material';
 import { MoreVertical, Share2, Settings as SettingsIcon, ChevronLeft, ArrowLeft } from 'lucide-react';
 import { TodayScreen } from './screens/TodayScreen';
 import { MyTithisScreen } from './screens/MyTithisScreen';
@@ -229,9 +229,7 @@ const App: React.FC = () => {
             position="sticky"
             elevation={0}
             sx={{
-              bgcolor: (theme) => theme.palette.mode === 'dark'
-                ? 'rgba(15, 14, 12, 0.95)'
-                : 'rgba(255, 255, 255, 0.95)',
+              bgcolor: (theme) => alpha(theme.palette.background.paper, 0.92),
               backdropFilter: 'blur(16px)',
               borderBottom: '1px solid',
               borderColor: 'divider',
@@ -248,7 +246,7 @@ const App: React.FC = () => {
                   mr: 1,
                   color: 'text.primary',
                   '&:hover': {
-                    bgcolor: 'rgba(199, 91, 18, 0.08)',
+                    bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
                     transform: 'translateX(-2px)',
                   },
                   transition: 'all 0.2s ease',
@@ -284,9 +282,7 @@ const App: React.FC = () => {
           position="sticky"
           elevation={0}
           sx={{
-            bgcolor: (theme) => theme.palette.mode === 'dark'
-              ? 'rgba(15, 14, 12, 0.95)'
-              : 'rgba(255, 255, 255, 0.95)',
+              bgcolor: (theme) => alpha(theme.palette.background.paper, 0.92),
             backdropFilter: 'blur(16px)',
             borderBottom: '1px solid',
             borderColor: 'divider',
@@ -303,15 +299,9 @@ const App: React.FC = () => {
                 fontWeight: 500,
                 fontSize: '1.25rem',
                 letterSpacing: '-0.03em',
-                background: theme.palette.mode === 'dark' 
-                  ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`
-                  : `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
               }}
             >
-              🙏 {t('common.appName')}
+              {t('common.appName')}
             </Typography>
 
             {/* Action Menu */}
@@ -325,13 +315,13 @@ const App: React.FC = () => {
                 minWidth: 48,
                 minHeight: 48,
                 '&:hover': { 
-                  bgcolor: 'rgba(199, 91, 18, 0.08)',
+                  bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
                   transform: 'rotate(90deg)',
                 },
                 transition: 'all 0.2s ease',
               }}
             >
-              <MoreVertical size={22} />
+              <MoreVertical size={20} />
             </IconButton>
 
             <Menu
@@ -358,10 +348,10 @@ const App: React.FC = () => {
                   py: 1.25,
                   mx: 1,
                   borderRadius: 1.5,
-                  '&:hover': { bgcolor: 'rgba(199, 91, 18, 0.08)' },
+                  '&:hover': { bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08) },
                 }}
               >
-                <Share2 size={18} color={theme.palette.primary.main} />
+                <Share2 size={16} color={theme.palette.primary.main} />
                 <Typography variant="body2" sx={{ fontWeight: 500 }}>
                   {t('common.share')}
                 </Typography>
@@ -373,10 +363,10 @@ const App: React.FC = () => {
                   py: 1.25,
                   mx: 1,
                   borderRadius: 1.5,
-                  '&:hover': { bgcolor: 'rgba(199, 91, 18, 0.08)' },
+                  '&:hover': { bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08) },
                 }}
               >
-                <SettingsIcon size={18} color="#5C4033" />
+                <SettingsIcon size={16} color={theme.palette.text.secondary} />
                 <Typography variant="body2" sx={{ fontWeight: 500 }}>
                   {t('navigation.settings')}
                 </Typography>
@@ -411,7 +401,7 @@ const App: React.FC = () => {
                 width: 48,
                 height: 48,
                 '&:hover': {
-                  bgcolor: 'rgba(199, 91, 18, 0.08)',
+                  bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
                   transform: 'translateX(-2px)',
                 },
                 transition: 'all 0.2s ease',

@@ -14,13 +14,14 @@ import {
   useTheme,
 } from '@mui/material';
 import { ScreenContainer } from '../components/ScreenContainer';
-import { Share2, Moon, Sun, Star, BookOpen } from 'lucide-react';
+import { SectionCard } from '../components/layout/SectionCard';
+import { Share2, Moon, Sun, Star, BookOpen, Sunrise, Sunset, Flame } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import { useI18n } from '../hooks/useI18n';
 import { getDailyVerse, VerseData } from '../services/verseApi';
 
 // Tithi meanings — colors use MUI palette slot names resolved at render time
-// Light mode values pass WCAG AA on #FFF8F0; dark mode values on #0F0E0C
+// Slots are checked for WCAG AA against the canvas token in both modes
 type PaletteSlot = 'primary.main' | 'primary.light' | 'primary.dark' | 'secondary.main' | 'info.main' | 'error.main' | 'text.secondary';
 
 const TITHI_MEANINGS: Record<number, { meaning: string; significance: string; paletteSlot: PaletteSlot }> = {
@@ -101,35 +102,8 @@ const StoriesScreen: React.FC = () => {
     }
   };
 
-  const cardSx = {
-    borderRadius: 3,
-    border: '1px solid',
-    borderColor: isDark ? 'rgba(255,248,240,0.08)' : 'rgba(0,0,0,0.06)',
-    overflow: 'hidden',
-    mb: 2,
-    bgcolor: 'background.paper',
-    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-    '&:hover': {
-      transform: 'translateY(-2px)',
-      boxShadow: isDark ? '0 4px 16px rgba(0,0,0,0.3)' : '0 4px 16px rgba(0,0,0,0.1)',
-    },
-  };
-
-  const cardHeaderSx = (accentColor: string) => ({
-    px: { xs: 2, sm: 2.5 },
-    py: { xs: 1.25, sm: 1.5 },
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderBottom: '1px solid',
-    borderColor: isDark ? 'rgba(255,248,240,0.06)' : 'rgba(0,0,0,0.04)',
-    bgcolor: isDark ? 'rgba(255,248,240,0.03)' : `${accentColor}08`,
-    flexWrap: 'wrap',
-    gap: 0.5,
-  });
-
   return (
-    <ScreenContainer maxWidth={600} sx={{ pt: 2.5 }}>
+    <ScreenContainer sx={{ pt: 2.5 }}>
       {/* Header */}
       <Fade in timeout={200}>
         <Box sx={{ mb: 3, textAlign: 'center', px: { xs: 1, sm: 2 } }}>
@@ -145,19 +119,21 @@ const StoriesScreen: React.FC = () => {
       {/* Card 1: Tithi */}
       {panchang?.tithi && (
         <Zoom in timeout={300}>
-        <Box sx={cardSx}>
-          <Box sx={cardHeaderSx(tithiColor)}>
+        <SectionCard
+          title={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Moon size={16} color={tithiColor} />
               <Typography variant="overline" sx={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: tithiColor, lineHeight: 1 }}>
                 {t('stories.tithiMeaning') || "Today's Tithi"}
               </Typography>
             </Box>
-            <IconButton size="small" onClick={() => handleShare(`Today's Tithi: ${panchang.tithi.name} (${panchang.tithi.paksha} Paksha)\n${tithiInfo.significance}`)} sx={{ minWidth: 48, minHeight: 48 }}>
-              <Share2 size={14} color={theme.palette.text.secondary} />
+          }
+          action={
+            <IconButton size="small" aria-label="Share tithi wisdom" onClick={() => handleShare(`Today's Tithi: ${panchang.tithi.name} (${panchang.tithi.paksha} Paksha)\n${tithiInfo.significance}`)} sx={{ minWidth: 48, minHeight: 48 }}>
+              <Share2 size={20} color={theme.palette.text.secondary} />
             </IconButton>
-          </Box>
-          <Box sx={{ px: { xs: 2, sm: 2.5 }, py: { xs: 2, sm: 2.5 } }}>
+          }
+        >
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 1.5, flexWrap: 'wrap' }}>
               <Box sx={{
                 width: { xs: 40, sm: 44 }, height: { xs: 40, sm: 44 }, borderRadius: 2.5, flexShrink: 0,
@@ -165,8 +141,8 @@ const StoriesScreen: React.FC = () => {
                 border: `1px solid ${tithiColor}30`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <Typography sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' }, lineHeight: 1 }}>
-                  {panchang.tithi.paksha === 'Shukla' ? '🌕' : '🌑'}
+                <Typography sx={{ display: 'flex', lineHeight: 1 }}>
+                  <Moon size={20} color={tithiColor} />
                 </Typography>
               </Box>
               <Box sx={{ minWidth: 0, flex: 1 }}>
@@ -193,27 +169,28 @@ const StoriesScreen: React.FC = () => {
             <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7, fontSize: '0.875rem' }}>
               {tithiInfo.significance}
             </Typography>
-          </Box>
-        </Box>
+        </SectionCard>
         </Zoom>
       )}
 
       {/* Card 2: Nakshatra */}
       {panchang?.nakshatra && (
         <Fade in timeout={400}>
-        <Box sx={cardSx}>
-          <Box sx={cardHeaderSx(theme.palette.info.main)}>
+        <SectionCard
+          title={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Star size={16} color={theme.palette.info.main} />
               <Typography variant="overline" sx={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: 'info.main', lineHeight: 1 }}>
                 {t('stories.nakshatraWisdom') || "Nakshatra of the Day"}
               </Typography>
             </Box>
-            <IconButton size="small" onClick={() => handleShare(`Today's Nakshatra: ${panchang.nakshatra.name}\n${nakshatraInfo}`)} sx={{ minWidth: 48, minHeight: 48 }}>
-              <Share2 size={14} color={theme.palette.text.secondary} />
+          }
+          action={
+            <IconButton size="small" aria-label="Share nakshatra wisdom" onClick={() => handleShare(`Today's Nakshatra: ${panchang.nakshatra.name}\n${nakshatraInfo}`)} sx={{ minWidth: 48, minHeight: 48 }}>
+              <Share2 size={20} color={theme.palette.text.secondary} />
             </IconButton>
-          </Box>
-          <Box sx={{ px: { xs: 2, sm: 2.5 }, py: { xs: 2, sm: 2.5 } }}>
+          }
+        >
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 2, flexWrap: 'wrap' }}>
               <Box sx={{
                 width: { xs: 40, sm: 44 }, height: { xs: 40, sm: 44 }, borderRadius: 2.5, flexShrink: 0,
@@ -221,7 +198,9 @@ const StoriesScreen: React.FC = () => {
                 border: '1px solid rgba(44,62,107,0.25)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <Typography sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' }, lineHeight: 1 }}>✨</Typography>
+                <Typography sx={{ display: 'flex', lineHeight: 1 }}>
+                  <Star size={20} color={theme.palette.info.main} />
+                </Typography>
               </Box>
               <Box sx={{ minWidth: 0, flex: 1 }}>
                 <Typography variant="h5" sx={{ fontWeight: 500, color: 'text.primary', letterSpacing: '-0.02em', mb: 0.25, fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
@@ -235,27 +214,28 @@ const StoriesScreen: React.FC = () => {
             <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7, fontSize: '0.875rem' }}>
               {nakshatraInfo}
             </Typography>
-          </Box>
-        </Box>
+        </SectionCard>
         </Fade>
       )}
 
       {/* Card 3: Festival (only if present) */}
       {panchang?.festivals && panchang.festivals.length > 0 && (
         <Fade in timeout={500}>
-        <Box sx={cardSx}>
-          <Box sx={cardHeaderSx(theme.palette.secondary.main)}>
+        <SectionCard
+          title={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Sun size={16} color={theme.palette.secondary.main} />
               <Typography variant="overline" sx={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: 'secondary.main', lineHeight: 1 }}>
                 {t('stories.sacredDay') || "Sacred Day"}
               </Typography>
             </Box>
-            <IconButton size="small" onClick={() => handleShare(`Today: ${panchang.festivals[0].name}\n${panchang.festivals[0].significance}`)} sx={{ minWidth: 48, minHeight: 48 }}>
-              <Share2 size={14} color={theme.palette.text.secondary} />
+          }
+          action={
+            <IconButton size="small" aria-label="Share sacred day" onClick={() => handleShare(`Today: ${panchang.festivals[0].name}\n${panchang.festivals[0].significance}`)} sx={{ minWidth: 48, minHeight: 48 }}>
+              <Share2 size={20} color={theme.palette.text.secondary} />
             </IconButton>
-          </Box>
-          <Box sx={{ px: { xs: 2, sm: 2.5 }, py: { xs: 2, sm: 2.5 } }}>
+          }
+        >
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 1.5, flexWrap: 'wrap' }}>
               <Box sx={{
                 width: { xs: 40, sm: 44 }, height: { xs: 40, sm: 44 }, borderRadius: 2.5, flexShrink: 0,
@@ -263,7 +243,9 @@ const StoriesScreen: React.FC = () => {
                 border: '1px solid rgba(61,107,36,0.25)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <Typography sx={{ fontSize: { xs: '1.2rem', sm: '1.4rem' }, lineHeight: 1 }}>🪔</Typography>
+                <Typography sx={{ display: 'flex', lineHeight: 1 }}>
+                  <Flame size={20} color={theme.palette.secondary.main} />
+                </Typography>
               </Box>
               <Box sx={{ minWidth: 0, flex: 1 }}>
                 <Typography variant="h5" sx={{ fontWeight: 500, color: 'text.primary', letterSpacing: '-0.02em', mb: 0.25, fontSize: { xs: '1.1rem', sm: '1.5rem' } }}>
@@ -280,35 +262,31 @@ const StoriesScreen: React.FC = () => {
             <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7, fontSize: '0.875rem' }}>
               {panchang.festivals[0].significance || 'A sacred day celebrated with devotion, prayer, and community gathering.'}
             </Typography>
-          </Box>
-        </Box>
+        </SectionCard>
         </Fade>
       )}
 
       {/* Card 4: Daily Verse */}
       <Fade in timeout={600}>
-      <Box sx={{
-        ...cardSx,
-        bgcolor: 'background.paper',
-        border: '1px solid',
-        borderColor: 'divider',
-      }}>
-        <Box sx={cardHeaderSx(theme.palette.primary.main)}>
+      <SectionCard
+        title={
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <BookOpen size={16} color={theme.palette.primary.main} />
             <Typography variant="overline" sx={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: 'primary.main', lineHeight: 1 }}>
               {t('stories.todaysVerse') || "Today's Verse"}
             </Typography>
           </Box>
-          <IconButton size="small" onClick={() => handleShare(`${todayVerse.sanskrit}\n\n${todayVerse.translation}\n— ${todayVerse.source}`)} sx={{ minWidth: 48, minHeight: 48 }}>
-            <Share2 size={14} color={theme.palette.text.secondary} />
+        }
+        action={
+          <IconButton size="small" aria-label="Share verse" onClick={() => handleShare(`${todayVerse.sanskrit}\n\n${todayVerse.translation}\n— ${todayVerse.source}`)} sx={{ minWidth: 48, minHeight: 48 }}>
+            <Share2 size={20} color={theme.palette.text.secondary} />
           </IconButton>
-        </Box>
-        <Box sx={{ px: { xs: 2, sm: 2.5 }, py: { xs: 2, sm: 2.5 } }}>
+        }
+      >
           <Typography
             variant="body1"
             sx={{
-              fontFamily: '"Noto Sans Devanagari", "Noto Sans", sans-serif',
+
               fontSize: '1.05rem',
               fontWeight: 500,
               color: isDark ? theme.palette.warning.light : theme.palette.warning.main,
@@ -331,26 +309,27 @@ const StoriesScreen: React.FC = () => {
             — {todayVerse.source}
             {todayVerse.chapter && todayVerse.verse ? `, Chapter ${todayVerse.chapter}, Verse ${todayVerse.verse}` : ''}
           </Typography>
-        </Box>
-      </Box>
+      </SectionCard>
       </Fade>
 
       {/* Card 5: Sunrise/Sunset */}
       {panchang?.sunrise && panchang?.sunset && (
         <Fade in timeout={700}>
-        <Box sx={cardSx}>
-          {/* Solar accent uses primary.main in light mode (primary.light fails contrast on paper) */}
-          <Box sx={cardHeaderSx(isDark ? theme.palette.primary.light : theme.palette.primary.main)}>
+        <SectionCard
+          title={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Sun size={16} color={isDark ? theme.palette.primary.light : theme.palette.primary.main} />
               <Typography variant="overline" sx={{ fontSize: '0.7rem', letterSpacing: '0.1em', color: isDark ? theme.palette.primary.light : theme.palette.primary.main, lineHeight: 1 }}>
                 {t('stories.solarTimings') || "Solar Timings"}
               </Typography>
             </Box>
-          </Box>
-          <Box sx={{ px: { xs: 2, sm: 2.5 }, py: { xs: 2, sm: 2.5 }, display: 'flex', gap: { xs: 2, sm: 3 }, flexWrap: 'wrap' }}>
+          }
+        >
+          <Box sx={{ display: 'flex', gap: { xs: 2, sm: 3 }, flexWrap: 'wrap' }}>
             <Box sx={{ flex: 1, minWidth: 120, textAlign: 'center' }}>
-              <Typography sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' }, mb: 0.5 }}>🌅</Typography>
+              <Typography sx={{ display: 'flex', justifyContent: 'center', mb: 0.5 }}>
+                <Sunrise size={20} color={isDark ? theme.palette.primary.light : theme.palette.primary.main} />
+              </Typography>
               <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary', mb: 0.25, fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                 {t('panchang.sunrise')}
               </Typography>
@@ -360,7 +339,9 @@ const StoriesScreen: React.FC = () => {
             </Box>
             <Box sx={{ width: 2, minWidth: 2, bgcolor: isDark ? 'rgba(255,248,240,0.2)' : 'rgba(0,0,0,0.15)', my: 1, borderRadius: 1, display: { xs: 'none', sm: 'block' } }} />
             <Box sx={{ flex: 1, minWidth: 120, textAlign: 'center' }}>
-              <Typography sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' }, mb: 0.5 }}>🌇</Typography>
+              <Typography sx={{ display: 'flex', justifyContent: 'center', mb: 0.5 }}>
+                <Sunset size={20} color={theme.palette.primary.main} />
+              </Typography>
               <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary', mb: 0.25, fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                 {t('panchang.sunset')}
               </Typography>
@@ -369,7 +350,7 @@ const StoriesScreen: React.FC = () => {
               </Typography>
             </Box>
           </Box>
-        </Box>
+        </SectionCard>
         </Fade>
       )}
     </ScreenContainer>

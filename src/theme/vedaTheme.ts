@@ -1,83 +1,82 @@
 /**
- * VedaTime Theme - Revamped Branding
- * 
- * New Color Palette - Warm, Pleasant & Professional
- * Inspired by temple aesthetics, nature, and sacred geometry
- * 
- * Design Philosophy:
- * - Warm, inviting colors that are easy on the eyes
- * - Professional yet spiritual aesthetic
- * - High contrast for readability (WCAG AA/AAA compliant)
- * - Consistent semantic meaning across light/dark modes
+ * VedaTime Theme - Design Tokens (Redesign Stage 1)
+ *
+ * Single-accent system:
+ * - Canvas/paper, ink text, ONE accent (maroon light / gold dark)
+ * - Semantic success/warning/error/info are MUTED and reserved for alerts only
+ * - dividers are ~12% ink in both modes
+ *
+ * Dark mode mechanism: `[data-theme='dark']` on <html> (set by ThemeProvider
+ * + useTheme) paired with MUI `palette.mode`. CSS vars below MUST equal the
+ * MUI palette values exactly.
  */
 
-import type { ThemeOptions } from '@mui/material/styles';
-
 // ============================================================================
-// COLOR PALETTE - REVAMPED
+// COLOR TOKENS — SINGLE SOURCE OF TRUTH (hex lives ONLY in this file)
 // ============================================================================
 
-// Primary: Warm Saffron (sacred, auspicious) — ONE canonical saffron per CLAUDE.md
-const saffron = {
-  light: '#E8944A',
-  main: '#C75B12',
-  dark: '#7A3008',
+// Canvas / paper
+const canvasLight = '#FAF7F2';
+const paperLight = '#FFFFFF';
+const canvasDark = '#161310';
+const paperDark = '#1E1A15';
+
+// Ink
+const inkLight = '#221C15';
+const inkDark = '#F2ECE3';
+
+// Single accent: deep maroon (light) / warm gold (dark)
+const accentLight = {
+  light: '#A34A1F',
+  main: '#7C2D12',
+  dark: '#5C1F0C',
   contrastText: '#FFFFFF',
 };
 
-// Secondary: Deep Indigo/Temple Blue (divine, serene)
-const indigo = {
-  light: '#7B8CDE',
-  main: '#4A55A8',   // Replaces harsh #2C3E6B
-  dark: '#37427A',
+const accentDark = {
+  light: '#F2C184',
+  main: '#E8A04C',
+  dark: '#C67F2E',
+  contrastText: '#221C15',
+};
+
+// Supporting bronze — muted companion for secondary slots only, never a
+// second brand accent. Retained because components reference palette.secondary.
+const bronzeLight = {
+  light: '#B89A6E',
+  main: '#8A6B42',
+  dark: '#5F4A2E',
   contrastText: '#FFFFFF',
 };
 
-// Success: Soft Forest Green (growth, prosperity)
-const forest = {
-  light: '#68D391',
-  main: '#38A169',   // More vibrant than #3D6B24
-  dark: '#276749',
-  contrastText: '#FFFFFF',
+const bronzeDark = {
+  light: '#D9BC8F',
+  main: '#B89A6E',
+  dark: '#8A6B42',
+  contrastText: '#221C15',
 };
 
-// Warning: Warm Amber (caution, attention)
-const amber = {
-  light: '#F6AD55',
-  main: '#DD6B20',
-  dark: '#C05621',
-  contrastText: '#FFFFFF',
+// Semantic colors — MUTED, slightly desaturated MUI-adjacent hues.
+// Reserved for alerts/status ONLY. Never use for branding or decoration.
+const semanticsLight = {
+  success: { light: '#82B190', main: '#4E7F5B', dark: '#35593F', contrastText: '#FFFFFF' },
+  warning: { light: '#DCAE6A', main: '#B07A2E', dark: '#7E5620', contrastText: '#FFFFFF' },
+  error: { light: '#D68A82', main: '#B05148', dark: '#7E3833', contrastText: '#FFFFFF' },
+  info: { light: '#7FA9C9', main: '#4E7FA3', dark: '#385A73', contrastText: '#FFFFFF' },
 };
 
-// Error: Soft Rose Red (alert, important)
-const rose = {
-  light: '#FC8181',
-  main: '#E53E3E',
-  dark: '#C53030',
-  contrastText: '#FFFFFF',
+const semanticsDark = {
+  success: { light: '#A9D3B2', main: '#82B190', dark: '#4E7F5B', contrastText: '#221C15' },
+  warning: { light: '#EAC68C', main: '#DCAE6A', dark: '#B07A2E', contrastText: '#221C15' },
+  error: { light: '#E5ADA6', main: '#D68A82', dark: '#B05148', contrastText: '#221C15' },
+  info: { light: '#A4C6DE', main: '#7FA9C9', dark: '#4E7FA3', contrastText: '#221C15' },
 };
 
-// Info: Calm Sky Blue (information, guidance)
-const sky = {
-  light: '#63B3ED',
-  main: '#3182CE',
-  dark: '#2B6CB0',
-  contrastText: '#FFFFFF',
-};
-
-// Neutral Palette - Warm Grays (easier on eyes than cool grays)
-const neutrals = {
-  50: '#FEFCF9',    // Warm white
-  100: '#F9F6F1',   // Cream
-  200: '#F0EBE3',   // Light warm gray
-  300: '#E2D9CC',   // Warm gray
-  400: '#C4B8A8',   // Medium warm gray
-  500: '#A89B8C',   // Mid gray
-  600: '#8B7D6E',   // Dark mid gray
-  700: '#6B5D50',   // Dark warm gray
-  800: '#4A3F35',   // Very dark
-  900: '#2D241C',   // Near black (warm)
-};
+// Meta theme-color for mobile browsers — equals canvas in each mode.
+export const metaThemeColors = {
+  light: canvasLight,
+  dark: canvasDark,
+} as const;
 
 // ============================================================================
 // BREAKPOINTS — SINGLE SOURCE OF TRUTH FOR RESPONSIVE LAYOUT
@@ -111,33 +110,27 @@ export const breakpointValues = {
 // THEME OPTIONS
 // ============================================================================
 
+import type { ThemeOptions } from '@mui/material/styles';
+
 export const themeOptions: ThemeOptions = {
   breakpoints: {
     values: breakpointValues,
-  },  palette: {
-    primary: saffron,
-    secondary: indigo,
-    success: forest,
-    warning: amber,
-    error: rose,
-    info: sky,
+  },
+  palette: {
+    mode: 'light',
+    primary: accentLight,
+    secondary: bronzeLight,
+    ...semanticsLight,
     background: {
-      default: neutrals[50],
-      paper: '#FFFFFF',
+      default: canvasLight,
+      paper: paperLight,
     },
     text: {
-      primary: neutrals[900],
-      secondary: neutrals[700],
-      disabled: neutrals[400],
+      primary: inkLight,
+      secondary: 'rgba(34, 28, 21, 0.6)',
+      disabled: 'rgba(34, 28, 21, 0.38)',
     },
-    // Custom semantic colors
-    saffron,
-    indigo,
-    forest,
-    amber,
-    rose,
-    sky,
-    neutrals,
+    divider: 'rgba(34, 28, 21, 0.12)',
   },
   typography: {
     fontFamily: '"Noto Sans", "Noto Sans Devanagari", sans-serif',
@@ -207,132 +200,78 @@ export const darkThemeOptions: ThemeOptions = {
   },
   shape: {
     borderRadius: 16, // Single canonical card radius — see CARD SPEC above
-  },  palette: {
+  },
+  palette: {
     mode: 'dark',
-    primary: {
-      ...saffron,
-      light: '#FDDCB5',
-      main: '#E8944A',
-      dark: '#C75B12',
-    },
-    secondary: {
-      ...indigo,
-      light: '#A3B1F0',
-      main: '#7B8CDE',
-      dark: '#4A55A8',
-    },
-    success: {
-      ...forest,
-      light: '#9AE6B4',
-      main: '#68D391',
-      dark: '#38A169',
-    },
-    warning: {
-      ...amber,
-      light: '#FBD38D',
-      main: '#F6AD55',
-      dark: '#DD6B20',
-    },
-    error: {
-      ...rose,
-      light: '#FEB2B2',
-      main: '#FC8181',
-      dark: '#E53E3E',
-    },
-    info: {
-      ...sky,
-      light: '#90CDF4',
-      main: '#63B3ED',
-      dark: '#3182CE',
-    },
+    primary: accentDark,
+    secondary: bronzeDark,
+    ...semanticsDark,
     background: {
-      default: '#1A1612',    // Warm dark background
-      paper: '#242019',      // Warm dark cards
+      default: canvasDark,
+      paper: paperDark,
     },
     text: {
-      primary: '#F5F0E8',    // Warm white text
-      secondary: '#C4B8A8',  // Warm gray text
-      disabled: '#6B5D50',
+      primary: inkDark,
+      secondary: 'rgba(242, 236, 227, 0.6)',
+      disabled: 'rgba(242, 236, 227, 0.38)',
     },
+    divider: 'rgba(242, 236, 227, 0.12)',
   },
 };
 
 // ============================================================================
-// THEME CREATION
-// ============================================================================
-
-// ============================================================================
 // EXPORT COLOR TOKENS FOR CSS VARIABLES
 // ============================================================================
+// Values MUST equal the MUI palettes above exactly.
 
 export const lightThemeColors = {
-  '--color-primary-light': saffron.light,
-  '--color-primary-main': saffron.main,
-  '--color-primary-dark': saffron.dark,
-  '--color-secondary-light': indigo.light,
-  '--color-secondary-main': indigo.main,
-  '--color-secondary-dark': indigo.dark,
-  '--color-success-light': forest.light,
-  '--color-success-main': forest.main,
-  '--color-success-dark': forest.dark,
-  '--color-warning-light': amber.light,
-  '--color-warning-main': amber.main,
-  '--color-warning-dark': amber.dark,
-  '--color-error-light': rose.light,
-  '--color-error-main': rose.main,
-  '--color-error-dark': rose.dark,
-  '--color-info-light': sky.light,
-  '--color-info-main': sky.main,
-  '--color-info-dark': sky.dark,
-  '--color-bg-default': neutrals[50],
-  '--color-bg-paper': '#FFFFFF',
-  '--color-text-primary': neutrals[900],
-  '--color-text-secondary': neutrals[700],
-  '--color-neutral-50': neutrals[50],
-  '--color-neutral-100': neutrals[100],
-  '--color-neutral-200': neutrals[200],
-  '--color-neutral-300': neutrals[300],
-  '--color-neutral-400': neutrals[400],
-  '--color-neutral-500': neutrals[500],
-  '--color-neutral-600': neutrals[600],
-  '--color-neutral-700': neutrals[700],
-  '--color-neutral-800': neutrals[800],
-  '--color-neutral-900': neutrals[900],
+  '--color-primary-light': accentLight.light,
+  '--color-primary-main': accentLight.main,
+  '--color-primary-dark': accentLight.dark,
+  '--color-secondary-light': bronzeLight.light,
+  '--color-secondary-main': bronzeLight.main,
+  '--color-secondary-dark': bronzeLight.dark,
+  '--color-success-light': semanticsLight.success.light,
+  '--color-success-main': semanticsLight.success.main,
+  '--color-success-dark': semanticsLight.success.dark,
+  '--color-warning-light': semanticsLight.warning.light,
+  '--color-warning-main': semanticsLight.warning.main,
+  '--color-warning-dark': semanticsLight.warning.dark,
+  '--color-error-light': semanticsLight.error.light,
+  '--color-error-main': semanticsLight.error.main,
+  '--color-error-dark': semanticsLight.error.dark,
+  '--color-info-light': semanticsLight.info.light,
+  '--color-info-main': semanticsLight.info.main,
+  '--color-info-dark': semanticsLight.info.dark,
+  '--color-bg-default': canvasLight,
+  '--color-bg-paper': paperLight,
+  '--color-text-primary': inkLight,
+  '--color-text-secondary': 'rgba(34, 28, 21, 0.6)',
 };
 
 export const darkThemeColors = {
-  '--color-primary-light': '#FDDCB5',
-  '--color-primary-main': '#E8944A',
-  '--color-primary-dark': '#C75B12',
-  '--color-secondary-light': '#A3B1F0',
-  '--color-secondary-main': '#7B8CDE',
-  '--color-secondary-dark': '#4A55A8',
-  '--color-success-light': '#9AE6B4',
-  '--color-success-main': '#68D391',
-  '--color-success-dark': '#38A169',
-  '--color-warning-light': '#FBD38D',
-  '--color-warning-main': '#F6AD55',
-  '--color-warning-dark': '#DD6B20',
-  '--color-error-light': '#FEB2B2',
-  '--color-error-main': '#FC8181',
-  '--color-error-dark': '#E53E3E',
-  '--color-info-light': '#90CDF4',
-  '--color-info-main': '#63B3ED',
-  '--color-info-dark': '#3182CE',
-  '--color-bg-default': '#1A1612',
-  '--color-bg-paper': '#242019',
-  '--color-text-primary': '#F5F0E8',
-  '--color-text-secondary': '#C4B8A8',
-  '--color-neutral-50': '#2D241C',
-  '--color-neutral-100': '#4A3F35',
-  '--color-neutral-200': '#6B5D50',
-  '--color-neutral-300': '#8B7D6E',
-  '--color-neutral-400': '#A89B8C',
-  '--color-neutral-500': '#C4B8A8',
-  '--color-neutral-600': '#E2D9CC',
-  '--color-neutral-700': '#F0EBE3',
-  '--color-neutral-800': '#F9F6F1',
-  '--color-neutral-900': '#FEFCF9',
+  '--color-primary-light': accentDark.light,
+  '--color-primary-main': accentDark.main,
+  '--color-primary-dark': accentDark.dark,
+  '--color-secondary-light': bronzeDark.light,
+  '--color-secondary-main': bronzeDark.main,
+  '--color-secondary-dark': bronzeDark.dark,
+  '--color-success-light': semanticsDark.success.light,
+  '--color-success-main': semanticsDark.success.main,
+  '--color-success-dark': semanticsDark.success.dark,
+  '--color-warning-light': semanticsDark.warning.light,
+  '--color-warning-main': semanticsDark.warning.main,
+  '--color-warning-dark': semanticsDark.warning.dark,
+  '--color-error-light': semanticsDark.error.light,
+  '--color-error-main': semanticsDark.error.main,
+  '--color-error-dark': semanticsDark.error.dark,
+  '--color-info-light': semanticsDark.info.light,
+  '--color-info-main': semanticsDark.info.main,
+  '--color-info-dark': semanticsDark.info.dark,
+  '--color-bg-default': canvasDark,
+  '--color-bg-paper': paperDark,
+  '--color-text-primary': inkDark,
+  '--color-text-secondary': 'rgba(242, 236, 227, 0.6)',
 };
 
 // ============================================================================
@@ -342,25 +281,3 @@ export const darkThemeColors = {
 export const getThemeColors = (isDark: boolean) => {
   return isDark ? darkThemeColors : lightThemeColors;
 };
-
-declare module '@mui/material/styles' {
-  interface Palette {
-    saffron: Palette['primary'];
-    indigo: Palette['primary'];
-    forest: Palette['primary'];
-    amber: Palette['primary'];
-    rose: Palette['primary'];
-    sky: Palette['primary'];
-    neutrals: Record<string, string>;
-  }
-  
-  interface PaletteOptions {
-    saffron?: PaletteOptions['primary'];
-    indigo?: PaletteOptions['primary'];
-    forest?: PaletteOptions['primary'];
-    amber?: PaletteOptions['primary'];
-    rose?: PaletteOptions['primary'];
-    sky?: PaletteOptions['primary'];
-    neutrals?: Record<string, string>;
-  }
-}

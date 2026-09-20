@@ -8,7 +8,7 @@ import { Box, Paper, Skeleton, useTheme } from '@mui/material';
 
 export const StoriesSkeleton: React.FC = React.memo(() => {
   const theme = useTheme();
-  const saffronBase = theme.palette.primary?.main || '#E8722A';
+  const saffronBase = theme.palette.primary.main;
   const shimmerBg = `${saffronBase}20`;
 
   const cardSx = {

@@ -14,7 +14,6 @@ import {
   Typography,
   Tabs,
   Tab,
-  Paper,
   Chip,
   useTheme as useMuiTheme,
   Accordion,
@@ -34,6 +33,7 @@ import { useAppStore } from '../stores/appStore';
 import { useI18n } from '../hooks/useI18n';
 import { EKADASHIS, OTHER_FASTS, FastingInfo } from '../data/fastings';
 import { ScreenContainer } from '../components/ScreenContainer';
+import { SectionCard } from '../components/layout/SectionCard';
 import { useBreakpoints } from '../hooks/useBreakpoints';
 import { PanchangShareCard } from '../components/PanchangShareCard';
 import EkadashiDetailCard from '../components/EkadashiDetailCard';
@@ -232,7 +232,6 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
 
   return (
     <ScreenContainer
-      maxWidth={800}
       sx={{ pt: 1.5 }}
     >
       {/* Header */}
@@ -282,7 +281,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 },
               }}
             >
-              <Share2 size={18} />
+              <Share2 size={20} />
             </Box>
           </Box>
           <Typography variant="body2" color="text.secondary" sx={{ px: 1 }}>
@@ -294,45 +293,30 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
       {/* Today's Fast Card */}
       {panchang?.fasting && (
         <Zoom in timeout={300}>
-        <Paper
-          elevation={0}
-          sx={{
-            mb: 1.5,
-            borderRadius: 2,
-            p: 1.5,
-            bgcolor: `${muiTheme.palette.success.main}12`,
-            border: `1px solid ${muiTheme.palette.success.main}30`,
-          }}
+        <SectionCard
+          title={
+            <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', letterSpacing: '-0.02em', lineHeight: 1.3 }}>
+              {currentLanguage === 'hi' ? panchang.fasting.nameHindi : panchang.fasting.name}
+            </Typography>
+          }
         >
-          <Typography variant="h6" sx={{ fontWeight: 500, mb: 0.5, color: 'success.main', letterSpacing: '-0.02em', lineHeight: 1.3 }}>
-            {currentLanguage === 'hi' ? panchang.fasting.nameHindi : panchang.fasting.name}
-          </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.5 }}>
             {panchang.fasting.significance?.substring(0, 200)}...
           </Typography>
-        </Paper>
+        </SectionCard>
         </Zoom>
       )}
 
       {/* Upcoming Fasts */}
       {upcomingFasts.length > 0 && (
         <Fade in timeout={350}>
-        <Paper
-          elevation={0}
-          sx={{
-            mb: 1.5,
-            borderRadius: 2,
-            p: 1.5,
-            bgcolor: `${muiTheme.palette.warning.main}08`,
-            border: `1px solid ${muiTheme.palette.warning.main}20`,
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-            <Calendar size={18} color={muiTheme.palette.warning.main} />
-            <Typography variant="subtitle1" sx={{ fontWeight: 500, color: muiTheme.palette.warning.main, letterSpacing: '-0.02em', lineHeight: 1.3 }}>
+        <SectionCard
+          title={
+            <Typography variant="subtitle1" sx={{ fontWeight: 500, color: 'text.primary', letterSpacing: '-0.02em', lineHeight: 1.3 }}>
               {t('fasting.upcoming') || 'Upcoming Fasts'}
             </Typography>
-          </Box>
+          }
+        >
 
           {/* First fast as prominent card - tappable if it matches a festival or has fasting details */}
           {(() => {
@@ -382,7 +366,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     flexShrink: 0,
                   }}
                 >
-                  <visual.Icon size={18} color={visual.color} />
+                  <visual.Icon size={20} color={visual.color} />
                 </Box>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                   <Typography variant="body1" sx={{ fontWeight: 500, color: muiTheme.palette.warning.main, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3 }}>
@@ -529,7 +513,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                           flexShrink: 0,
                         }}
                       >
-                        <visual.Icon size={18} color={visual.color} />
+                        <visual.Icon size={20} color={visual.color} />
                       </Box>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
                         <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3 }}>
@@ -589,7 +573,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               </AccordionDetails>
             </Accordion>
           )}
-        </Paper>
+        </SectionCard>
         </Fade>
       )}
       {upcomingFasts.length === 0 && (
@@ -601,22 +585,13 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
       {/* Upcoming Festivals */}
       {upcomingFestivals.length > 0 && (
         <Fade in timeout={400}>
-        <Paper
-          elevation={0}
-          sx={{
-            mb: 1.5,
-            borderRadius: 2,
-            p: 1.5,
-            bgcolor: `${muiTheme.palette.primary.main}08`,
-            border: `1px solid ${muiTheme.palette.primary.main}20`,
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-            <Sparkles size={18} color={muiTheme.palette.primary.main} />
-            <Typography variant="subtitle1" sx={{ fontWeight: 500, color: muiTheme.palette.primary.main, letterSpacing: '-0.02em', lineHeight: 1.3 }}>
+        <SectionCard
+          title={
+            <Typography variant="subtitle1" sx={{ fontWeight: 500, color: 'text.primary', letterSpacing: '-0.02em', lineHeight: 1.3 }}>
               {t('festivals.upcoming') || 'Upcoming Festivals'}
             </Typography>
-          </Box>
+          }
+        >
 
           {/* First festival as prominent card - tappable */}
           {upcomingFestivals[0] && (() => {
@@ -661,7 +636,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     flexShrink: 0,
                   }}
                 >
-                  <Sparkles size={18} color={muiTheme.palette.primary.main} />
+                  <Sparkles size={20} color={muiTheme.palette.primary.main} />
                 </Box>
                 <Typography
                   variant="body1"
@@ -837,7 +812,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                             flexShrink: 0,
                           }}
                         >
-                          <Sparkles size={18} color={muiTheme.palette.primary.main} />
+                          <Sparkles size={20} color={muiTheme.palette.primary.main} />
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1, flex: 1, minWidth: 0 }}>
                           <Typography
@@ -918,7 +893,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               </AccordionDetails>
             </Accordion>
           )}
-        </Paper>
+        </SectionCard>
         </Fade>
       )}
       {upcomingFestivals.length === 0 && (
@@ -929,16 +904,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
 
       {/* Tabs */}
       <Zoom in timeout={450}>
-      <Paper
-        elevation={0}
-        sx={{
-          mb: 1.5,
-          borderRadius: 2,
-          overflow: 'hidden',
-          bgcolor: muiTheme.palette.action.hover,
-          border: `1px solid ${muiTheme.palette.divider}`,
-        }}
-      >
+      <SectionCard noPadding>
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
@@ -971,7 +937,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
           <Tab value={1} label={t('fasting.otherVrats')} />
           <Tab value={2} label={t('festivals.title') || 'Festivals'} />
         </Tabs>
-      </Paper>
+      </SectionCard>
       </Zoom>
 
       {/* Tab Content */}

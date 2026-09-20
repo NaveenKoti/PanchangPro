@@ -2,11 +2,9 @@
  * This file imports all theme-related CSS files and serves as the main entry point for styles
  */
 
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Crimson\+Text:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Source\+Sans\+Pro:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Noto\+Sans:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Noto\+Sans\+Devanagari:wght@300;400;500;600;700&display=swap');
+/* Import Google Fonts — Noto Sans only, weights 400/500 (see vedaTheme.ts) */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500&display=swap');
 
 /* Base styles with CSS variables */
 @import './styles/globals.css';
@@ -15,54 +13,54 @@
 @import './styles/print.css';
 
 :root {
-  /* Color Tokens - Light Mode (Default)  */
-  --veda-saffron-100: #fff3e0;
-  --veda-saffron-200: #ffe0b2;
-  --veda-saffron-300: #ffcc80;
-  --veda-saffron-400: #ffb74d;
-  --veda-saffron-500: #c75b12;
-  --veda-saffron-600: #7a3008;
-  --veda-saffron-700: #5a2406;
-  --veda-saffron-800: #3a1804;
-  --veda-saffron-900: #1a0c02;
+  /* Color Tokens - Light Mode (Default). Values MUST equal vedaTheme.ts. */
+  --veda-saffron-100: #f7e8dc;
+  --veda-saffron-200: #eac9ae;
+  --veda-saffron-300: #d69c72;
+  --veda-saffron-400: #a34a1f;
+  --veda-saffron-500: #7c2d12;
+  --veda-saffron-600: #5c1f0c;
+  --veda-saffron-700: #471707;
+  --veda-saffron-800: #2e0f05;
+  --veda-saffron-900: #170802;
 
-  --veda-temple-100: #e8f5e8;
-  --veda-temple-200: #c8e6c9;
-  --veda-temple-300: #a5d6a7;
-  --veda-temple-400: #7db356;
-  --veda-temple-500: #3d6b24;
-  --veda-temple-600: #2a4a19;
-  --veda-temple-700: #1f3a14;
-  --veda-temple-800: #142a0f;
-  --veda-temple-900: #091a09;
+  --veda-temple-100: #e6efe7;
+  --veda-temple-200: #c6ddcb;
+  --veda-temple-300: #a3c8ac;
+  --veda-temple-400: #82b190;
+  --veda-temple-500: #4e7f5b;
+  --veda-temple-600: #35593f;
+  --veda-temple-700: #29452f;
+  --veda-temple-800: #1c3021;
+  --veda-temple-900: #0e1811;
 
-  --veda-neutral-50: #fefefe;
-  --veda-neutral-100: #f5f3f0;
-  --veda-neutral-200: #e8e6e3;
-  --veda-neutral-300: #d1cdc7;
-  --veda-neutral-400: #9e9b94;
-  --veda-neutral-500: #6b6b6b;
-  --veda-neutral-600: #2c2c2c;
-  --veda-neutral-700: #1f1f1f;
-  --veda-neutral-800: #121212;
-  --veda-neutral-900: #0a0a0a;
+  --veda-neutral-50: #faf7f2;
+  --veda-neutral-100: #f1ece2;
+  --veda-neutral-200: #e2d8c6;
+  --veda-neutral-300: #c8b99e;
+  --veda-neutral-400: #9a8b70;
+  --veda-neutral-500: #6e6152;
+  --veda-neutral-600: #4a4034;
+  --veda-neutral-700: #332b22;
+  --veda-neutral-800: #221c15;
+  --veda-neutral-900: #171310;
 
-  --veda-text-primary: #2c2c2c;
-  --veda-text-secondary: #6b6b6b;
-  --veda-text-disabled: #9e9b94;
+  --veda-text-primary: #221c15;
+  --veda-text-secondary: rgba(34, 28, 21, 0.6);
+  --veda-text-disabled: rgba(34, 28, 21, 0.38);
 
-  --veda-background-default: #fefefe;
-  --veda-background-paper: #f5f3f0;
+  --veda-background-default: #faf7f2;
+  --veda-background-paper: #ffffff;
 
-  --veda-error-main: #d32f2f;
-  --veda-warning-main: #f57c00;
-  --veda-info-main: #0288d1;
-  --veda-success-main: #3d6b24;
+  --veda-error-main: #b05148;
+  --veda-warning-main: #b07a2e;
+  --veda-info-main: #4e7fa3;
+  --veda-success-main: #4e7f5b;
 
-  --veda-border-radius: 8px;
-  --veda-border-radius-sm: 4px;
-  --veda-border-radius-lg: 12px;
-  --veda-border-radius-xl: 12px;
+  --veda-border-radius: 16px;
+  --veda-border-radius-sm: 8px;
+  --veda-border-radius-lg: 16px;
+  --veda-border-radius-xl: 16px;
 
   --veda-shadow-level-1: 0px 2px 1px -1px rgba(0, 0, 0, 0.08);
   --veda-shadow-level-2: 0px 3px 1px -2px rgba(0, 0, 0, 0.08), 0px 2px 2px 0px rgba(0, 0, 0, 0.06);
@@ -104,50 +102,51 @@
   --sar: env(safe-area-inset-right, 0px);
 }
 
-/* Dark mode color overrides */
+/* Dark mode overrides — selector MUST stay [data-theme='dark']: the app sets
+   data-theme on <html> (ThemeProvider + useTheme). Values equal vedaTheme.ts. */
 [data-theme='dark'] {
-  --veda-saffron-100: #2a1810;
-  --veda-saffron-200: #3d2418;
-  --veda-saffron-300: #5a3323;
-  --veda-saffron-400: #834f38;
-  --veda-saffron-500: #e8884a;
-  --veda-saffron-600: #f0a060;
-  --veda-saffron-700: #fddcb5;
-  --veda-saffron-800: #fff3e7;
-  --veda-saffron-900: #fff8f0;
+  --veda-saffron-100: #2a1a0d;
+  --veda-saffron-200: #4a2c12;
+  --veda-saffron-300: #6e421a;
+  --veda-saffron-400: #c67f2e;
+  --veda-saffron-500: #e8a04c;
+  --veda-saffron-600: #f2c184;
+  --veda-saffron-700: #f8d9ae;
+  --veda-saffron-800: #fcebd3;
+  --veda-saffron-900: #fff8ee;
 
-  --veda-temple-100: #122712;
-  --veda-temple-200: #1a361a;
-  --veda-temple-300: #274f27;
-  --veda-temple-400: #7db356;
-  --veda-temple-500: #7db356;
-  --veda-temple-600: #ebf5e3;
-  --veda-temple-700: #f8fbf6;
-  --veda-temple-800: #ffffff;
+  --veda-temple-100: #12241a;
+  --veda-temple-200: #1b3626;
+  --veda-temple-300: #2a5239;
+  --veda-temple-400: #4e7f5b;
+  --veda-temple-500: #82b190;
+  --veda-temple-600: #c4e0cb;
+  --veda-temple-700: #e4f1e7;
+  --veda-temple-800: #f4faf5;
   --veda-temple-900: #ffffff;
 
-  --veda-neutral-50: #0f0e0c;
-  --veda-neutral-100: #1c1916;
-  --veda-neutral-200: #2f2b27;
-  --veda-neutral-300: #474238;
-  --veda-neutral-400: #6b665c;
-  --veda-neutral-500: #9a958b;
-  --veda-neutral-600: #c4b39e;
-  --veda-neutral-700: #ddd3c5;
-  --veda-neutral-800: #f0e9e1;
-  --veda-neutral-900: #fcfaf7;
+  --veda-neutral-50: #161310;
+  --veda-neutral-100: #1e1a15;
+  --veda-neutral-200: #2c2721;
+  --veda-neutral-300: #453e34;
+  --veda-neutral-400: #6b6257;
+  --veda-neutral-500: #979084;
+  --veda-neutral-600: #bfb7a9;
+  --veda-neutral-700: #d8d1c3;
+  --veda-neutral-800: #eae4d8;
+  --veda-neutral-900: #f2ece3;
 
-  --veda-text-primary: #fcf8f0;
-  --veda-text-secondary: #ddd3c5;
-  --veda-text-disabled: #c4b39e;
+  --veda-text-primary: #f2ece3;
+  --veda-text-secondary: rgba(242, 236, 227, 0.6);
+  --veda-text-disabled: rgba(242, 236, 227, 0.38);
 
-  --veda-background-default: #0f0e0c;
-  --veda-background-paper: #1c1916;
+  --veda-background-default: #161310;
+  --veda-background-paper: #1e1a15;
 
-  --veda-error-main: #ef6060;
-  --veda-warning-main: #fddcb5;
-  --veda-info-main: #7b9bd6;
-  --veda-success-main: #7db356;
+  --veda-error-main: #d68a82;
+  --veda-warning-main: #dcae6a;
+  --veda-info-main: #7fa9c9;
+  --veda-success-main: #82b190;
 }
 
 /* Custom scrollbar */

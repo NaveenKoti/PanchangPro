@@ -190,7 +190,7 @@ export const MoreMenu: React.FC<MoreMenuProps> = ({ open, onClose, onSelectItem 
                   color: theme.palette.primary.main,
                 }}
               >
-                <item.icon size={22} strokeWidth={1.5} />
+                <item.icon size={20} strokeWidth={1.5} />
               </ListItemIcon>
               <Box sx={{ flex: 1 }}>
                 <ListItemText

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Badge, Typography, Paper, Fade, IconButton, Popover, CircularProgress } from '@mui/material'
 import { Wifi as WifiIcon, WifiOff as WifiOffIcon, CloudSync as CloudSyncIcon, CloudDone as CloudDoneIcon, Info as InfoIcon } from '@mui/icons-material'
+import { Check as CheckIcon, Loader as LoaderIcon } from 'lucide-react'
 import { useTheme } from '@mui/material/styles'
 import { usePWAStatus } from '../../hooks/usePWAStatus'
 import panchangCacheService, { CacheStats } from '../../services/PanchangCacheService'
@@ -145,6 +146,7 @@ const OfflineIndicator: React.FC = () => {
           <IconButton
             size="small"
             onClick={handleInfoClick}
+            aria-label="Cache status details"
             sx={{ 
               color: theme.palette.common.white,
               ml: 0.5,
@@ -171,7 +173,7 @@ const OfflineIndicator: React.FC = () => {
         sx={{ mt: 1 }}
       >
         <Box sx={{ p: 2, minWidth: 250 }}>
-          <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
+          <Typography variant="subtitle2" fontWeight={500} gutterBottom>
             Cache Status
           </Typography>
           
@@ -225,8 +227,9 @@ const OfflineIndicator: React.FC = () => {
                 <Typography variant="caption" color="textSecondary">
                   Auto-sync:
                 </Typography>
-                <Typography variant="caption" fontWeight="medium">
-                  {isSynced ? '✅ Active' : '⏳ Pending'}
+                <Typography variant="caption" fontWeight="medium" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  {isSynced ? <CheckIcon size={14} /> : <LoaderIcon size={14} />}
+                  {isSynced ? 'Active' : 'Pending'}
                 </Typography>
               </Box>
             )}
