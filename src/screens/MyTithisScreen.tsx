@@ -38,6 +38,7 @@ import {
   Collapse,
   Snackbar,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import {
   Plus,
   Delete,
@@ -369,7 +370,7 @@ export const MyTithisScreen: React.FC = () => {
                   width: 40,
                   height: 40,
                   borderRadius: 2,
-                  bgcolor: 'rgba(199, 91, 18, 0.1)',
+                  bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -407,9 +408,9 @@ export const MyTithisScreen: React.FC = () => {
                 py: 1,
                 fontWeight: 500,
                 textTransform: 'none',
-                boxShadow: '0 2px 8px rgba(199, 91, 18, 0.3)',
+                boxShadow: (theme) => `0 2px 8px ${alpha(theme.palette.primary.main, 0.3)}`,
                 '&:hover': {
-                  boxShadow: '0 4px 16px rgba(199, 91, 18, 0.4)',
+                  boxShadow: (theme) => `0 4px 16px ${alpha(theme.palette.primary.main, 0.4)}`,
                   transform: 'translateY(-2px)',
                 },
                 transition: 'all 0.2s ease',
@@ -461,7 +462,7 @@ export const MyTithisScreen: React.FC = () => {
                 width: 80,
                 height: 80,
                 borderRadius: '50%',
-                bgcolor: 'rgba(199, 91, 18, 0.08)',
+                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -515,7 +516,7 @@ export const MyTithisScreen: React.FC = () => {
                           width: 48,
                           height: 48,
                           borderRadius: 2,
-                          bgcolor: 'rgba(199, 91, 18, 0.1)',
+                          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -604,7 +605,7 @@ export const MyTithisScreen: React.FC = () => {
                         {/* Next Occurrences with Countdown */}
                         {isExpanded && occurrences.length > 0 && (
                           <Fade in timeout={300}>
-                            <Box sx={{ mt: 1.5, p: 1.5, bgcolor: 'rgba(199, 91, 18, 0.04)', borderRadius: 2, border: '1px solid rgba(199, 91, 18, 0.15)' }}>
+                            <Box sx={{ mt: 1.5, p: 1.5, bgcolor: (theme) => alpha(theme.palette.primary.main, 0.04), borderRadius: 2, border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.15)}` }}>
                               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
                 <Clock size={16} color={muiTheme.palette.primary.main} />
                 <Typography variant="caption" sx={{ fontWeight: 500, color: muiTheme.palette.primary.main }}>
@@ -804,27 +805,28 @@ export const MyTithisScreen: React.FC = () => {
               )}
             </Box>
 
-            {/* Date Selection */}
+            {/* Date Selection — Tithi full-width (names like Purnima/Amavasya
+                must never truncate), Paksha + Month side by side below. */}
+            <TextField
+              fullWidth
+              label={isHindi ? 'तिथि' : 'Tithi'}
+              select
+              SelectProps={{ native: true }}
+              value={formData.tithiNumber}
+              onChange={(e) => setFormData({ ...formData, tithiNumber: Number(e.target.value) })}
+              sx={{ mb: 2 }}
+              helperText={isHindi ? 'कौन सी तिथि?' : 'Which tithi?'}
+            >
+              {[
+                'Pratipada', 'Dwitiya', 'Tritiya', 'Chaturthi', 'Panchami',
+                'Shashthi', 'Saptami', 'Ashtami', 'Navami', 'Dashami',
+                'Ekadashi', 'Dwadashi', 'Trayodashi', 'Chaturdashi', 'Purnima/Amavasya'
+              ].map((t, i) => (
+                <option key={t} value={i + 1}>{t}</option>
+              ))}
+            </TextField>
+
             <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-              <TextField
-                fullWidth
-                label={isHindi ? 'तिथि' : 'Tithi'}
-                select
-                SelectProps={{ native: true }}
-                value={formData.tithiNumber}
-                onChange={(e) => setFormData({ ...formData, tithiNumber: Number(e.target.value) })}
-                sx={{ flex: 1 }}
-                helperText={isHindi ? 'कौन सी तिथि?' : 'Which tithi?'}
-              >
-                {[
-                  'Pratipada', 'Dwitiya', 'Tritiya', 'Chaturthi', 'Panchami',
-                  'Shashthi', 'Saptami', 'Ashtami', 'Navami', 'Dashami',
-                  'Ekadashi', 'Dwadashi', 'Trayodashi', 'Chaturdashi', 'Purnima/Amavasya'
-                ].map((t, i) => (
-                  <option key={t} value={i + 1}>{t}</option>
-                ))}
-              </TextField>
-              
               <TextField
                 fullWidth
                 label={isHindi ? 'पक्ष' : 'Paksha'}
@@ -832,32 +834,32 @@ export const MyTithisScreen: React.FC = () => {
                 SelectProps={{ native: true }}
                 value={formData.paksha}
                 onChange={(e) => setFormData({ ...formData, paksha: e.target.value as 'Shukla' | 'Krishna' })}
-                sx={{ width: 140 }}
+                sx={{ flex: 1, minWidth: 0 }}
               >
                 <option value="Shukla">Shukla</option>
                 <option value="Krishna">Krishna</option>
               </TextField>
-            </Box>
 
-            {/* Month Selection */}
-            <TextField
-              fullWidth
-              label={isHindi ? 'महीना' : 'Month'}
-              select
-              value={formData.month}
-              onChange={(e) => setFormData({ ...formData, month: Number(e.target.value) })}
-              sx={{ mb: 2 }}
-              helperText={isHindi ? 'किस महीने में आता है?' : 'Which month does it fall in?'}
-            >
-              {['Chaitra', 'Vaishakha', 'Jyeshtha', 'Ashadha', 'Shravana', 'Bhadrapada', 'Ashwin', 'Kartik', 'Margashirsha', 'Pausha', 'Magha', 'Phalguna'].map((month, i) => (
-                <option key={month} value={i}>{month}</option>
-              ))}
-            </TextField>
+              {/* Month Selection */}
+              <TextField
+                fullWidth
+                label={isHindi ? 'महीना' : 'Month'}
+                select
+                value={formData.month}
+                onChange={(e) => setFormData({ ...formData, month: Number(e.target.value) })}
+                sx={{ flex: 1, minWidth: 0 }}
+                helperText={isHindi ? 'किस महीने में?' : 'Which month?'}
+              >
+                {['Chaitra', 'Vaishakha', 'Jyeshtha', 'Ashadha', 'Shravana', 'Bhadrapada', 'Ashwin', 'Kartik', 'Margashirsha', 'Pausha', 'Magha', 'Phalguna'].map((month, i) => (
+                  <option key={month} value={i}>{month}</option>
+                ))}
+              </TextField>
+            </Box>
             
             {/* Recurring Toggle */}
             <Box sx={{ 
               p: 1.5, 
-              bgcolor: 'rgba(199, 91, 18, 0.04)',
+              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.04),
               borderRadius: 1.5,
               mb: 2,
             }}>

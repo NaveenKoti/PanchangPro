@@ -28,6 +28,7 @@ import {
   Zoom,
   Button,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { Calendar, Clock, Sparkles, ChevronDown, X, Share2, Moon } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import { useI18n } from '../hooks/useI18n';
@@ -52,11 +53,11 @@ interface FastsScreenProps {
  */
 const getFastTypeVisual = (
   type: string,
-  palette: { primary: { main: string }; info: { main: string }; warning: { main: string } },
+  palette: { primary: { main: string } },
 ): { Icon: React.ComponentType<{ size?: number | string; color?: string }>; color: string } => {
   if (type === 'festival') return { Icon: Sparkles, color: palette.primary.main };
-  if (type === 'purnima' || type === 'amavasya') return { Icon: Moon, color: palette.info.main };
-  return { Icon: Clock, color: palette.warning.main };
+  if (type === 'purnima' || type === 'amavasya') return { Icon: Moon, color: palette.primary.main };
+  return { Icon: Clock, color: palette.primary.main };
 };
 
 export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
@@ -338,13 +339,13 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               sx={{
                 p: { xs: 1.25, sm: 1.5 },
                 borderRadius: 1.5,
-                bgcolor: `${muiTheme.palette.warning.main}12`,
-                border: `1px solid ${muiTheme.palette.warning.main}25`,
+                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.07),
+                border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
                 mb: upcomingFasts.length > 1 ? 0.75 : 0,
                 cursor: (canViewStory || canViewDetails) ? 'pointer' : 'default',
                 transition: 'all 0.2s ease',
                 '&:hover': (canViewStory || canViewDetails) ? {
-                  bgcolor: `${muiTheme.palette.warning.main}18`,
+                  bgcolor: (theme) => alpha(theme.palette.primary.main, 0.12),
                 } : {},
                 '&:active': (canViewStory || canViewDetails) ? {
                   transform: 'scale(0.98)',
@@ -369,7 +370,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   <visual.Icon size={20} color={visual.color} />
                 </Box>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography variant="body1" sx={{ fontWeight: 500, color: muiTheme.palette.warning.main, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3 }}>
+                  <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3 }}>
                     {upcomingFasts[0].name}
                   </Typography>
                   <Typography variant="caption" sx={{ color: 'text.secondary', lineHeight: 1.4, display: 'block' }}>
@@ -414,11 +415,11 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                       fontWeight: 500,
                       minWidth: 48,
                       bgcolor: upcomingFasts[0].daysUntil <= 3
-                        ? `${muiTheme.palette.error.main}15`
-                        : `${muiTheme.palette.warning.main}15`,
+                        ? (theme) => alpha(theme.palette.error.main, 0.15)
+                        : (theme) => alpha(theme.palette.primary.main, 0.15),
                       color: upcomingFasts[0].daysUntil <= 3
-                        ? muiTheme.palette.error.main
-                        : muiTheme.palette.warning.main,
+                        ? 'error.main'
+                        : 'primary.main',
                     }}
                   />
                 </Box>
@@ -441,7 +442,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               }}
             >
               <AccordionSummary
-                expandIcon={<ChevronDown size={20} color={muiTheme.palette.warning.main} />}
+                expandIcon={<ChevronDown size={20} color="primary.main" />}
                 sx={{
                   minHeight: 48,
                   px: 1,
@@ -455,7 +456,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 <Typography
                   variant="body2"
                   sx={{
-                    color: muiTheme.palette.warning.main,
+                    color: 'text.primary',
                     fontWeight: 500,
                     fontSize: '0.8rem',
                   }}
@@ -558,11 +559,11 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                             fontWeight: 500,
                             minWidth: 48,
                             bgcolor: fast.daysUntil <= 3
-                              ? `${muiTheme.palette.error.main}12`
-                              : `${muiTheme.palette.warning.main}12`,
+                              ? (theme) => alpha(theme.palette.error.main, 0.12)
+                              : (theme) => alpha(theme.palette.primary.main, 0.12),
                             color: fast.daysUntil <= 3
-                              ? muiTheme.palette.error.main
-                              : muiTheme.palette.warning.main,
+                              ? 'error.main'
+                              : 'primary.main',
                           }}
                         />
                       </Box>
@@ -674,11 +675,11 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                       fontWeight: 500,
                       minWidth: 48,
                       bgcolor: upcomingFestivals[0].daysUntil <= 3
-                        ? `${muiTheme.palette.error.main}15`
-                        : `${muiTheme.palette.warning.main}15`,
+                        ? (theme) => alpha(theme.palette.error.main, 0.15)
+                        : (theme) => alpha(theme.palette.primary.main, 0.15),
                       color: upcomingFestivals[0].daysUntil <= 3
-                        ? muiTheme.palette.error.main
-                        : muiTheme.palette.warning.main,
+                        ? 'error.main'
+                        : 'primary.main',
                     }}
                   />
                 </Box>
@@ -852,11 +853,11 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                               minWidth: 48,
                               flexShrink: 0,
                               bgcolor: festival.daysUntil <= 3
-                                ? `${muiTheme.palette.error.main}12`
-                                : `${muiTheme.palette.warning.main}12`,
+                                ? (theme) => alpha(theme.palette.error.main, 0.12)
+                                : (theme) => alpha(theme.palette.primary.main, 0.12),
                               color: festival.daysUntil <= 3
-                                ? muiTheme.palette.error.main
-                                : muiTheme.palette.warning.main,
+                                ? 'error.main'
+                                : 'primary.main',
                             }}
                           />
                         </Box>
@@ -1690,7 +1691,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   variant="caption"
                   sx={{
                     fontWeight: 500,
-                    color: 'warning.main',
+                    color: 'primary.main',
                     display: 'block',
                     mb: 0.75,
                     fontSize: '0.7rem',
@@ -1710,12 +1711,12 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         gap: 1,
                         p: 0.75,
                         borderRadius: 1,
-                        bgcolor: `${muiTheme.palette.warning.main}08`,
+                        bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
                       }}
                     >
                       <Typography
                         sx={{
-                          color: 'warning.main',
+                          color: 'primary.main',
                           fontWeight: 500,
                           fontSize: '0.75rem',
                           lineHeight: 1.4,

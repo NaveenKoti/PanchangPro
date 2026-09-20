@@ -137,11 +137,13 @@ export class PanchangEngine {
 
     // Detect festivals based on tithi, paksha, AND lunar month, then correct
     // for vyapti (Udaya matching alone misdates Madhyahna/Nishita festivals).
-    // The ADD path checks rule months against the true amanta month: the
-    // legacy sun-sign lunarMonth reads Phalguna in mid-Feb while the span is
-    // amanta Magha (Maha Shivratri's month). Purnimanta-basis rules (Diwali,
-    // Karva, Ahoi, Bhai Dooj) additionally match the purnimanta month, which
-    // the Udaya matcher accepts via the extra argument.
+    // Month gating is amanta throughout (the true lunar-month name): the
+    // legacy sun-sign lunarMonth flips at sankranti, mid-fortnight, and
+    // admitted phantoms (Dussehra + Sharad Purnima firing in Sep 2026 while
+    // the span was still Bhadrapada). Purnimanta-basis rules (Diwali, Karva,
+    // Ahoi, Bhai Dooj) additionally match the purnimanta month, which the
+    // Udaya matcher accepts via the extra argument. `lunarMonth` itself is
+    // kept for display only.
     const amantaMonth = this.getAmantaMonthNumber(localDate);
     const festivals = this.applyFestivalVyapti(
       getFestivalsForDate(
@@ -149,7 +151,7 @@ export class PanchangEngine {
         tithi.number,
         tithi.paksha,
         undefined,
-        lunarMonth,
+        amantaMonth ?? lunarMonth,
         amantaMonth === null
           ? undefined
           : (this.purnimantaMonth(amantaMonth, tithi.paksha) ?? undefined)
@@ -1089,7 +1091,10 @@ export class PanchangEngine {
       if (!rule || rule.keepUdayaMatch) return true;
       if (rule.vyapti === 'aparahna') {
         // Para-viddha (Bhai Dooj): two consecutive aparahna-Dwitiyas keep
-        // the LATER day — drop today when tomorrow fires too.
+        // the LATER day — drop today when tomorrow fires too. Purva-viddha
+        // (Dussehra preferFirst): keep the FIRST day — drop today when
+        // yesterday already fired.
+        if (rule.preferFirst) return !this.ruleFiresOnDay(rule, yesterday, yAmanta);
         const tomorrow = new Date(localDate);
         tomorrow.setDate(tomorrow.getDate() + 1);
         tomorrow.setHours(0, 0, 0, 0);
@@ -1099,22 +1104,18 @@ export class PanchangEngine {
     });
   }
 
-  /** Solar-sign lunar month (1-12) for a civil day — pure, no recursion. */
-  private solarMonthOf(day: Date): number {
-    const sr = calculateSunrise(day, this.location);
-    const sunLong = toSidereal(getSunLongitude(sr), getAyanamsa(sr));
-    return getHinduLunarMonth(sunLong);
-  }
-
-  /** Udaya tithi+paksha match with solar-month (or every-month) gating. */
+  /** Udaya tithi+paksha match with amanta-month (or every-month) gating. */
   private udayaMatchesRule(rule: FestivalData, day: Date, amantaMonth: number | null): boolean {
     const sr = calculateSunrise(day, this.location);
     const idx = this.tithiIndexAt(sr);
     if (idx !== this.ruleTithiIndex(rule.tithiNumber, rule.paksha)) return false;
     if (rule.month === 0) return true;
-    if (this.solarMonthOf(day) === rule.month) return true;
-    // Purnimanta-basis rules (Karva Oct 10 2025 reads solar month 7):
-    // match the purnimanta month derived from the Udaya paksha.
+    // Amanta month is the true lunar-month name (a Shukla Dashami four days
+    // before the new moon is Bhadrapada Dashami, not Dussehra — the old
+    // solar-sign gate flipped at sankranti and admitted such phantoms, e.g.
+    // Dussehra + Sharad Purnima both firing in Sep 2026). Purnimanta-basis
+    // rules (Karva/Diwali/Ahoi) match the derived purnimanta month instead.
+    if (amantaMonth !== null && rule.month === amantaMonth) return true;
     return (
       rule.monthBasis === 'purnimanta' &&
       amantaMonth !== null &&

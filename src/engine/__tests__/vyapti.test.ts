@@ -68,3 +68,28 @@ describe('Pradosh is sunset-vyapini (first evening)', () => {
     expect(engine.calculate(atMidnight(2025, 6, 9)).fasting?.id ?? 'none').not.toMatch(/pradosh/);
   });
 });
+
+describe('Dussehra is Aparahna-vyapini, purva-viddha (first day)', () => {
+  // Dashami Oct 20 13:00 → Oct 21 ~15:00 IST: Aparahna-Dashami on two days,
+  // Drik observes the FIRST (Tue Oct 20 2026). Udaya alone says Oct 21.
+  it('2026: Oct 20 has it, Oct 21 does not', () => {
+    expect(engine.calculate(atMidnight(2026, 10, 20)).festivals.some((f) => f.id === 'dussehra')).toBe(true);
+    expect(engine.calculate(atMidnight(2026, 10, 21)).festivals.some((f) => f.id === 'dussehra')).toBe(false);
+  });
+});
+
+describe('Festival month gating is amanta (no solar-month phantoms)', () => {
+  // Sep 21 2026: Udaya Shukla Dashami but amanta Bhadrapada (solar Ashwin
+  // flips at Kanya Sankranti Sep 17) — not Dussehra (user-reported: Fasts
+  // showed "Dussehra Tomorrow Sep 21").
+  it('2026: Sep 21 has no Dussehra', () => {
+    expect(engine.calculate(atMidnight(2026, 9, 21)).festivals.some((f) => f.id === 'dussehra')).toBe(false);
+  });
+
+  // Sep 26 2026: Udaya Purnima of amanta Bhadrapada — not Sharad Purnima
+  // (Ashwin Purnima is Oct 26 2026 per VedJyotix/PanchangBodh/ShubhPanchang).
+  it('2026: Sep 26 has no Sharad Purnima; Oct 26 does', () => {
+    expect(engine.calculate(atMidnight(2026, 9, 26)).festivals.some((f) => f.id === 'sharad-purnima')).toBe(false);
+    expect(engine.calculate(atMidnight(2026, 10, 26)).festivals.some((f) => f.id === 'sharad-purnima')).toBe(true);
+  });
+});

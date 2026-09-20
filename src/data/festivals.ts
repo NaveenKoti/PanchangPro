@@ -38,8 +38,8 @@ export interface FestivalData {
   vyapti?: FestivalVyapti;
   /**
    * Which lunar-month reckoning the rule's `month` is expressed in (engine
-   * ADD-path month gate; the legacy Udaya matcher in getFestivalsForDate
-   * stays solar-sign unless a purnimanta month is passed in):
+   * month gates are amanta throughout; getFestivalsForDate accepts an
+   * explicit purnimanta month for the purnimanta-basis fallback):
    * - 'amanta' (default): month ends with Amavasya (Dakshin/Maharashtra
    *   convention). Correct for Shukla-paksha and most festivals.
    * - 'purnimanta': month ends with Purnima (North Indian convention).
@@ -69,6 +69,17 @@ export interface FestivalData {
    * the exception day is never erased (Holika Mar 2 + Mar 3 both stand).
    */
   keepUdayaMatch?: boolean;
+  /**
+   * Aparahna-viddha direction for multi-day vyapti matches (engine vriddhi
+   * dedupe). Default (absent) keeps the LATER day — Bhai Dooj para-viddha:
+   * when Dwitiya prevails at Aparahna on two consecutive days, Drik
+   * observes the second. Set `preferFirst: true` for purva-viddha rules:
+   * Vijayadashami (Dussehra) — when Dashami prevails at Aparahna on two
+   * days (Oct 20 + 21 in 2026: Dashami Oct 20 13:00 → Oct 21 ~15:00),
+   * Drik observes the FIRST (Oct 20). Only meaningful with a non-udaya
+   * vyapti; ignored otherwise.
+   */
+  preferFirst?: boolean;
 }
 
 export const FESTIVALS: FestivalData[] = [
@@ -156,7 +167,9 @@ export const FESTIVALS: FestivalData[] = [
     tithiNumber: 10,
     paksha: 'Shukla',
     month: 7, // Ashwin (month 7 = index 6 + 1)
-    type: 'major'
+    type: 'major',
+    vyapti: 'aparahna', // Vijayadashami = Dashami prevailing at Aparahna, not merely at dawn
+    preferFirst: true, // purva-viddha: two Aparahna-Dashamis keep the FIRST day (2026: Oct 20, not 21)
   },
   {
     id: 'ganesh-chaturthi',
