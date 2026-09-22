@@ -254,8 +254,14 @@ export class PanchangEngine {
     // Dashami but Ekadashi prevailing by midday. Smartas fast today (Ekadashi
     // at midday); Vaishnavas observe the Dwadashi day. No second date is
     // invented — tomorrow's verdict is computed on its own Udaya tithi.
+    // Verified-DB check FIRST (result reused below): a curated Drik
+    // observance (incl. Mahadwadashi and Gauna/Vaishnava rows) always wins
+    // over the generic viddha label — otherwise Jul 10 Yogini / Nov 20
+    // Devutthana would display as nameless "Ekadashi (Smarta)" despite
+    // having exact names.
     // E.g. Nov 1 2025 (Prabodhini context): Udaya Dashami, midday Ekadashi.
-    if (this.isEkadashiViddhaAt(sunrise, sunset)) {
+    const verifiedEkadashi = isVerifiedEkadashi(date);
+    if (!verifiedEkadashi && this.isEkadashiViddhaAt(sunrise, sunset)) {
       const midday = new Date((sunrise.getTime() + sunset.getTime()) / 2);
       const midPaksha = getPaksha(this.tithiIndexAt(midday));
       const midIsShukla = midPaksha === 'Shukla';
@@ -299,9 +305,8 @@ export class PanchangEngine {
       };
     }
 
-    // Ekadashi detection - use verified database first
-    const verifiedEkadashi = isVerifiedEkadashi(date);
-    
+    // Ekadashi detection - verifiedEkadashi was resolved above (it takes
+    // precedence over the viddha path); otherwise fall back to the Udaya tithi.
     if (verifiedEkadashi || tithiName.includes('ekadashi')) {
       // If we have verified database entry, use it
       // Otherwise fallback to algorithmic detection

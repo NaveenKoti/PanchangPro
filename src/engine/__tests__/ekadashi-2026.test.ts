@@ -19,49 +19,52 @@ const BANGALORE = {
 describe('Ekadashi 2026 Accuracy Tests', () => {
   const engine = new PanchangEngine(BANGALORE);
 
-  // All 24 Ekadashis in 2026, verified against Drik Panchang
-  // Dates corrected against drikTruth.ts ground truth
+  // All 2026 Ekadashi observances, verified against Drik Panchang
+  // (drikpanchang.com/vrats/ekadashidates.html?year=2026, Smarta list).
+  // NOTE (Sep 2026): this table once carried a one-row data-entry shift
+  // (Indira on Sep 23, Papankusha on Oct 7, …) that made Fasts disagree
+  // with Calendar. It is now Drik-exact; keep it so.
   const ekadashiDates = [
     { date: '2026-01-14', name: 'Shat Tila Ekadashi', paksha: 'Krishna', month: 'Pausha' },
-    { date: '2026-01-29', name: 'Vaikuntha Ekadashi', paksha: 'Shukla', month: 'Pausha' },
-    { date: '2026-02-03', name: 'Jaya Ekadashi', paksha: 'Shukla', month: 'Magha' },
+    { date: '2026-01-29', name: 'Jaya Ekadashi', paksha: 'Shukla', month: 'Magha' },
     { date: '2026-02-13', name: 'Vijaya Ekadashi', paksha: 'Krishna', month: 'Magha' },
     { date: '2026-02-27', name: 'Amalaki Ekadashi', paksha: 'Shukla', month: 'Phalguna' },
     { date: '2026-03-15', name: 'Papmochani Ekadashi', paksha: 'Krishna', month: 'Chaitra' },
     { date: '2026-03-29', name: 'Kamada Ekadashi', paksha: 'Shukla', month: 'Chaitra' },
     { date: '2026-04-13', name: 'Varuthini Ekadashi', paksha: 'Krishna', month: 'Vaishakha' },
     { date: '2026-04-27', name: 'Mohini Ekadashi', paksha: 'Shukla', month: 'Vaishakha' },
-    { date: '2026-05-27', name: 'Apara Ekadashi', paksha: 'Krishna', month: 'Jyeshtha' },
-    { date: '2026-06-11', name: 'Nirjala Ekadashi', paksha: 'Shukla', month: 'Jyeshtha' },
-    { date: '2026-06-26', name: 'Yogini Ekadashi', paksha: 'Krishna', month: 'Ashadha' },
-    { date: '2026-07-10', name: 'Devashayani Ekadashi', paksha: 'Shukla', month: 'Ashadha' },
-    { date: '2026-07-25', name: 'Kamika Ekadashi', paksha: 'Krishna', month: 'Shravana' },
-    { date: '2026-08-09', name: 'Aja Ekadashi', paksha: 'Shukla', month: 'Shravana' },
-    { date: '2026-08-24', name: 'Annada Ekadashi', paksha: 'Krishna', month: 'Bhadrapada' },
-    { date: '2026-09-07', name: 'Parshva Ekadashi', paksha: 'Shukla', month: 'Bhadrapada' },
-    { date: '2026-09-23', name: 'Indira Ekadashi', paksha: 'Krishna', month: 'Ashwin' },
-    { date: '2026-10-07', name: 'Papankusha Ekadashi', paksha: 'Shukla', month: 'Ashwin' },
-    { date: '2026-10-22', name: 'Rama Ekadashi', paksha: 'Krishna', month: 'Kartika' },
-    { date: '2026-11-05', name: 'Utthana Ekadashi', paksha: 'Shukla', month: 'Kartika' },
-    { date: '2026-11-21', name: 'Utpanna Ekadashi', paksha: 'Krishna', month: 'Margashirsha' },
-    { date: '2026-12-05', name: 'Mokshada Ekadashi', paksha: 'Shukla', month: 'Margashirsha' },
-    { date: '2026-12-20', name: 'Safala Ekadashi', paksha: 'Krishna', month: 'Pausha' },
+    { date: '2026-05-13', name: 'Apara Ekadashi', paksha: 'Krishna', month: 'Jyeshtha' },
+    { date: '2026-05-27', name: 'Padmini Ekadashi', paksha: 'Shukla', month: 'Jyeshtha' },
+    { date: '2026-06-11', name: 'Parama Ekadashi', paksha: 'Krishna', month: 'Jyeshtha' },
+    { date: '2026-06-25', name: 'Nirjala Ekadashi', paksha: 'Shukla', month: 'Jyeshtha' },
+    { date: '2026-07-10', name: 'Yogini Ekadashi', paksha: 'Krishna', month: 'Ashadha' },
+    { date: '2026-07-25', name: 'Devshayani Ekadashi', paksha: 'Shukla', month: 'Ashadha' },
+    { date: '2026-08-09', name: 'Kamika Ekadashi', paksha: 'Krishna', month: 'Shravana' },
+    { date: '2026-08-23', name: 'Shravana Putrada Ekadashi', paksha: 'Shukla', month: 'Shravana' },
+    { date: '2026-09-07', name: 'Aja Ekadashi', paksha: 'Krishna', month: 'Bhadrapada' },
+    { date: '2026-09-22', name: 'Parsva Ekadashi', paksha: 'Shukla', month: 'Bhadrapada' },
+    { date: '2026-10-06', name: 'Indira Ekadashi', paksha: 'Krishna', month: 'Ashwin' },
+    { date: '2026-10-22', name: 'Papankusha Ekadashi', paksha: 'Shukla', month: 'Ashwin' },
+    { date: '2026-11-05', name: 'Rama Ekadashi', paksha: 'Krishna', month: 'Kartika' },
+    { date: '2026-11-20', name: 'Devutthana Ekadashi', paksha: 'Shukla', month: 'Kartika' },
+    { date: '2026-12-04', name: 'Utpanna Ekadashi', paksha: 'Krishna', month: 'Margashirsha' },
+    { date: '2026-12-20', name: 'Mokshada Ekadashi', paksha: 'Shukla', month: 'Margashirsha' },
   ];
 
   describe('Ekadashi date accuracy', () => {
-    // Dates where the engine's Udaya Tithi matches Drik truth
+    // Dates where the engine's Udaya Tithi is itself Ekadashi (Drik truth).
     const engineCorrectDates = [
       '2026-01-14', '2026-01-29', '2026-02-13', '2026-02-27',
-      '2026-03-15', '2026-03-29', '2026-04-13', '2026-05-27',
-      '2026-06-11', '2026-07-25', '2026-08-09',
-      '2026-09-07', '2026-10-22', '2026-11-05', '2026-11-21',
+      '2026-03-15', '2026-03-29', '2026-04-13', '2026-04-27',
+      '2026-05-13', '2026-06-11', '2026-06-25', '2026-07-25',
+      '2026-08-09', '2026-08-23', '2026-09-07', '2026-09-22',
+      '2026-10-06', '2026-10-22', '2026-11-05', '2026-12-04',
       '2026-12-20',
     ];
-    // Dates where the engine shows ±1 day error (fasting still detected via verified DB)
-    const engineOffDates = [
-      '2026-02-03', '2026-06-26', '2026-07-10', '2026-08-24',
-      '2026-09-23', '2026-10-07', '2026-12-05',
-    ];
+    // Observances where Udaya is NOT Ekadashi but the fast still fires:
+    // May 27 Padmini (Unmilini Mahadwadashi, Udaya Dwadashi),
+    // Jul 10 Yogini + Nov 20 Devutthana (Dashami-viddha at sunrise).
+    const viddhaDates = ['2026-05-27', '2026-07-10', '2026-11-20'];
 
     for (const ekadashi of ekadashiDates) {
       it(`should detect ${ekadashi.name} on ${ekadashi.date}`, () => {
@@ -161,9 +164,11 @@ describe('Major Ekadashis in 2026 - Additional verification', () => {
   const engine = new PanchangEngine(BANGALORE);
 
   const majorEkadashis = [
-    { date: '2026-06-11', name: 'Nirjala Ekadashi' },
-    { date: '2026-11-05', name: 'Utthana Ekadashi' },
-    { date: '2026-12-20', name: 'Safala Ekadashi' },
+    { date: '2026-06-25', name: 'Nirjala Ekadashi' },
+    { date: '2026-11-20', name: 'Devutthana Ekadashi' },
+    { date: '2026-12-20', name: 'Mokshada Ekadashi' },
+    { date: '2026-09-22', name: 'Parsva Ekadashi' },
+    { date: '2026-10-06', name: 'Indira Ekadashi' },
   ];
 
   for (const ekadashi of majorEkadashis) {
@@ -173,7 +178,13 @@ describe('Major Ekadashis in 2026 - Additional verification', () => {
       const panchang = engine.calculate(date);
 
       expect(panchang.fasting?.type).toBe('ekadashi');
-      expect(panchang.tithi.name.toLowerCase()).toContain('ekadashi');
+      expect(panchang.fasting?.name).toBe(ekadashi.name);
     });
   }
+
+  it('Sep 23 2026 is NOT Indira Ekadashi (user-reported Fasts/Calendar split)', () => {
+    const panchang = engine.calculate(new Date(2026, 8, 23));
+    expect(panchang.fasting?.name ?? 'none').not.toBe('Indira Ekadashi');
+    expect(panchang.tithi.number).not.toBe(11);
+  });
 });

@@ -4,6 +4,11 @@
  * Source: Verified against Drik Panchang (drikpanchang.com)
  * These dates are 100% accurate and used as fallback when algorithmic
  * calculation has minor errors due to Moon position approximations.
+ *
+ * Smarta convention (Drik main list). When Drik lists a Gauna/Vaishnava
+ * observance on the following Dwadashi day, it is kept as a separate row
+ * with a "(Vaishnava)" suffix — never merged onto the wrong tithi (a
+ * 2026 data-entry shift once put Indira on Sep 23 instead of Oct 6).
  * 
  * Format: { date: 'YYYY-MM-DD', name: string, paksha: 'Shukla'|'Krishna', month: string }
  */
@@ -41,32 +46,35 @@ export const VERIFIED_EKADASHIS: VerifiedEkadashi[] = [
   { date: '2025-11-15', name: 'Utpanna Ekadashi', paksha: 'Krishna', lunarMonth: 9 },
   { date: '2025-12-01', name: 'Mokshada Ekadashi', paksha: 'Shukla', lunarMonth: 9 },
   { date: '2025-12-15', name: 'Safala Ekadashi', paksha: 'Krishna', lunarMonth: 10 },
-
-  // 2026 Ekadashis
   { date: '2026-01-14', name: 'Shat Tila Ekadashi', paksha: 'Krishna', lunarMonth: 10 },
-  { date: '2026-01-29', name: 'Vaikuntha Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
-  { date: '2026-02-03', name: 'Jaya Ekadashi', paksha: 'Shukla', lunarMonth: 11 },
+  { date: '2026-01-29', name: 'Jaya Ekadashi', paksha: 'Shukla', lunarMonth: 11 },
   { date: '2026-02-13', name: 'Vijaya Ekadashi', paksha: 'Krishna', lunarMonth: 11 },
   { date: '2026-02-27', name: 'Amalaki Ekadashi', paksha: 'Shukla', lunarMonth: 12 },
   { date: '2026-03-15', name: 'Papmochani Ekadashi', paksha: 'Krishna', lunarMonth: 1 },
   { date: '2026-03-29', name: 'Kamada Ekadashi', paksha: 'Shukla', lunarMonth: 1 },
   { date: '2026-04-13', name: 'Varuthini Ekadashi', paksha: 'Krishna', lunarMonth: 2 },
   { date: '2026-04-27', name: 'Mohini Ekadashi', paksha: 'Shukla', lunarMonth: 2 },
-  { date: '2026-05-27', name: 'Apara Ekadashi', paksha: 'Krishna', lunarMonth: 3 },
-  { date: '2026-06-11', name: 'Nirjala Ekadashi', paksha: 'Shukla', lunarMonth: 3 },
-  { date: '2026-06-26', name: 'Yogini Ekadashi', paksha: 'Krishna', lunarMonth: 4 },
-  { date: '2026-07-10', name: 'Devashayani Ekadashi', paksha: 'Shukla', lunarMonth: 4 },
-  { date: '2026-07-25', name: 'Kamika Ekadashi', paksha: 'Krishna', lunarMonth: 5 },
-  { date: '2026-08-09', name: 'Aja Ekadashi', paksha: 'Shukla', lunarMonth: 5 },
-  { date: '2026-08-24', name: 'Annada Ekadashi', paksha: 'Krishna', lunarMonth: 6 },
-  { date: '2026-09-07', name: 'Parshva Ekadashi', paksha: 'Shukla', lunarMonth: 6 },
-  { date: '2026-09-23', name: 'Indira Ekadashi', paksha: 'Krishna', lunarMonth: 7 },
-  { date: '2026-10-07', name: 'Papankusha Ekadashi', paksha: 'Shukla', lunarMonth: 7 },
-  { date: '2026-10-22', name: 'Rama Ekadashi', paksha: 'Krishna', lunarMonth: 8 },
-  { date: '2026-11-05', name: 'Utthana Ekadashi', paksha: 'Shukla', lunarMonth: 8 },
-  { date: '2026-11-21', name: 'Utpanna Ekadashi', paksha: 'Krishna', lunarMonth: 9 },
-  { date: '2026-12-05', name: 'Mokshada Ekadashi', paksha: 'Shukla', lunarMonth: 9 },
-  { date: '2026-12-20', name: 'Safala Ekadashi', paksha: 'Krishna', lunarMonth: 10 },
+  { date: '2026-05-13', name: 'Apara Ekadashi', paksha: 'Krishna', lunarMonth: 3 },
+  { date: '2026-05-27', name: 'Padmini Ekadashi', paksha: 'Shukla', lunarMonth: 3 },
+  { date: '2026-06-11', name: 'Parama Ekadashi', paksha: 'Krishna', lunarMonth: 3 },
+  { date: '2026-06-25', name: 'Nirjala Ekadashi', paksha: 'Shukla', lunarMonth: 3 },
+  { date: '2026-07-10', name: 'Yogini Ekadashi', paksha: 'Krishna', lunarMonth: 4 },
+  { date: '2026-07-11', name: 'Yogini Ekadashi (Vaishnava)', paksha: 'Shukla', lunarMonth: 4 },
+  { date: '2026-07-25', name: 'Devshayani Ekadashi', paksha: 'Shukla', lunarMonth: 4 },
+  { date: '2026-08-09', name: 'Kamika Ekadashi', paksha: 'Krishna', lunarMonth: 5 },
+  { date: '2026-08-23', name: 'Shravana Putrada Ekadashi', paksha: 'Shukla', lunarMonth: 5 },
+  { date: '2026-08-24', name: 'Shravana Putrada Ekadashi (Vaishnava)', paksha: 'Shukla', lunarMonth: 5 },
+  { date: '2026-09-07', name: 'Aja Ekadashi', paksha: 'Krishna', lunarMonth: 6 },
+  { date: '2026-09-22', name: 'Parsva Ekadashi', paksha: 'Shukla', lunarMonth: 6 },
+  { date: '2026-10-06', name: 'Indira Ekadashi', paksha: 'Krishna', lunarMonth: 7 },
+  { date: '2026-10-22', name: 'Papankusha Ekadashi', paksha: 'Shukla', lunarMonth: 7 },
+  { date: '2026-11-05', name: 'Rama Ekadashi', paksha: 'Krishna', lunarMonth: 8 },
+  { date: '2026-11-20', name: 'Devutthana Ekadashi', paksha: 'Shukla', lunarMonth: 8 },
+  { date: '2026-11-21', name: 'Devutthana Ekadashi (Vaishnava)', paksha: 'Shukla', lunarMonth: 8 },
+  { date: '2026-12-04', name: 'Utpanna Ekadashi', paksha: 'Krishna', lunarMonth: 9 },
+  { date: '2026-12-20', name: 'Mokshada Ekadashi', paksha: 'Shukla', lunarMonth: 9 },
+
+  // 2026 Ekadashis
 
   // 2027 Ekadashis
   { date: '2027-01-04', name: 'Vaikuntha Ekadashi', paksha: 'Shukla', lunarMonth: 10 },
