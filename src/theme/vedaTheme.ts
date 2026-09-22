@@ -99,7 +99,7 @@ export const breakpointValues = {
 // CANONICAL CARD SPEC (documented token — do NOT restyle components here)
 // ============================================================================
 // Card = elevation 0 + border `1px solid` theme.palette.divider +
-// borderRadius 16 (shape.borderRadius) +
+// borderRadius 8 (shape.borderRadius) +
 // shadow `0 1px 3px rgba(0,0,0,0.04)` light /
 // `0 1px 3px rgba(0,0,0,0.3)` dark.
 // Component-level card styling is owned by other agents; this file only
@@ -185,7 +185,7 @@ export const themeOptions: ThemeOptions = {
     },
   },
   shape: {
-    borderRadius: 16, // Single canonical card radius — see CARD SPEC above
+    borderRadius: 8, // Single canonical radius (crisp, professional) — see CARD SPEC above
   },
   spacing: 8, // 8px base unit
 };
@@ -199,7 +199,7 @@ export const darkThemeOptions: ThemeOptions = {
     values: breakpointValues,
   },
   shape: {
-    borderRadius: 16, // Single canonical card radius — see CARD SPEC above
+    borderRadius: 8, // Single canonical radius (crisp, professional) — see CARD SPEC above
   },
   palette: {
     mode: 'dark',

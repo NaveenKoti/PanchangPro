@@ -12,6 +12,7 @@
 
 import React from 'react';
 import { Box, BoxProps, useTheme } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 
 export interface ScreenContainerProps extends BoxProps {
   /** Disable bottom padding for the nav bar (default: false) */
@@ -73,9 +74,7 @@ export const ScreenContainer: React.FC<ScreenContainerProps> = ({
             },
         // Background variant
         bgcolor: variant === 'elevated'
-          ? theme.palette.mode === 'dark'
-            ? 'rgba(255,255,255,0.02)'
-            : 'rgba(0,0,0,0.01)'
+          ? alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.03 : 0.015)
           : 'transparent',
         // Smooth transitions
         transition: 'background-color 0.3s ease, padding 0.3s ease',

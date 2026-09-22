@@ -24,6 +24,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
+import { alpha } from '@mui/material/styles';
 import { FastingInfo } from '../data/fastings';
 import { useI18n } from '../hooks/useI18n';
 
@@ -42,14 +43,18 @@ export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi
       elevation={0}
       sx={{
         mb: 1.5,
-        borderRadius: 2,
+        borderRadius: 1,
         bgcolor: 'background.paper',
-        border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
+        border: (theme) => `1px solid ${alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.12 : 0.08)}`,
         transition: 'all 0.2s ease',
+        cursor: 'pointer',
         '&:hover': {
-          boxShadow: (theme) => theme.palette.mode === 'dark' ? '0 2px 8px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.06)',
+          boxShadow: (theme) => `0 2px 8px ${alpha(theme.palette.common.black, theme.palette.mode === 'dark' ? 0.4 : 0.06)}`,
+          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.04),
         },
+        '&:active': { transform: 'scale(0.98)' },
       }}
+      onClick={() => setExpanded(!expanded)}
     >
       {/* Compact Header - Always Visible */}
       <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
@@ -59,15 +64,15 @@ export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi
             sx={{
               width: 36,
               height: 36,
-              borderRadius: 1.5,
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(144, 164, 215, 0.12)' : 'rgba(44, 62, 107, 0.08)',
+              borderRadius: 1,
+              bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.14 : 0.08),
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
             }}
           >
-            <Sparkles size={18} strokeWidth={1.5} color={muiTheme.palette.info.main} />
+            <Sparkles size={18} strokeWidth={1.5} color={muiTheme.palette.primary.main} />
           </Box>
           
           {/* Name & Month */}
@@ -101,7 +106,7 @@ export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi
                     height: 22,
                     fontSize: '0.6875rem',
                     fontWeight: 500,
-                    bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(199, 91, 18, 0.15)' : 'rgba(199, 91, 18, 0.06)',
+                    bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.16 : 0.08),
                     color: muiTheme.palette.primary.main,
                     minWidth: 'auto',
                     px: 0.5,
@@ -116,8 +121,8 @@ export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi
                     height: 22,
                     fontSize: '0.6875rem',
                     fontWeight: 500,
-                    bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(144, 164, 215, 0.1)' : 'rgba(44, 62, 107, 0.06)',
-                    color: muiTheme.palette.info.main,
+                    bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.12 : 0.06),
+                    color: muiTheme.palette.primary.main,
                     minWidth: 'auto',
                     px: 0.5,
                   }}
@@ -129,11 +134,11 @@ export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi
           {/* Expand Button */}
           <IconButton
             size="small"
-            onClick={() => setExpanded(!expanded)}
+            onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}
             aria-label={expanded ? 'Collapse details' : 'Expand details'}
             sx={{
-              width: 32,
-              height: 32,
+              width: 48,
+              height: 48,
               flexShrink: 0,
               transition: 'transform 0.2s ease',
               transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
@@ -191,7 +196,7 @@ export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi
                     height: 24,
                     fontSize: '0.7rem',
                     fontWeight: 500,
-                    bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(199, 91, 18, 0.15)' : 'rgba(199, 91, 18, 0.06)',
+                    bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.16 : 0.08),
                     color: muiTheme.palette.primary.main,
                   }}
                 />
@@ -225,7 +230,7 @@ export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi
                     height: 24,
                     fontSize: '0.7rem',
                     fontWeight: 500,
-                    bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(5, 150, 105, 0.15)' : 'rgba(5, 150, 105, 0.06)',
+                    bgcolor: (theme) => alpha(theme.palette.success.main, theme.palette.mode === 'dark' ? 0.16 : 0.08),
                     color: muiTheme.palette.success.main,
                   }}
                 />
@@ -238,9 +243,9 @@ export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi
             <Box
               sx={{
                 p: 1,
-                bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(129, 199, 106, 0.08)' : 'rgba(61, 107, 36, 0.04)',
+                bgcolor: (theme) => alpha(theme.palette.success.main, theme.palette.mode === 'dark' ? 0.1 : 0.05),
                 borderRadius: 1,
-                border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(129, 199, 106, 0.15)' : 'rgba(61, 107, 36, 0.08)'}`,
+                border: (theme) => `1px solid ${alpha(theme.palette.success.main, 0.18)}`,
               }}
             >
               <Typography

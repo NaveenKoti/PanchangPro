@@ -20,7 +20,8 @@ import {
   ListItemText,
   useTheme as useMuiTheme,
 } from '@mui/material';
-import { Search } from 'lucide-react';
+import { Search, CalendarDays, SearchX, PartyPopper } from 'lucide-react';
+import { alpha } from '@mui/material/styles';
 import { useAppStore } from '../stores/appStore';
 import { useI18n } from '../hooks/useI18n';
 import { FESTIVALS } from '../data/festivals';
@@ -259,7 +260,7 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
           mb: query.trim() ? 1 : 0,
           '& .MuiOutlinedInput-root': {
             minHeight: 48,
-            borderRadius: 2,
+            borderRadius: 1,
             bgcolor: 'background.paper',
             
           },
@@ -277,10 +278,11 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
             sx={{
               border: '1px solid',
               borderColor: 'divider',
-              borderRadius: 2,
+              borderRadius: 1,
               bgcolor: 'background.paper',
               mb: 1.5,
               maxWidth: '100%',
+              overflow: 'hidden',
             }}
           >
             {results.map(({ entry, next }) => {
@@ -301,8 +303,13 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
                     borderBottomColor: 'divider',
                     '&:last-child': { borderBottom: 'none' },
                     '&.Mui-disabled': { opacity: 1 },
+                    '&:hover': tappable ? { bgcolor: alpha(muiTheme.palette.primary.main, 0.04) } : {},
+                    '&:active': tappable ? { transform: 'scale(0.98)' } : {},
                   }}
                 >
+                  <Box sx={{ width: 34, height: 34, borderRadius: 1, bgcolor: alpha(muiTheme.palette.primary.main, 0.08), display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 1.5, flexShrink: 0 }}>
+                    <CalendarDays size={18} strokeWidth={1.5} color={muiTheme.palette.primary.main} />
+                  </Box>
                   <ListItemText
                     primary={isHindi ? entry.nameHindi : entry.name}
                     secondary={label}
@@ -324,18 +331,24 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
             })}
           </List>
         ) : (
-          <Typography
-            variant="body2"
-            sx={{
-              color: 'text.secondary',
-              fontWeight: 400,
-              
-              pl: 0.5,
-              mb: 1.5,
-            }}
-          >
-            {isHindi ? 'कोई परिणाम नहीं' : 'No matches'}
-          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 3, mb: 1.5 }}>
+            <Box sx={{ width: 48, height: 48, borderRadius: 1, bgcolor: alpha(muiTheme.palette.primary.main, 0.08), display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
+              <SearchX size={24} strokeWidth={1.5} color={muiTheme.palette.primary.main} />
+            </Box>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+                fontWeight: 400,
+                pl: 0.5,
+              }}
+            >
+              {isHindi ? 'कोई परिणाम नहीं' : 'No matches'}
+            </Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              {isHindi ? 'जैसे: दीपावली, एकादशी…' : 'Try: Diwali, Ekadashi…'}
+            </Typography>
+          </Box>
         )
       )}
 
@@ -367,6 +380,19 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
           '&::-webkit-scrollbar': { display: 'none' },
         }}
       >
+        {upcoming.length === 0 && (
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 3, mx: 'auto' }}>
+            <Box sx={{ width: 48, height: 48, borderRadius: 1, bgcolor: alpha(muiTheme.palette.primary.main, 0.08), display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1 }}>
+              <PartyPopper size={24} strokeWidth={1.5} color={muiTheme.palette.primary.main} />
+            </Box>
+            <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 400 }}>
+              {isHindi ? 'आगे · अगले 15 दिन' : 'Coming up · next 15 days'}
+            </Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              {isHindi ? 'त्योहार और व्रत खोजें' : 'Search festivals & vrats'}
+            </Typography>
+          </Box>
+        )}
         {upcoming.map((day) => {
           const tappable = !!day.detailId && !!onFestivalOpen;
           return (
@@ -388,14 +414,20 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
                 minWidth: 104,
                 maxWidth: 140,
                 p: 1,
-                borderRadius: 2,
+                borderRadius: 1,
                 border: '1px solid',
                 borderColor: 'divider',
                 bgcolor: 'background.paper',
                 cursor: tappable ? 'pointer' : 'default',
                 minHeight: 48,
+                transition: 'all 0.2s ease',
+                '&:hover': tappable ? { bgcolor: alpha(muiTheme.palette.primary.main, 0.04) } : {},
+                '&:active': tappable ? { transform: 'scale(0.98)' } : {},
               }}
             >
+              <Box sx={{ width: 32, height: 32, borderRadius: 1, bgcolor: alpha(muiTheme.palette.primary.main, 0.08), display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 0.5 }}>
+                <CalendarDays size={18} strokeWidth={1.5} color={muiTheme.palette.primary.main} />
+              </Box>
               <Typography
                 variant="caption"
                 sx={{

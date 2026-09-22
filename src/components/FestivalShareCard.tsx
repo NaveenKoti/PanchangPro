@@ -30,7 +30,8 @@ import {
   ToggleButtonGroup,
   Chip,
 } from '@mui/material';
-import { X, Download, Share2, Copy, Image, Smartphone, Sun, Moon } from 'lucide-react';
+import { X, Download, Share2, Copy, Image, Smartphone, Sun, Moon, Share } from 'lucide-react';
+import { alpha } from '@mui/material/styles';
 import { Festival } from '../types';
 import { useI18n } from '../hooks/useI18n';
 
@@ -642,11 +643,14 @@ Shared from VedaTime - vedatime.app`;
       maxWidth="sm"
       fullWidth
       PaperProps={{
-        sx: { borderRadius: 3 }
+        sx: { borderRadius: 1 }
       }}
     >
-      <DialogTitle sx={{ fontWeight: 500, pb: 1 }}>
-        {deco.emoji} {isHindi ? 'त्योहार साझा करें' : 'Share Festival'}
+      <DialogTitle sx={{ fontWeight: 500, pb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ width: 32, height: 32, borderRadius: 1, bgcolor: alpha(theme.palette.primary.main, 0.08), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Share size={18} strokeWidth={1.5} color={theme.palette.primary.main} />
+        </Box>
+        {isHindi ? 'त्योहार साझा करें' : 'Share Festival'}
         <IconButton
           onClick={onClose}
           aria-label="Close share card"
@@ -666,16 +670,16 @@ Shared from VedaTime - vedatime.app`;
           sx={{
             p: 2,
             mb: 2,
-            borderRadius: 2,
-            background: 'linear-gradient(135deg, rgba(199, 91, 18, 0.08), rgba(255, 215, 0, 0.08))',
-            border: '1px solid rgba(199, 91, 18, 0.15)',
+            borderRadius: 1,
+            background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)}, ${alpha(theme.palette.warning.main, 0.08)})`,
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
           }}
         >
           <Typography variant="h5" sx={{ fontWeight: 500, color: 'primary.main', mb: 0.5 }}>
             {festival.name}
           </Typography>
           {festival.nameHindi && (
-            <Typography variant="body1" sx={{ color: '#7A3008', mb: 1 }}>
+            <Typography variant="body1" sx={{ color: 'primary.dark', mb: 1 }}>
               {festival.nameHindi}
             </Typography>
           )}
@@ -684,8 +688,8 @@ Shared from VedaTime - vedatime.app`;
               label={tithiInfo}
               size="small"
               sx={{
-                bgcolor: 'rgba(199, 91, 18, 0.1)',
-                color: '#C75B12',
+                bgcolor: alpha(theme.palette.primary.main, 0.1),
+                color: 'primary.main',
                 fontWeight: 500,
                 mr: 1,
                 mb: 1,
@@ -715,7 +719,7 @@ Shared from VedaTime - vedatime.app`;
               exclusive
               onChange={handleAspectRatioChange}
               size="small"
-              sx={{ bgcolor: 'rgba(199, 91, 18, 0.06)', borderRadius: 2 }}
+              sx={{ bgcolor: alpha(theme.palette.primary.main, 0.06), borderRadius: 1 }}
             >
               <ToggleButton value="standard" sx={{ px: 1.5, borderRadius: 2, minHeight: 36 }}>
                 {isHindi ? 'स्क्वायर' : 'Square'}
@@ -734,7 +738,7 @@ Shared from VedaTime - vedatime.app`;
               exclusive
               onChange={handleThemeChange}
               size="small"
-              sx={{ bgcolor: 'rgba(199, 91, 18, 0.06)', borderRadius: 2 }}
+              sx={{ bgcolor: alpha(theme.palette.primary.main, 0.06), borderRadius: 1 }}
             >
               <ToggleButton value="light" sx={{ px: 1.5, borderRadius: 2, minHeight: 36 }}>
                 <Sun size={14} style={{ marginRight: 4 }} />
@@ -753,10 +757,10 @@ Shared from VedaTime - vedatime.app`;
           <Box
             sx={{
               mb: 2,
-              borderRadius: 2,
+              borderRadius: 1,
               overflow: 'hidden',
-              border: '1px solid rgba(0,0,0,0.08)',
-              bgcolor: 'rgba(0,0,0,0.02)',
+              border: `1px solid ${alpha(theme.palette.text.primary, 0.08)}`,
+              bgcolor: alpha(theme.palette.text.primary, 0.02),
             }}
           >
             <Box

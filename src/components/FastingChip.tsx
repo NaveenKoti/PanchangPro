@@ -17,6 +17,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import { Leaf, Clock } from 'lucide-react';
+import { alpha } from '@mui/material/styles';
 import { useBreakpoints } from '../hooks/useBreakpoints';
 
 export interface FastingInfo {
@@ -108,43 +109,37 @@ export const FastingChip: React.FC<FastingChipProps> = ({
           alignItems: 'center',
           gap: 1.5,
           p: 1.5,
-          borderRadius: 2,
-          bgcolor: isDark
-            ? `${theme.palette.success.main}15`
-            : `${theme.palette.success.main}10`,
+          borderRadius: 1,
+          bgcolor: alpha(theme.palette.success.main, isDark ? 0.1 : 0.06),
           border: '1px solid',
-          borderColor: isDark
-            ? `${theme.palette.success.main}30`
-            : `${theme.palette.success.main}25`,
+          borderColor: alpha(theme.palette.success.main, isDark ? 0.2 : 0.16),
           cursor: onClick ? 'pointer' : 'default',
+          minHeight: 48,
           transition: 'all 0.2s ease',
           '&:hover': onClick
             ? {
-                bgcolor: isDark
-                  ? `${theme.palette.success.main}25`
-                  : `${theme.palette.success.main}18`,
+                bgcolor: alpha(theme.palette.success.main, isDark ? 0.16 : 0.1),
               }
-            : {},
+            : { bgcolor: alpha(theme.palette.success.main, isDark ? 0.12 : 0.08) },
+          '&:active': onClick ? { transform: 'scale(0.98)' } : {},
         }}
       >
         {/* Fasting icon with glow */}
         <Box
           sx={{
-            width: 48,
-            height: 48,
-            borderRadius: 2,
+            width: 36,
+            height: 36,
+            borderRadius: 1,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            bgcolor: isDark
-              ? `${theme.palette.success.main}25`
-              : `${theme.palette.success.main}15`,
+            bgcolor: alpha(theme.palette.success.main, isDark ? 0.16 : 0.1),
             color: theme.palette.success.main,
             flexShrink: 0,
             animation: isActive ? 'fastingPulse 2s ease-in-out infinite' : 'none',
           }}
         >
-          <Leaf size={20} strokeWidth={1.5} />
+          <Leaf size={18} strokeWidth={1.5} />
         </Box>
 
         <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -190,9 +185,7 @@ export const FastingChip: React.FC<FastingChipProps> = ({
                 px: 1,
                 py: 0.25,
                 borderRadius: 1,
-                bgcolor: isDark
-                  ? `${theme.palette.success.main}20`
-                  : `${theme.palette.success.main}12`,
+                bgcolor: alpha(theme.palette.success.main, isDark ? 0.14 : 0.08),
               }}
             >
               <Clock size={11} color={theme.palette.success.main} />
@@ -251,23 +244,20 @@ export const FastingChip: React.FC<FastingChipProps> = ({
       size="small"
       sx={{
         height: 28,
-        borderRadius: 1.5,
-        bgcolor: isDark
-          ? `${theme.palette.success.main}20`
-          : `${theme.palette.success.main}12`,
+        borderRadius: 999,
+        bgcolor: alpha(theme.palette.success.main, isDark ? 0.14 : 0.08),
         color: theme.palette.success.main,
         fontWeight: 500,
         fontSize: '0.75rem',
-        border: `1px solid ${isDark ? `${theme.palette.success.main}35` : `${theme.palette.success.main}25`}`,
+        border: `1px solid ${alpha(theme.palette.success.main, isDark ? 0.22 : 0.16)}`,
         cursor: onClick ? 'pointer' : 'default',
         transition: 'all 0.2s ease',
         '&:hover': onClick
           ? {
-              bgcolor: isDark
-                ? `${theme.palette.success.main}30`
-                : `${theme.palette.success.main}20`,
+              bgcolor: alpha(theme.palette.success.main, isDark ? 0.2 : 0.12),
             }
           : {},
+        '&:active': onClick ? { transform: 'scale(0.98)' } : {},
         '& .MuiChip-icon': {
           ml: '6px',
         },

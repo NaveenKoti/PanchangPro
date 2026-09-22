@@ -47,7 +47,7 @@ export const GlossaryDialog: React.FC<GlossaryDialogProps> = ({
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: 3,
+          borderRadius: 1,
         },
       }}
     >
@@ -61,17 +61,17 @@ export const GlossaryDialog: React.FC<GlossaryDialogProps> = ({
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
           <Box
             sx={{
-              width: 48,
-              height: 48,
-              borderRadius: 2,
-              bgcolor: alpha(theme.palette.primary.main, 0.15),
+              width: 36,
+              height: 36,
+              borderRadius: 1,
+              bgcolor: alpha(theme.palette.primary.main, 0.12),
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
             }}
           >
-            <BookOpen size={28} color={theme.palette.primary.main} />
+            <BookOpen size={19} color={theme.palette.primary.main} />
           </Box>
           <Box sx={{ flex: 1 }}>
             <Typography
@@ -98,8 +98,9 @@ export const GlossaryDialog: React.FC<GlossaryDialogProps> = ({
               minWidth: 48,
               minHeight: 48,
               '&:hover': {
-                bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+                bgcolor: alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.08 : 0.05),
               },
+              '&:active': { transform: 'scale(0.98)' },
             }}
           >
             <X size={20} />

@@ -10,6 +10,7 @@
 import React from 'react';
 import { Box, Chip, BoxProps, useTheme } from '@mui/material';
 import { Sparkles } from 'lucide-react';
+import { alpha } from '@mui/material/styles';
 
 export type Favorability = 'auspicious' | 'neutral' | 'challenging';
 
@@ -35,15 +36,15 @@ export const AuspiciousIndicator: React.FC<AuspiciousIndicatorProps> = ({
     switch (favorability) {
       case 'auspicious':
         return {
-          bg: isDark ? `${theme.palette.primary.main}20` : `${theme.palette.primary.main}15`,
+          bg: alpha(theme.palette.primary.main, isDark ? 0.14 : 0.08),
           color: theme.palette.primary.main,
-          border: isDark ? `${theme.palette.primary.main}40` : `${theme.palette.primary.main}30`,
+          border: alpha(theme.palette.primary.main, isDark ? 0.25 : 0.2),
         };
       case 'neutral':
         return {
-          bg: isDark ? `${theme.palette.secondary.main}20` : `${theme.palette.secondary.main}15`,
+          bg: alpha(theme.palette.secondary.main, isDark ? 0.14 : 0.08),
           color: theme.palette.secondary.main,
-          border: isDark ? `${theme.palette.secondary.main}40` : `${theme.palette.secondary.main}30`,
+          border: alpha(theme.palette.secondary.main, isDark ? 0.25 : 0.2),
         };
       case 'challenging':
         return {
@@ -90,7 +91,7 @@ export const AuspiciousIndicator: React.FC<AuspiciousIndicatorProps> = ({
           bgcolor: colors.bg,
           color: colors.color,
           border: `1px solid ${colors.border}`,
-          borderRadius: 2,
+          borderRadius: 1,
           padding: '12px 16px',
           
           fontWeight: 500,
@@ -99,7 +100,7 @@ export const AuspiciousIndicator: React.FC<AuspiciousIndicatorProps> = ({
         {...props}
       >
         {showIcon && <Sparkles size={16} />}
-        <span>{message || `✨ ${favorability.charAt(0).toUpperCase() + favorability.slice(1)} timing`}</span>
+        <span>{message || `${favorability.charAt(0).toUpperCase() + favorability.slice(1)} timing`}</span>
       </Box>
     );
   }
@@ -114,7 +115,7 @@ export const AuspiciousIndicator: React.FC<AuspiciousIndicatorProps> = ({
         bgcolor: colors.bg,
         color: colors.color,
         border: `1px solid ${colors.border}`,
-        borderRadius: 2,
+        borderRadius: 1,
         px: 1.5,
         py: 0.75,
         fontSize: sizeStyles.fontSize,

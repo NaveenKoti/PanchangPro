@@ -35,6 +35,7 @@ import {
   Chip,
   IconButton,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import {
   MapPin,
   Bell,
@@ -286,8 +287,8 @@ export default function SettingsScreen() {
               sx={{
                 width: { xs: 36, sm: 40 },
                 height: { xs: 36, sm: 40 },
-                borderRadius: 2,
-                bgcolor: 'rgba(199, 91, 18, 0.1)',
+                borderRadius: 1,
+                bgcolor: alpha(muiTheme.palette.primary.main, 0.1),
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -336,10 +337,13 @@ export default function SettingsScreen() {
                   onClick={() => setLocation({ latitude: city.latitude, longitude: city.longitude, timezone: city.timezone, name: city.name })}
                   sx={{
                     cursor: 'pointer',
-                    bgcolor: preferences.location.name === city.name ? 'rgba(199, 91, 18, 0.04)' : 'transparent',
+                    bgcolor: preferences.location.name === city.name ? alpha(muiTheme.palette.primary.main, 0.04) : 'transparent',
                     transition: 'all 0.2s ease',
                     '&:hover': {
-                      bgcolor: 'rgba(199, 91, 18, 0.08)',
+                      bgcolor: alpha(muiTheme.palette.primary.main, 0.08),
+                    },
+                    '&:active': {
+                      transform: 'scale(0.98)',
                     },
                   }}
                 >
@@ -368,7 +372,8 @@ export default function SettingsScreen() {
                 onClick={() => setManualCoords(true)}
                 sx={{
                   cursor: 'pointer',
-                  '&:hover': { bgcolor: 'rgba(199, 91, 18, 0.08)' },
+                  '&:hover': { bgcolor: alpha(muiTheme.palette.primary.main, 0.08) },
+                  '&:active': { transform: 'scale(0.98)' },
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
@@ -475,7 +480,7 @@ export default function SettingsScreen() {
                 onClick={() => setNotificationCenterOpen(true)}
                 sx={{
                   cursor: 'pointer',
-                  '&:hover': { bgcolor: 'rgba(199, 91, 18, 0.06)' },
+                  '&:hover': { bgcolor: alpha(muiTheme.palette.primary.main, 0.06) },
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
@@ -490,7 +495,7 @@ export default function SettingsScreen() {
                     label="Open"
                     size="small"
                     variant="outlined"
-                    sx={{ borderRadius: 2, borderColor: muiTheme.palette.divider }}
+                    sx={{ borderRadius: 1, borderColor: muiTheme.palette.divider }}
                   />
                 </ListItemSecondaryAction>
               </ListItem>
@@ -578,7 +583,7 @@ export default function SettingsScreen() {
                   variant="outlined"
                   size="small"
                   onClick={sharePanchang}
-                  sx={{ borderRadius: 2 }}
+                  sx={{ borderRadius: 1 }}
                 >
                   {t('common.share')}
                 </Button>
@@ -597,7 +602,7 @@ export default function SettingsScreen() {
                   size="small"
                   onClick={handleClearData}
                   color="error"
-                  sx={{ borderRadius: 2 }}
+                  sx={{ borderRadius: 1 }}
                 >
                   {t('settings.clear')}
                 </Button>
@@ -634,7 +639,7 @@ export default function SettingsScreen() {
                 tabIndex={0}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setAboutDialog(true); } }}
                 onClick={() => setAboutDialog(true)}
-                sx={{ cursor: 'pointer', '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)' } }}
+                sx={{ cursor: 'pointer', '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? alpha(theme.palette.common.white, 0.04) : alpha(theme.palette.common.black, 0.02) }, '&:active': { transform: 'scale(0.98)' } }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   <Info size={20} color={muiTheme.palette.info.main} />
@@ -650,7 +655,7 @@ export default function SettingsScreen() {
                 tabIndex={0}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPrivacyDialog(true); } }}
                 onClick={() => setPrivacyDialog(true)}
-                sx={{ cursor: 'pointer', minHeight: 48, '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)' } }}
+                sx={{ cursor: 'pointer', minHeight: 48, '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? alpha(theme.palette.common.white, 0.04) : alpha(theme.palette.common.black, 0.02) }, '&:active': { transform: 'scale(0.98)' } }}
               >
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   <Lock size={20} color={muiTheme.palette.info.main} />
@@ -669,7 +674,7 @@ export default function SettingsScreen() {
       <Dialog 
         open={manualCoords} 
         onClose={() => setManualCoords(false)}
-        PaperProps={{ sx: { borderRadius: 2, p: 2 } }}
+        PaperProps={{ sx: { borderRadius: 1, p: 2 } }}
       >
         <DialogTitle sx={{ fontWeight: 500 }}>
           {t('settings.enterManual')}
@@ -705,13 +710,13 @@ export default function SettingsScreen() {
           />
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => { setCoordsError(''); setManualCoords(false); }} variant="outlined" sx={{ borderRadius: 2 }}>
+          <Button onClick={() => { setCoordsError(''); setManualCoords(false); }} variant="outlined" sx={{ borderRadius: 1 }}>
             {t('common.cancel')}
           </Button>
           <Button 
             onClick={handleManualLocationSave} 
             variant="contained" 
-            sx={{ borderRadius: 2 }}
+            sx={{ borderRadius: 1 }}
           >
             {t('common.save')}
           </Button>
@@ -722,7 +727,7 @@ export default function SettingsScreen() {
       <Dialog 
         open={aboutDialog} 
         onClose={() => setAboutDialog(false)}
-        PaperProps={{ sx: { borderRadius: 2, p: 2 } }}
+        PaperProps={{ sx: { borderRadius: 1, p: 2 } }}
       >
         <DialogTitle sx={{ fontWeight: 500, textAlign: 'center' }}>
           🙏 {t('common.appName')}
@@ -769,7 +774,7 @@ export default function SettingsScreen() {
           <Button 
             onClick={() => setAboutDialog(false)} 
             variant="contained"
-            sx={{ borderRadius: 2, px: 3 }}
+            sx={{ borderRadius: 1, px: 3 }}
           >
             {t('common.close')}
           </Button>
@@ -780,7 +785,7 @@ export default function SettingsScreen() {
       <Dialog
         open={privacyDialog}
         onClose={() => setPrivacyDialog(false)}
-        PaperProps={{ sx: { borderRadius: 2, p: 2 } }}
+        PaperProps={{ sx: { borderRadius: 1, p: 2 } }}
       >
         <DialogTitle sx={{ fontWeight: 500, textAlign: 'center' }}>
           {isHindi ? 'गोपनीयता' : 'Privacy'}
@@ -803,7 +808,7 @@ export default function SettingsScreen() {
           <Button
             onClick={() => setPrivacyDialog(false)}
             variant="contained"
-            sx={{ borderRadius: 2, px: 3 }}
+            sx={{ borderRadius: 1, px: 3 }}
           >
             {t('common.close')}
           </Button>
@@ -814,7 +819,7 @@ export default function SettingsScreen() {
       <Dialog 
         open={inviteDialog} 
         onClose={() => setInviteDialog(false)}
-        PaperProps={{ sx: { borderRadius: 2, p: 2 } }}
+        PaperProps={{ sx: { borderRadius: 1, p: 2 } }}
       >
         <DialogTitle sx={{ fontWeight: 500 }}>
           {t('invite.familyMember')}
@@ -837,14 +842,14 @@ export default function SettingsScreen() {
           />
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setInviteDialog(false)} variant="outlined" sx={{ borderRadius: 2 }}>
+          <Button onClick={() => setInviteDialog(false)} variant="outlined" sx={{ borderRadius: 1 }}>
             {t('common.cancel')}
           </Button>
           <Button 
             onClick={handleInvite} 
             variant="contained" 
             startIcon={<UserPlus size={18} />}
-            sx={{ borderRadius: 2 }}
+            sx={{ borderRadius: 1 }}
           >
             {t('invite.send')}
           </Button>
@@ -867,7 +872,7 @@ export default function SettingsScreen() {
         <Alert
           severity={snackbar.severity}
           onClose={() => setSnackbar({ ...snackbar, open: false })}
-          sx={{ borderRadius: 2 }}
+          sx={{ borderRadius: 1 }}
         >
           {snackbar.message}
         </Alert>

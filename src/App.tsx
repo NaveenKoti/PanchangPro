@@ -333,9 +333,10 @@ const App: React.FC = () => {
                 sx: {
                   mt: 1,
                   minWidth: 180,
-                  borderRadius: 2.5,
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-                  border: '1px solid rgba(0,0,0,0.05)',
+                  borderRadius: 1,
+                  boxShadow: (theme) => theme.shadows[8],
+                  border: '1px solid',
+                  borderColor: 'divider',
                 },
               }}
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}

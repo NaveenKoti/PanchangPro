@@ -24,27 +24,28 @@ import {
   useTheme,
 } from '@mui/material';
 import { Clock, Sun, Moon, Sunrise, Sunset, Wind, Flame, Leaf } from 'lucide-react';
+import { alpha } from '@mui/material/styles';
 import { Panchang, DinacharyaPhase } from '../types';
 
 // Dosha visual config — colors now theme-aware
 const getDoshaConfig = (theme: any) => ({
   vata: {
     color: theme.palette.info.main,
-    bg: `${theme.palette.info.main}15`,
+    bg: alpha(theme.palette.info.main, 0.1),
     name: 'Vata',
     element: 'Air & Ether',
     Icon: Wind,
   },
   pitta: {
     color: theme.palette.warning.main,
-    bg: `${theme.palette.warning.main}15`,
+    bg: alpha(theme.palette.warning.main, 0.1),
     name: 'Pitta',
     element: 'Fire & Water',
     Icon: Flame,
   },
   kapha: {
     color: theme.palette.success.main,
-    bg: `${theme.palette.success.main}15`,
+    bg: alpha(theme.palette.success.main, 0.1),
     name: 'Kapha',
     element: 'Earth & Water',
     Icon: Leaf,
@@ -66,8 +67,8 @@ export const AyurvedicClock: React.FC<AyurvedicClockProps> = ({ panchang }) => {
   const [timeRemaining, setTimeRemaining] = useState('');
 
   // Theme-aware background colors
-  const getBoxBg = () => isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)';
-  const getBorder = () => isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
+  const getBoxBg = () => alpha(theme.palette.text.primary, isDark ? 0.05 : 0.04);
+  const getBorder = () => alpha(theme.palette.text.primary, isDark ? 0.14 : 0.08);
 
   // Update clock every minute — sufficient for this display
   useEffect(() => {
@@ -135,28 +136,28 @@ export const AyurvedicClock: React.FC<AyurvedicClockProps> = ({ panchang }) => {
   // ── Nidra Kala fallback ──────────────────────────────────────────────────────
   if (!currentPhase) {
     const nidraColor = theme.palette.info.main;
-    const nidraBg = `${nidraColor}15`;
+    const nidraBg = alpha(nidraColor, 0.1);
     
     return (
       <Card
         elevation={0}
         sx={{
-          borderRadius: 3,
+          borderRadius: 1,
           mb: 2,
           bgcolor: 'background.paper',
           border: `1px solid ${getBorder()}`,
         }}
       >
-        <Box sx={{ height: 4, bgcolor: `${nidraColor}80` }} />
+        <Box sx={{ height: 4, bgcolor: alpha(nidraColor, 0.5) }} />
         <CardContent sx={{ p: 2, pb: '16px !important' }}>
           {/* Header */}
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Box
                 sx={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 2,
+                  width: 36,
+                  height: 36,
+                  borderRadius: 1,
                   bgcolor: nidraBg,
                   display: 'flex',
                   alignItems: 'center',
@@ -193,7 +194,7 @@ export const AyurvedicClock: React.FC<AyurvedicClockProps> = ({ panchang }) => {
             sx={{
               bgcolor: nidraBg,
               color: nidraColor,
-              border: `1px solid ${nidraColor}40`,
+              border: `1px solid ${alpha(nidraColor, 0.25)}`,
               fontWeight: 500,
               fontSize: '0.7rem',
               height: 26,
@@ -208,10 +209,24 @@ export const AyurvedicClock: React.FC<AyurvedicClockProps> = ({ panchang }) => {
                 alignItems: 'center',
                 gap: 1,
                 p: 1,
-                borderRadius: 2,
+                borderRadius: 1,
                 bgcolor: getBoxBg(),
               }}
             >
+              <Box
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 1,
+                  bgcolor: alpha(doshaConfig[nextPhase.dosha].color, 0.12),
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Moon size={16} color={doshaConfig[nextPhase.dosha].color} />
+              </Box>
               <Box
                 sx={{
                   width: 8,
@@ -239,7 +254,7 @@ export const AyurvedicClock: React.FC<AyurvedicClockProps> = ({ panchang }) => {
     <Card
       elevation={0}
       sx={{
-        borderRadius: 3,
+        borderRadius: 1,
         mb: 2,
         bgcolor: 'background.paper',
         border: `1px solid ${getBorder()}`,
@@ -249,7 +264,7 @@ export const AyurvedicClock: React.FC<AyurvedicClockProps> = ({ panchang }) => {
       <Box
         sx={{
           height: 4,
-          background: `linear-gradient(90deg, ${dosha.color}, ${dosha.color}66)`,
+          background: `linear-gradient(90deg, ${dosha.color}, ${alpha(dosha.color, 0.4)})`,
         }}
       />
 
@@ -266,16 +281,16 @@ export const AyurvedicClock: React.FC<AyurvedicClockProps> = ({ panchang }) => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Box
               sx={{
-                width: 32,
-                height: 32,
-                borderRadius: 2,
+                width: 36,
+                height: 36,
+                borderRadius: 1,
                 bgcolor: dosha.bg,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <Clock size={18} color={dosha.color} />
+              <DoshaIcon size={18} color={dosha.color} />
             </Box>
             <Typography
               variant="overline"
@@ -310,7 +325,7 @@ export const AyurvedicClock: React.FC<AyurvedicClockProps> = ({ panchang }) => {
           sx={{
             bgcolor: dosha.bg,
             color: dosha.color,
-            border: `1px solid ${dosha.color}44`,
+            border: `1px solid ${alpha(dosha.color, 0.27)}`,
             fontWeight: 500,
             fontSize: '0.7rem',
             height: 26,
@@ -360,11 +375,25 @@ export const AyurvedicClock: React.FC<AyurvedicClockProps> = ({ panchang }) => {
               alignItems: 'center',
               gap: 1,
               p: 1,
-              borderRadius: 2,
+              borderRadius: 1,
               bgcolor: getBoxBg(),
               mb: 1.5,
             }}
           >
+            <Box
+              sx={{
+                width: 32,
+                height: 32,
+                borderRadius: 1,
+                bgcolor: alpha(doshaConfig[nextPhase.dosha].color, 0.12),
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <Clock size={16} color={doshaConfig[nextPhase.dosha].color} />
+            </Box>
             <Box
               sx={{
                 width: 8,

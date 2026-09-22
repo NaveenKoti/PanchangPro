@@ -23,6 +23,7 @@ import {
   Slide,
 } from '@mui/material';
 import { Leaf, BookOpen, Settings, X } from 'lucide-react';
+import { alpha } from '@mui/material/styles';
 import { useI18n } from '../hooks/useI18n';
 import { useBreakpoints } from '../theme/breakpoints';
 import { triggerHapticIfSupported } from '../utils/haptics';
@@ -115,8 +116,8 @@ export const MoreMenu: React.FC<MoreMenuProps> = ({ open, onClose, onSelectItem 
           sx={{
             width: 40,
             height: 4,
-            borderRadius: 2,
-            bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)',
+            borderRadius: 999,
+            bgcolor: alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.2 : 0.15),
           }}
         />
       </Box>
@@ -143,6 +144,7 @@ export const MoreMenu: React.FC<MoreMenuProps> = ({ open, onClose, onSelectItem 
         </Typography>
         <ListItemButton
           onClick={onClose}
+          aria-label="Close menu"
           sx={{
             width: 48,
             height: 48,
@@ -153,8 +155,9 @@ export const MoreMenu: React.FC<MoreMenuProps> = ({ open, onClose, onSelectItem 
             justifyContent: 'center',
             alignItems: 'center',
             '&:hover': {
-              bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
+              bgcolor: alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.08 : 0.06),
             },
+            '&:active': { transform: 'scale(0.98)' },
           }}
         >
           <X size={20} color={theme.palette.text.secondary} />
@@ -174,13 +177,14 @@ export const MoreMenu: React.FC<MoreMenuProps> = ({ open, onClose, onSelectItem 
                 px: 2.5,
                 mx: 1,
                 my: 0.25,
-                borderRadius: 2,
+                borderRadius: 1,
                 minHeight: 56,
                 '&:hover': {
-                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(199, 91, 18, 0.06)',
+                  bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.1 : 0.04),
                 },
                 '&:active': {
-                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(199, 91, 18, 0.1)',
+                  transform: 'scale(0.98)',
+                  bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.14 : 0.08),
                 },
               }}
             >
@@ -190,7 +194,9 @@ export const MoreMenu: React.FC<MoreMenuProps> = ({ open, onClose, onSelectItem 
                   color: theme.palette.primary.main,
                 }}
               >
-                <item.icon size={20} strokeWidth={1.5} />
+                <Box sx={{ width: 36, height: 36, borderRadius: 1, bgcolor: alpha(theme.palette.primary.main, 0.08), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <item.icon size={19} strokeWidth={1.5} />
+                </Box>
               </ListItemIcon>
               <Box sx={{ flex: 1 }}>
                 <ListItemText

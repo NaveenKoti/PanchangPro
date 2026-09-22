@@ -29,6 +29,7 @@ import {
   Chip,
 } from '@mui/material';
 import { X, Download, Share2, MessageCircle, Image, Smartphone } from 'lucide-react';
+import { alpha } from '@mui/material/styles';
 import { Panchang, Festival } from '../types';
 import { useI18n } from '../hooks/useI18n';
 
@@ -514,7 +515,7 @@ Shared from VedaTime - vedatime.app`;
       maxWidth="sm"
       fullWidth
       PaperProps={{
-        sx: { borderRadius: 3 }
+        sx: { borderRadius: 1 }
       }}
     >
       <DialogTitle sx={{ fontWeight: 500, pb: 1 }}>
@@ -540,7 +541,7 @@ Shared from VedaTime - vedatime.app`;
             exclusive
             onChange={handleAspectRatioChange}
             size="small"
-            sx={{ bgcolor: 'rgba(199, 91, 18, 0.06)', borderRadius: 2 }}
+            sx={{ bgcolor: alpha(theme.palette.primary.main, 0.06), borderRadius: 1 }}
           >
             <ToggleButton value="standard" sx={{ px: 2, borderRadius: 2 }}>
               <Image size={16} style={{ marginRight: 6 }} />
@@ -556,8 +557,8 @@ Shared from VedaTime - vedatime.app`;
               label={isHindi ? 'त्योहार' : 'Festival'}
               size="small"
               sx={{
-                bgcolor: 'rgba(255, 107, 53, 0.15)',
-                color: '#FF6B35',
+                bgcolor: alpha(theme.palette.warning.main, 0.12),
+                color: 'warning.main',
                 fontWeight: 500,
               }}
             />
@@ -571,14 +572,14 @@ Shared from VedaTime - vedatime.app`;
             sx={{
               p: 2,
               mb: 2,
-              borderRadius: 2,
-              bgcolor: 'rgba(199, 91, 18, 0.04)',
-              border: '1px solid rgba(199, 91, 18, 0.15)',
+              borderRadius: 1,
+              bgcolor: alpha(theme.palette.primary.main, 0.04),
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 1.5 }}>
               <Typography variant="h6" sx={{ fontWeight: 500, color: theme.palette.primary.main }}>
-                {isHindi ? '🌙 पंचांग' : '🌙 Panchang'}
+                {isHindi ? 'पंचांग' : 'Panchang'}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 ({panchang.tithi.paksha})
@@ -586,25 +587,25 @@ Shared from VedaTime - vedatime.app`;
             </Box>
 
             <Typography variant="body2" sx={{ mb: 0.5 }}>
-              ⭐ {panchang.nakshatra.name}
+              {panchang.nakshatra.name}
             </Typography>
             <Typography variant="body2" sx={{ mb: 0.5 }}>
-              🧘 {panchang.yoga.name} • ☀️ {panchang.karana.name}
+              {panchang.yoga.name} • {panchang.karana.name}
             </Typography>
             <Typography variant="body2" sx={{ mb: 0.5 }}>
-              🌅 {panchang.sunrise.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {panchang.sunrise.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               {' • '}
-              🌇 {panchang.sunset.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {panchang.sunset.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </Typography>
 
             {hasFestival && panchang.festivals && (
-              <Typography variant="body2" sx={{ mb: 0.5, color: '#FF6B35', fontWeight: 500 }}>
-                🎉 {isHindi ? panchang.festivals[0].nameHindi : panchang.festivals[0].name}
+              <Typography variant="body2" sx={{ mb: 0.5, color: 'warning.main', fontWeight: 500 }}>
+                {isHindi ? panchang.festivals[0].nameHindi : panchang.festivals[0].name}
               </Typography>
             )}
 
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-              📍 {locationName} • {panchang.date.toLocaleDateString()}
+              {locationName} • {panchang.date.toLocaleDateString()}
             </Typography>
 
             {/* Image preview - shown only when generated */}
@@ -617,9 +618,9 @@ Shared from VedaTime - vedatime.app`;
                   width: '100%',
                   maxHeight: isStory ? 400 : 220,
                   objectFit: 'contain',
-                  borderRadius: 2,
+                  borderRadius: 1,
                   mt: 1.5,
-                  border: '1px solid rgba(0,0,0,0.08)',
+                  border: `1px solid ${alpha(theme.palette.text.primary, 0.08)}`,
                 }}
               />
             )}

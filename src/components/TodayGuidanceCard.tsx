@@ -22,6 +22,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { alpha } from '@mui/material/styles';
 import { Panchang, TimeRange } from '../types';
 import {
   calculateGuidance,
@@ -83,8 +84,8 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
 
   const color = getColor();
   const isDark = theme.palette.mode === 'dark';
-  const colorLight = isDark ? `${color}15` : `${color}08`;
-  const colorBorder = isDark ? `${color}30` : `${color}20`;
+  const colorLight = alpha(color, isDark ? 0.1 : 0.05);
+  const colorBorder = alpha(color, isDark ? 0.2 : 0.14);
 
   // Thin SVG progress ring for the score (same value, favorability color).
   const ringSize = 44;
@@ -99,10 +100,11 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
       <Card
         elevation={0}
         sx={{
-          borderRadius: 2,
+          borderRadius: 1,
           bgcolor: 'background.paper',
           border: `1px solid ${colorBorder}`,
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          '&:active': { transform: 'scale(0.98)' },
         }}
       >
         <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
@@ -113,24 +115,32 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
               bgcolor: colorLight,
               cursor: 'pointer',
               transition: 'all 0.2s ease',
+              minHeight: 48,
+              '&:hover': { bgcolor: alpha(color, 0.08) },
+              '&:active': { transform: 'scale(0.98)' },
             }}
+            role="button"
+            tabIndex={0}
+            aria-expanded={expanded}
+            aria-label={expanded ? 'Collapse guidance details' : 'Expand guidance details'}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(!expanded); } }}
             onClick={() => setExpanded(!expanded)}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               {/* Icon */}
               <Box
                 sx={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 2,
-                  bgcolor: `${color}15`, // 8% opacity
+                  width: 36,
+                  height: 36,
+                  borderRadius: 1,
+                  bgcolor: alpha(color, 0.1),
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
                 }}
               >
-                <Sparkles size={22} strokeWidth={1.5} color={color} />
+                <Sparkles size={19} strokeWidth={1.5} color={color} />
               </Box>
 
               {/* Text */}
@@ -181,7 +191,7 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
                       cy={ringSize / 2}
                       r={ringRadius}
                       fill="none"
-                      stroke={`${color}25`}
+                      stroke={alpha(color, 0.15)}
                       strokeWidth={ringStroke}
                     />
                     <circle
@@ -214,8 +224,8 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
                   size="small"
                   aria-label={expanded ? 'Collapse guidance details' : 'Expand guidance details'}
                   sx={{
-                    width: 32,
-                    height: 32,
+                    width: 48,
+                    height: 48,
                     color,
                     transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
@@ -252,10 +262,10 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
                         key={index}
                         label={item}
                         size="small"
-                        sx={{
-                          height: 28,
-                          borderRadius: 1.5,
-                          bgcolor: `${theme.palette.success.main}10`,
+                sx={{
+                  height: 28,
+                  borderRadius: 999,
+                  bgcolor: alpha(theme.palette.success.main, 0.08),
                           color: theme.palette.success.main,
                           fontWeight: 500,
                           fontSize: '0.75rem',
@@ -288,10 +298,10 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
                         key={index}
                         label={item}
                         size="small"
-                        sx={{
-                          height: 28,
-                          borderRadius: 1.5,
-                          bgcolor: `${theme.palette.error.main}10`,
+                sx={{
+                  height: 28,
+                  borderRadius: 999,
+                  bgcolor: alpha(theme.palette.error.main, 0.08),
                           color: theme.palette.error.main,
                           fontWeight: 500,
                           fontSize: '0.75rem',
@@ -305,12 +315,12 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
               {/* Reasons */}
               {guidance.reasons.length > 0 && (
                 <Box
-                  sx={{
-                    mt: 1.5,
-                    p: 1.5,
-                    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
-                    borderRadius: 2,
-                  }}
+                sx={{
+                  mt: 1.5,
+                  p: 1.5,
+                  bgcolor: alpha(theme.palette.text.primary, isDark ? 0.05 : 0.03),
+                  borderRadius: 1,
+                }}
                 >
                   <Typography
                     variant="caption"

@@ -27,6 +27,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material';
 import { X, CheckCircle, XCircle, Info, Sparkles, Moon } from 'lucide-react';
+import { alpha } from '@mui/material/styles';
 import { getNakshatraByNumber, NakshatraSignificance } from '../data/vedic/nakshatraData';
 import { useI18n } from '../hooks/useI18n';
 
@@ -60,14 +61,14 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: 3,
+          borderRadius: 1,
         },
       }}
     >
       {/* Header */}
       <DialogTitle
         sx={{
-          bgcolor: 'rgba(44, 62, 107, 0.08)',
+          bgcolor: alpha(theme.palette.primary.main, 0.07),
           py: 2,
           px: 2.5,
         }}
@@ -75,17 +76,17 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
           <Box
             sx={{
-              width: 48,
-              height: 48,
-              borderRadius: 2,
-              bgcolor: 'rgba(44, 62, 107, 0.15)',
+              width: 36,
+              height: 36,
+              borderRadius: 1,
+              bgcolor: alpha(theme.palette.primary.main, 0.12),
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
             }}
           >
-            <Moon size={28} color={theme.palette.info.main} />
+            <Moon size={19} color={theme.palette.primary.main} />
           </Box>
           <Box sx={{ flex: 1 }}>
             <Typography
@@ -93,7 +94,7 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
               variant="h6"
               sx={{
                 fontWeight: 500,
-                color: theme.palette.info.main,
+                color: theme.palette.primary.main,
                 mb: 0.5,
               }}
             >
@@ -109,7 +110,10 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
             aria-label="Close nakshatra explanation"
             sx={{
               color: 'text.secondary',
-              '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' },
+              minWidth: 48,
+              minHeight: 48,
+              '&:hover': { bgcolor: alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.08 : 0.05) },
+              '&:active': { transform: 'scale(0.98)' },
             }}
           >
             <X size={20} />
@@ -127,10 +131,10 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
               fontWeight: 500,
               bgcolor:
                 nakshatraData.guna === 'Sattva'
-                  ? (theme) => theme.palette.mode === 'dark' ? 'rgba(129, 199, 106, 0.15)' : 'rgba(61, 107, 36, 0.1)'
+                  ? (theme) => alpha(theme.palette.success.main, theme.palette.mode === 'dark' ? 0.16 : 0.08)
                   : nakshatraData.guna === 'Rajas'
-                  ? (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 183, 77, 0.15)' : 'rgba(232, 148, 74, 0.1)'
-                  : 'rgba(158, 158, 158, 0.1)',
+                  ? (theme) => alpha(theme.palette.warning.main, theme.palette.mode === 'dark' ? 0.16 : 0.08)
+                  : alpha(theme.palette.text.primary, 0.08),
               color:
                 nakshatraData.guna === 'Sattva'
                   ? theme.palette.success.main
@@ -144,8 +148,8 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
             size="small"
             sx={{
               fontWeight: 500,
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(144, 164, 215, 0.15)' : 'rgba(44, 62, 107, 0.1)',
-              color: theme.palette.info.main,
+              bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.16 : 0.08),
+              color: theme.palette.primary.main,
             }}
           />
           <Chip
@@ -153,8 +157,8 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
             size="small"
             sx={{
               fontWeight: 500,
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(144, 164, 215, 0.15)' : 'rgba(44, 62, 107, 0.1)',
-              color: theme.palette.info.main,
+              bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.16 : 0.08),
+              color: theme.palette.primary.main,
             }}
           />
         </Box>
@@ -162,8 +166,8 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
         {/* Symbol */}
         <Box sx={{ mb: 2.5 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
-            <Sparkles size={18} color={theme.palette.info.main} />
-            <Typography variant="subtitle2" sx={{ fontWeight: 500, color: theme.palette.info.main }}>
+            <Sparkles size={18} color={theme.palette.primary.main} />
+            <Typography variant="subtitle2" sx={{ fontWeight: 500, color: theme.palette.primary.main }}>
               {isHindi ? 'प्रतीक' : 'Symbol'}
             </Typography>
           </Box>
@@ -172,9 +176,9 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
             sx={{
               lineHeight: 1.7,
               color: 'text.secondary',
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(144, 164, 215, 0.08)' : 'rgba(44, 62, 107, 0.05)',
+              bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.1 : 0.05),
               p: 1.5,
-              borderRadius: 2,
+              borderRadius: 1,
             }}
           >
             {isHindi ? nakshatraData.symbolHindi : nakshatraData.symbol}
@@ -184,8 +188,8 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
         {/* Significance */}
         <Box sx={{ mb: 2.5 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
-            <Info size={18} color={theme.palette.info.main} />
-            <Typography variant="subtitle2" sx={{ fontWeight: 500, color: theme.palette.info.main }}>
+            <Info size={18} color={theme.palette.primary.main} />
+            <Typography variant="subtitle2" sx={{ fontWeight: 500, color: theme.palette.primary.main }}>
               {isHindi ? 'महत्व' : 'Significance'}
             </Typography>
           </Box>
@@ -220,7 +224,7 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
                   sx={{
                     fontSize: '0.8rem',
                     fontWeight: 500,
-                    bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(129, 199, 106, 0.12)' : 'rgba(61, 107, 36, 0.08)',
+                    bgcolor: (theme) => alpha(theme.palette.success.main, theme.palette.mode === 'dark' ? 0.14 : 0.08),
                     color: theme.palette.success.main,
                   }}
                 />
@@ -247,7 +251,7 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
                   sx={{
                     fontSize: '0.8rem',
                     fontWeight: 500,
-                    bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(239, 154, 154, 0.12)' : 'rgba(244, 67, 54, 0.08)',
+                    bgcolor: (theme) => alpha(theme.palette.error.main, theme.palette.mode === 'dark' ? 0.14 : 0.08),
                     color: theme.palette.error.main,
                   }}
                 />
@@ -262,16 +266,16 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
             sx={{
               mt: 2,
               p: 1.5,
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(144, 164, 215, 0.1)' : 'rgba(44, 62, 107, 0.08)',
-              borderRadius: 2,
-              border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(144, 164, 215, 0.2)' : 'rgba(44, 62, 107, 0.2)'}`,
+              bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.12 : 0.06),
+              borderRadius: 1,
+              border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.25)}`,
             }}
           >
             <Typography
               variant="caption"
               sx={{
                 fontWeight: 500,
-                color: theme.palette.info.main,
+                color: theme.palette.primary.main,
                 display: 'block',
                 mb: 0.5,
               }}
@@ -297,11 +301,13 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
           variant="contained"
           fullWidth
           sx={{
-            borderRadius: 2,
+            borderRadius: 1,
             py: 1.25,
             fontWeight: 500,
-            bgcolor: theme.palette.info.main,
-            '&:hover': { bgcolor: theme.palette.info.dark },
+            minHeight: 48,
+            bgcolor: theme.palette.primary.main,
+            '&:hover': { bgcolor: theme.palette.primary.dark },
+            '&:active': { transform: 'scale(0.98)' },
           }}
         >
           {isHindi ? 'बंद करें' : 'Close'}

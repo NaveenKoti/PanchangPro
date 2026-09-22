@@ -33,7 +33,9 @@ export const SectionCard = React.forwardRef<HTMLDivElement, SectionCardProps>(fu
       elevation={0}
       sx={{
         border: `1px solid ${theme.palette.divider}`,
-        borderRadius: theme.shape.borderRadius * 2,
+        // NOTE: MUI multiplies NUMERIC borderRadius by theme.shape.borderRadius
+        // (8): numeric 1 = 8px crisp. Never pass the raw token (8 → 64px!).
+        borderRadius: 1,
         bgcolor: 'background.paper',
         mb: 1.5,
       }}

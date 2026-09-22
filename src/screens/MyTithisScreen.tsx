@@ -369,7 +369,7 @@ export const MyTithisScreen: React.FC = () => {
                 sx={{
                   width: 40,
                   height: 40,
-                  borderRadius: 2,
+                  borderRadius: 1,
                   bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
                   display: 'flex',
                   alignItems: 'center',
@@ -403,7 +403,7 @@ export const MyTithisScreen: React.FC = () => {
               startIcon={<Plus size={18} />}
               onClick={() => handleOpen()}
               sx={{
-                borderRadius: 2,
+                borderRadius: 1,
                 px: 2.5,
                 py: 1,
                 fontWeight: 500,
@@ -424,7 +424,7 @@ export const MyTithisScreen: React.FC = () => {
               startIcon={<Download size={18} />}
               onClick={handleExport}
               sx={{
-                borderRadius: 2,
+                borderRadius: 1,
                 px: 2.5,
                 py: 1,
                 fontWeight: 500,
@@ -439,7 +439,7 @@ export const MyTithisScreen: React.FC = () => {
               startIcon={<Upload size={18} />}
               onClick={() => setImportDialogOpen(true)}
               sx={{
-                borderRadius: 2,
+                borderRadius: 1,
                 px: 2.5,
                 py: 1,
                 fontWeight: 500,
@@ -488,7 +488,7 @@ export const MyTithisScreen: React.FC = () => {
               startIcon={<Plus size={18} />}
               onClick={() => handleOpen()}
               sx={{
-                borderRadius: 2,
+                borderRadius: 1,
                 px: 3,
                 py: 1,
                 fontWeight: 500,
@@ -515,7 +515,7 @@ export const MyTithisScreen: React.FC = () => {
                         sx={{
                           width: 48,
                           height: 48,
-                          borderRadius: 2,
+                          borderRadius: 1,
                           bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
                           display: 'flex',
                           alignItems: 'center',
@@ -602,10 +602,24 @@ export const MyTithisScreen: React.FC = () => {
                           )}
                         </Box>
 
+                        {/* Plain-language reminder line (reuses the form's option labels) */}
+                        {tithi.reminderEnabled && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1, minWidth: 0 }}>
+                            <Bell size={14} color={muiTheme.palette.text.secondary} />
+                            <Typography variant="caption" color="text.secondary" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {tithi.reminderTime} · {(tithi.reminderDaysBefore ?? 1) === 0
+                                ? (isHindi ? 'उसी दिन' : 'On the day')
+                                : isHindi
+                                  ? `${tithi.reminderDaysBefore} दिन पहले`
+                                  : `${tithi.reminderDaysBefore} day${(tithi.reminderDaysBefore ?? 1) > 1 ? 's' : ''} before`}
+                            </Typography>
+                          </Box>
+                        )}
+
                         {/* Next Occurrences with Countdown */}
                         {isExpanded && occurrences.length > 0 && (
                           <Fade in timeout={300}>
-                            <Box sx={{ mt: 1.5, p: 1.5, bgcolor: (theme) => alpha(theme.palette.primary.main, 0.04), borderRadius: 2, border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.15)}` }}>
+                            <Box sx={{ mt: 1.5, p: 1.5, bgcolor: (theme) => alpha(theme.palette.primary.main, 0.04), borderRadius: 1, border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.15)}` }}>
                               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
                 <Clock size={16} color={muiTheme.palette.primary.main} />
                 <Typography variant="caption" sx={{ fontWeight: 500, color: muiTheme.palette.primary.main }}>
@@ -629,7 +643,7 @@ export const MyTithisScreen: React.FC = () => {
                                       mb: 0.5,
                                       p: 0.75,
                                       bgcolor: 'background.paper',
-                                      borderRadius: 2,
+                                      borderRadius: 1,
                                     }}
                                   >
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -736,7 +750,7 @@ export const MyTithisScreen: React.FC = () => {
         fullWidth
         maxWidth="sm"
         PaperProps={{
-          sx: { borderRadius: 2, p: 2 },
+          sx: { borderRadius: 1, p: 2 },
         }}
       >
         <DialogTitle sx={{ fontWeight: 500, pb: 1 }}>
@@ -962,14 +976,14 @@ export const MyTithisScreen: React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setOpen(false)} variant="outlined" sx={{ borderRadius: 2 }}>
+          <Button onClick={() => setOpen(false)} variant="outlined" sx={{ borderRadius: 1 }}>
             {t('common.cancel')}
           </Button>
           <Button 
             onClick={handleSave} 
             variant="contained" 
             startIcon={<Save size={18} />}
-            sx={{ borderRadius: 2 }}
+            sx={{ borderRadius: 1 }}
           >
             {t('common.save')}
           </Button>
@@ -983,7 +997,7 @@ export const MyTithisScreen: React.FC = () => {
         fullWidth
         maxWidth="sm"
         PaperProps={{
-          sx: { borderRadius: 2, p: 2 },
+          sx: { borderRadius: 1, p: 2 },
         }}
       >
         <DialogTitle sx={{ fontWeight: 500, pb: 1 }}>
@@ -1032,20 +1046,20 @@ export const MyTithisScreen: React.FC = () => {
               startIcon={<Upload size={18} />}
               onClick={handleImportFile}
               fullWidth
-              sx={{ borderRadius: 2 }}
+              sx={{ borderRadius: 1 }}
             >
               {t('myTithis.uploadFile')}
             </Button>
           </Box>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setImportDialogOpen(false)} variant="outlined" sx={{ borderRadius: 2 }}>
+          <Button onClick={() => setImportDialogOpen(false)} variant="outlined" sx={{ borderRadius: 1 }}>
             {t('common.cancel')}
           </Button>
           <Button 
             onClick={() => handleImportText(importText)} 
             variant="contained"
-            sx={{ borderRadius: 2 }}
+            sx={{ borderRadius: 1 }}
           >
             {t('myTithis.import')}
           </Button>
@@ -1062,7 +1076,7 @@ export const MyTithisScreen: React.FC = () => {
         <Alert
           severity={snackbar.severity}
           onClose={() => setSnackbar({ ...snackbar, open: false })}
-          sx={{ borderRadius: 2 }}
+          sx={{ borderRadius: 1 }}
         >
           {snackbar.message}
         </Alert>

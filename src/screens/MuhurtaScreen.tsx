@@ -25,6 +25,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { SectionCard } from '../components/layout/SectionCard';
 import {
@@ -71,23 +72,23 @@ const MuhurtaScreen: React.FC = () => {
   };
 
   const MUHURTA_GRADIENTS: Record<MuhurtaType, { light: string; dark: string }> = {
-    Amrit: { light: `${muiTheme.palette.success.main}14`, dark: `${muiTheme.palette.success.main}24` },
-    Shubh: { light: `${muiTheme.palette.success.dark}14`, dark: `${muiTheme.palette.success.dark}24` },
-    Labh: { light: `${muiTheme.palette.success.light}1A`, dark: `${muiTheme.palette.success.light}24` },
-    Char: { light: `${muiTheme.palette.info.main}14`, dark: `${muiTheme.palette.info.main}24` },
-    Rog: { light: `${muiTheme.palette.error.main}14`, dark: `${muiTheme.palette.error.main}24` },
-    Kaal: { light: `${muiTheme.palette.error.dark}14`, dark: `${muiTheme.palette.error.dark}29` },
-    Udveg: { light: `${muiTheme.palette.warning.main}14`, dark: `${muiTheme.palette.warning.main}24` },
+    Amrit: { light: alpha(muiTheme.palette.success.main, 0.08), dark: alpha(muiTheme.palette.success.main, 0.14) },
+    Shubh: { light: alpha(muiTheme.palette.success.dark, 0.08), dark: alpha(muiTheme.palette.success.dark, 0.14) },
+    Labh: { light: alpha(muiTheme.palette.success.light, 0.10), dark: alpha(muiTheme.palette.success.light, 0.14) },
+    Char: { light: alpha(muiTheme.palette.info.main, 0.08), dark: alpha(muiTheme.palette.info.main, 0.14) },
+    Rog: { light: alpha(muiTheme.palette.error.main, 0.08), dark: alpha(muiTheme.palette.error.main, 0.14) },
+    Kaal: { light: alpha(muiTheme.palette.error.dark, 0.08), dark: alpha(muiTheme.palette.error.dark, 0.16) },
+    Udveg: { light: alpha(muiTheme.palette.warning.main, 0.08), dark: alpha(muiTheme.palette.warning.main, 0.14) },
   };
 
   const MUHURTA_BG: Record<MuhurtaType, string> = {
-    Amrit: `${muiTheme.palette.success.main}1F`,
-    Shubh: `${muiTheme.palette.success.dark}1F`,
-    Labh: `${muiTheme.palette.success.light}1F`,
-    Char: `${muiTheme.palette.info.main}1A`,
-    Rog: `${muiTheme.palette.error.main}1A`,
-    Kaal: `${muiTheme.palette.error.dark}24`,
-    Udveg: `${muiTheme.palette.warning.main}1A`,
+    Amrit: alpha(muiTheme.palette.success.main, 0.12),
+    Shubh: alpha(muiTheme.palette.success.dark, 0.12),
+    Labh: alpha(muiTheme.palette.success.light, 0.12),
+    Char: alpha(muiTheme.palette.info.main, 0.10),
+    Rog: alpha(muiTheme.palette.error.main, 0.10),
+    Kaal: alpha(muiTheme.palette.error.dark, 0.14),
+    Udveg: alpha(muiTheme.palette.warning.main, 0.10),
   };
 
   const { selectedDate, preferences, calculatePanchang } = useAppStore();
@@ -338,9 +339,9 @@ const MuhurtaScreen: React.FC = () => {
           minHeight: 48,
           maxWidth: '100%',
           borderRadius: 1.5,
-          bgcolor: isDark ? MUHURTA_BG[muhurta.name] : `${color}14`,
+          bgcolor: isDark ? MUHURTA_BG[muhurta.name] : alpha(color, 0.08),
           border: '1px solid',
-          borderColor: isCurrent ? color : `${color}40`,
+          borderColor: isCurrent ? color : alpha(color, 0.25),
           position: 'relative',
           overflow: 'hidden',
           transition: 'all 0.2s ease',
@@ -353,6 +354,9 @@ const MuhurtaScreen: React.FC = () => {
           '&:hover': {
             transform: 'translateY(-1px)',
           },
+          '&:active': {
+            transform: 'scale(0.98)',
+          },
         }}
       >
         {/* Progress fill for current segment */}
@@ -364,7 +368,7 @@ const MuhurtaScreen: React.FC = () => {
               left: 0,
               width: `${progressPercent}%`,
               height: '100%',
-              bgcolor: `${color}30`,
+              bgcolor: alpha(color, 0.19),
               transition: 'width 1s linear',
             }}
           />
@@ -387,10 +391,10 @@ const MuhurtaScreen: React.FC = () => {
           sx={{
             width: 36,
             height: 36,
-            borderRadius: 1.5,
-            bgcolor: `${color}1A`,
+            borderRadius: 1,
+            bgcolor: alpha(color, 0.10),
             border: '1px solid',
-            borderColor: `${color}40`,
+            borderColor: alpha(color, 0.25),
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -450,8 +454,21 @@ const MuhurtaScreen: React.FC = () => {
   // Full timeline showing all muhurtas — stacked scannable bands
   const renderTimeline = (muhurtas: Muhurta[], label: string, icon: React.ReactNode) => (
     <Box sx={{ mb: 1.5, maxWidth: '100%' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-        {icon}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, minWidth: 0 }}>
+        <Box
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: 1,
+            bgcolor: alpha(muiTheme.palette.primary.main, 0.08),
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          {icon}
+        </Box>
         <Typography
           variant="overline"
           sx={{
@@ -459,6 +476,8 @@ const MuhurtaScreen: React.FC = () => {
             letterSpacing: '0.1em',
             fontSize: '0.75rem',
             color: 'text.secondary',
+            flex: 1,
+            minWidth: 0,
           }}
         >
           {label}
@@ -469,7 +488,7 @@ const MuhurtaScreen: React.FC = () => {
           display: 'flex',
           flexDirection: 'column',
           gap: 0.75,
-          borderRadius: 2,
+          borderRadius: 1,
           maxWidth: '100%',
         }}
       >
@@ -493,11 +512,11 @@ const MuhurtaScreen: React.FC = () => {
           p: { xs: 1.25, sm: 1.5 },
           mb: 0.75,
           background: isCurrent
-            ? `${border}15`
+            ? alpha(border, 0.08)
             : bg,
           border: '1px solid',
-          borderColor: isCurrent ? border : `${border}40`,
-          borderRadius: 2,
+          borderColor: isCurrent ? border : alpha(border, 0.25),
+          borderRadius: 1,
           transition: 'all 0.2s ease',
           position: 'relative',
           overflow: 'hidden',
@@ -530,10 +549,10 @@ const MuhurtaScreen: React.FC = () => {
               sx={{
                 width: 36,
                 height: 36,
-                borderRadius: 1.5,
-                bgcolor: `${border}1A`,
+                borderRadius: 1,
+                bgcolor: alpha(border, 0.10),
                 border: '1px solid',
-                borderColor: `${border}40`,
+                borderColor: alpha(border, 0.25),
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -623,11 +642,11 @@ const MuhurtaScreen: React.FC = () => {
               value={progressPercent}
               sx={{
                 height: 6,
-                borderRadius: 2,
+                borderRadius: 1,
                 bgcolor: muiTheme.palette.action.hover,
                 '& .MuiLinearProgress-bar': {
                   bgcolor: border,
-                  borderRadius: 2,
+                  borderRadius: 1,
                   transition: 'width 1s linear',
                   backgroundImage: 'none',
                 },
@@ -660,7 +679,7 @@ const MuhurtaScreen: React.FC = () => {
             width: 32,
             height: 32,
             borderRadius: 1.5,
-            bgcolor: isDark ? `${accentColor}20` : `${accentColor}10`,
+            bgcolor: isDark ? alpha(accentColor, 0.13) : alpha(accentColor, 0.06),
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -720,12 +739,12 @@ const MuhurtaScreen: React.FC = () => {
             textAlign: 'center',
             mb: 1.25,
             p: { xs: 1.25, sm: 1.5 },
-            borderRadius: 2,
+            borderRadius: 1,
             bgcolor: isDark
-              ? `${muiTheme.palette.primary.main}14`
-              : `${muiTheme.palette.primary.main}0A`,
+              ? alpha(muiTheme.palette.primary.main, 0.08)
+              : alpha(muiTheme.palette.primary.main, 0.04),
             border: '1px solid',
-            borderColor: isDark ? `${muiTheme.palette.primary.main}4D` : `${muiTheme.palette.primary.main}26`,
+            borderColor: isDark ? alpha(muiTheme.palette.primary.main, 0.30) : alpha(muiTheme.palette.primary.main, 0.15),
             maxWidth: '100%',
           }}
         >
@@ -770,11 +789,11 @@ const MuhurtaScreen: React.FC = () => {
             sx={{
               p: { xs: 1.5, sm: 2 },
               mb: 1.5,
-              borderRadius: 2,
+              borderRadius: 1,
               background: `linear-gradient(135deg, ${MUHURTA_BORDER[currentMuhurta.muhurta.name]}1F 0%, ${MUHURTA_BORDER[currentMuhurta.muhurta.name]}14 45%, ${muiTheme.palette.background.paper} 100%)`,
               bgcolor: 'background.paper',
               border: '1px solid',
-              borderColor: `${MUHURTA_BORDER[currentMuhurta.muhurta.name]}40`,
+              borderColor: alpha(MUHURTA_BORDER[currentMuhurta.muhurta.name], 0.25),
               position: 'relative',
               overflow: 'hidden',
               maxWidth: '100%',
@@ -803,7 +822,7 @@ const MuhurtaScreen: React.FC = () => {
                     position: 'absolute',
                     inset: -4,
                     borderRadius: '50%',
-                    border: `2px solid ${MUHURTA_BORDER[currentMuhurta.muhurta.name]}40`,
+                    border: `2px solid ${alpha(MUHURTA_BORDER[currentMuhurta.muhurta.name], 0.25)}`,
                     animation: 'pulseRing 2s ease-in-out infinite',
                   }}
                 />
@@ -903,8 +922,8 @@ const MuhurtaScreen: React.FC = () => {
                       fontSize: '0.75rem',
                       fontWeight: 500,
                       bgcolor: currentMuhurta.muhurta.isAuspicious
-                        ? `${muiTheme.palette.success.main}20`
-                        : `${muiTheme.palette.error.main}20`,
+                        ? alpha(muiTheme.palette.success.main, 0.13)
+                        : alpha(muiTheme.palette.error.main, 0.13),
                       color: currentMuhurta.muhurta.isAuspicious ? muiTheme.palette.success.main : muiTheme.palette.error.main,
                       border: `1px solid ${currentMuhurta.muhurta.isAuspicious ? muiTheme.palette.success.main : muiTheme.palette.error.main}`,
                     }}
@@ -997,7 +1016,7 @@ const MuhurtaScreen: React.FC = () => {
               flex: '1 1 140px',
               minWidth: 140,
               p: 1.25,
-              borderRadius: 2,
+              borderRadius: 1,
               bgcolor: muiTheme.palette.action.hover,
               border: '1px solid',
               borderColor: 'divider',
@@ -1010,10 +1029,10 @@ const MuhurtaScreen: React.FC = () => {
               sx={{
                 width: 36,
                 height: 36,
-                borderRadius: 1.5,
+                borderRadius: 1,
                 bgcolor: isDark
-                  ? `${muiTheme.palette.warning.main}25`
-                  : `${muiTheme.palette.warning.main}15`,
+                  ? alpha(muiTheme.palette.warning.main, 0.15)
+                  : alpha(muiTheme.palette.warning.main, 0.08),
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -1037,7 +1056,7 @@ const MuhurtaScreen: React.FC = () => {
               flex: '1 1 140px',
               minWidth: 140,
               p: 1.25,
-              borderRadius: 2,
+              borderRadius: 1,
               bgcolor: muiTheme.palette.action.hover,
               border: '1px solid',
               borderColor: 'divider',
@@ -1050,10 +1069,10 @@ const MuhurtaScreen: React.FC = () => {
               sx={{
                 width: 36,
                 height: 36,
-                borderRadius: 1.5,
+                borderRadius: 1,
                 bgcolor: isDark
-                  ? `${muiTheme.palette.info.main}20`
-                  : `${muiTheme.palette.info.main}10`,
+                  ? alpha(muiTheme.palette.info.main, 0.13)
+                  : alpha(muiTheme.palette.info.main, 0.06),
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -1085,7 +1104,7 @@ const MuhurtaScreen: React.FC = () => {
             fullWidth={isMobile}
             sx={{
               bgcolor: muiTheme.palette.action.hover,
-              borderRadius: 2,
+              borderRadius: 1,
               border: '1px solid',
               borderColor: 'divider',
               p: 0.5,
@@ -1185,10 +1204,10 @@ const MuhurtaScreen: React.FC = () => {
                 sx={{
                   width: 32,
                   height: 32,
-                  borderRadius: 1.5,
+                  borderRadius: 1,
                   bgcolor: isDark
-                    ? `${muiTheme.palette.primary.main}20`
-                    : `${muiTheme.palette.primary.main}10`,
+                    ? alpha(muiTheme.palette.primary.main, 0.13)
+                    : alpha(muiTheme.palette.primary.main, 0.06),
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1235,7 +1254,7 @@ const MuhurtaScreen: React.FC = () => {
                   borderRadius: 1.5,
                   bgcolor: MUHURTA_BG[type],
                   border: '1px solid',
-                  borderColor: `${MUHURTA_BORDER[type]}40`,
+                  borderColor: alpha(MUHURTA_BORDER[type], 0.25),
                   minHeight: 48,
                 }}
               >
@@ -1243,8 +1262,8 @@ const MuhurtaScreen: React.FC = () => {
                   sx={{
                     width: 36,
                     height: 36,
-                    borderRadius: 1.5,
-                    bgcolor: `${MUHURTA_BORDER[type]}1A`,
+                    borderRadius: 1,
+                    bgcolor: alpha(MUHURTA_BORDER[type], 0.10),
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',

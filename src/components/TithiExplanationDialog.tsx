@@ -26,6 +26,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material';
 import { Sparkles, X, Info, CheckCircle, XCircle } from 'lucide-react';
+import { alpha } from '@mui/material/styles';
 import { getTithiByIndex, TithiSignificance } from '../data/vedic/tithiData';
 import { useI18n } from '../hooks/useI18n';
 
@@ -63,14 +64,14 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: 3,
+          borderRadius: 1,
         },
       }}
     >
       {/* Header */}
       <DialogTitle
         sx={{
-          bgcolor: 'rgba(199, 91, 18, 0.08)',
+          bgcolor: alpha(theme.palette.primary.main, 0.07),
           py: 2,
           px: 2.5,
         }}
@@ -78,17 +79,17 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
           <Box
             sx={{
-              width: 48,
-              height: 48,
-              borderRadius: 2,
-              bgcolor: 'rgba(199, 91, 18, 0.15)',
+              width: 36,
+              height: 36,
+              borderRadius: 1,
+              bgcolor: alpha(theme.palette.primary.main, 0.12),
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
             }}
           >
-            <Sparkles size={28} color={theme.palette.primary.main} />
+            <Sparkles size={19} color={theme.palette.primary.main} />
           </Box>
           <Box sx={{ flex: 1 }}>
             <Typography
@@ -112,7 +113,10 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
             aria-label="Close tithi explanation"
             sx={{
               color: 'text.secondary',
-              '&:hover': { bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)' },
+              minWidth: 48,
+              minHeight: 48,
+              '&:hover': { bgcolor: alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.08 : 0.05) },
+              '&:active': { transform: 'scale(0.98)' },
             }}
           >
             <X size={20} />
@@ -128,8 +132,8 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
             size="small"
             sx={{
               fontWeight: 500,
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(144, 164, 215, 0.15)' : 'rgba(44, 62, 107, 0.1)',
-              color: theme.palette.info.main,
+              bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.16 : 0.08),
+              color: theme.palette.primary.main,
             }}
           />
           <Chip
@@ -151,10 +155,10 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
               fontWeight: 500,
               bgcolor:
                 tithiData.nature === 'good'
-                  ? (theme) => theme.palette.mode === 'dark' ? 'rgba(129, 199, 106, 0.15)' : 'rgba(61, 107, 36, 0.1)'
+                  ? (theme) => alpha(theme.palette.success.main, theme.palette.mode === 'dark' ? 0.16 : 0.08)
                   : tithiData.nature === 'avoid'
-                  ? (theme) => theme.palette.mode === 'dark' ? 'rgba(239, 154, 154, 0.15)' : 'rgba(244, 67, 54, 0.1)'
-                  : (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 183, 77, 0.15)' : 'rgba(232, 148, 74, 0.1)',
+                  ? (theme) => alpha(theme.palette.error.main, theme.palette.mode === 'dark' ? 0.16 : 0.08)
+                  : (theme) => alpha(theme.palette.warning.main, theme.palette.mode === 'dark' ? 0.16 : 0.08),
               color:
                 tithiData.nature === 'good'
                   ? theme.palette.success.main
@@ -169,8 +173,8 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
               size="small"
               sx={{
                 fontWeight: 500,
-                bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(144, 164, 215, 0.15)' : 'rgba(44, 62, 107, 0.1)',
-                color: theme.palette.info.main,
+                bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.16 : 0.08),
+                color: theme.palette.primary.main,
               }}
             />
           )}
@@ -215,7 +219,7 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
                   sx={{
                     fontSize: '0.8rem',
                     fontWeight: 500,
-                    bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(129, 199, 106, 0.12)' : 'rgba(61, 107, 36, 0.08)',
+                    bgcolor: (theme) => alpha(theme.palette.success.main, theme.palette.mode === 'dark' ? 0.14 : 0.08),
                     color: theme.palette.success.main,
                   }}
                 />
@@ -242,7 +246,7 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
                   sx={{
                     fontSize: '0.8rem',
                     fontWeight: 500,
-                    bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(239, 154, 154, 0.12)' : 'rgba(244, 67, 54, 0.08)',
+                    bgcolor: (theme) => alpha(theme.palette.error.main, theme.palette.mode === 'dark' ? 0.14 : 0.08),
                     color: theme.palette.error.main,
                   }}
                 />
@@ -257,9 +261,9 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
             sx={{
               mt: 2,
               p: 1.5,
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 183, 77, 0.1)' : 'rgba(255, 193, 7, 0.08)',
-              borderRadius: 2,
-              border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255, 183, 77, 0.2)' : 'rgba(255, 193, 7, 0.2)'}`,
+              bgcolor: (theme) => alpha(theme.palette.warning.main, theme.palette.mode === 'dark' ? 0.12 : 0.07),
+              borderRadius: 1,
+              border: (theme) => `1px solid ${alpha(theme.palette.warning.main, 0.25)}`,
             }}
           >
             <Typography

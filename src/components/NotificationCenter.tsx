@@ -46,6 +46,7 @@ import {
   CheckCircle,
   ChevronRight,
 } from 'lucide-react';
+import { alpha } from '@mui/material/styles';
 import {
   notificationService,
   notificationScheduler,
@@ -221,7 +222,7 @@ export default function NotificationCenter({ open, onClose }: NotificationCenter
         fullScreen={isMobile}
         PaperProps={{
           sx: {
-            borderRadius: isMobile ? 0 : 3,
+            borderRadius: isMobile ? 0 : 1,
             maxWidth: 500,
             width: '100%',
             maxHeight: isMobile ? '100vh' : '85vh',
@@ -253,9 +254,9 @@ export default function NotificationCenter({ open, onClose }: NotificationCenter
             sx={{
               p: 2,
               mb: 2,
-              borderRadius: 2,
-              bgcolor: globallyEnabled ? `${muiTheme.palette.primary.main}10` : muiTheme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
-              border: (t) => `1px solid ${globallyEnabled ? `${muiTheme.palette.primary.main}25` : t.palette.divider}`,
+              borderRadius: 1,
+              bgcolor: globallyEnabled ? alpha(muiTheme.palette.primary.main, 0.06) : alpha(muiTheme.palette.text.primary, muiTheme.palette.mode === 'dark' ? 0.05 : 0.03),
+              border: (t) => `1px solid ${globallyEnabled ? alpha(muiTheme.palette.primary.main, 0.18) : t.palette.divider}`,
             }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -327,9 +328,14 @@ export default function NotificationCenter({ open, onClose }: NotificationCenter
                 textAlign: 'center',
                 py: 6,
                 color: 'text.secondary',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
               }}
             >
-              <BellOff size={48} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
+              <Box sx={{ width: 56, height: 56, borderRadius: 1, bgcolor: alpha(muiTheme.palette.primary.main, 0.08), display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5 }}>
+                <BellOff size={28} strokeWidth={1.5} color={muiTheme.palette.primary.main} />
+              </Box>
               <Typography variant="body1" sx={{ fontWeight: 500 }}>
                 No notifications scheduled
               </Typography>
@@ -351,8 +357,9 @@ export default function NotificationCenter({ open, onClose }: NotificationCenter
                   elevation={0}
                   sx={{
                     mb: 2,
-                    borderRadius: 2,
+                    borderRadius: 1,
                     border: (t) => `1px solid ${t.palette.divider}`,
+                    overflow: 'hidden',
                   }}
                 >
                   {/* Group header */}
@@ -360,14 +367,16 @@ export default function NotificationCenter({ open, onClose }: NotificationCenter
                     sx={{
                       px: 2,
                       py: 1,
-                      bgcolor: `${config.color}10`,
+                      bgcolor: alpha(config.color, 0.07),
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                     }}
                   >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Icon size={16} color={config.color} />
+                      <Box sx={{ width: 32, height: 32, borderRadius: 1, bgcolor: alpha(config.color, 0.12), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Icon size={18} strokeWidth={1.5} color={config.color} />
+                      </Box>
                       <Typography variant="subtitle2" sx={{ fontWeight: 500, color: config.color }}>
                         {config.label}
                       </Typography>
@@ -390,21 +399,23 @@ export default function NotificationCenter({ open, onClose }: NotificationCenter
                     {notifs.slice(0, 10).map((notif) => (
                       <ListItem
                         key={notif.id}
-                        sx={{ py: 1 }}
+                        sx={{ py: 1, '&:hover': { bgcolor: alpha(config.color, 0.04) }, '&:active': { transform: 'scale(0.99)' } }}
                         secondaryAction={
                           <IconButton
                             edge="end"
                             size="small"
                             onClick={() => handleCancelNotification(notif.id)}
-                            aria-label="Cancel notification"
-                            sx={{ color: 'text.disabled' }}
+                            aria-label={`Cancel notification: ${notif.title}`}
+                            sx={{ color: 'text.disabled', width: 48, height: 48 }}
                           >
                             <X size={16} />
                           </IconButton>
                         }
                       >
-                        <ListItemIcon sx={{ minWidth: 36 }}>
-                          <ChevronRight size={16} color={muiTheme.palette.text.disabled} />
+                        <ListItemIcon sx={{ minWidth: 44 }}>
+                          <Box sx={{ width: 32, height: 32, borderRadius: 1, bgcolor: alpha(config.color, 0.1), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <ChevronRight size={18} color={config.color} />
+                          </Box>
                         </ListItemIcon>
                         <ListItemText
                           primary={
@@ -420,7 +431,7 @@ export default function NotificationCenter({ open, onClose }: NotificationCenter
                                 sx={{
                                   height: 18,
                                   fontSize: 10,
-                                  bgcolor: `${config.color}15`,
+                                  bgcolor: alpha(config.color, 0.1),
                                   color: config.color,
                                 }}
                               />
@@ -448,7 +459,7 @@ export default function NotificationCenter({ open, onClose }: NotificationCenter
       <Dialog
         open={cancelConfirmId !== null}
         onClose={() => setCancelConfirmId(null)}
-        PaperProps={{ sx: { borderRadius: 2 } }}
+        PaperProps={{ sx: { borderRadius: 1 } }}
       >
         <DialogTitle sx={{ fontWeight: 500 }}>Cancel Notification?</DialogTitle>
         <DialogContent>

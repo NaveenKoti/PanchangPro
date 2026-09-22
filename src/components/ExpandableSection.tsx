@@ -15,6 +15,8 @@ import {
   BoxProps,
 } from '@mui/material';
 import { ChevronDown } from 'lucide-react';
+import { alpha } from '@mui/material/styles';
+import { useTheme } from '@mui/material';
 
 export interface ExpandableSectionProps extends BoxProps {
   title: string;
@@ -40,6 +42,7 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [maxHeight, setMaxHeight] = useState<number>(0);
   const contentRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
   const isControlled = typeof expanded === 'boolean';
   const currentExpanded = isControlled ? expanded : isExpanded;
 
@@ -88,29 +91,36 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
         className="expandable-card"
         elevation={0}
         sx={{
-          borderRadius: 2,
+          borderRadius: 1,
                     bgcolor: 'background.paper',
           border: '1px solid',
           borderColor: 'divider',          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           '&:hover': {
-            boxShadow: (theme) => theme.palette.mode === 'dark' ? '0 4px 12px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.08)',
+            boxShadow: (theme) => `0 4px 12px ${alpha(theme.palette.common.black, theme.palette.mode === 'dark' ? 0.4 : 0.08)}`,
           },
+          '&:active': { transform: 'scale(0.99)' },
         }}
       >
         <Box
           className="expandable-header"
           onClick={handleToggle}
+          role="button"
+          tabIndex={0}
+          aria-expanded={currentExpanded}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleToggle(); } }}
           sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             p: 2,
+            minHeight: 48,
             cursor: 'pointer',
             userSelect: 'none',
             bgcolor: 'background.paper',
             '&:hover': {
-              bgcolor: (theme) => theme.palette.action.hover,
+              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.04),
             },
+            '&:active': { transform: 'scale(0.99)' },
           }}
         >
           <Box
@@ -121,21 +131,40 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
               gap: 2,
             }}
           >
-            {icon && (
+            {icon ? (
               <Box
                 className="header-icon"
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  width: 40,
-                  height: 40,
-                  borderRadius: 2,
-                  bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(199, 91, 18, 0.15)' : 'rgba(199, 91, 18, 0.1)',
+                  width: 36,
+                  height: 36,
+                  borderRadius: 1,
+                  bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.14 : 0.08),
                   color: 'primary.main',
                 }}
               >
                 {icon}
+              </Box>
+            ) : (
+              <Box
+                className="header-icon"
+                aria-hidden
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 36,
+                  height: 36,
+                  borderRadius: 1,
+                  bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.14 : 0.08),
+                  color: 'primary.main',
+                  fontWeight: 500,
+                  fontSize: '1rem',
+                }}
+              >
+                {title.charAt(0)}
               </Box>
             )}
             <Typography
@@ -156,6 +185,8 @@ export const ExpandableSection: React.FC<ExpandableSectionProps> = ({
             size="small"
             aria-label={currentExpanded ? 'Collapse section' : 'Expand section'}
             sx={{
+              width: 48,
+              height: 48,
               transition: `transform ${animationDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`,
               transform: currentExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
             }}

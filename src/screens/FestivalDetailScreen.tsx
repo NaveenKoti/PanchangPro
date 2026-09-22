@@ -30,6 +30,7 @@ import {
   Breadcrumbs,
   Link,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import {
   ArrowBack,
   Share,
@@ -189,7 +190,7 @@ const SectionCard = React.forwardRef<HTMLDivElement, SectionCardProps>(({ icon, 
         bgcolor: 'background.paper',
         border: '1px solid',
         borderColor: 'divider',
-        borderRadius: 2,
+        borderRadius: 1,
         mb: 3,
         boxShadow: isDark ? '0 1px 3px rgba(0,0,0,0.3)' : '0 1px 3px rgba(0,0,0,0.04)',
         ...sx,
@@ -201,10 +202,10 @@ const SectionCard = React.forwardRef<HTMLDivElement, SectionCardProps>(({ icon, 
             sx={{
               width: { xs: 36, sm: 40 },
               height: { xs: 36, sm: 40 },
-              borderRadius: '50%',
+              borderRadius: 1,
               bgcolor: isDark
-                ? 'rgba(255,154,92,0.12)'
-                : 'rgba(232,114,42,0.08)',
+                ? alpha(theme.palette.primary.light, 0.12)
+                : alpha(theme.palette.primary.main, 0.08),
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -424,8 +425,8 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
           top: (theme) => theme.spacing(7),
           zIndex: 100,
           backdropFilter: 'blur(12px)',
-          background: isDark ? 'rgba(26,22,18,0.9)' : 'rgba(254,252,249,0.9)',
-          borderBottom: `1px solid ${isDark ? 'rgba(255,154,92,0.1)' : 'rgba(232,114,42,0.08)'}`,
+          background: isDark ? alpha(theme.palette.background.paper, 0.9) : alpha(theme.palette.common.white, 0.9),
+          borderBottom: `1px solid ${isDark ? alpha(theme.palette.primary.light, 0.1) : alpha(theme.palette.primary.main, 0.08)}`,
           px: { xs: 1.5, sm: 4 },
           py: { xs: 1, sm: 1.5 },
         }}
@@ -542,12 +543,12 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                 py: { xs: 2, sm: 3 },
                 fontSize: { xs: '0.8rem', sm: '0.9rem' },
                 fontWeight: 500,
-                borderRadius: 2,
+                borderRadius: 1,
                 background: isDark
-                  ? 'rgba(74,85,168,0.2)'
-                  : 'rgba(74,85,168,0.08)',
+                  ? alpha(theme.palette.info.main, 0.2)
+                  : alpha(theme.palette.info.main, 0.08),
                 color: theme.palette.secondary.main,
-                border: `1px solid ${isDark ? 'rgba(74,85,168,0.3)' : 'rgba(74,85,168,0.15)'}`,
+                border: `1px solid ${isDark ? alpha(theme.palette.info.main, 0.3) : alpha(theme.palette.info.main, 0.15)}`,
                 mb: 3,
                 maxWidth: '100%',
               }}
@@ -570,12 +571,12 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                   label={isHindi ? festival.durationHindi || festival.duration : festival.duration}
                   size="small"
                   sx={{
-                    borderRadius: 2,
+                    borderRadius: 1,
                     background: isDark
-                      ? 'rgba(56,161,105,0.15)'
-                      : 'rgba(56,161,105,0.1)',
+                      ? alpha(theme.palette.success.main, 0.15)
+                      : alpha(theme.palette.success.main, 0.1),
                     color: theme.palette.success.main,
-                    border: `1px solid ${isDark ? 'rgba(56,161,105,0.25)' : 'rgba(56,161,105,0.2)'}`,
+                    border: `1px solid ${isDark ? alpha(theme.palette.success.main, 0.25) : alpha(theme.palette.success.main, 0.2)}`,
                   }}
                 />
               )}
@@ -585,12 +586,12 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                   label={color}
                   size="small"
                   sx={{
-                    borderRadius: 2,
+                    borderRadius: 1,
                     background: isDark
-                      ? 'rgba(255,154,92,0.1)'
-                      : 'rgba(232,114,42,0.08)',
+                      ? alpha(theme.palette.primary.light, 0.1)
+                      : alpha(theme.palette.primary.main, 0.08),
                     color: theme.palette.warning.main,
-                    border: `1px solid ${isDark ? 'rgba(255,154,92,0.2)' : 'rgba(232,114,42,0.15)'}`,
+                    border: `1px solid ${isDark ? alpha(theme.palette.primary.light, 0.2) : alpha(theme.palette.primary.main, 0.15)}`,
                   }}
                 />
               ))}
@@ -604,13 +605,27 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
         <Fade in timeout={800}>
           <LayoutSectionCard
             title={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Timer sx={{ color: theme.palette.primary.light }} />
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 0, flex: 1 }}>
+                <Box
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 1,
+                    bgcolor: alpha(theme.palette.primary.main, 0.08),
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Timer sx={{ color: theme.palette.primary.main, fontSize: 20 }} />
+                </Box>
                 <Typography
                   variant="h6"
                   sx={{
                     fontWeight: 500,
                     color: theme.palette.text.primary,
+                    minWidth: 0,
                   }}
                 >
                   Next {festival.name}
@@ -709,15 +724,15 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                     alignItems: 'flex-start',
                     gap: { xs: 1, sm: 1.5 },
                     p: { xs: 1.25, sm: 1.5 },
-                    borderRadius: 2,
+                    borderRadius: 1,
                     background: isDark
-                      ? 'rgba(255,154,92,0.05)'
-                      : 'rgba(232,114,42,0.03)',
+                      ? alpha(theme.palette.primary.light, 0.05)
+                      : alpha(theme.palette.primary.main, 0.03),
                     transition: 'background 0.2s ease',
                     '&:hover': {
                       background: isDark
-                        ? 'rgba(255,154,92,0.1)'
-                        : 'rgba(232,114,42,0.06)',
+                        ? alpha(theme.palette.primary.light, 0.1)
+                        : alpha(theme.palette.primary.main, 0.06),
                     },
                   }}
                 >
@@ -728,8 +743,8 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                       minWidth: { xs: 24, sm: 28 },
                       borderRadius: '50%',
                       bgcolor: isDark
-                        ? 'rgba(255,154,92,0.12)'
-                        : 'rgba(232,114,42,0.08)',
+                        ? alpha(theme.palette.primary.light, 0.12)
+                        : alpha(theme.palette.primary.main, 0.08),
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -781,10 +796,10 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                       alignItems: 'flex-start',
                       gap: 1.5,
                       p: 1.5,
-                      borderRadius: 2,
+                      borderRadius: 1,
                       background: isDark
-                        ? 'rgba(56,161,105,0.08)'
-                        : 'rgba(56,161,105,0.04)',
+                        ? alpha(theme.palette.success.main, 0.08)
+                        : alpha(theme.palette.success.main, 0.04),
                     }}
                   >
                     <Box
@@ -828,16 +843,16 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                   elevation={0}
                   sx={{
                     p: { xs: 1.5, sm: 2, md: 2.5 },
-                    borderRadius: 2,
+                    borderRadius: 1,
                     background: isDark
-                      ? 'rgba(74,85,168,0.1)'
-                      : 'rgba(74,85,168,0.04)',
-                    border: `1px solid ${isDark ? 'rgba(74,85,168,0.2)' : 'rgba(74,85,168,0.1)'}`,
+                      ? alpha(theme.palette.info.main, 0.1)
+                      : alpha(theme.palette.info.main, 0.04),
+                    border: `1px solid ${isDark ? alpha(theme.palette.info.main, 0.2) : alpha(theme.palette.info.main, 0.1)}`,
                     transition: 'all 0.2s ease',
                     '&:hover': {
                       background: isDark
-                        ? 'rgba(74,85,168,0.15)'
-                        : 'rgba(74,85,168,0.07)',
+                        ? alpha(theme.palette.info.main, 0.15)
+                        : alpha(theme.palette.info.main, 0.07),
                       transform: { xs: 'none', sm: 'translateY(-1px)' },
                     },
                   }}
@@ -898,7 +913,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
               sx={{
                 py: 1.5,
                 px: 4,
-                borderRadius: 2,
+                borderRadius: 1,
                 fontSize: '1rem',
                 fontWeight: 500,
                 textTransform: 'none',
@@ -921,17 +936,17 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
               sx={{
                 py: 1.5,
                 px: 4,
-                borderRadius: 2,
+                borderRadius: 1,
                 fontSize: '1rem',
                 fontWeight: 500,
                 textTransform: 'none',
-                borderColor: isDark ? 'rgba(255,154,92,0.3)' : 'rgba(232,114,42,0.3)',
+                borderColor: isDark ? alpha(theme.palette.primary.light, 0.3) : alpha(theme.palette.primary.main, 0.3),
                 color: theme.palette.warning.main,
                 '&:hover': {
-                  borderColor: isDark ? 'rgba(255,154,92,0.5)' : 'rgba(232,114,42,0.5)',
+                  borderColor: isDark ? alpha(theme.palette.primary.light, 0.5) : alpha(theme.palette.primary.main, 0.5),
                   background: isDark
-                    ? 'rgba(255,154,92,0.1)'
-                    : 'rgba(232,114,42,0.05)',
+                    ? alpha(theme.palette.primary.light, 0.1)
+                    : alpha(theme.palette.primary.main, 0.05),
                 },
               }}
             >

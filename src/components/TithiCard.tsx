@@ -11,6 +11,7 @@
 
 import React from 'react';
 import { Card, CardContent, Typography, Box, Chip, useTheme } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { Moon } from 'lucide-react';
 import { Tithi } from '../types';
 import { useBreakpoints } from '../hooks/useBreakpoints';
@@ -32,8 +33,8 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
 
   // Use primary (saffron) for Shukla, secondary (indigo) for Krishna
   const accent = isShukla ? theme.palette.primary : theme.palette.secondary;
-  const accentLight = `${accent.main}15`;
-  const accentBorder = `${accent.main}25`;
+  const accentLight = alpha(accent.main, isDark ? 0.14 : 0.08);
+  const accentBorder = alpha(accent.main, 0.18);
 
   // Moon-phase illumination: 0 = new, 15 = full.
   // Waxing (Shukla): lit fraction grows with tithi number; waning (Krishna): shrinks.
@@ -55,11 +56,13 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
   if (compact) {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-        <Moon
-          size={18}
-          strokeWidth={1.5}
-          color={accent.main}
-        />
+        <Box sx={{ width: 32, height: 32, borderRadius: 1, bgcolor: accentLight, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid', borderColor: accentBorder, flexShrink: 0 }}>
+          <Moon
+            size={18}
+            strokeWidth={1.5}
+            color={accent.main}
+          />
+        </Box>
         <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
           {tithi.name}
         </Typography>
@@ -72,20 +75,22 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
       onClick={handleClick}
       elevation={0}
       sx={{
-        borderRadius: 2,
+        borderRadius: 1,
         overflow: 'hidden',
-        // HERO exception: saffron-tinted gradient (low alpha, readable both modes)
-        background: `linear-gradient(135deg, ${theme.palette.primary.main}1F 0%, ${theme.palette.primary.light}14 45%, ${theme.palette.background.paper} 100%)`,
+        // HERO exception: saffron-tinted wash (low alpha, readable both modes)
+        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.12)} 0%, ${alpha(theme.palette.primary.light, 0.08)} 45%, ${theme.palette.background.paper} 100%)`,
         bgcolor: 'background.paper',
         border: '1px solid',
         borderColor: 'divider',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+        boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.04)}`,
         cursor: onClick ? 'pointer' : 'default',
         transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
         '&:hover': onClick ? {
-          boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+          boxShadow: `0 4px 12px ${alpha(theme.palette.common.black, 0.06)}`,
           transform: 'translateY(-1px)',
+          bgcolor: alpha(theme.palette.primary.main, 0.04),
         } : {},
+        '&:active': onClick ? { transform: 'scale(0.98)' } : {},
         height: isMobile ? 'auto' : undefined,
       }}
     >
@@ -97,7 +102,7 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
               sx={{
                 width: 48,
                 height: 48,
-                borderRadius: 2,
+                borderRadius: 1,
                 bgcolor: isDark ? `${accent.main}22` : accentLight,
                 display: 'flex',
                 alignItems: 'center',
@@ -132,7 +137,7 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
                   cx={moonSize / 2}
                   cy={moonSize / 2}
                   r={moonSize / 2 - 2.5}
-                  fill={`${accent.main}30`}
+                  fill={alpha(accent.main, 0.18)}
                 />
                 <circle
                   cx={moonSize / 2}

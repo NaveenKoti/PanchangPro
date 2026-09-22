@@ -29,7 +29,7 @@ import {
   Button,
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { Calendar, Clock, Sparkles, ChevronDown, X, Share2, Moon } from 'lucide-react';
+import { Calendar, Clock, Sparkles, ChevronDown, ChevronRight, X, Share2, Moon } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import { useI18n } from '../hooks/useI18n';
 import { EKADASHIS, OTHER_FASTS, FastingInfo } from '../data/fastings';
@@ -265,16 +265,16 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 height: 48,
                 borderRadius: '50%',
                 bgcolor: isDark
-                  ? `${muiTheme.palette.primary.main}15`
-                  : `${muiTheme.palette.primary.main}10`,
+                  ? alpha(muiTheme.palette.primary.main, 0.08)
+                  : alpha(muiTheme.palette.primary.main, 0.06),
                 color: 'primary.main',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 flexShrink: 0,
                 '&:hover': {
                   bgcolor: isDark
-                    ? `${muiTheme.palette.primary.main}25`
-                    : `${muiTheme.palette.primary.main}20`,
+                    ? alpha(muiTheme.palette.primary.main, 0.15)
+                    : alpha(muiTheme.palette.primary.main, 0.13),
                   transform: 'scale(1.05)',
                 },
                 '&:active': {
@@ -296,9 +296,25 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
         <Zoom in timeout={300}>
         <SectionCard
           title={
-            <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', letterSpacing: '-0.02em', lineHeight: 1.3 }}>
-              {currentLanguage === 'hi' ? panchang.fasting.nameHindi : panchang.fasting.name}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+              <Box
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 1,
+                  bgcolor: alpha(muiTheme.palette.primary.main, 0.08),
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Sparkles size={18} color={muiTheme.palette.primary.main} />
+              </Box>
+              <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', letterSpacing: '-0.02em', lineHeight: 1.3, flex: 1, minWidth: 0 }}>
+                {currentLanguage === 'hi' ? panchang.fasting.nameHindi : panchang.fasting.name}
+              </Typography>
+            </Box>
           }
         >
           <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.5 }}>
@@ -313,9 +329,25 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
         <Fade in timeout={350}>
         <SectionCard
           title={
-            <Typography variant="subtitle1" sx={{ fontWeight: 500, color: 'text.primary', letterSpacing: '-0.02em', lineHeight: 1.3 }}>
-              {t('fasting.upcoming') || 'Upcoming Fasts'}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+              <Box
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 1,
+                  bgcolor: alpha(muiTheme.palette.primary.main, 0.08),
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Clock size={18} color={muiTheme.palette.primary.main} />
+              </Box>
+              <Typography variant="subtitle1" sx={{ fontWeight: 500, color: 'text.primary', letterSpacing: '-0.02em', lineHeight: 1.3, flex: 1, minWidth: 0 }}>
+                {t('fasting.upcoming') || 'Upcoming Fasts'}
+              </Typography>
+            </Box>
           }
         >
 
@@ -357,10 +389,10 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   sx={{
                     width: 36,
                     height: 36,
-                    borderRadius: 1.5,
+                    borderRadius: 1,
                     bgcolor: isDark
-                      ? `${visual.color}25`
-                      : `${visual.color}15`,
+                      ? alpha(visual.color, 0.15)
+                      : alpha(visual.color, 0.08),
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -386,9 +418,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         height: 22,
                         fontSize: '0.6rem',
                         fontWeight: 500,
-                        bgcolor: `${muiTheme.palette.primary.main}15`,
+                        bgcolor: alpha(muiTheme.palette.primary.main, 0.08),
                         color: muiTheme.palette.primary.main,
-                        border: `1px solid ${muiTheme.palette.primary.main}30`,
+                        border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.19)}`,
                       }}
                     />
                   )}
@@ -400,9 +432,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         height: 22,
                         fontSize: '0.6rem',
                         fontWeight: 500,
-                        bgcolor: `${muiTheme.palette.primary.main}15`,
+                        bgcolor: alpha(muiTheme.palette.primary.main, 0.08),
                         color: muiTheme.palette.primary.main,
-                        border: `1px solid ${muiTheme.palette.primary.main}30`,
+                        border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.19)}`,
                       }}
                     />
                   )}
@@ -422,6 +454,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         : 'primary.main',
                     }}
                   />
+                  {(canViewStory || canViewDetails) && (
+                    <ChevronRight size={16} color={muiTheme.palette.primary.main} aria-hidden="true" />
+                  )}
                 </Box>
               </Box>
             </Box>
@@ -442,7 +477,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               }}
             >
               <AccordionSummary
-                expandIcon={<ChevronDown size={20} color="primary.main" />}
+                expandIcon={<ChevronDown size={20} color={muiTheme.palette.primary.main} />}
                 sx={{
                   minHeight: 48,
                   px: 1,
@@ -498,16 +533,19 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         '&:hover': (canViewStory || canViewDetails) ? {
                           bgcolor: muiTheme.palette.action.selected,
                         } : {},
+                        '&:active': (canViewStory || canViewDetails) ? {
+                          transform: 'scale(0.98)',
+                        } : {},
                       }}
                     >
                       <Box
                         sx={{
                           width: 36,
                           height: 36,
-                          borderRadius: 1.5,
+                          borderRadius: 1,
                           bgcolor: isDark
-                            ? `${visual.color}20`
-                            : `${visual.color}10`,
+                            ? alpha(visual.color, 0.13)
+                            : alpha(visual.color, 0.06),
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -530,9 +568,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                               height: 18,
                               fontSize: '0.55rem',
                               fontWeight: 500,
-                              bgcolor: `${muiTheme.palette.primary.main}12`,
+                              bgcolor: alpha(muiTheme.palette.primary.main, 0.07),
                               color: muiTheme.palette.primary.main,
-                              border: `1px solid ${muiTheme.palette.primary.main}25`,
+                              border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.15)}`,
                             }}
                           />
                         )}
@@ -544,9 +582,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                               height: 18,
                               fontSize: '0.55rem',
                               fontWeight: 500,
-                              bgcolor: `${muiTheme.palette.primary.main}12`,
+                              bgcolor: alpha(muiTheme.palette.primary.main, 0.07),
                               color: muiTheme.palette.primary.main,
-                              border: `1px solid ${muiTheme.palette.primary.main}25`,
+                              border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.15)}`,
                             }}
                           />
                         )}
@@ -578,9 +616,26 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
         </Fade>
       )}
       {upcomingFasts.length === 0 && (
-        <Typography variant="body2" color="text.secondary" sx={{ px: 0.5, mb: 1.5, lineHeight: 1.6 }}>
-          {isHindi ? 'अगले 30 दिनों में कोई व्रत नहीं — एकादशी और प्रदोष यहाँ दिखेंगे।' : 'No fasts in the next 30 days — Ekadashi and Pradosh will appear here.'}
-        </Typography>
+        <Box sx={{ textAlign: 'center', py: 2, mb: 1.5 }}>
+          <Box
+            sx={{
+              width: 48,
+              height: 48,
+              borderRadius: 1,
+              bgcolor: alpha(muiTheme.palette.primary.main, 0.08),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mx: 'auto',
+              mb: 1,
+            }}
+          >
+            <Moon size={24} color={muiTheme.palette.primary.main} />
+          </Box>
+          <Typography variant="body2" color="text.secondary" sx={{ px: 0.5, lineHeight: 1.6 }}>
+            {isHindi ? 'अगले 30 दिनों में कोई व्रत नहीं — एकादशी और प्रदोष यहाँ दिखेंगे।' : 'No fasts in the next 30 days — Ekadashi and Pradosh will appear here.'}
+          </Typography>
+        </Box>
       )}
 
       {/* Upcoming Festivals */}
@@ -588,9 +643,25 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
         <Fade in timeout={400}>
         <SectionCard
           title={
-            <Typography variant="subtitle1" sx={{ fontWeight: 500, color: 'text.primary', letterSpacing: '-0.02em', lineHeight: 1.3 }}>
-              {t('festivals.upcoming') || 'Upcoming Festivals'}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+              <Box
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 1,
+                  bgcolor: alpha(muiTheme.palette.primary.main, 0.08),
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Calendar size={18} color={muiTheme.palette.primary.main} />
+              </Box>
+              <Typography variant="subtitle1" sx={{ fontWeight: 500, color: 'text.primary', letterSpacing: '-0.02em', lineHeight: 1.3, flex: 1, minWidth: 0 }}>
+                {t('festivals.upcoming') || 'Upcoming Festivals'}
+              </Typography>
+            </Box>
           }
         >
 
@@ -609,13 +680,13 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               sx={{
                 p: { xs: 1.25, sm: 1.5 },
                 borderRadius: 1.5,
-                bgcolor: `${muiTheme.palette.primary.main}12`,
-                border: `1px solid ${muiTheme.palette.primary.main}25`,
+                bgcolor: alpha(muiTheme.palette.primary.main, 0.07),
+                border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.15)}`,
                 mb: upcomingFestivals.length > 1 ? 0.75 : 0,
                 cursor: canViewStory ? 'pointer' : 'default',
                 transition: 'all 0.2s ease',
                 '&:hover': canViewStory ? {
-                  bgcolor: `${muiTheme.palette.primary.main}18`,
+                  bgcolor: alpha(muiTheme.palette.primary.main, 0.09),
                 } : {},
                 '&:active': canViewStory ? {
                   transform: 'scale(0.98)',
@@ -627,10 +698,10 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   sx={{
                     width: 36,
                     height: 36,
-                    borderRadius: 1.5,
+                    borderRadius: 1,
                     bgcolor: isDark
-                      ? `${muiTheme.palette.primary.main}25`
-                      : `${muiTheme.palette.primary.main}15`,
+                      ? alpha(muiTheme.palette.primary.main, 0.15)
+                      : alpha(muiTheme.palette.primary.main, 0.08),
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -660,9 +731,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         height: 22,
                         fontSize: '0.6rem',
                         fontWeight: 500,
-                        bgcolor: `${muiTheme.palette.primary.main}20`,
+                        bgcolor: alpha(muiTheme.palette.primary.main, 0.13),
                         color: muiTheme.palette.primary.main,
-                        border: `1px solid ${muiTheme.palette.primary.main}35`,
+                        border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.21)}`,
                       }}
                     />
                   )}
@@ -682,6 +753,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         : 'primary.main',
                     }}
                   />
+                  {canViewStory && (
+                    <ChevronRight size={16} color={muiTheme.palette.primary.main} aria-hidden="true" />
+                  )}
                 </Box>
               </Box>
               {upcomingFestivals[0].description && (
@@ -704,9 +778,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   height: 22,
                   fontSize: '0.65rem',
                   fontWeight: 500,
-                  bgcolor: `${muiTheme.palette.primary.main}15`,
+                  bgcolor: alpha(muiTheme.palette.primary.main, 0.08),
                   color: muiTheme.palette.primary.main,
-                  border: `1px solid ${muiTheme.palette.primary.main}30`,
+                  border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.19)}`,
                 }}
               />
             </Box>
@@ -754,19 +828,19 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   {upcomingFestivals.slice(1).map((festival, index) => {
                     const typeColors = {
                       major: {
-                        bg: `${muiTheme.palette.primary.main}12`,
+                        bg: alpha(muiTheme.palette.primary.main, 0.07),
                         text: muiTheme.palette.primary.main,
-                        border: `${muiTheme.palette.primary.main}25`,
+                        border: alpha(muiTheme.palette.primary.main, 0.15),
                       },
                       minor: {
-                        bg: `${muiTheme.palette.success.main}12`,
+                        bg: alpha(muiTheme.palette.success.main, 0.07),
                         text: muiTheme.palette.success.main,
-                        border: `${muiTheme.palette.success.main}25`,
+                        border: alpha(muiTheme.palette.success.main, 0.15),
                       },
                       regional: {
-                        bg: `${muiTheme.palette.info.main}12`,
+                        bg: alpha(muiTheme.palette.info.main, 0.07),
                         text: muiTheme.palette.info.main,
-                        border: `${muiTheme.palette.info.main}25`,
+                        border: alpha(muiTheme.palette.info.main, 0.15),
                       },
                     };
                     const colors = typeColors[festival.type] || typeColors.minor;
@@ -797,16 +871,19 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                           '&:hover': canViewStory ? {
                             bgcolor: muiTheme.palette.action.selected,
                           } : {},
+                          '&:active': canViewStory ? {
+                            transform: 'scale(0.98)',
+                          } : {},
                         }}
                       >
                         <Box
                           sx={{
                             width: 36,
                             height: 36,
-                            borderRadius: 1.5,
+                            borderRadius: 1,
                             bgcolor: isDark
-                              ? `${muiTheme.palette.primary.main}20`
-                              : `${muiTheme.palette.primary.main}10`,
+                              ? alpha(muiTheme.palette.primary.main, 0.13)
+                              : alpha(muiTheme.palette.primary.main, 0.06),
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -837,9 +914,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                                   height: 18,
                                   fontSize: '0.55rem',
                                   fontWeight: 500,
-                                  bgcolor: `${muiTheme.palette.primary.main}15`,
+                                  bgcolor: alpha(muiTheme.palette.primary.main, 0.08),
                                   color: muiTheme.palette.primary.main,
-                                  border: `1px solid ${muiTheme.palette.primary.main}30`,
+                                  border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.19)}`,
                                 }}
                               />
                             )}
@@ -898,9 +975,26 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
         </Fade>
       )}
       {upcomingFestivals.length === 0 && (
-        <Typography variant="body2" color="text.secondary" sx={{ px: 0.5, mb: 1.5, lineHeight: 1.6 }}>
-          {isHindi ? 'अगले 60 दिनों में कोई त्योहार नहीं — तिथि अनुसार त्योहार यहाँ दिखेंगे।' : 'No festivals in the next 60 days — festivals appear here by tithi.'}
-        </Typography>
+        <Box sx={{ textAlign: 'center', py: 2, mb: 1.5 }}>
+          <Box
+            sx={{
+              width: 48,
+              height: 48,
+              borderRadius: 1,
+              bgcolor: alpha(muiTheme.palette.primary.main, 0.08),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mx: 'auto',
+              mb: 1,
+            }}
+          >
+            <Sparkles size={24} color={muiTheme.palette.primary.main} />
+          </Box>
+          <Typography variant="body2" color="text.secondary" sx={{ px: 0.5, lineHeight: 1.6 }}>
+            {isHindi ? 'अगले 60 दिनों में कोई त्योहार नहीं — तिथि अनुसार त्योहार यहाँ दिखेंगे।' : 'No festivals in the next 60 days — festivals appear here by tithi.'}
+          </Typography>
+        </Box>
       )}
 
       {/* Tabs */}
@@ -1002,8 +1096,8 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   px: 1,
                   py: 0.5,
                   borderRadius: 1.5,
-                  bgcolor: `${muiTheme.palette.primary.main}08`,
-                  border: `1px solid ${muiTheme.palette.primary.main}15`,
+                  bgcolor: alpha(muiTheme.palette.primary.main, 0.03),
+                  border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.08)}`,
                   '& .MuiAccordionSummary-content': {
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -1077,9 +1171,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                               height: 20,
                               fontSize: '0.6rem',
                               fontWeight: 500,
-                              bgcolor: `${muiTheme.palette.primary.main}12`,
+                              bgcolor: alpha(muiTheme.palette.primary.main, 0.07),
                               color: muiTheme.palette.primary.main,
-                              border: `1px solid ${muiTheme.palette.primary.main}25`,
+                              border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.15)}`,
                               flexShrink: 0,
                             }}
                           />
@@ -1117,9 +1211,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                             height: 22,
                             fontSize: '0.65rem',
                             fontWeight: 500,
-                            bgcolor: `${muiTheme.palette.primary.main}15`,
+                            bgcolor: alpha(muiTheme.palette.primary.main, 0.08),
                             color: muiTheme.palette.primary.main,
-                            border: `1px solid ${muiTheme.palette.primary.main}30`,
+                            border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.19)}`,
                           }}
                         />
                         {festival.region && festival.region.length > 0 && (
@@ -1130,9 +1224,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                               height: 22,
                               fontSize: '0.6rem',
                               fontWeight: 500,
-                              bgcolor: `${muiTheme.palette.info.main}12`,
+                              bgcolor: alpha(muiTheme.palette.info.main, 0.07),
                               color: muiTheme.palette.info.main,
-                              border: `1px solid ${muiTheme.palette.info.main}25`,
+                              border: `1px solid ${alpha(muiTheme.palette.info.main, 0.15)}`,
                             }}
                           />
                         )}
@@ -1163,8 +1257,8 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   px: 1,
                   py: 0.5,
                   borderRadius: 1.5,
-                  bgcolor: `${muiTheme.palette.success.main}08`,
-                  border: `1px solid ${muiTheme.palette.success.main}15`,
+                  bgcolor: alpha(muiTheme.palette.success.main, 0.03),
+                  border: `1px solid ${alpha(muiTheme.palette.success.main, 0.08)}`,
                   '& .MuiAccordionSummary-content': {
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -1238,9 +1332,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                               height: 20,
                               fontSize: '0.6rem',
                               fontWeight: 500,
-                              bgcolor: `${muiTheme.palette.primary.main}12`,
+                              bgcolor: alpha(muiTheme.palette.primary.main, 0.07),
                               color: muiTheme.palette.primary.main,
-                              border: `1px solid ${muiTheme.palette.primary.main}25`,
+                              border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.15)}`,
                               flexShrink: 0,
                             }}
                           />
@@ -1278,9 +1372,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                             height: 22,
                             fontSize: '0.65rem',
                             fontWeight: 500,
-                            bgcolor: `${muiTheme.palette.success.main}12`,
+                            bgcolor: alpha(muiTheme.palette.success.main, 0.07),
                             color: muiTheme.palette.success.main,
-                            border: `1px solid ${muiTheme.palette.success.main}25`,
+                            border: `1px solid ${alpha(muiTheme.palette.success.main, 0.15)}`,
                           }}
                         />
                         {festival.region && festival.region.length > 0 && (
@@ -1291,9 +1385,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                               height: 22,
                               fontSize: '0.6rem',
                               fontWeight: 500,
-                              bgcolor: `${muiTheme.palette.info.main}12`,
+                              bgcolor: alpha(muiTheme.palette.info.main, 0.07),
                               color: muiTheme.palette.info.main,
-                              border: `1px solid ${muiTheme.palette.info.main}25`,
+                              border: `1px solid ${alpha(muiTheme.palette.info.main, 0.15)}`,
                             }}
                           />
                         )}
@@ -1324,8 +1418,8 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   px: 1,
                   py: 0.5,
                   borderRadius: 1.5,
-                  bgcolor: `${muiTheme.palette.info.main}08`,
-                  border: `1px solid ${muiTheme.palette.info.main}15`,
+                  bgcolor: alpha(muiTheme.palette.info.main, 0.03),
+                  border: `1px solid ${alpha(muiTheme.palette.info.main, 0.08)}`,
                   '& .MuiAccordionSummary-content': {
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -1399,9 +1493,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                               height: 20,
                               fontSize: '0.6rem',
                               fontWeight: 500,
-                              bgcolor: `${muiTheme.palette.primary.main}12`,
+                              bgcolor: alpha(muiTheme.palette.primary.main, 0.07),
                               color: muiTheme.palette.primary.main,
-                              border: `1px solid ${muiTheme.palette.primary.main}25`,
+                              border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.15)}`,
                               flexShrink: 0,
                             }}
                           />
@@ -1439,9 +1533,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                             height: 22,
                             fontSize: '0.65rem',
                             fontWeight: 500,
-                            bgcolor: `${muiTheme.palette.info.main}15`,
+                            bgcolor: alpha(muiTheme.palette.info.main, 0.08),
                             color: muiTheme.palette.info.main,
-                            border: `1px solid ${muiTheme.palette.info.main}30`,
+                            border: `1px solid ${alpha(muiTheme.palette.info.main, 0.19)}`,
                           }}
                         />
                         {festival.region && festival.region.length > 0 && (
@@ -1452,9 +1546,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                               height: 22,
                               fontSize: '0.6rem',
                               fontWeight: 500,
-                              bgcolor: `${muiTheme.palette.info.main}12`,
+                              bgcolor: alpha(muiTheme.palette.info.main, 0.07),
                               color: muiTheme.palette.info.main,
-                              border: `1px solid ${muiTheme.palette.info.main}25`,
+                              border: `1px solid ${alpha(muiTheme.palette.info.main, 0.15)}`,
                             }}
                           />
                         )}
@@ -1488,7 +1582,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               sx={{
                 m: 0,
                 p: 1.5,
-                bgcolor: `${muiTheme.palette.primary.main}08`,
+                bgcolor: alpha(muiTheme.palette.primary.main, 0.03),
                 borderBottom: `1px solid ${muiTheme.palette.divider}`,
               }}
             >
@@ -1498,8 +1592,8 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     sx={{
                       width: 40,
                       height: 40,
-                      borderRadius: 2,
-                      bgcolor: `${muiTheme.palette.primary.main}15`,
+                      borderRadius: 1,
+                      bgcolor: alpha(muiTheme.palette.primary.main, 0.08),
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -1533,9 +1627,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         fontSize: '0.65rem',
                         fontWeight: 500,
                         mt: 0.5,
-                        bgcolor: `${muiTheme.palette.primary.main}12`,
+                        bgcolor: alpha(muiTheme.palette.primary.main, 0.07),
                         color: muiTheme.palette.primary.main,
-                        border: `1px solid ${muiTheme.palette.primary.main}25`,
+                        border: `1px solid ${alpha(muiTheme.palette.primary.main, 0.15)}`,
                       }}
                     />
                   </Box>
@@ -1563,9 +1657,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 sx={{
                   mb: 1.5,
                   p: 1.25,
-                  borderRadius: 2,
-                  bgcolor: `${muiTheme.palette.info.main}08`,
-                  border: `1px solid ${muiTheme.palette.info.main}20`,
+                  borderRadius: 1,
+                  bgcolor: alpha(muiTheme.palette.info.main, 0.03),
+                  border: `1px solid ${alpha(muiTheme.palette.info.main, 0.13)}`,
                 }}
               >
                 <Typography
@@ -1650,8 +1744,8 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         gap: 0.5,
                         p: 0.75,
                         borderRadius: 1.5,
-                        bgcolor: `${muiTheme.palette.success.main}08`,
-                        border: `1px solid ${muiTheme.palette.success.main}15`,
+                        bgcolor: alpha(muiTheme.palette.success.main, 0.03),
+                        border: `1px solid ${alpha(muiTheme.palette.success.main, 0.08)}`,
                         flex: '1 1 calc(50% - 6px)',
                         minWidth: 0,
                       }}
@@ -1749,9 +1843,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   sx={{
                     mb: 1,
                     p: 1.25,
-                    borderRadius: 2,
-                    bgcolor: `${muiTheme.palette.success.main}12`,
-                    border: `1px solid ${muiTheme.palette.success.main}25`,
+                    borderRadius: 1,
+                    bgcolor: alpha(muiTheme.palette.success.main, 0.07),
+                    border: `1px solid ${alpha(muiTheme.palette.success.main, 0.15)}`,
                   }}
                 >
                   <Typography
@@ -1787,9 +1881,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                 <Box
                   sx={{
                     p: 1.25,
-                    borderRadius: 2,
-                    bgcolor: `${muiTheme.palette.info.main}08`,
-                    border: `1px solid ${muiTheme.palette.info.main}20`,
+                    borderRadius: 1,
+                    bgcolor: alpha(muiTheme.palette.info.main, 0.03),
+                    border: `1px solid ${alpha(muiTheme.palette.info.main, 0.13)}`,
                   }}
                 >
                   <Typography

@@ -11,6 +11,7 @@
 
 import React from 'react';
 import { BottomNavigation, BottomNavigationAction, Paper, useTheme } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { Sunrise, CalendarDays, Clock, MoreHorizontal, Star } from 'lucide-react';
 import { useI18n } from '../hooks/useI18n';
 import { useBreakpoints } from '../hooks/useBreakpoints';
@@ -62,11 +63,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({ value, onChange, onShowMor
         // Glass blur + translucent background.paper (mirrors AppBar treatment)
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        bgcolor: (theme) =>
-          theme.palette.mode === 'dark'
-            ? 'rgba(36, 32, 25, 0.85)'
-            : 'rgba(255, 255, 255, 0.85)',
-        borderTop: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
+        bgcolor: (theme) => alpha(theme.palette.background.paper, 0.85),
+        borderTop: (theme) => `1px solid ${alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.12 : 0.08)}`,
         // Safe-area inset for gesture-bar devices, with fallback
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}
@@ -85,8 +83,9 @@ export const BottomNav: React.FC<BottomNavProps> = ({ value, onChange, onShowMor
             color: theme.palette.text.secondary,
             transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
             '&:hover': {
-              bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+              bgcolor: alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.08 : 0.04),
             },
+            '&:active': { transform: 'scale(0.97)' },
           },
           '& .Mui-selected': {
             color: `${theme.palette.primary.main} !important`,

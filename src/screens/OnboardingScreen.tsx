@@ -13,6 +13,7 @@ import {
   ToggleButtonGroup,
   useTheme,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { MapPin, CheckCircle, Sun, Moon, Monitor, ShieldCheck } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import { GeoLocation } from '../types';
@@ -99,21 +100,21 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           <Box sx={{
             position: 'absolute', top: -80, right: -80,
             width: 300, height: 300, borderRadius: '50%',
-            bgcolor: 'rgba(255,255,255,0.06)',
+            bgcolor: alpha(theme.palette.common.white, 0.06),
           }} />
           <Box sx={{
             position: 'absolute', bottom: -60, left: -60,
             width: 240, height: 240, borderRadius: '50%',
-            bgcolor: 'rgba(255,255,255,0.05)',
+            bgcolor: alpha(theme.palette.common.white, 0.05),
           }} />
 
           {/* Logo mark */}
           <Box
             sx={{
               width: 96, height: 96, borderRadius: '50%',
-              bgcolor: 'rgba(255,255,255,0.15)',
+              bgcolor: alpha(theme.palette.common.white, 0.15),
               backdropFilter: 'blur(8px)',
-              border: '2px solid rgba(255,255,255,0.3)',
+              border: `2px solid ${alpha(theme.palette.common.white, 0.3)}`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               mb: 4,
             }}
@@ -178,7 +179,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
               px: 5,
               py: 1.5,
               minHeight: 48,
-              borderRadius: 2,
+              borderRadius: 1,
               boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
               '&:hover': {
                 bgcolor: 'primary.contrastText',
@@ -219,7 +220,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
                 sx={{
                   border: '1px solid',
                   borderColor: 'divider',
-                  borderRadius: 2,
+                  borderRadius: 1,
                   p: 1.5,
                   bgcolor: 'background.paper',
                 }}
@@ -242,7 +243,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
               alignItems: 'flex-start',
               border: '1px solid',
               borderColor: 'success.main',
-              borderRadius: 2,
+              borderRadius: 1,
               p: 1.5,
               mb: 4,
               bgcolor: 'background.paper',
@@ -261,7 +262,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             size="large"
             onClick={() => setStep(2)}
             fullWidth
-            sx={{ py: 1.5, minHeight: 48, borderRadius: 2, fontWeight: 500, fontSize: '1rem' }}
+            sx={{ py: 1.5, minHeight: 48, borderRadius: 1, fontWeight: 500, fontSize: '1rem' }}
           >
             {isHindiOnboarding ? 'आगे बढ़ें' : 'Continue'}
           </Button>
@@ -293,7 +294,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             sx={{
               border: '1px solid',
               borderColor: detectedLocation ? 'success.main' : 'divider',
-              borderRadius: 2,
+              borderRadius: 1,
               p: 2,
               mb: 3,
               bgcolor: 'background.paper',
@@ -332,7 +333,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
                     onClick={handleDetectLocation}
                     disabled={isDetecting}
                     startIcon={isDetecting ? <CircularProgress size={14} /> : undefined}
-                    sx={{ borderColor: 'primary.main', color: 'primary.main', borderRadius: 2, minWidth: 80, minHeight: 48 }}
+                    sx={{ borderColor: 'primary.main', color: 'primary.main', borderRadius: 1, minWidth: 80, minHeight: 48 }}
                   >
                     {isDetecting ? '' : (isHindiOnboarding ? (locationTimedOut ? 'पुनः प्रयास करें' : 'अनुमति दें') : (locationTimedOut ? 'Retry' : 'Allow'))}
                   </Button>
@@ -403,7 +404,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             size="large"
             onClick={() => setStep(3)}
             fullWidth
-            sx={{ py: 1.5, minHeight: 48, borderRadius: 2, fontWeight: 500, fontSize: '1rem' }}
+            sx={{ py: 1.5, minHeight: 48, borderRadius: 1, fontWeight: 500, fontSize: '1rem' }}
           >
             {isHindiOnboarding ? 'आगे बढ़ें' : 'Continue'}
           </Button>
@@ -444,7 +445,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             size="large"
             onClick={handleComplete}
             sx={{
-              px: 6, py: 1.5, minHeight: 48, borderRadius: 2,
+              px: 6, py: 1.5, minHeight: 48, borderRadius: 1,
               fontWeight: 500, fontSize: '1rem',
               boxShadow: '0 6px 20px rgba(199,91,18,0.3)',
               '&:hover': { transform: 'translateY(-2px)', boxShadow: '0 10px 28px rgba(199,91,18,0.4)' },

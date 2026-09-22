@@ -13,6 +13,7 @@ import {
   Zoom,
   useTheme,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { SectionCard } from '../components/layout/SectionCard';
 import { Share2, Moon, Sun, Star, BookOpen, Sunrise, Sunset, Flame } from 'lucide-react';
@@ -136,9 +137,9 @@ const StoriesScreen: React.FC = () => {
         >
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 1.5, flexWrap: 'wrap' }}>
               <Box sx={{
-                width: { xs: 40, sm: 44 }, height: { xs: 40, sm: 44 }, borderRadius: 2.5, flexShrink: 0,
-                bgcolor: `${tithiColor}15`,
-                border: `1px solid ${tithiColor}30`,
+                width: { xs: 40, sm: 44 }, height: { xs: 40, sm: 44 }, borderRadius: 1, flexShrink: 0,
+                bgcolor: alpha(tithiColor, 0.08),
+                border: `1px solid ${alpha(tithiColor, 0.19)}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <Typography sx={{ display: 'flex', lineHeight: 1 }}>
@@ -157,11 +158,11 @@ const StoriesScreen: React.FC = () => {
             <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
               <Chip label={panchang.tithi.paksha === 'Shukla' ? 'Shukla Paksha' : 'Krishna Paksha'} size="small"
                 sx={{ height: 24, borderRadius: 1.5, fontSize: '0.7rem', fontWeight: 500,
-                  bgcolor: `${tithiColor}12`, color: tithiColor,
-                  border: `1px solid ${tithiColor}25` }} />
+                  bgcolor: alpha(tithiColor, 0.07), color: tithiColor,
+                  border: `1px solid ${alpha(tithiColor, 0.15)}` }} />
               <Chip label={`Tithi ${panchang.tithi.number}`} size="small" variant="outlined"
                 sx={{ height: 24, borderRadius: 1.5, fontSize: '0.7rem', fontWeight: 500,
-                  borderColor: isDark ? 'rgba(255,248,240,0.15)' : 'rgba(0,0,0,0.1)', color: 'text.secondary' }} />
+                  borderColor: isDark ? alpha(theme.palette.common.white, 0.15) : alpha(theme.palette.common.black, 0.1), color: 'text.secondary' }} />
             </Box>
             <Typography variant="body2" sx={{ fontWeight: 500, color: tithiColor, mb: 0.75, fontSize: '0.875rem' }}>
               {tithiInfo.meaning}
@@ -193,9 +194,9 @@ const StoriesScreen: React.FC = () => {
         >
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 2, flexWrap: 'wrap' }}>
               <Box sx={{
-                width: { xs: 40, sm: 44 }, height: { xs: 40, sm: 44 }, borderRadius: 2.5, flexShrink: 0,
-                bgcolor: isDark ? 'rgba(44,62,107,0.25)' : 'rgba(44,62,107,0.1)',
-                border: '1px solid rgba(44,62,107,0.25)',
+                width: { xs: 40, sm: 44 }, height: { xs: 40, sm: 44 }, borderRadius: 1, flexShrink: 0,
+                bgcolor: isDark ? alpha(theme.palette.info.main, 0.25) : alpha(theme.palette.info.main, 0.1),
+                border: `1px solid ${alpha(theme.palette.info.main, 0.25)}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <Typography sx={{ display: 'flex', lineHeight: 1 }}>
@@ -238,9 +239,9 @@ const StoriesScreen: React.FC = () => {
         >
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 1.5, flexWrap: 'wrap' }}>
               <Box sx={{
-                width: { xs: 40, sm: 44 }, height: { xs: 40, sm: 44 }, borderRadius: 2.5, flexShrink: 0,
-                bgcolor: isDark ? 'rgba(61,107,36,0.25)' : 'rgba(61,107,36,0.1)',
-                border: '1px solid rgba(61,107,36,0.25)',
+                width: { xs: 40, sm: 44 }, height: { xs: 40, sm: 44 }, borderRadius: 1, flexShrink: 0,
+                bgcolor: isDark ? alpha(theme.palette.secondary.main, 0.25) : alpha(theme.palette.secondary.main, 0.1),
+                border: `1px solid ${alpha(theme.palette.secondary.main, 0.25)}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <Typography sx={{ display: 'flex', lineHeight: 1 }}>
@@ -254,8 +255,8 @@ const StoriesScreen: React.FC = () => {
                 {panchang.festivals[0].type && (
                   <Chip label={panchang.festivals[0].type} size="small"
                     sx={{ height: 22, borderRadius: 1.5, fontSize: '0.68rem', fontWeight: 500,
-                      bgcolor: isDark ? 'rgba(61,107,36,0.25)' : 'rgba(61,107,36,0.1)', color: 'secondary.main',
-                      border: '1px solid rgba(61,107,36,0.25)' }} />
+                      bgcolor: isDark ? alpha(theme.palette.secondary.main, 0.25) : alpha(theme.palette.secondary.main, 0.1), color: 'secondary.main',
+                      border: `1px solid ${alpha(theme.palette.secondary.main, 0.25)}` }} />
                 )}
               </Box>
             </Box>
@@ -305,7 +306,7 @@ const StoriesScreen: React.FC = () => {
               <Box component="span" sx={{ fontWeight: 500 }}>Meaning:</Box> {todayVerse.meaning}
             </Typography>
           )}
-          <Typography variant="caption" sx={{ color: isDark ? 'rgba(255,248,240,0.6)' : 'rgba(92,64,51,0.7)', fontStyle: 'italic' }}>
+          <Typography variant="caption" sx={{ color: isDark ? alpha(theme.palette.common.white, 0.6) : alpha(theme.palette.text.secondary, 0.7), fontStyle: 'italic' }}>
             — {todayVerse.source}
             {todayVerse.chapter && todayVerse.verse ? `, Chapter ${todayVerse.chapter}, Verse ${todayVerse.verse}` : ''}
           </Typography>
@@ -337,7 +338,7 @@ const StoriesScreen: React.FC = () => {
                 {panchang.sunrise.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </Typography>
             </Box>
-            <Box sx={{ width: 2, minWidth: 2, bgcolor: isDark ? 'rgba(255,248,240,0.2)' : 'rgba(0,0,0,0.15)', my: 1, borderRadius: 1, display: { xs: 'none', sm: 'block' } }} />
+            <Box sx={{ width: 2, minWidth: 2, bgcolor: isDark ? alpha(theme.palette.common.white, 0.2) : alpha(theme.palette.common.black, 0.15), my: 1, borderRadius: 1, display: { xs: 'none', sm: 'block' } }} />
             <Box sx={{ flex: 1, minWidth: 120, textAlign: 'center' }}>
               <Typography sx={{ display: 'flex', justifyContent: 'center', mb: 0.5 }}>
                 <Sunset size={20} color={theme.palette.primary.main} />

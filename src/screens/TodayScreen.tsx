@@ -338,7 +338,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
             size="small"
             variant="outlined"
             onClick={() => requestTab('myTithis')}
-            sx={{ mt: 1, borderRadius: 2, textTransform: 'none', fontWeight: 500, minHeight: 48 }}
+            sx={{ mt: 1, borderRadius: 1, textTransform: 'none', fontWeight: 500, minHeight: 48 }}
           >
             {isDigestHindi ? 'मेरी तिथियाँ देखें' : 'View My Tithis'}
           </Button>
@@ -425,7 +425,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
           elevation={0}
           sx={{
             mb: 1.5,
-            borderRadius: 2,
+            borderRadius: 1,
             border: '1px solid',
             borderColor: 'divider',
             position: 'sticky',
@@ -580,7 +580,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
           sx={{
             borderColor: 'primary.main',
             color: 'primary.main',
-            borderRadius: 2,
+            borderRadius: 1,
             py: 1,
             px: 3,
             fontWeight: 500,
@@ -642,7 +642,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                     triggerHapticIfSupported('light');
                     setIsNakshatraDialogOpen(true);
                   }}
-                  sx={{ borderRadius: 2, cursor: 'pointer', border: '1px solid', borderColor: 'divider' }}
+                  sx={{ borderRadius: 1, cursor: 'pointer', border: '1px solid', borderColor: 'divider', transition: 'all 0.2s ease', '&:hover': { bgcolor: 'action.hover' }, '&:active': { transform: 'scale(0.98)' } }}
                 >
                   <CardContent>
                     <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
@@ -671,7 +671,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                     triggerHapticIfSupported('light');
                     setGlossaryLimb('yoga');
                   }}
-                  sx={{ borderRadius: 2, cursor: 'pointer', border: '1px solid', borderColor: 'divider' }}
+                  sx={{ borderRadius: 1, cursor: 'pointer', border: '1px solid', borderColor: 'divider', transition: 'all 0.2s ease', '&:hover': { bgcolor: 'action.hover' }, '&:active': { transform: 'scale(0.98)' } }}
                 >
                   <CardContent>
                     <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
@@ -768,7 +768,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
         <Alert
           severity={snackbar.severity}
           onClose={() => setSnackbar({ ...snackbar, open: false })}
-          sx={{ borderRadius: 2, fontWeight: 500 }}
+          sx={{ borderRadius: 1, fontWeight: 500 }}
         >
           {snackbar.message}
         </Alert>
