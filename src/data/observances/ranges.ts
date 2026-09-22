@@ -84,7 +84,7 @@ export const RANGE_OBSERVANCES: ObservanceEntry[] = [
     id: 'chhath',
     name: 'Chhath Puja (4-day)',
     nameHindi: 'छठ पूजा (चार दिवसीय)',
-    meaning: 'Four-day Sun worship from Kartika Shukla Chaturthi (Nahay-Khay) to Saptami (Usha Arghya). 2026: Nov 13 Nahay-Khay, Nov 14 Kharna, Nov 15 Sandhya Arghya (Shashthi), Nov 16 Usha Arghya.',
+    meaning: 'Four-day Sun worship from Kartika Shukla Chaturthi (Nahay-Khay) to Saptami (Usha Arghya).',
     meaningHindi: 'कार्तिक शुक्ल चतुर्थी (नहाय-खाय) से सप्तमी (उषा अर्घ्य) तक चार दिवसीय सूर्य उपासना।',
     rule: {
       kind: 'date-range',

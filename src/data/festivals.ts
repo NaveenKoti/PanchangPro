@@ -115,7 +115,7 @@ export const FESTIVALS: FestivalData[] = [
     name: 'Bhai Dooj',
     nameHindi: 'भाई दूज',
     description: 'Sisters bless brothers (Diwali close)',
-    significance: 'Kartika Shukla Dwitiya — sisters apply tilak and bless their brothers in the afternoon (Aparahna), closing the five-day Diwali festival. Dwitiya must prevail at Aparahna (sunrise + 0.7 × daylength), not merely at dawn (Delhi reckoning 2026: Nov 11). अपराह्न काल में द्वितीया होने पर भाई दूज मनाई जाती है।',
+    significance: 'Kartika Shukla Dwitiya — sisters apply tilak and bless their brothers in the afternoon (Aparahna), closing the five-day Diwali festival. Dwitiya must prevail at Aparahna (sunrise + 0.7 × daylength), not merely at dawn. अपराह्न काल में द्वितीया होने पर भाई दूज मनाई जाती है।',
     tithiNumber: 2,
     paksha: 'Shukla',
     month: 8, // Kartika
