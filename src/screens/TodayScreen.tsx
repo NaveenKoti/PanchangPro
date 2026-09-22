@@ -26,6 +26,7 @@ import {
   MapPin,
   ChevronLeft,
   ChevronRight,
+  Sparkles,
   Calendar as CalendarIcon,
   Star,
   Sunrise,
@@ -57,6 +58,7 @@ import { LUNAR_MONTHS, LUNAR_MONTHS_HINDI } from '../engine/constants';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { SearchUpcoming } from '../components/SearchUpcoming';
 import { SectionCard } from '../components/layout/SectionCard';
+import { PanchangTimelineItem } from '../components/layout/PanchangTimelineItem';
 import { AlertStack, type AlertItem } from '../components/layout/AlertStack';
 import { useBreakpoints } from '../hooks/useBreakpoints';
 import { triggerHapticIfSupported } from '../utils/haptics';
@@ -628,11 +630,12 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
               {t('panchang.title')}
             </Typography>
 
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 1.5, width: '100%', maxWidth: '100%' }}>
-              {/* Nakshatra Section */}
+            {/* Panchanga timeline: dashed spine + node per limb (almanac style) */}
+            <Box sx={{ width: '100%', maxWidth: '100%' }}>
+              {/* Nakshatra Section (timeline node carries the icon) */}
+              <PanchangTimelineItem icon={<Star size={18} />}>
               <ExpandableSection
                 title={t('panchang.nakshatra')}
-                icon={<Star size={20} />}
                 expanded={isExpanded('nakshatra')}
                 onToggle={() => toggleSection('nakshatra')}
               >
@@ -657,11 +660,12 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                   </CardContent>
                 </Card>
               </ExpandableSection>
+              </PanchangTimelineItem>
 
-              {/* Yoga Section */}
+              {/* Yoga Section (timeline node carries the icon) */}
+              <PanchangTimelineItem icon={<Sparkles size={18} />}>
               <ExpandableSection
                 title={t('panchang.yoga')}
-                icon={<Star size={20} />}
                 expanded={isExpanded('yoga')}
                 onToggle={() => toggleSection('yoga')}
               >
@@ -686,8 +690,10 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                   </CardContent>
                 </Card>
               </ExpandableSection>
+              </PanchangTimelineItem>
 
               {/* Karana Section */}
+              <PanchangTimelineItem icon={<Clock size={18} />} isLast={!panchang.samvatsara}>
               <SectionCard
                 dense
                 title={
@@ -710,9 +716,11 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                   {panchang.karana.type}
                 </Typography>
               </SectionCard>
+              </PanchangTimelineItem>
 
               {/* Samvatsara Section */}
               {panchang.samvatsara && (
+                <PanchangTimelineItem icon={<CalendarIcon size={18} />} isLast>
                 <SectionCard
                   dense
                   title={
@@ -728,6 +736,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                     {t('panchang.samvatsaraDesc') || 'Hindu Year (60-year cycle)'}
                   </Typography>
                 </SectionCard>
+                </PanchangTimelineItem>
               )}
             </Box>
 

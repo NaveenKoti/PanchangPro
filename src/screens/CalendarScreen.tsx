@@ -561,6 +561,8 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   ? alpha(muiTheme.palette.primary.main, 0.19)
   : isTodayDate
   ? alpha(muiTheme.palette.primary.main, 0.10)
+  : day.isFestival
+  ? alpha(muiTheme.palette.primary.main, 0.08)
   : tithiColors.bg,
   border: isSelected
   ? `2px solid ${muiTheme.palette.primary.main}`

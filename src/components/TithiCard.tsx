@@ -173,6 +173,22 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
                 {tithi.nameHindi}
               </Typography>
             </Box>
+            {/* Oversized tithi numeral (almanac display style) */}
+            <Typography
+              aria-hidden
+              sx={{
+                marginLeft: 'auto',
+                fontWeight: 500,
+                fontSize: 'clamp(2.75rem, 12vw, 3.5rem)',
+                lineHeight: 1,
+                color: 'primary.main',
+                opacity: 0.9,
+                letterSpacing: '-0.03em',
+                flexShrink: 0,
+              }}
+            >
+              {tithi.number}
+            </Typography>
           </Box>
         </Box>
 
@@ -228,7 +244,14 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
               letterSpacing: '0.01em',
             }}
           >
-            Ends at {tithi.endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {(() => {
+              const tfmt = (d: Date) => d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              const dfmt = (d: Date) => d.toLocaleDateString([], { day: 'numeric', month: 'short' });
+              const sameDay = tithi.startTime.toDateString() === tithi.endTime.toDateString();
+              return sameDay
+                ? `${tfmt(tithi.startTime)} – ${tfmt(tithi.endTime)}`
+                : `${dfmt(tithi.startTime)}, ${tfmt(tithi.startTime)} – ${dfmt(tithi.endTime)}, ${tfmt(tithi.endTime)}`;
+            })()}
           </Typography>
         </Box>
       </CardContent>
