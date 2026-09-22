@@ -8,16 +8,15 @@
 
 import { describe, it, expect } from 'vitest';
 import { PanchangEngine } from '../panchang';
+import { DELHI } from './referenceData';
 
-const BANGALORE = {
-  latitude: 12.9716,
-  longitude: 77.5946,
-  timezone: 'Asia/Kolkata',
-  name: 'Bangalore'
-};
+// Drik observance dates are Delhi dates (sunrise-relative rules can shift
+// observance ±1 day by city, e.g. Devutthana 2026: Nov 20 Delhi,
+// Nov 21 Bangalore) — so this file runs on Delhi, not Bangalore.
+const DELHI_LOC = DELHI;
 
 describe('Ekadashi 2026 Accuracy Tests', () => {
-  const engine = new PanchangEngine(BANGALORE);
+  const engine = new PanchangEngine(DELHI_LOC);
 
   // All 2026 Ekadashi observances, verified against Drik Panchang
   // (drikpanchang.com/vrats/ekadashidates.html?year=2026, Smarta list).
@@ -161,7 +160,7 @@ describe('Ekadashi 2026 Accuracy Tests', () => {
 });
 
 describe('Major Ekadashis in 2026 - Additional verification', () => {
-  const engine = new PanchangEngine(BANGALORE);
+  const engine = new PanchangEngine(DELHI_LOC);
 
   const majorEkadashis = [
     { date: '2026-06-25', name: 'Nirjala Ekadashi' },

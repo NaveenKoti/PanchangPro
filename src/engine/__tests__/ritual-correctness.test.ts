@@ -131,9 +131,11 @@ describe('Moonrise model + Karva Chauth', () => {
 
 describe('Vaishnava viddha (Dashami-viddha Ekadashi)', () => {
   // Published context: Prabodhini (Devutthana) Ekadashi listings place the
-  // Kartika-Shukla observance on Nov 1 2025; the engine shows Udaya Dashami
-  // with Ekadashi prevailing by midday — the textbook Dashami-viddha split
-  // (Smarta fast Nov 1, Vaishnavas the Dwadashi day). Mokshada Ekadashi
+  // Kartika-Shukla observance on Nov 1 2025; Drik Delhi ground truth shows
+  // Udaya Dashami Nov 1 with Ekadashi surviving to the Nov 2 sunrise — the
+  // ordinary viddha-eve shape (NOT a kshaya), so the fast is Nov 2 alone and
+  // Nov 1 carries no Ekadashi fast. Contrast Dec 30 2025 (kshaya: Ekadashi
+  // touches no sunrise): the viddha day itself IS fasted. Mokshada Ekadashi
   // (Margashirsha Shukla) falls Dec 1 2025 with a clean Udaya Ekadashi —
   // the non-viddha control. This test asserts the MECHANISM (viddha-day
   // labeling), not any sampradaya calendar's second date (never invented).
@@ -142,11 +144,12 @@ describe('Vaishnava viddha (Dashami-viddha Ekadashi)', () => {
     expect(engine.isEkadashiViddha(atMidnight(2025, 12, 1))).toBe(false);
   });
 
-  it('labels the viddha day Ekadashi (Smarta) with the Vaishnava note', () => {
-    const p = engine.calculate(atMidnight(2025, 11, 1));
-    expect(p.fasting?.name).toBe('Ekadashi (Smarta)');
-    expect(p.fasting?.type).toBe('ekadashi');
-    expect(p.fasting?.significance).toMatch(/Vaishnavas observe the Dwadashi day/);
+  it('does NOT fast the ordinary viddha-eve (Nov 1 2025 fasts Nov 2)', () => {
+    const eve = engine.calculate(atMidnight(2025, 11, 1));
+    expect(eve.fasting?.type ?? 'none').not.toBe('ekadashi');
+    const day = engine.calculate(atMidnight(2025, 11, 2));
+    expect(day.fasting?.type).toBe('ekadashi');
+    expect(day.fasting?.name).toBe('Devutthana Ekadashi');
   });
 
   it('Mokshada Dec 1 2025 keeps the plain Ekadashi label', () => {

@@ -32,7 +32,7 @@ import {
 } from './constants';
 import { getFestivalsForDate, FESTIVALS, FestivalVyapti, FestivalData } from '../data/festivals';
 import { OTHER_FASTS } from '../data/fastings';
-import { isVerifiedEkadashi } from '../data/verifiedEkadashis';
+import { resolveEkadashiName } from '../data/ekadashiNames';
 import {
   getSunLongitude,
   getMoonLongitude,
@@ -132,8 +132,23 @@ export class PanchangEngine {
     // Calculate dinacharya phases
     const dinacharya = this.calculateDinacharyaPhases(sunrise, sunset);
 
-    // Detect fasting day based on tithi (needs sunrise/sunset for parana windows)
-    const fasting = this.detectFastingDay(tithi, localDate, sunrise, sunset);
+    const amantaMonth = this.getAmantaMonthNumber(localDate);
+
+    // Detect Adhik/Kshaya Maas for the enclosing lunar month (additive;
+    // legacy lunarMonth/festival matching untouched). Hoisted above fasting
+    // detection: Ekadashi naming needs the adhik flag (Parama/Padmini).
+    const adhikMaas = this.getAdhikMaasInfo(localDate);
+
+    // Detect fasting day based on tithi (needs sunrise/sunset for parana windows;
+    // Ekadashi names resolve from the amanta month + adhik flag — no date tables)
+    const fasting = this.detectFastingDay(
+      tithi,
+      localDate,
+      sunrise,
+      sunset,
+      amantaMonth,
+      adhikMaas?.isAdhik === true
+    );
 
     // Detect festivals based on tithi, paksha, AND lunar month, then correct
     // for vyapti (Udaya matching alone misdates Madhyahna/Nishita festivals).
@@ -144,7 +159,6 @@ export class PanchangEngine {
     // Ahoi, Bhai Dooj) additionally match the purnimanta month, which the
     // Udaya matcher accepts via the extra argument. `lunarMonth` itself is
     // kept for display only.
-    const amantaMonth = this.getAmantaMonthNumber(localDate);
     const festivals = this.applyFestivalVyapti(
       getFestivalsForDate(
         localDate,
@@ -172,10 +186,6 @@ export class PanchangEngine {
           ingressTime: ingress.ingressTime
         }
       : null;
-
-    // Detect Adhik/Kshaya Maas for the enclosing lunar month (additive;
-    // legacy lunarMonth/festival matching untouched)
-    const adhikMaas = this.getAdhikMaasInfo(localDate);
 
     return {
       date: localDate,
@@ -245,37 +255,88 @@ export class PanchangEngine {
    * Sankashti adds a moonrise catch (Chaturthi prevailing at the computed
    * moonrise, sunset fallback) alongside the Udaya day, with Angarki kept.
    */
-  private detectFastingDay(tithi: Tithi, date: Date, sunrise: Date, sunset: Date) {
+  private detectFastingDay(
+    tithi: Tithi,
+    date: Date,
+    sunrise: Date,
+    sunset: Date,
+    amantaMonth: number | null,
+    isAdhikMonth: boolean
+  ) {
     const tithiName = tithi.name.toLowerCase();
     const isShukla = tithi.paksha === 'Shukla';
     const weekday = date.getDay(); // 0=Sun, 1=Mon, 2=Tue, …, 6=Sat
 
-    // Dashami-viddha Ekadashi FIRST (before the verified-DB branch): Udaya
-    // Dashami but Ekadashi prevailing by midday. Smartas fast today (Ekadashi
-    // at midday); Vaishnavas observe the Dwadashi day. No second date is
-    // invented — tomorrow's verdict is computed on its own Udaya tithi.
-    // Verified-DB check FIRST (result reused below): a curated Drik
-    // observance (incl. Mahadwadashi and Gauna/Vaishnava rows) always wins
-    // over the generic viddha label — otherwise Jul 10 Yogini / Nov 20
-    // Devutthana would display as nameless "Ekadashi (Smarta)" despite
-    // having exact names.
-    // E.g. Nov 1 2025 (Prabodhini context): Udaya Dashami, midday Ekadashi.
-    const verifiedEkadashi = isVerifiedEkadashi(date);
-    if (!verifiedEkadashi && this.isEkadashiViddhaAt(sunrise, sunset)) {
-      const midday = new Date((sunrise.getTime() + sunset.getTime()) / 2);
-      const midPaksha = getPaksha(this.tithiIndexAt(midday));
-      const midIsShukla = midPaksha === 'Shukla';
+    // Ekadashi observance is COMPUTED from tithi mechanics — no date tables.
+    // Names resolve via (amanta month, paksha, adhik) in ekadashiNames.ts.
+    // Paths:
+    // A. Udaya Ekadashi prevailing since arunodaya (sunrise − 96 min).
+    //    Late-start Ekadashis (arunodaya-viddha, e.g. May 26 2026) are NOT
+    //    fasted — the observance moves to the Dwadashi day (Path C).
+    // B. Dashami-viddha: Udaya Dashami, Ekadashi by midday — Smarta fast
+    //    today, Vaishnavas the Dwadashi day (e.g. Dec 30 2025, Jul 10 2026).
+    // C. Udaya Dwadashi with Ekadashi within ±60 min of sunrise
+    //    (Mahadwadashi, e.g. May 27 2026 Padmini) — "(Vaishnava)" suffixed
+    //    when Smartas already fasted yesterday (Jul 11 / Nov 21 2026).
+    // D. Vriddhi Dwadashi spanning two sunrises (Vanjuli-type, Vaishnava).
+    const ARUNODAYA_MS = 96 * 60 * 1000;
+    const TOUCH_MS = 60 * 60 * 1000;
+    const udayaIdx = this.tithiIndexAt(sunrise);
+    const midday = new Date((sunrise.getTime() + sunset.getTime()) / 2);
+    const midIdx = this.tithiIndexAt(midday);
+    const arunodayaIdx = this.tithiIndexAt(new Date(sunrise.getTime() - ARUNODAYA_MS));
+    // Naming month: Shukla fortnights share the amanta name; Krishna
+    // fortnights are named for the upcoming (purnimanta) month — Drik's
+    // convention (Oct 6 = "Ashwina Krishna" although amanta Bhadrapada).
+    // Adhik months short-circuit to Parama/Padmini inside the resolver.
+    const ekadashiName = (paksha: 'Shukla' | 'Krishna') =>
+      resolveEkadashiName(
+        paksha === 'Shukla' ? amantaMonth : this.purnimantaMonth(amantaMonth, paksha),
+        paksha,
+        isAdhikMonth
+      );
+    // Tomorrow's sunrise (Path B kshaya check + Path D vriddhi check).
+    const tomorrowMidnight = new Date(date);
+    tomorrowMidnight.setDate(tomorrowMidnight.getDate() + 1);
+    tomorrowMidnight.setHours(0, 0, 0, 0);
+    const tomorrowSunrise = calculateSunrise(tomorrowMidnight, this.location);
+
+    // Path A.
+    if (this.isEkadashiIndex(udayaIdx) && this.isEkadashiIndex(arunodayaIdx)) {
+      const paksha = getPaksha(udayaIdx);
+      const resolved = ekadashiName(paksha);
+      return this.buildEkadashiFasting(
+        resolved?.name ?? 'Ekadashi',
+        resolved?.nameHindi ?? 'एकादशी',
+        paksha,
+        date
+      );
+    }
+
+    // Path B. Extra kshaya guard: the Ekadashi must end BEFORE tomorrow's
+    // sunrise (touching no sunrise at all, e.g. Jul 10 2026, Nov 20 2026,
+    // Dec 30 2025). Ordinary eve-of-Ekadashi Dashamis (Feb 12, Mar 14 2026…)
+    // are NOT fasts — Drik observes the Udaya day instead.
+    if (
+      this.isDashamiIndex(udayaIdx) &&
+      this.isEkadashiIndex(midIdx) &&
+      !this.isEkadashiIndex(this.tithiIndexAt(new Date(tomorrowSunrise.getTime() - 60000)))
+    ) {
+      const paksha = getPaksha(midIdx);
+      const resolved = ekadashiName(paksha);
+      // Bare name: this IS the day's observance (Drik main list); the
+      // Smarta/Vaishnava split lives in the significance note.
+      const base = resolved?.name ?? 'Ekadashi';
+      const baseHindi = resolved?.nameHindi ?? 'एकादशी';
       return {
         id: 'ekadashi-smarta',
-        name: 'Ekadashi (Smarta)',
-        nameHindi: 'एकादशी (स्मार्त)',
+        name: base,
+        nameHindi: baseHindi,
         type: 'ekadashi' as const,
-        significance: midIsShukla
-          ? 'Shukla Paksha Ekadashi (Dashami-viddha at sunrise) — Smarta fast today. Vaishnavas observe the Dwadashi day.'
-          : 'Krishna Paksha Ekadashi (Dashami-viddha at sunrise) — Smarta fast today. Vaishnavas observe the Dwadashi day.',
-        significanceHindi: midIsShukla
-          ? 'शुक्ल पक्ष एकादशी (सूर्योदय के समय दशमी-विद्धा) — आज स्मार्त व्रत। वैष्णव द्वादशी के दिन व्रत रखते हैं।'
-          : 'कृष्ण पक्ष एकादशी (सूर्योदय के समय दशमी-विद्धा) — आज स्मार्त व्रत। वैष्णव द्वादशी के दिन व्रत रखते हैं।',
+        significance: paksha === 'Shukla'
+          ? `${base} (Dashami-viddha at sunrise) — Smarta fast today. Vaishnavas observe the Dwadashi day.`
+          : `${base} (Dashami-viddha at sunrise) — Smarta fast today. Vaishnavas observe the Dwadashi day.`,
+        significanceHindi: `सूर्योदय के समय दशमी-विद्धा — आज स्मार्त व्रत। वैष्णव द्वादशी के दिन व्रत रखते हैं।`,
         benefits: [
           'Spiritual purification',
           'Removes sins',
@@ -305,54 +366,70 @@ export class PanchangEngine {
       };
     }
 
-    // Ekadashi detection - verifiedEkadashi was resolved above (it takes
-    // precedence over the viddha path); otherwise fall back to the Udaya tithi.
-    if (verifiedEkadashi || tithiName.includes('ekadashi')) {
-      // If we have verified database entry, use it
-      // Otherwise fallback to algorithmic detection
-      const actualPaksha = verifiedEkadashi ? verifiedEkadashi.paksha : tithi.paksha;
-      const actualIsShukla = actualPaksha === 'Shukla';
-      
-      return {
-        id: actualIsShukla ? 'ekadashi-shukla' : 'ekadashi-krishna',
-        name: verifiedEkadashi ? verifiedEkadashi.name : 'Ekadashi',
-        nameHindi: 'एकादशी',
-        type: 'ekadashi' as const,
-        significance: actualIsShukla
-          ? 'Shukla Paksha Ekadashi - Dedicated to Lord Vishnu for spiritual purification'
-          : 'Krishna Paksha Ekadashi - Dedicated to Lord Vishnu for removing sins',
-        significanceHindi: actualIsShukla
-          ? 'शुक्ल पक्ष एकादशी - आध्यात्मिक शुद्धि के लिए भगवान विष्णु को समर्पित'
-          : 'कृष्ण पक्ष एकादशी - पापों को दूर करने के लिए भगवान विष्णु को समर्पित',
-        benefits: [
-          'Spiritual purification',
-          'Removes sins',
-          'Pleases Lord Vishnu',
-          'Improves willpower'
-        ],
-        benefitsHindi: [
-          'आध्यात्मिक शुद्धि',
-          'पाप दूर',
-          'भगवान विष्णु को प्रसन्न',
-          'इच्छाशक्ति में सुधार'
-        ],
-        rules: [
-          'No grains, beans, or cereals',
-          'Fruits, milk, and nuts allowed',
-          'Some observe complete water fast',
-          'Break fast next day during Parana time'
-        ],
-        rulesHindi: [
-          'अनाज, फलियां या अनाज नहीं',
-          'फल, दूध और मेवे की अनुमति',
-          'कुछ पूर्ण निर्जल व्रत observance करते हैं',
-          'अगले दिन पारण के समय व्रत तोड़ें'
-        ],
-        date,
-        paranaTime: this.calculateEkadashiParana(date)
-      };
+    // Paths C + D + E (Udaya Dwadashi).
+    if (this.isDwadashiIndex(udayaIdx)) {
+      const touched = this.ekadashiTouchNearSunrise(sunrise, TOUCH_MS);
+      const tomorrowUdayaDwadashi = this.isDwadashiIndex(
+        this.tithiIndexAt(tomorrowSunrise)
+      );
+      // Path E: yesterday was a viddha-Ekadashi fast day (Path B verdict) —
+      // Vaishnavas observe this Dwadashi even with no sunrise touch
+      // (Dec 31 2025 after the Dec 30 viddha). Same verdict as C's
+      // yesterday rule; evaluated only when C/D inputs are absent.
+      const yesterdayViddha = this.hadViddhaFastYesterday(date);
+      if (touched !== null || tomorrowUdayaDwadashi || yesterdayViddha) {
+        const paksha = getPaksha(touched ?? udayaIdx);
+        const resolved = ekadashiName(paksha);
+        const base = resolved?.name ?? 'Ekadashi';
+        const baseHindi = resolved?.nameHindi ?? 'एकादशी';
+        // Vaishnava second day when Smartas fasted yesterday (A/B verdict).
+        // Path E (no touch/vriddhi) is Vaishnava by construction.
+        const vaishnava = yesterdayViddha || this.hadEkadashiFastYesterday(date);
+        const name = vaishnava ? `${base} (Vaishnava)` : base;
+        return {
+          id: vaishnava ? 'ekadashi-vaishnava' : 'ekadashi-mahadwadashi',
+          name,
+          nameHindi: vaishnava ? `${baseHindi} (वैष्णव)` : baseHindi,
+          type: 'ekadashi' as const,
+          significance: vaishnava
+            ? `${base} — Vaishnava observance today; Smartas fasted yesterday.`
+            : `${base} (Mahadwadashi — Ekadashi extends past sunrise) — fast observed today.`,
+          significanceHindi: vaishnava
+            ? 'वैष्णव व्रत आज; स्मार्त व्रत कल था।'
+            : 'महाद्वादशी — आज व्रत रखें।',
+          benefits: [
+            'Spiritual purification',
+            'Removes sins',
+            'Pleases Lord Vishnu',
+            'Improves willpower'
+          ],
+          benefitsHindi: [
+            'आध्यात्मिक शुद्धि',
+            'पाप दूर',
+            'भगवान विष्णु को प्रसन्न',
+            'इच्छाशक्ति में सुधार'
+          ],
+          rules: [
+            'No grains, beans, or cereals',
+            'Fruits, milk, and nuts allowed',
+            'Some observe complete water fast',
+            'Break fast next day during Parana time'
+          ],
+          rulesHindi: [
+            'अनाज, फलियां या अनाज नहीं',
+            'फल, दूध और मेवे की अनुमति',
+            'कुछ पूर्ण निर्जल व्रत observance करते हैं',
+            'अगले दिन पारण के समय व्रत तोड़ें'
+          ],
+          date,
+          paranaTime: this.calculateEkadashiParana(date)
+        };
+      }
     }
 
+    // No Udaya-name fallback: any Udaya Ekadashi reaches Path A unless it
+    // is arunodaya-viddha (correctly unfested, e.g. May 26 2026) — a
+    // name-only fallback would re-ignite exactly those cases.
     // Pradosh: Trayodashi (either paksha) prevailing AT SUNSET, first evening
     // only. Pradosh is an evening (pradosh-kaal) vrat, so Udaya matching is
     // wrong in both directions: it fires when Trayodashi ends before sunset
@@ -928,6 +1005,111 @@ export class PanchangEngine {
   /** True for Shukla/Krishna Dashami index (9/24). */
   private isDashamiIndex(idx: number): boolean {
     return idx === 9 || idx === 24;
+  }
+
+  /** True for Shukla/Krishna Dwadashi index (11/26). */
+  private isDwadashiIndex(idx: number): boolean {
+    return idx === 11 || idx === 26;
+  }
+
+  /**
+   * Standard Ekadashi fasting object (paths A + fallback). Names come from
+   * the (month, paksha, adhik) resolver — never date tables.
+   */
+  private buildEkadashiFasting(
+    name: string,
+    nameHindi: string,
+    paksha: 'Shukla' | 'Krishna',
+    date: Date
+  ) {
+    const isShukla = paksha === 'Shukla';
+    return {
+      id: isShukla ? 'ekadashi-shukla' : 'ekadashi-krishna',
+      name,
+      nameHindi,
+      type: 'ekadashi' as const,
+      significance: isShukla
+        ? 'Shukla Paksha Ekadashi - Dedicated to Lord Vishnu for spiritual purification'
+        : 'Krishna Paksha Ekadashi - Dedicated to Lord Vishnu for removing sins',
+      significanceHindi: isShukla
+        ? 'शुक्ल पक्ष एकादशी - आध्यात्मिक शुद्धि के लिए भगवान विष्णु को समर्पित'
+        : 'कृष्ण पक्ष एकादशी - पापों को दूर करने के लिए भगवान विष्णु को समर्पित',
+      benefits: [
+        'Spiritual purification',
+        'Removes sins',
+        'Pleases Lord Vishnu',
+        'Improves willpower'
+      ],
+      benefitsHindi: [
+        'आध्यात्मिक शुद्धि',
+        'पाप दूर',
+        'भगवान विष्णु को प्रसन्न',
+        'इच्छाशक्ति में सुधार'
+      ],
+      rules: [
+        'No grains, beans, or cereals',
+        'Fruits, milk, and nuts allowed',
+        'Some observe complete water fast',
+        'Break fast next day during Parana time'
+      ],
+      rulesHindi: [
+        'अनाज, फलियां या अनाज नहीं',
+        'फल, दूध और मेवे की अनुमति',
+        'कुछ पूर्ण निर्जल व्रत observance करते हैं',
+        'अगले दिन पारण के समय व्रत तोड़ें'
+      ],
+      date,
+      paranaTime: this.calculateEkadashiParana(date)
+    };
+  }
+
+  /**
+   * Mahadwadashi touch test: is Ekadashi (idx 10/25) prevailing at any
+   * moment within ±windowMs of sunrise? Returns the matching index or null.
+   * Pure sampling over tithiIndexAt (10-min steps) — no calculate() recursion.
+   */
+  private ekadashiTouchNearSunrise(sunrise: Date, windowMs: number): number | null {
+    for (let dt = -windowMs; dt <= windowMs; dt += 10 * 60 * 1000) {
+      const idx = this.tithiIndexAt(new Date(sunrise.getTime() + dt));
+      if (this.isEkadashiIndex(idx)) return idx;
+    }
+    return null;
+  }
+
+  /**
+   * Did yesterday carry a Smarta Ekadashi fast (Path A or B verdict)?
+   * Used to label second-day observances "(Vaishnava)". Pure: recomputes
+   * yesterday's sunrise/sunset/tithi locally — no calculate() recursion.
+   */
+  private hadEkadashiFastYesterday(date: Date): boolean {
+    return this.yesterdayVerdict(date).fast;
+  }
+
+  /**
+   * Was yesterday specifically a viddha-Ekadashi fast (Path B verdict:
+   * Udaya Dashami + midday Ekadashi ending before today's sunrise)?
+   * Path E (Vaishnava Dwadashi with no sunrise touch) keys off this alone —
+   * a normal Udaya-Ekadashi yesterday means today is just Parana day.
+   */
+  private hadViddhaFastYesterday(date: Date): boolean {
+    return this.yesterdayVerdict(date).viddha;
+  }
+
+  private yesterdayVerdict(date: Date): { fast: boolean; viddha: boolean } {
+    const yesterday = new Date(date);
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const sr = calculateSunrise(yesterday, this.location);
+    const ss = calculateSunset(yesterday, this.location);
+    const udayaIdx = this.tithiIndexAt(sr);
+    const midIdx = this.tithiIndexAt(new Date((sr.getTime() + ss.getTime()) / 2));
+    const arunodayaIdx = this.tithiIndexAt(new Date(sr.getTime() - 96 * 60 * 1000));
+    const pathA = this.isEkadashiIndex(udayaIdx) && this.isEkadashiIndex(arunodayaIdx);
+    const viddha =
+      this.isDashamiIndex(udayaIdx) &&
+      this.isEkadashiIndex(midIdx) &&
+      !this.isEkadashiIndex(this.tithiIndexAt(calculateSunrise(date, this.location)));
+    return { fast: pathA || viddha, viddha };
   }
 
   /** True for Shukla/Krishna Ekadashi index (10/25). */

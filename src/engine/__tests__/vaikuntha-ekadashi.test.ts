@@ -89,7 +89,9 @@ describe('Vaikuntha Ekadashi Dec 30-31 2025 (Dashami-viddha split)', () => {
     expect(engine.isEkadashiViddha(atMidnight(2025, 12, 30))).toBe(true);
     const p = engine.calculate(atMidnight(2025, 12, 30));
     expect(p.fasting?.type).toBe('ekadashi');
-    expect(p.fasting?.name).toBe('Ekadashi (Smarta)');
+    // Computed naming: Pausha Shukla midday Ekadashi = Vaikuntha
+    // (Mokshada was Dec 1, Margashirsha Shukla).
+    expect(p.fasting?.name).toBe('Vaikuntha Ekadashi');
     expect(p.fasting?.significance).toMatch(/Vaishnavas observe the Dwadashi day/);
   });
 
