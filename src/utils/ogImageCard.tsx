@@ -44,7 +44,7 @@ export const OgImageCard: React.FC<{ meta: Extract<OgMeta, { ok: true }> }> = ({
         <div style={{ fontSize: 88, fontWeight: 700, color: INK, lineHeight: 1 }}>
           {meta.tithiName}
         </div>
-        <div style={{ fontSize: 34, color: MUTED, marginTop: 12 }}>
+        <div style={{ display: 'flex', fontSize: 34, color: MUTED, marginTop: 12 }}>
           {meta.paksha} Paksha · {meta.nakshatraName} · {meta.dateLabel}
         </div>
       </div>
@@ -77,6 +77,7 @@ export const OgImageCard: React.FC<{ meta: Extract<OgMeta, { ok: true }> }> = ({
         <div
           style={{
             display: 'flex',
+            alignItems: 'center',
             marginLeft: 'auto',
             backgroundColor: ACCENT_SOFT,
             border: `2px solid ${ACCENT}`,
