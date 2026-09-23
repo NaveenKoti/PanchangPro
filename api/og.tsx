@@ -5,7 +5,11 @@
  * (title/description/per-tithi PNG). Real browsers are bounced straight to
  * the app via meta-refresh + JS redirect. Invalid dates 302 to `/`.
  * All tithi content comes from buildOgMeta (real engine) — never hand-written.
+ *
+ * NOTE: static import (not dynamic) — Vercel file-tracing must bundle the
+ * engine chain or this 302s every request; `?debug=1` returns the throw.
  */
+import { buildOgMeta } from '../src/utils/ogMeta';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default async function handler(req: any, res: any): Promise<void> {
@@ -13,13 +17,14 @@ export default async function handler(req: any, res: any): Promise<void> {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
+  const debug =
+    (Array.isArray(req.query?.debug) ? req.query.debug[0] : req.query?.debug) === '1';
   try {
     const host =
       (req.headers?.['x-forwarded-host'] as string) ||
       (req.headers?.host as string) ||
       'panchang-pro.vercel.app';
     const d = Array.isArray(req.query?.d) ? req.query.d[0] : (req.query?.d as string | undefined);
-    const { buildOgMeta } = await import('../src/utils/ogMeta');
     const meta = buildOgMeta(d ?? '', host);
     if (!meta.ok) {
       res.writeHead(302, { Location: '/' });
@@ -60,7 +65,11 @@ export default async function handler(req: any, res: any): Promise<void> {
     // per distinct URL, so a short cache is safe and cheap.
     res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=86400');
     res.status(200).send(html);
-  } catch {
+  } catch (err) {
+    if (debug) {
+      res.status(500).send(`OGERR: ${String(err).slice(0, 300)}`);
+      return;
+    }
     res.writeHead(302, { Location: '/' });
     res.end();
   }

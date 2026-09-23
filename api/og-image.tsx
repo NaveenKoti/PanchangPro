@@ -67,9 +67,13 @@ export default async function handler(req: any): Promise<Response> {
         { name: 'Noto Sans', data: fonts[700], weight: 700, style: 'normal' },
       ],
     });
-  } catch {
+  } catch (err) {
     try {
-      return errorRedirect(new URL(req.url));
+      const debugUrl = new URL(req.url);
+      if (debugUrl.searchParams.get('debug') === '1') {
+        return new Response(`OGIMGERR: ${String(err).slice(0, 300)}`, { status: 500 });
+      }
+      return errorRedirect(debugUrl);
     } catch {
       return new Response('error', { status: 500 });
     }
