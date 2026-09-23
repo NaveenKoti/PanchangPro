@@ -85,6 +85,7 @@ export default async function handler(req: any): Promise<Response> {
           ],
         }).arrayBuffer();
         return Response.json({
+          sha: (process.env.VERCEL_GIT_COMMIT_SHA ?? 'local').slice(0, 7),
           font500bytes: fonts[500]?.byteLength ?? -1,
           font700bytes: fonts[700]?.byteLength ?? -1,
           magic500: fonts[500] ? magic(fonts[500]) : 'missing',
