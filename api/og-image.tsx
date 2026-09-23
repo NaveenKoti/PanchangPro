@@ -115,7 +115,21 @@ export default async function handler(req: any): Promise<Response> {
         { name: 'Noto Sans', data: fonts[500], weight: 500, style: 'normal' },
         { name: 'Noto Sans', data: fonts[700], weight: 700, style: 'normal' },
       ],
-    });
+    }).arrayBuffer().then(
+      (buf) =>
+        new Response(buf, {
+          status: 200,
+          headers: {
+            'Content-Type': 'image/png',
+            // One date = one immutable image: render once per date, serve
+            // from the edge cache afterwards (cold-start cost amortized).
+            'Cache-Control': 'public, max-age=86400, s-maxage=31536000, stale-while-revalidate=86400',
+          },
+        }),
+      (renderErr: unknown) => {
+        throw new Error(`render: ${String(renderErr).slice(0, 200)}`);
+      }
+    );
   } catch (err) {
     try {
       const debugUrl = new URL(req.url);
