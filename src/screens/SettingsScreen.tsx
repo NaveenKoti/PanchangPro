@@ -53,6 +53,7 @@ import {
   Globe,
   Clock,
   CheckCircle,
+  Mail,
   X,
 } from 'lucide-react';
 import { useAppStore, clearAllData } from '../stores/appStore';
@@ -751,6 +752,18 @@ export default function SettingsScreen() {
           <Typography variant="caption" color="text.secondary">
             Version 3.8.0
           </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+            {isHindi ? 'निर्माता: नवीन कोटि' : 'Created by Naveen Koti'}
+          </Typography>
+          <Button
+            component="a"
+            href="mailto:naveenkoti@gmail.com?subject=VedaTime%20feedback"
+            variant="outlined"
+            startIcon={<Mail size={16} />}
+            sx={{ borderRadius: 1, mt: 1.5 }}
+          >
+            {isHindi ? 'प्रतिक्रिया भेजें' : 'Send feedback'}
+          </Button>
 
           {/* Permanent glossary reference — same copy as onboarding */}
           <Divider sx={{ my: 2 }} />

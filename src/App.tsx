@@ -80,16 +80,46 @@ const App: React.FC = () => {
   // Share-tithi deep link (?d=YYYY-MM-DD): open the sent day on Today,
   // show the shared-day banner + install nudge, then clean the URL.
   // Invalid/absent params boot normally (parseDayParam returns null).
+  // App-shortcut entry (?shortcut=today|calendar|muhurta|myTithis|fasts|stories):
+  // Android long-press launcher shortcuts land on the right view.
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
     const linked = parseDayParam(window.location.search);
-    if (!linked) return;
-    setSelectedDate(linked);
-    setTab(0);
-    setInlineScreen(null);
-    setFestivalDetail(null);
-    setShowSettings(false);
-    setSharedDay(linked);
-    window.history.replaceState(null, '', window.location.pathname);
+    const shortcut = params.get('shortcut');
+    if (linked) {
+      setSelectedDate(linked);
+      setTab(0);
+      setSharedDay(linked);
+    } else if (shortcut) {
+      const tabFor: Record<string, number> = { today: 0, calendar: 1, muhurta: 2, myTithis: 3 };
+      if (shortcut in tabFor) {
+        setTab(tabFor[shortcut]);
+      } else if (shortcut === 'fasts' || shortcut === 'stories') {
+        setInlineScreen(shortcut);
+      }
+    }
+    if (linked || shortcut) {
+      setInlineScreen((prev) => (linked ? null : prev));
+      setFestivalDetail(null);
+      setShowSettings(false);
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Home-screen badge (iOS 16.4+ installed PWA, Android no-op): today's
+  // tithi number on the app icon. Refreshes on open (no background sync
+  // on iOS); failures are silent by design.
+  useEffect(() => {
+    try {
+      const nav = navigator as Navigator & { setAppBadge?: (n: number) => Promise<void> };
+      if (typeof nav.setAppBadge === 'function') {
+        const n = calculatePanchang(new Date()).tithi.number;
+        if (n >= 1 && n <= 30) void nav.setAppBadge(n).catch(() => undefined);
+      }
+    } catch {
+      // Badge unsupported or denied — never block boot.
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
