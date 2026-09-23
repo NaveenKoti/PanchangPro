@@ -32,10 +32,10 @@ export const OgImageCard: React.FC<{ meta: Extract<OgMeta, { ok: true }> }> = ({
   >
     {/* Wordmark */}
     <div style={{ display: 'flex', alignItems: 'center', fontSize: 34, color: ACCENT, fontWeight: 700 }}>
-      VedaTime
-      <span style={{ marginLeft: 16, fontSize: 24, color: MUTED, fontWeight: 500 }}>
+      <div>VedaTime</div>
+      <div style={{ marginLeft: 16, fontSize: 24, color: MUTED, fontWeight: 500 }}>
         Sacred Rhythms of Time
-      </span>
+      </div>
     </div>
 
     {/* Hero row: name + giant numeral */}
@@ -49,7 +49,7 @@ export const OgImageCard: React.FC<{ meta: Extract<OgMeta, { ok: true }> }> = ({
         </div>
       </div>
       <div style={{ marginLeft: 'auto', fontSize: 200, fontWeight: 700, color: ACCENT, lineHeight: 1 }}>
-        {meta.tithiNumber}
+        {String(meta.tithiNumber)}
       </div>
     </div>
 
@@ -67,11 +67,13 @@ export const OgImageCard: React.FC<{ meta: Extract<OgMeta, { ok: true }> }> = ({
         color: INK,
       }}
     >
-      <div style={{ display: 'flex' }}>
-        Sunrise <span style={{ fontWeight: 700, marginLeft: 12 }}>{meta.sunrise}</span>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div>Sunrise&nbsp;</div>
+        <div style={{ fontWeight: 700 }}>{meta.sunrise}</div>
       </div>
-      <div style={{ display: 'flex', marginLeft: 48 }}>
-        Sunset <span style={{ fontWeight: 700, marginLeft: 12 }}>{meta.sunset}</span>
+      <div style={{ display: 'flex', alignItems: 'center', marginLeft: 48 }}>
+        <div>Sunset&nbsp;</div>
+        <div style={{ fontWeight: 700 }}>{meta.sunset}</div>
       </div>
       {meta.festivalName ? (
         <div
