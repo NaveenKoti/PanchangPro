@@ -35,8 +35,9 @@ describe('parseDayParam', () => {
     expect(parseDayParam('?d=2101-01-01')).toBeNull();
   });
 
-  it('round-trips through buildDayLink', () => {
+  it('round-trips through buildDayLink (og unfurl path)', () => {
     const link = buildDayLink(new Date(2026, 9, 20));
+    expect(link).toContain('/api/og?d=2026-10-20');
     const query = link.slice(link.indexOf('?'));
     expect(parseDayParam(query)?.getTime()).toBe(new Date(2026, 9, 20).getTime());
   });
