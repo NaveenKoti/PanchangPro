@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { Box, AppBar, Toolbar, Typography, Snackbar, Alert, IconButton, Menu, MenuItem, Fade, CssBaseline, useTheme, alpha } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, Snackbar, Alert, IconButton, Menu, MenuItem, Fade, CssBaseline, useTheme, alpha, Button } from '@mui/material';
 import { MoreVertical, Share2, Settings as SettingsIcon, ChevronLeft, ArrowLeft } from 'lucide-react';
 import { TodayScreen } from './screens/TodayScreen';
 import { MyTithisScreen } from './screens/MyTithisScreen';
@@ -23,6 +23,8 @@ import { ThemeProvider } from './components/ThemeProvider';
 import { notificationService, notificationScheduler } from './services/notificationService';
 import { useAppStore } from './stores/appStore';
 import { PanchangShareCard } from './components/PanchangShareCard';
+import { PWAInstallPrompt } from './components/pwa/PWAInstallPrompt';
+import { parseDayParam } from './utils/dayLink';
 import GestureHandler from './components/GestureHandler';
 
 // Lazy-loaded screens with code-splitting for performance
@@ -47,7 +49,11 @@ const App: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showShareCard, setShowShareCard] = useState(false);
   const [festivalDetail, setFestivalDetail] = useState<{ id: string } | null>(null);
-  const { t } = useI18n();
+  // Share-tithi deep link (?d=YYYY-MM-DD): day the recipient was sent.
+  const [sharedDay, setSharedDay] = useState<Date | null>(null);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const { t, currentLanguage } = useI18n();
+  const isHindi = currentLanguage === 'hi';
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -66,9 +72,26 @@ const App: React.FC = () => {
     sharePanchang,
     calculatePanchang,
     selectedDate,
+    setSelectedDate,
     requestedTab,
     clearTabRequest,
   } = useAppStore();
+
+  // Share-tithi deep link (?d=YYYY-MM-DD): open the sent day on Today,
+  // show the shared-day banner + install nudge, then clean the URL.
+  // Invalid/absent params boot normally (parseDayParam returns null).
+  useEffect(() => {
+    const linked = parseDayParam(window.location.search);
+    if (!linked) return;
+    setSelectedDate(linked);
+    setTab(0);
+    setInlineScreen(null);
+    setFestivalDetail(null);
+    setShowSettings(false);
+    setSharedDay(linked);
+    window.history.replaceState(null, '', window.location.pathname);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Store-requested tab switch (e.g. Today digest "View My Tithis" CTA):
   // map tab id → index, then clear the request. Subscribe-only; visuals untouched.
@@ -437,6 +460,36 @@ const App: React.FC = () => {
           {/* Tab-based screens */}
           {!festivalDetail && !inlineScreen && !showSettings && (
             <>
+              {/* Shared-tithi banner: visible on Today until dismissed or the
+                  user navigates to another day. Install CTA opens the PWA
+                  prompt — the self-marketing loop for link recipients. */}
+              {tab === 0 && sharedDay && (() => {
+                const sharedPanchang = calculatePanchang(sharedDay);
+                const tithiName = isHindi ? sharedPanchang.tithi.nameHindi : sharedPanchang.tithi.name;
+                const fest = sharedPanchang.festivals?.[0];
+                const festName = fest ? (isHindi ? fest.nameHindi : fest.name) : null;
+                return (
+                  <Alert
+                    severity="info"
+                    onClose={() => setSharedDay(null)}
+                    sx={{ mb: 1.5, borderRadius: 1, alignItems: 'center' }}
+                    action={
+                      <Button
+                        size="small"
+                        variant="contained"
+                        onClick={() => setShowInstallPrompt(true)}
+                        sx={{ borderRadius: 1, whiteSpace: 'nowrap', ml: 1 }}
+                      >
+                        {isHindi ? 'ऐप इंस्टॉल करें' : 'Install App'}
+                      </Button>
+                    }
+                  >
+                    {isHindi
+                      ? `साझा तिथि: ${tithiName}${festName ? ` · ${festName}` : ''} (${sharedDay.toLocaleDateString('hi-IN')}) — VedaTime में देखें`
+                      : `Shared tithi: ${tithiName}${festName ? ` · ${festName}` : ''} (${sharedDay.toLocaleDateString()}) — view in VedaTime`}
+                  </Alert>
+                );
+              })()}
               {tab === 0 && <TodayScreen key="today" onFestivalOpen={(id) => setFestivalDetail({ id })} />}
               {tab === 1 && (
                 <Suspense key="calendar" fallback={<CalendarSkeleton />}>
@@ -501,6 +554,12 @@ const App: React.FC = () => {
           onClose={() => setShowShareCard(false)}
           panchang={panchang}
           locationName={preferences.location.name || 'Unknown Location'}
+        />
+
+        {/* PWA install prompt (deep-link recipients via the shared-day banner) */}
+        <PWAInstallPrompt
+          open={showInstallPrompt || undefined}
+          onDismiss={() => setShowInstallPrompt(false)}
         />
       </Box>
     </ThemeProvider>

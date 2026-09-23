@@ -28,7 +28,8 @@ import {
   ToggleButtonGroup,
   Chip,
 } from '@mui/material';
-import { X, Download, Share2, MessageCircle, Image, Smartphone } from 'lucide-react';
+import { X, Download, Share2, MessageCircle, Image, Smartphone, Link as LinkIcon } from 'lucide-react';
+import { buildDayLink } from '../utils/dayLink';
 import { alpha } from '@mui/material/styles';
 import { Panchang, Festival } from '../types';
 import { useI18n } from '../hooks/useI18n';
@@ -452,6 +453,7 @@ export const PanchangShareCard: React.FC<PanchangShareCardProps> = ({
       ? `\n🎉 Festival: ${panchang.festivals[0].name}`
       : '';
 
+    const dayLink = buildDayLink(panchang.date);
     const shareText = `🙏 VedaTime - Today's Panchang
 📍 ${locationName}
 📅 ${panchang.date.toLocaleDateString()}
@@ -461,6 +463,7 @@ export const PanchangShareCard: React.FC<PanchangShareCardProps> = ({
 ☀️ Sunrise: ${panchang.sunrise.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
 🌅 Sunset: ${panchang.sunset.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}${festivalLine}
 
+🔗 Open this day: ${dayLink}
 Shared from VedaTime - vedatime.app`;
 
     if (navigator.share) {
@@ -478,6 +481,19 @@ Shared from VedaTime - vedatime.app`;
       setShareMessage(isHindi ? 'क्लिपबोर्ड पर कॉपी किया!' : 'Copied to clipboard!');
     }
   }, [panchang, locationName, isHindi, hasFestival]);
+
+  // Copy the deep link for this day (?d=YYYY-MM-DD): recipients open the
+  // exact tithi in the app and get an install nudge.
+  const handleCopyLink = useCallback(async () => {
+    if (!panchang) return;
+    try {
+      await navigator.clipboard.writeText(buildDayLink(panchang.date));
+      setShareMessage(isHindi ? 'दिन का लिंक कॉपी हो गया!' : 'Day link copied!');
+    } catch {
+      setShareMessage(isHindi ? 'कॉपी नहीं हो पाया' : 'Copy failed');
+    }
+    setTimeout(() => setShareMessage(''), 3000);
+  }, [panchang, isHindi]);
 
   // Reset state when dialog opens
   React.useEffect(() => {
@@ -668,6 +684,23 @@ Shared from VedaTime - vedatime.app`;
             }}
           >
             WhatsApp
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={handleCopyLink}
+            aria-label={isHindi ? 'दिन का लिंक कॉपी करें' : 'Copy day link'}
+            sx={{
+              borderRadius: 2,
+              minWidth: 48,
+              width: 48,
+              height: 48,
+              flexShrink: 0,
+              borderColor: 'divider',
+              color: 'primary.main',
+              '&:hover': { bgcolor: 'action.hover' }
+            }}
+          >
+            <LinkIcon size={20} />
           </Button>
         </Box>
 
