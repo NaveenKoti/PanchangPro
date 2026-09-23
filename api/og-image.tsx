@@ -99,13 +99,27 @@ export default async function handler(req: any): Promise<Response> {
         Array.from(new Uint8Array(b.slice(0, 4)))
           .map((x) => x.toString(16))
           .join('');
-      return Response.json({
-        font500bytes: fonts[500]?.byteLength ?? -1,
-        font700bytes: fonts[700]?.byteLength ?? -1,
-        magic500: fonts[500] ? magic(fonts[500]) : 'missing',
-        magic700: fonts[700] ? magic(fonts[700]) : 'missing',
-        title: meta.title,
-      });
+      // Attempt the render eagerly so failures surface as text, not crashes.
+      try {
+        const probe = await new ImageResponse(<OgImageCard meta={meta} />, {
+          width: 1200,
+          height: 630,
+          fonts: [
+            { name: 'Noto Sans', data: fonts[500], weight: 500, style: 'normal' },
+            { name: 'Noto Sans', data: fonts[700], weight: 700, style: 'normal' },
+          ],
+        }).arrayBuffer();
+        return Response.json({
+          font500bytes: fonts[500]?.byteLength ?? -1,
+          font700bytes: fonts[700]?.byteLength ?? -1,
+          magic500: fonts[500] ? magic(fonts[500]) : 'missing',
+          magic700: fonts[700] ? magic(fonts[700]) : 'missing',
+          title: meta.title,
+          renderedBytes: probe.byteLength,
+        });
+      } catch (renderErr) {
+        return new Response(`RENDERERR: ${String(renderErr).slice(0, 400)}`, { status: 500 });
+      }
     }
 
     return new ImageResponse(<OgImageCard meta={meta} />, {
