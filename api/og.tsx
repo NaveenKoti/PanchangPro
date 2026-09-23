@@ -1,35 +1,27 @@
 /**
  * api/og — unfurl page for share-tithi links (?d=YYYY-MM-DD).
  *
+ * EDGE runtime (the engine chain demonstrably loads there; the Node
+ * runtime sibling 500s on this project — see og-image diagnosis).
  * Crawlers (WhatsApp/Telegram/X) fetch this HTML and read the og:* meta
- * (title/description/per-tithi PNG). Real browsers are bounced straight to
- * the app via meta-refresh + JS redirect. Invalid dates 302 to `/`.
- * All tithi content comes from buildOgMeta (real engine) — never hand-written.
- *
- * NOTE: static import (not dynamic) — Vercel file-tracing must bundle the
- * engine chain or this 302s every request; `?debug=1` returns the throw.
+ * (title/description/per-tithi PNG). Real browsers bounce straight to the
+ * app via meta-refresh + JS redirect. Invalid dates 302 to `/`.
+ * `?debug=1` returns the throw as text. All tithi content comes from
+ * buildOgMeta (real engine) — never hand-written.
  */
 import { buildOgMeta } from '../src/utils/ogMeta';
 
+export const config = { runtime: 'edge' };
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default async function handler(req: any, res: any): Promise<void> {
-  if (req.method !== 'GET' && req.method !== 'HEAD') {
-    res.status(405).json({ error: 'Method not allowed' });
-    return;
-  }
-  const debug =
-    (Array.isArray(req.query?.debug) ? req.query.debug[0] : req.query?.debug) === '1';
+export default async function handler(req: any): Promise<Response> {
+  const url = new URL(req.url);
+  const debug = url.searchParams.get('debug') === '1';
   try {
-    const host =
-      (req.headers?.['x-forwarded-host'] as string) ||
-      (req.headers?.host as string) ||
-      'panchang-pro.vercel.app';
-    const d = Array.isArray(req.query?.d) ? req.query.d[0] : (req.query?.d as string | undefined);
-    const meta = buildOgMeta(d ?? '', host);
+    const host = req.headers.get('x-forwarded-host') ?? url.host;
+    const meta = buildOgMeta(url.searchParams.get('d') ?? '', host);
     if (!meta.ok) {
-      res.writeHead(302, { Location: '/' });
-      res.end();
-      return;
+      return Response.redirect(new URL('/', url).toString(), 302);
     }
     const esc = (s: string) =>
       s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -60,17 +52,15 @@ export default async function handler(req: any, res: any): Promise<void> {
 <script>window.location.replace(${JSON.stringify(meta.redirectUrl)});</script>
 </body>
 </html>`;
-    res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    // Unfurl content is date-specific and immutable-ish; crawlers re-fetch
-    // per distinct URL, so a short cache is safe and cheap.
-    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=86400');
-    res.status(200).send(html);
+    return new Response(html, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+      },
+    });
   } catch (err) {
-    if (debug) {
-      res.status(500).send(`OGERR: ${String(err).slice(0, 300)}`);
-      return;
-    }
-    res.writeHead(302, { Location: '/' });
-    res.end();
+    if (debug) return new Response(`OGERR: ${String(err).slice(0, 300)}`, { status: 500 });
+    return Response.redirect(new URL('/', url).toString(), 302);
   }
 }

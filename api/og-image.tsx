@@ -17,25 +17,52 @@ export const config = { runtime: 'edge' };
 
 let fontCache: Promise<Record<number, ArrayBuffer>> | null = null;
 
-/** Noto Sans 500 + 700 woff2 via Google Fonts CSS (cached across warm invocations). */
+/** Noto Sans 500 + 700 woff2 (cached across warm invocations). */
 function loadFonts(): Promise<Record<number, ArrayBuffer>> {
   if (!fontCache) {
     fontCache = (async () => {
-      const css = await (
-        await fetch(
-          'https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;700&display=swap',
-          { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; VedaTime-OG/1.0)' } }
-        )
-      ).text();
+      // Primary: fontsource direct woff2 URLs (deterministic, no parsing).
+      try {
+        const out: Record<number, ArrayBuffer> = {};
+        for (const weight of [500, 700]) {
+          const res = await fetch(
+            `https://cdn.jsdelivr.net/fontsource/fonts/noto-sans@latest/latin-${weight}-normal.woff2`
+          );
+          if (!res.ok) throw new Error(`fontsource ${weight}: ${res.status}`);
+          out[weight] = await res.arrayBuffer();
+        }
+        return out;
+      } catch {
+        // Fallback: parse Google Fonts CSS (latin subset preferred).
+      }
+      const cssRes = await fetch(
+        'https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;700&display=swap',
+        { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; VedaTime-OG/1.0)' } }
+      );
+      if (!cssRes.ok) throw new Error(`font css: ${cssRes.status}`);
+      const css = await cssRes.text();
+      // Multiple @font-face blocks per weight (latin, latin-ext, devanagari…):
+      // prefer the `latin` subset, fall back to any block of the weight.
       const out: Record<number, ArrayBuffer> = {};
-      for (const block of css.split('@font-face').slice(1)) {
-        const weight = Number(/font-weight:\s*(\d+)/.exec(block)?.[1]);
-        const url = /url\((https:[^)]+\.woff2)\)/.exec(block)?.[1];
-        if ((weight === 500 || weight === 700) && url && !out[weight]) {
-          out[weight] = await (await fetch(url)).arrayBuffer();
+      const latin: Record<number, string> = {};
+      const any: Record<number, string> = {};
+      for (const chunk of css.split('/*')) {
+        const subset = (/^\s*([\w-]+)\s*\*\//.exec(chunk)?.[1] ?? '').toLowerCase();
+        const faces = chunk.match(/@font-face\s*{[^}]*}/g) ?? [];
+        for (const face of faces) {
+          const weight = Number(/font-weight:\s*(\d+)/.exec(face)?.[1]);
+          const url = /url\((https:[^)]+\.woff2)\)/.exec(face)?.[1];
+          if ((weight === 500 || weight === 700) && url) {
+            if (subset === 'latin' && !latin[weight]) latin[weight] = url;
+            if (!any[weight]) any[weight] = url;
+          }
         }
       }
-      if (!out[500] || !out[700]) throw new Error('missing woff2 weights');
+      for (const weight of [500, 700]) {
+        const url = latin[weight] ?? any[weight];
+        if (!url) throw new Error(`missing woff2 weight ${weight}`);
+        out[weight] = await (await fetch(url)).arrayBuffer();
+      }
       return out;
     })();
     // Don't poison the cache on failure — retry next cold/warm call.
