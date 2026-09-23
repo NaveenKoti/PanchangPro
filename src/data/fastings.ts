@@ -74,45 +74,27 @@ export const OTHER_FASTS: { [key: string]: FastingInfo } = {
     name: 'Pradosh Vrat',
     nameHindi: 'प्रदोष व्रत',
     type: 'pradosh',
-    significance: 'Pradosh is the twilight period on Trayodashi (13th lunar day). Dedicated to Lord Shiva, it removes sins and brings prosperity. Observed twice a month during both Shukla and Krishna paksha.',
-    significanceHindi: 'प्रदोष त्रयोदशी (13वें चंद्र दिन) की संध्या अवधि है। भगवान शिव को समर्पित, यह पापों को दूर करता है और समृद्धि लाता है। शुकल और कृष्ण दोनों पक्षों में महीने में दो बार मनाया जाता है।',
+    significance: 'Pradosh Vrat is observed on both Trayodashi tithis to honour Lord Shiva during Pradosh Kaal after sunset. Drik Panchang fixes the day when Trayodashi prevails after sunset, so dates vary by city. Soma, Bhauma and Shani Pradosh carry special names.',
+    significanceHindi: 'प्रदोष व्रत दोनों त्रयोदशी तिथियों पर सूर्यास्त के बाद प्रदोष काल में भगवान शिव की उपासना के लिए मनाया जाता है। त्रयोदशी सूर्यास्त के बाद व्याप्त होने वाले दिन को ही व्रत का दिन माना जाता है, इसलिए नगर के अनुसार तिथि बदल सकती है। सोम, भौम और शनि प्रदोष के विशेष नाम हैं।',
     benefits: [
-      'Removes all sins',
-      'Brings prosperity and wealth',
-      'Fulfills legitimate desires',
-      'Improves health and relationships',
-      'Brings mental peace',
-      'Blesses with progeny',
-      'Removes obstacles in marriage'
+      'Removes sins and obstacles',
+      'Health, prosperity, family harmony'
     ],
     benefitsHindi: [
-      'सभी पाप दूर करता है',
-      'समृद्धि और धन लाता है',
-      'वैध इच्छाएं पूरी करता है',
-      'स्वास्थ्य और रिश्तों में सुधार',
-      'मानसिक शांति लाता है',
-      'संतान का आशीर्वाद देता है',
-      'विवाह में बाधाएं दूर करता है'
+      'पाप और बाधाएं दूर करता है',
+      'स्वास्थ्य, समृद्धि, पारिवारिक सौहार्द'
     ],
     rules: [
-      'Fast during the day',
-      'Worship Lord Shiva during twilight (1.5 hours before sunset to 1 hour after)',
-      'Visit Shiva temple if possible',
-      'Offer water, milk, bel leaves, and dhatura to Shiva Linga',
-      'Chant Om Namah Shivaya and Maha Mrityunjaya Mantra',
-      'Read Shiva Purana or Pradosh Vrat Katha',
-      'Break fast after evening puja and moonrise',
-      'Maintain celibacy and speak truth'
+      'Fast during day; take fruit or nirjala per capacity',
+      'Worship Shiva-Parvati in Pradosh Kaal after sunset',
+      'Offer bilva leaves, milk, water, ghee lamp',
+      'Hear Pradosh Katha; break fast after evening puja'
     ],
     rulesHindi: [
-      'दिन के दौरान व्रत रखें',
-      'संध्या के दौरान भगवान शिव की पूजा करें (सूर्यास्त से 1.5 घंटे पहले से 1 घंटे बाद तक)',
-      'संभव हो तो शिव मंदिर जाएं',
-      'शिव लिंग पर जल, दूध, बेल पत्र और धतूरा अर्पित करें',
-      'ॐ नमः शिवाय और महा मृत्युंजय मंत्र जाप करें',
-      'शिव पुराण या प्रदोष व्रत कथा पढ़ें',
-      'शाम की पूजा और चंद्रोदय के बाद व्रत तोड़ें',
-      'ब्रह्मचर्य का पालन करें और सत्य बोलें'
+      'दिन में व्रत रखें; क्षमता अनुसार फल या निर्जला',
+      'सूर्यास्त के बाद प्रदोष काल में शिव-पार्वती की पूजा करें',
+      'बेलपत्र, दूध, जल और घी का दीपक अर्पित करें',
+      'प्रदोष कथा सुनें; शाम की पूजा के बाद व्रत तोड़ें'
     ],
     deity: 'Lord Shiva',
     deityHindi: 'भगवान शिव',
@@ -127,47 +109,27 @@ export const OTHER_FASTS: { [key: string]: FastingInfo } = {
     name: 'Sankashti Chaturthi',
     nameHindi: 'संकष्टी चतुर्थी',
     type: 'sankashti',
-    significance: 'Sankashti Chaturthi is observed on the 4th day of Krishna Paksha (waning moon). Dedicated to Lord Ganesha, it removes obstacles and brings success. The fast is broken after moonrise.',
-    significanceHindi: 'संकष्टी चतुर्थी कृष्ण पक्ष (घटते चंद्रमा) के चौथे दिन मनाई जाती है। भगवान गणेश को समर्पित, यह बाधाओं को दूर करता है और सफलता लाता है। चंद्रोदय के बाद व्रत तोड़ा जाता है।',
+    significance: 'Sankashti Chaturthi is the Krishna Paksha Chaturthi after full moon, dedicated to Lord Ganesha as remover of obstacles. Sankashti means deliverance during troubled times. Strongest in Maharashtra and Tamil Nadu; Tuesday observance is called Angarki and deemed highly auspicious.',
+    significanceHindi: 'संकष्टी चतुर्थी पूर्णिमा के बाद कृष्ण पक्ष की चतुर्थी है, जो विघ्नहर्ता भगवान गणेश को समर्पित है। संकष्टी का अर्थ है कष्ट के समय से छुटकारा। महाराष्ट्र और तमिलनाडु में इसका विशेष प्रचलन है; मंगलवार का व्रत अंगारकी कहलाता है और अत्यंत शुभ माना जाता है।',
     benefits: [
-      'Removes all obstacles',
-      'Brings success in endeavors',
-      'Improves wisdom and intellect',
-      'Brings prosperity and wealth',
-      'Fulfills desires',
-      'Protects from enemies and negative forces',
-      'Removes Mangal Dosha and other planetary afflictions'
+      'Removes obstacles',
+      'Wisdom and success'
     ],
     benefitsHindi: [
-      'सभी बाधाएं दूर करता है',
-      'प्रयासों में सफलता लाता है',
-      'बुद्धि और बुद्धिमत्ता में सुधार',
-      'समृद्धि और धन लाता है',
-      'इच्छाएं पूरी करता है',
-      'शत्रुओं और नकारात्मक शक्तियों से रक्षा',
-      'मंगल दोष और अन्य ग्रह दोष दूर करता है'
+      'बाधाएं दूर करता है',
+      'बुद्धि और सफलता'
     ],
     rules: [
-      'Complete fast or fruits/milk only',
-      'Worship Lord Ganesha with red flowers',
-      'Offer durva grass and modak (sweet)',
-      'Light ghee lamp in evening',
-      'Chant Ganesha mantras (Om Gam Ganapataye Namah)',
-      'Read Ganesha Atharvashirsha',
-      'Break fast after moonrise',
-      'View moon through sieve, then break fast',
-      'Apply tilak of kumkum on forehead'
+      'Fast from sunrise until moonrise sighting',
+      'Eat only fruit, roots, sabudana, peanuts if needed',
+      'Worship Ganesha with durva, modak, red flowers',
+      'Break fast after moon sighting; day varies by city'
     ],
     rulesHindi: [
-      'पूर्ण व्रत या केवल फल/दूध',
-      'लाल फूलों से भगवान गणेश की पूजा करें',
-      'दूर्वा घास और मोदक अर्पित करें',
-      'शाम को घी का दीपक जलाएं',
-      'गणेश मंत्र जाप (ॐ गं गणपतये नमः)',
-      'गणेश अथर्वशीर्ष पढ़ें',
-      'चंद्रोदय के बाद व्रत तोड़ें',
-      'छलनी से चंद्रमा देखें, फिर व्रत तोड़ें',
-      'माथे पर कुमकुम का तिलक लगाएं'
+      'सूर्योदय से चंद्रोदय दर्शन तक व्रत रखें',
+      'आवश्यकता हो तो केवल फल, कंदमूल, साबूदाना, मूंगफली खाएं',
+      'दूर्वा, मोदक, लाल फूलों से गणेश की पूजा करें',
+      'चंद्र दर्शन के बाद व्रत तोड़ें; नगर अनुसार दिन बदलता है'
     ],
     deity: 'Lord Ganesha',
     deityHindi: 'भगवान गणेश',
@@ -182,45 +144,29 @@ export const OTHER_FASTS: { [key: string]: FastingInfo } = {
     name: 'Purnima Vrat',
     nameHindi: 'पूर्णिमा व्रत',
     type: 'purnima',
-    significance: 'Full moon day is highly auspicious for spiritual practices. Fasting on Purnima brings mental peace, spiritual growth, and fulfillment of desires. Dedicated to Lord Satyanarayan and Moon god.',
-    significanceHindi: 'पूर्णिमा का दिन आध्यात्मिक अभ्यास के लिए अत्यंत शुभ है। पूर्णिमा पर व्रत रखने से मानसिक शांति, आध्यात्मिक विकास और इच्छाओं की पूर्ति होती है। भगवान सत्यनारायण और चंद्र देव को समर्पित।',
+    significance: 'Purnima is the full moon day observed as Satyanarayan Vrat in North India and Pournami Vratam in the South. Drik Panchang applies the Madhyahna rule, rejecting Chaturdashi-polluted days. Fast runs sunrise to moon sighting; evening Satyanarayan Katha permits breaking fast with prasad.',
+    significanceHindi: 'पूर्णिमा पूर्ण चंद्र का दिन है, जो उत्तर भारत में सत्यनारायण व्रत और दक्षिण में पौरनमी व्रतम के रूप में मनाया जाता है। मध्याह्न नियम लागू होता है — चतुर्दशी-विद्ध दिन अमान्य है। व्रत सूर्योदय से चंद्र दर्शन तक रहता है; शाम की सत्यनारायण कथा के बाद प्रसाद से व्रत तोड़ा जा सकता है।',
     benefits: [
-      'Mental peace and emotional balance',
-      'Spiritual growth and enlightenment',
-      'Fulfills legitimate desires',
-      'Removes sins and negative karma',
-      'Improves relationships and family harmony',
-      'Brings prosperity and good health',
-      'Enhances meditation and spiritual practices'
+      'Mental peace and clarity',
+      'Spiritual growth',
+      'Family harmony'
     ],
     benefitsHindi: [
-      'मानसिक शांति और भावनात्मक संतुलन',
-      'आध्यात्मिक विकास और ज्ञान',
-      'वैध इच्छाओं की पूर्ति',
-      'पाप और नकारात्मक कर्म दूर',
-      'रिश्तों और पारिवारिक सौहार्द में सुधार',
-      'समृद्धि और अच्छा स्वास्थ्य लाता है',
-      'ध्यान और आध्यात्मिक अभ्यास को बढ़ाता है'
+      'मानसिक शांति और स्पष्टता',
+      'आध्यात्मिक विकास',
+      'पारिवारिक सौहार्द'
     ],
     rules: [
-      'Fast or eat only light sattvic food',
-      'Worship Lord Satyanarayan',
-      'Perform Satyanarayan Puja if possible',
-      'Donate food, clothes, and essentials to poor',
-      'Chant Vishnu mantras or Satyanarayan Katha',
-      'Visit temple and offer prayers',
-      'Break fast after moonrise or next morning',
-      'Maintain purity of thought and action'
+      'Keep fast; eat only light sattvic food',
+      'Perform Satyanarayan Puja and hear Katha evening',
+      'Offer prasad, donate food and essentials',
+      'Break fast after moon sighting with prasad'
     ],
     rulesHindi: [
-      'व्रत करें या केवल हल्का सात्विक भोजन',
-      'भगवान सत्यनारायण की पूजा करें',
-      'संभव हो तो सत्यनारायण पूजा करें',
-      'गरीबों को भोजन, वस्त्र और आवश्यक वस्तुएं दान करें',
-      'विष्णु मंत्र या सत्यनारायण कथा जाप करें',
-      'मंदिर जाएं और प्रार्थना करें',
-      'चंद्रोदय के बाद या अगली सुबह व्रत तोड़ें',
-      'विचार और कर्म की शुद्धता बनाए रखें'
+      'व्रत रखें; केवल हल्का सात्विक भोजन करें',
+      'शाम को सत्यनारायण पूजा करें और कथा सुनें',
+      'प्रसाद अर्पित करें, अन्न और आवश्यक वस्तुएं दान करें',
+      'चंद्र दर्शन के बाद प्रसाद से व्रत तोड़ें'
     ],
     deity: 'Lord Satyanarayan / Moon God',
     deityHindi: 'भगवान सत्यनारायण / चंद्र देव',
@@ -235,47 +181,27 @@ export const OTHER_FASTS: { [key: string]: FastingInfo } = {
     name: 'Amavasya Vrat',
     nameHindi: 'अमावस्या व्रत',
     type: 'amavasya',
-    significance: 'New moon day is dedicated to ancestor worship (Pitru Tarpan). Fasting on Amavasya honors ancestors, removes Pitru Dosha, and brings their blessings. Especially important for those facing Pitru Dosha in horoscope.',
-    significanceHindi: 'अमावस्या का दिन पितृ पूजा (पितृ तर्पण) को समर्पित है। अमावस्या पर व्रत रखने से पूर्वजों का सम्मान होता है, पितृ दोष दूर होता है और उनका आशीर्वाद मिलता है। विशेष रूप से जिनकी कुंडली में पितृ दोष है उनके लिए महत्वपूर्ण।',
+    significance: 'Amavasya is the new moon day classed as Pitra Tithi for Shraddha, tarpan and charity to ancestors. Drik Panchang deems it unsuitable for auspicious beginnings but apt for Kalasarpa Dosha puja. Monday Somvati and Saturday Shani Amavasya are especially significant.',
+    significanceHindi: 'अमावस्या नव चंद्र का दिन है, जो श्राद्ध, तर्पण और पूर्वजों के लिए दान हेतु पितृ तिथि मानी जाती है। शुभ आरंभ के लिए इसे अनुपयुक्त, परंतु कालसर्प दोष पूजा के लिए योग्य माना जाता है। सोमवती और शनि अमावस्या का विशेष महत्व है।',
     benefits: [
-      'Honors ancestors and brings their blessings',
-      'Removes Pitru Dosha from horoscope',
-      'Helps in getting progeny',
-      'Removes obstacles from family lineage',
-      'Brings peace to departed souls',
-      'Improves family relationships',
-      'Removes unexplained problems and suffering'
+      'Honours ancestors, eases Pitru Dosha',
+      'Peace for departed, family welfare'
     ],
     benefitsHindi: [
-      'पूर्वजों का सम्मान और उनका आशीर्वाद',
-      'कुंडली से पितृ दोष दूर',
-      'संतान प्राप्ति में सहायक',
-      'पारिवारिक वंश से बाधाएं दूर',
-      'दिवंगत आत्माओं को शांति',
-      'पारिवारिक रिश्तों में सुधार',
-      'अस्पष्ट समस्याओं और पीड़ा को दूर करता है'
+      'पूर्वजों का सम्मान, पितृ दोष शांत',
+      'दिवंगतों को शांति, पारिवारिक कल्याण'
     ],
     rules: [
-      'Fast or eat light sattvic food',
-      'Perform Pitru Tarpan (ancestor rituals)',
-      'Offer water, sesame seeds, and rice to ancestors',
-      'Feed Brahmins, poor, and cows',
-      'Donate food in ancestor name',
-      'Chant Pitru mantras',
-      'Avoid auspicious ceremonies on this day',
-      'Break fast after sunset or next morning',
-      'Visit Gaya or other sacred places for Pitru rituals if possible'
+      'Fast or take single sattvic meal after rites',
+      'Perform Pitru tarpan with sesame, water in afternoon',
+      'Donate food, feed crows, cows, Brahmins',
+      'Avoid weddings, new ventures; resume next day'
     ],
     rulesHindi: [
-      'व्रत करें या हल्का सात्विक भोजन',
-      'पितृ तर्पण करें (पूर्वज अनुष्ठान)',
-      'पूर्वजों को जल, तिल और चावल अर्पित करें',
-      'ब्राह्मणों, गरीबों और गायों को भोजन खिलाएं',
-      'पूर्वज के नाम पर भोजन दान करें',
-      'पितृ मंत्र जाप करें',
-      'इस दिन शुभ समारोह से बचें',
-      'सूर्यास्त के बाद या अगली सुबह व्रत तोड़ें',
-      'संभव हो तो पितृ अनुष्ठान के लिए गया या अन्य पवित्र स्थान जाएं'
+      'अनुष्ठानों के बाद व्रत या एक बार सात्विक भोजन करें',
+      'दोपहर में तिल, जल से पितृ तर्पण करें',
+      'अन्न दान करें, कौओं, गायों, ब्राह्मणों को खिलाएं',
+      'विवाह, नए कार्य न करें; अगले दिन पुनः आरंभ करें'
     ],
     deity: 'Ancestors (Pitrus)',
     deityHindi: 'पितृ (पूर्वज)',

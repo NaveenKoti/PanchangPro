@@ -54,6 +54,7 @@ import { TithiExplanationDialog } from '../components/TithiExplanationDialog';
 import { NakshatraExplanationDialog } from '../components/NakshatraExplanationDialog';
 import { GlossaryDialog } from '../components/GlossaryDialog';
 import type { GlossaryEntry } from '../data/panchangGlossary';
+import { festivalText } from '../data/festivals';
 import { LUNAR_MONTHS, LUNAR_MONTHS_HINDI } from '../engine/constants';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { SearchUpcoming } from '../components/SearchUpcoming';
@@ -89,7 +90,7 @@ export interface TodayScreenProps {
 type TodayTab = 'details' | 'day';
 
 export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
-  const { t } = useI18n();
+  const { t, currentLanguage } = useI18n();
   const muiTheme = useMuiTheme();
   const { isMobile } = useBreakpoints();
 
@@ -366,9 +367,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
       children: (
         <Box>
           <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-            {preferences.language === 'hi'
-              ? panchang.festivals[0].nameHindi
-              : panchang.festivals[0].name}
+            {festivalText(panchang.festivals[0], currentLanguage, 'name')}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             {panchang.festivals[0].significance}

@@ -51,7 +51,7 @@ import { ScreenContainer } from '../components/ScreenContainer';
 import { SectionCard as LayoutSectionCard } from '../components/layout/SectionCard';
 import { useI18n } from '../hooks/useI18n';
 import { getFestivalStory, FESTIVAL_STORIES, findFestivalStoryByName, FestivalStory } from '../data/festivalStories';
-import { getFestivalById } from '../data/festivals';
+import { getFestivalById, festivalText } from '../data/festivals';
 import { findNextOccurrence } from '../data/observances';
 import type { ObservanceRule } from '../data/observances/types';
 import { FestivalShareCard } from '../components/FestivalShareCard';
@@ -355,6 +355,11 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
     return getVyaptiNote(festival.id);
   }, [festival]);
 
+  const festivalData = useMemo(() => {
+    if (!festival) return undefined;
+    return getFestivalById(festival.id);
+  }, [festival]);
+
   const formatDate = useCallback((date: Date): string => {
     return date.toLocaleDateString('en-IN', {
       weekday: 'long',
@@ -406,6 +411,34 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
 
   const isHindi = currentLanguage === 'hi';
 
+  // Localized text from festivals.ts i18n (hi/sa/kn/te/ta), English fallback.
+  // detailLang resolves to currentLanguage only when i18n[lang] exists.
+  const detailLang = (festivalData?.i18n as Record<string, unknown> | undefined)?.[currentLanguage]
+    ? currentLanguage
+    : 'en';
+  // festivals.ts translations take precedence for non-English languages;
+  // English keeps the story fields (unchanged legacy behavior).
+  const useDetailText = !!festivalData && detailLang !== 'en';
+  const detailName = useDetailText
+    ? (festivalText(festivalData!, detailLang, 'name') as string)
+    : festival.name;
+  const detailSubtitle = currentLanguage === 'en'
+    ? festival.nameHindi
+    : (festivalData?.name ?? festival.name);
+  const detailSignificance = useDetailText
+    ? (festivalText(festivalData!, detailLang, 'significance') as string)
+    : (isHindi ? festival.significanceHindi : festival.significance);
+  const detailDeity = festivalData
+    ? (festivalText(festivalData, detailLang, 'deity') as string | undefined)
+    : undefined;
+  const detailRituals = festivalData
+    ? ((festivalText(festivalData, detailLang, 'rituals') as string[] | undefined) ?? [])
+    : [];
+  const storyRituals = (isHindi ? festival.ritualsHindi : festival.rituals) ?? [];
+  const displayedRituals = (useDetailText && detailRituals.length > 0)
+    ? detailRituals
+    : (storyRituals.length > 0 ? storyRituals : detailRituals);
+
   return (
     <ScreenContainer
       sx={{
@@ -449,7 +482,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
               Festivals
             </Link>
             <Typography variant="body2" sx={{ color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {festival.name}
+              {detailName}
             </Typography>
           </Breadcrumbs>
           <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0 }}>
@@ -519,7 +552,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                 wordBreak: 'break-word',
               }}
             >
-              {festival.name}
+              {detailName}
             </Typography>
 
             <Typography
@@ -531,8 +564,22 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                 mb: 3,
               }}
             >
-              {festival.nameHindi}
+              {detailSubtitle}
             </Typography>
+
+            {/* Presiding deity (festivals.ts i18n, English fallback) */}
+            {detailDeity && (
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: { xs: '1rem', sm: '1.1rem' },
+                  mb: 3,
+                }}
+              >
+                Deity: {detailDeity}
+              </Typography>
+            )}
 
             {/* Date Chip */}
             <Chip
@@ -628,7 +675,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                     minWidth: 0,
                   }}
                 >
-                  Next {festival.name}
+                  Next {detailName}
                 </Typography>
               </Box>
             }
@@ -681,7 +728,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                 fontSize: { xs: '0.95rem', sm: '1rem' },
               }}
             >
-              {isHindi ? festival.significanceHindi : festival.significance}
+              {detailSignificance}
             </Typography>
           </SectionCard>
         </Fade>
@@ -708,15 +755,16 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
         </Fade>
 
         {/* ================================================================== */}
-        {/* RITUALS & OBSERVANCES */}
+        {/* RITUALS & OBSERVANCES (festivals.ts i18n first, story fallback) */}
         {/* ================================================================== */}
+        {displayedRituals.length > 0 && (
         <Fade in timeout={1200}>
           <SectionCard
             icon={<Restaurant sx={{ color: theme.palette.primary.light }} />}
             title="Rituals & Observances"
           >
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-              {(isHindi ? festival.ritualsHindi : festival.rituals).map((ritual, index) => (
+              {displayedRituals.map((ritual, index) => (
                 <Box
                   key={index}
                   sx={{
@@ -777,6 +825,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
             </Box>
           </SectionCard>
         </Fade>
+        )}
 
         {/* ================================================================== */}
         {/* FASTING RULES */}

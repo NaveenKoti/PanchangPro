@@ -4,9 +4,11 @@ import {
  Typography,
  Paper,
  IconButton,
- Chip,
- Fade,
+  Chip,
+  Fade,
   Zoom,
+  Tabs,
+  Tab,
   useTheme as useMuiTheme,
  Skeleton,
  Snackbar,
@@ -33,9 +35,11 @@ import { useAppStore } from '../stores/appStore';
 import { useI18n } from '../hooks/useI18n';
 import { CalendarDay } from '../types';
 import { ScreenContainer } from '../components/ScreenContainer';
+import { WeeklyAgenda } from '../components/WeeklyAgenda';
 import { SectionCard } from '../components/layout/SectionCard';
 import { triggerHapticIfSupported } from '../utils/haptics';
 import { useBreakpoints } from '../hooks/useBreakpoints';
+import { festivalText } from '../data/festivals';
 
 interface CalendarScreenProps {
   /** Callback when user taps a festival to view its full story */
@@ -54,7 +58,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  const isDark = muiTheme.palette.mode === 'dark';
   const { isMobile, isTablet } = useBreakpoints();
 
-  const { getCalendarMonth, setSelectedDate, preferences } = useAppStore();
+  const { getCalendarMonth, setSelectedDate, selectedDate, calculatePanchang, customTithis, preferences } = useAppStore();
   // Sacred times render in the LOCATION timezone (engine instants are
   // absolute; device-local formatting corrupts them when traveling).
   const formatTime = (date: Date) =>
@@ -73,8 +77,18 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  direction: null,
  velocity: 0,
  });
- const [viewMode, setViewMode] = useState<'month' | 'week'>('month');
- const [monthTransition, setMonthTransition] = useState<'none' | 'left' | 'right'>('none');
+  const [viewMode, setViewMode] = useState<'month' | 'week'>('month');
+  const [monthTransition, setMonthTransition] = useState<'none' | 'left' | 'right'>('none');
+  const isHindi = currentLanguage === 'hi';
+
+  // Week view state: Sunday-start week containing today (matches month grid convention).
+  const startOfWeekSunday = (d: Date) => {
+    const c = new Date(d);
+    c.setHours(0, 0, 0, 0);
+    c.setDate(c.getDate() - c.getDay());
+    return c;
+  };
+  const [weekStart, setWeekStart] = useState(() => startOfWeekSunday(new Date()));
 
  const [snackbar, setSnackbar] = useState<{
  open: boolean;
@@ -144,18 +158,36 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   };
 
   const handlePrevMonth = () => {
- setMonthTransition('right');
- setCurrentMonth(
- new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1)
- );
- };
+  if (viewMode === 'week') {
+  setMonthTransition('right');
+  setWeekStart((w) => {
+  const n = new Date(w);
+  n.setDate(n.getDate() - 7);
+  return n;
+  });
+  return;
+  }
+  setMonthTransition('right');
+  setCurrentMonth(
+  new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1)
+  );
+  };
 
   const handleNextMonth = () => {
- setMonthTransition('left');
- setCurrentMonth(
- new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1)
- );
- };
+  if (viewMode === 'week') {
+  setMonthTransition('left');
+  setWeekStart((w) => {
+  const n = new Date(w);
+  n.setDate(n.getDate() + 7);
+  return n;
+  });
+  return;
+  }
+  setMonthTransition('left');
+  setCurrentMonth(
+  new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1)
+  );
+  };
 
   const handleDayClick = useCallback((day: CalendarDay) => {
     triggerHapticIfSupported('light');
@@ -171,10 +203,48 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   }, [setSelectedDate]);
 
   const handleToday = () => {
- setMonthTransition('none');
- setCurrentMonth(new Date());
- setSelectedDay(null);
- };
+  setMonthTransition('none');
+  if (viewMode === 'week') {
+  setWeekStart(startOfWeekSunday(new Date()));
+  }
+  setCurrentMonth(new Date());
+  setSelectedDay(null);
+  };
+
+  // Week agenda row tap → same selection path as month grid cells.
+  const handleWeekSelect = useCallback((d: Date) => {
+    const panchang = calculatePanchang(d);
+    const dayCustomTithis = customTithis.filter((ct: any) => {
+      if (ct.isRecurring) {
+        return ct.tithiNumber === panchang.tithi.number && ct.paksha === panchang.tithi.paksha;
+      } else if (ct.customDate) {
+        return new Date(ct.customDate).toDateString() === d.toDateString();
+      }
+      return false;
+    });
+    handleDayClick({
+      date: d,
+      panchang,
+      isToday: d.toDateString() === new Date().toDateString(),
+      isFestival: panchang.festivals.length > 0,
+      isFasting: !!panchang.fasting,
+      customTithis: dayCustomTithis,
+    });
+  }, [calculatePanchang, customTithis, handleDayClick]);
+
+  const getWeekLabel = () => {
+  const locale =
+  currentLanguage === 'hi'
+  ? 'hi-IN'
+  : currentLanguage === 'sa'
+  ? 'sa-IN'
+  : 'en-IN';
+  const end = new Date(weekStart);
+  end.setDate(end.getDate() + 6);
+  const s = weekStart.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+  const e = end.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
+  return `${s} – ${e}`;
+  };
 
  const handleShareDay = async () => {
  if (!selectedDay) return;
@@ -312,7 +382,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   <IconButton
   onClick={handlePrevMonth}
   size="small"
-  aria-label="previous month"
+  aria-label={viewMode === 'week' ? (isHindi ? 'पिछला सप्ताह' : 'previous week') : 'previous month'}
   sx={{
   width: 48,
   height: 48,
@@ -330,7 +400,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   variant="h6"
    sx={{ fontWeight: 500, fontSize: { xs: '1.1rem', sm: '1.25rem' }, color: 'text.primary', letterSpacing: '-0.02em', lineHeight: 1.3 }}
  >
- {getMonthName(currentMonth)}
+  {viewMode === 'week' ? getWeekLabel() : getMonthName(currentMonth)}
  </Typography>
   </Box>
   </Box>
@@ -355,7 +425,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   <IconButton
   onClick={handleNextMonth}
   size="small"
-  aria-label="next month"
+  aria-label={viewMode === 'week' ? (isHindi ? 'अगला सप्ताह' : 'next week') : 'next month'}
   sx={{
   width: 48,
   height: 48,
@@ -368,9 +438,25 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  </Box>
  </Box>
  </Paper>
- </Zoom>
+  </Zoom>
 
- <Fade in timeout={500}>
+  <Tabs
+  value={viewMode}
+  onChange={(_, v) => {
+  if (v) {
+  triggerHapticIfSupported('light');
+  setViewMode(v);
+  }
+  }}
+  variant="fullWidth"
+  aria-label={isHindi ? 'कैलेंडर दृश्य' : 'Calendar view'}
+  sx={{ mb: 1.5, minHeight: 48 }}
+  >
+  <Tab label={isHindi ? 'माह' : 'Month'} value="month" sx={{ minHeight: 48, textTransform: 'none', fontWeight: 500 }} />
+  <Tab label={isHindi ? 'सप्ताह' : 'Week'} value="week" sx={{ minHeight: 48, textTransform: 'none', fontWeight: 500 }} />
+  </Tabs>
+
+  <Fade in timeout={500}>
  <animated.div {...bindCalendar()} {...bindCalendarPinch()} style={{ ...monthAnimation, touchAction: 'none' }}>
  <Paper
  elevation={0}
@@ -380,8 +466,19 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  bgcolor: 'background.paper',
  border: '1px solid',
  borderColor: 'divider',
- }}
+  }}
   >
+  {viewMode === 'week' ? (
+  <WeeklyAgenda
+  weekStart={weekStart}
+  selectedDate={selectedDate}
+  onSelectDate={handleWeekSelect}
+  calculatePanchang={calculatePanchang}
+  onFestivalOpen={onFestivalOpen}
+  isHindi={isHindi}
+  />
+  ) : (
+  <>
   {!isMobile && (
   <Box
   sx={{
@@ -697,6 +794,8 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   );
   })}
   </Box>
+  )}
+  </>
   )}
   </Paper>
   </animated.div>
@@ -1182,7 +1281,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   </Box>
  <Box sx={{ flex: 1, minWidth: 0 }}>
  <Typography variant="body2" sx={{ fontWeight: 500, color: 'primary.main', lineHeight: 1.3 }}>
- {festival.name}
+ {festivalText(festival, currentLanguage, 'name')}
  </Typography>
  {festival.type && (
  <Chip

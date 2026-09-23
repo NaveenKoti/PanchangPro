@@ -76,6 +76,10 @@ export interface Festival {
   month: number;
   type: 'major' | 'minor' | 'regional';
   region?: string[]; // Applicable regions
+  rituals?: string[];
+  deity?: string;
+  // Translators fill `i18n` later; English top-level fields stay canonical.
+  i18n?: { [lang in 'hi'|'sa'|'kn'|'te'|'ta']?: { name?: string; description?: string; significance?: string; rituals?: string[]; deity?: string } };
 }
 
 // Fasting information

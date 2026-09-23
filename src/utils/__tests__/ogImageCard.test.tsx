@@ -22,7 +22,9 @@ describe('OgImageCard', () => {
   });
 
   it('plain day omits the festival pill', () => {
-    const meta = buildOgMeta('2026-09-23', 'x.test');
+    // 2026-09-23 is Vamana Jayanti (Bhadrapada Shukla Dwadashi) since the
+    // festival data was extended — use 2026-09-22, which has no festival.
+    const meta = buildOgMeta('2026-09-22', 'x.test');
     expect(meta.ok).toBe(true);
     if (!meta.ok) return;
     expect(meta.festivalName).toBeNull();

@@ -40,7 +40,7 @@ import { PanchangShareCard } from '../components/PanchangShareCard';
 import EkadashiDetailCard from '../components/EkadashiDetailCard';
 import { triggerHapticIfSupported } from '../utils/haptics';
 import { findFestivalStoryByName } from '../data/festivalStories';
-import { FESTIVALS, FestivalData } from '../data/festivals';
+import { FESTIVALS, FestivalData, festivalText } from '../data/festivals';
 
 interface FastsScreenProps {
   /** Callback when user taps a festival to view its full story */
@@ -136,7 +136,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
             if (!alreadyAdded) {
               fasts.push({
                 date: date,
-                name: currentLanguage === 'hi' ? festival.nameHindi : festival.name,
+                name: festivalText(festival, currentLanguage, 'name') as string,
                 type: 'festival',
                 daysUntil: i,
               });
@@ -172,7 +172,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
         panchang.festivals.forEach((festival: any) => {
           festivals.push({
             date,
-            name: currentLanguage === 'hi' ? festival.nameHindi : festival.name,
+            name: festivalText(festival, currentLanguage, 'name') as string,
             description: festival.description || festival.significance?.substring(0, 100) || '',
             type: festival.type || 'minor',
             daysUntil: i,
@@ -1161,7 +1161,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                             lineHeight: 1.3,
                           }}
                         >
-                          {isHindi ? festival.nameHindi : festival.name}
+                          {festivalText(festival, currentLanguage, 'name')}
                         </Typography>
                         {canViewStory && (
                           <Chip
@@ -1322,7 +1322,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                             lineHeight: 1.3,
                           }}
                         >
-                          {isHindi ? festival.nameHindi : festival.name}
+                          {festivalText(festival, currentLanguage, 'name')}
                         </Typography>
                         {canViewStory && (
                           <Chip
@@ -1483,7 +1483,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                             lineHeight: 1.3,
                           }}
                         >
-                          {isHindi ? festival.nameHindi : festival.name}
+                          {festivalText(festival, currentLanguage, 'name')}
                         </Typography>
                         {canViewStory && (
                           <Chip
