@@ -75,9 +75,9 @@ export default async function handler(req: any): Promise<Response> {
         Array.from(new Uint8Array(b.slice(0, 4)))
           .map((x) => x.toString(16))
           .join('');
-      // Progressive bisect: cumulative variants isolate the failing node.
-      // V1 wordmark (has <span>) → V2 hero → V3 timings → V4 pill → V5 full.
-      const { OgImageCard } = await import('../src/utils/ogImageCard');
+      // Full render probe (bytes) — Satori failures surface here as text.
+      const F = (s: object, ...kids: React.ReactNode[]) =>
+        React.createElement('div', { style: s }, ...kids);
       const attempt = async (el: React.ReactNode): Promise<string> => {
         try {
           const buf = await new ImageResponse(el as never, {
@@ -93,32 +93,6 @@ export default async function handler(req: any): Promise<Response> {
           return `ERR:${String(e).slice(0, 120)}`;
         }
       };
-      const F = (s: object, ...kids: React.ReactNode[]) =>
-        React.createElement('div', { style: s }, ...kids);
-      const v1 = F(
-        { display: 'flex', fontSize: 34, color: '#7C2D12', fontWeight: 700 },
-        'VedaTime',
-        React.createElement('span', null, 'Sacred Rhythms of Time')
-      );
-      const pill = F({ display: 'flex' }, meta.festivalName ?? 'NoFest');
-      const timings = F(
-        { display: 'flex' },
-        F({ display: 'flex' }, 'Sunrise ', React.createElement('span', null, meta.sunrise)),
-        F({ display: 'flex' }, 'Sunset ', React.createElement('span', null, meta.sunset)),
-        pill
-      );
-      const hero = F(
-        { display: 'flex' },
-        F(
-          { display: 'flex', flexDirection: 'column' },
-          F({ fontSize: 88 }, meta.tithiName),
-          F({ display: 'flex' }, `${meta.paksha} Paksha`)
-        ),
-        F({ fontSize: 200 }, `${meta.tithiNumber}`)
-      );
-      const root = (kids: React.ReactNode[]) =>
-        F({ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }, ...kids);
-      const footer = F({ display: 'flex' }, 'Open this day in the app');
       return Response.json({
         sha: (process.env.VERCEL_GIT_COMMIT_SHA ?? 'local').slice(0, 7),
         font500bytes: fonts[500]?.byteLength ?? -1,
@@ -126,13 +100,12 @@ export default async function handler(req: any): Promise<Response> {
         magic500: fonts[500] ? magic(fonts[500]) : 'missing',
         magic700: fonts[700] ? magic(fonts[700]) : 'missing',
         title: meta.title,
-        v1wordmarkSpan: await attempt(root([v1])),
-        v2hero: await attempt(root([v1, hero])),
-        v3timings: await attempt(root([v1, hero, timings])),
-        v4card: await attempt(
-          root([v1, hero, timings, F({ display: 'flex' }, 'footer')])
+        fullBytes: await attempt(
+          F(
+            { display: 'flex', flexDirection: 'column', width: '100%', height: '100%' },
+            React.createElement(OgImageCard, { meta })
+          )
         ),
-        v5full: await attempt(React.createElement(OgImageCard, { meta })),
       });
     }
 
