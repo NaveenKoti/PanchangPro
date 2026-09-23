@@ -21,6 +21,11 @@ let fontCache: Promise<Record<number, ArrayBuffer>> | null = null;
 function loadFonts(): Promise<Record<number, ArrayBuffer>> {
   if (!fontCache) {
     fontCache = (async () => {
+      const assertWoff2 = (buf: ArrayBuffer, where: string) => {
+        const magic = new Uint8Array(buf.slice(0, 4));
+        const ok = magic[0] === 0x77 && magic[1] === 0x4f && magic[2] === 0x46 && magic[3] === 0x32;
+        if (!ok) throw new Error(`bad font bytes @${where}`);
+      };
       // Primary: fontsource direct woff2 URLs (deterministic, no parsing).
       try {
         const out: Record<number, ArrayBuffer> = {};
@@ -29,7 +34,9 @@ function loadFonts(): Promise<Record<number, ArrayBuffer>> {
             `https://cdn.jsdelivr.net/fontsource/fonts/noto-sans@latest/latin-${weight}-normal.woff2`
           );
           if (!res.ok) throw new Error(`fontsource ${weight}: ${res.status}`);
-          out[weight] = await res.arrayBuffer();
+          const buf = await res.arrayBuffer();
+          assertWoff2(buf, `fontsource-${weight}`);
+          out[weight] = buf;
         }
         return out;
       } catch {
@@ -61,7 +68,9 @@ function loadFonts(): Promise<Record<number, ArrayBuffer>> {
       for (const weight of [500, 700]) {
         const url = latin[weight] ?? any[weight];
         if (!url) throw new Error(`missing woff2 weight ${weight}`);
-        out[weight] = await (await fetch(url)).arrayBuffer();
+        const buf = await (await fetch(url)).arrayBuffer();
+        assertWoff2(buf, `gcss-${weight}`);
+        out[weight] = buf;
       }
       return out;
     })();
