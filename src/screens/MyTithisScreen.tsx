@@ -54,9 +54,12 @@ import {
   ChevronUp,
   Sparkles,
   Clock,
+  Share2,
 } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import { notificationService } from '../services/notificationService';
+import { shareContent } from '../utils/share';
+import { buildDayLink } from '../utils/dayLink';
 import { useI18n } from '../hooks/useI18n';
 import { CustomTithi } from '../types';
 import { ScreenContainer } from '../components/ScreenContainer';
@@ -295,6 +298,35 @@ export const MyTithisScreen: React.FC = () => {
       if (!allowed) return;
     }
     updateCustomTithi(tithi.id, { reminderEnabled: !tithi.reminderEnabled });
+  };
+
+  // Share a saved tithi: next occurrence date + day deep link (?d=), so the
+  // recipient opens the exact tithi day in the app with an install nudge.
+  const handleShareTithi = async (tithi: CustomTithi) => {
+    const occurrences = getNextOccurrences(tithi.id);
+    const next = occurrences[0] ?? tithi.customDate ?? null;
+    if (!next) {
+      showMessage(
+        isHindi ? 'साझा करने के लिए कोई आगामी तारीख नहीं है' : 'No upcoming date to share',
+        'info'
+      );
+      return;
+    }
+    const nextDate = next instanceof Date ? next : new Date(next);
+    const tithiLine = isHindi
+      ? `तिथि ${tithi.tithiNumber} - ${tithi.paksha} पक्ष`
+      : `Tithi ${tithi.tithiNumber} - ${tithi.paksha} Paksha`;
+    const dateLabel = nextDate.toLocaleDateString(isHindi ? 'hi-IN' : undefined, {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+    const text = isHindi
+      ? `${tithiLine}\nअगली: ${dateLabel}\n\nयह तिथि खोलें: ${buildDayLink(nextDate)}`
+      : `${tithiLine}\nNext: ${dateLabel}\n\nOpen this tithi: ${buildDayLink(nextDate)}`;
+    await shareContent({ title: tithi.name, text });
+    showMessage(isHindi ? 'साझा किया!' : 'Shared!', 'success');
   };
 
   const handleExport = async () => {
@@ -699,6 +731,21 @@ export const MyTithisScreen: React.FC = () => {
                             }}
                           >
                             {tithi.reminderEnabled ? <Bell size={16} /> : <BellOff size={16} />}
+                          </IconButton>
+                        </Tooltip>
+
+                        <Tooltip title={isHindi ? 'साझा करें' : 'Share'}>
+                          <IconButton
+                            aria-label={isHindi ? 'तिथि साझा करें' : 'Share tithi'}
+                            size="small"
+                            onClick={() => handleShareTithi(tithi)}
+                            sx={{
+                              width: 48,
+                              height: 48,
+                              color: 'primary.main',
+                            }}
+                          >
+                            <Share2 size={16} />
                           </IconButton>
                         </Tooltip>
                         
