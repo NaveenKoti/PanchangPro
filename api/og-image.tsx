@@ -10,6 +10,7 @@
  * /og-image.png so a shared link NEVER 500s for a crawler.
  */
 import { ImageResponse } from '@vercel/og';
+import React from 'react';
 import { buildOgMeta } from '../src/utils/ogMeta';
 import { OgImageCard } from '../src/utils/ogImageCard';
 
@@ -74,28 +75,65 @@ export default async function handler(req: any): Promise<Response> {
         Array.from(new Uint8Array(b.slice(0, 4)))
           .map((x) => x.toString(16))
           .join('');
-      // Attempt the render eagerly so failures surface as text, not crashes.
-      try {
-        const probe = await new ImageResponse(<OgImageCard meta={meta} />, {
-          width: 1200,
-          height: 630,
-          fonts: [
-            { name: 'Noto Sans', data: fonts[500], weight: 500, style: 'normal' },
-            { name: 'Noto Sans', data: fonts[700], weight: 700, style: 'normal' },
-          ],
-        }).arrayBuffer();
-        return Response.json({
-          sha: (process.env.VERCEL_GIT_COMMIT_SHA ?? 'local').slice(0, 7),
-          font500bytes: fonts[500]?.byteLength ?? -1,
-          font700bytes: fonts[700]?.byteLength ?? -1,
-          magic500: fonts[500] ? magic(fonts[500]) : 'missing',
-          magic700: fonts[700] ? magic(fonts[700]) : 'missing',
-          title: meta.title,
-          renderedBytes: probe.byteLength,
-        });
-      } catch (renderErr) {
-        return new Response(`RENDERERR: ${String(renderErr).slice(0, 400)}`, { status: 500 });
-      }
+      // Progressive bisect: cumulative variants isolate the failing node.
+      // V1 wordmark (has <span>) → V2 hero → V3 timings → V4 pill → V5 full.
+      const { OgImageCard } = await import('../src/utils/ogImageCard');
+      const attempt = async (el: React.ReactNode): Promise<string> => {
+        try {
+          const buf = await new ImageResponse(el as never, {
+            width: 1200,
+            height: 630,
+            fonts: [
+              { name: 'Noto Sans', data: fonts[500], weight: 500, style: 'normal' },
+              { name: 'Noto Sans', data: fonts[700], weight: 700, style: 'normal' },
+            ],
+          }).arrayBuffer();
+          return `${buf.byteLength}b`;
+        } catch (e) {
+          return `ERR:${String(e).slice(0, 120)}`;
+        }
+      };
+      const F = (s: object, ...kids: React.ReactNode[]) =>
+        React.createElement('div', { style: s }, ...kids);
+      const v1 = F(
+        { display: 'flex', fontSize: 34, color: '#7C2D12', fontWeight: 700 },
+        'VedaTime',
+        React.createElement('span', null, 'Sacred Rhythms of Time')
+      );
+      const pill = F({ display: 'flex' }, meta.festivalName ?? 'NoFest');
+      const timings = F(
+        { display: 'flex' },
+        F({ display: 'flex' }, 'Sunrise ', React.createElement('span', null, meta.sunrise)),
+        F({ display: 'flex' }, 'Sunset ', React.createElement('span', null, meta.sunset)),
+        pill
+      );
+      const hero = F(
+        { display: 'flex' },
+        F(
+          { display: 'flex', flexDirection: 'column' },
+          F({ fontSize: 88 }, meta.tithiName),
+          F({ display: 'flex' }, `${meta.paksha} Paksha`)
+        ),
+        F({ fontSize: 200 }, `${meta.tithiNumber}`)
+      );
+      const root = (kids: React.ReactNode[]) =>
+        F({ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }, ...kids);
+      const footer = F({ display: 'flex' }, 'Open this day in the app');
+      return Response.json({
+        sha: (process.env.VERCEL_GIT_COMMIT_SHA ?? 'local').slice(0, 7),
+        font500bytes: fonts[500]?.byteLength ?? -1,
+        font700bytes: fonts[700]?.byteLength ?? -1,
+        magic500: fonts[500] ? magic(fonts[500]) : 'missing',
+        magic700: fonts[700] ? magic(fonts[700]) : 'missing',
+        title: meta.title,
+        v1wordmarkSpan: await attempt(root([v1])),
+        v2hero: await attempt(root([v1, hero])),
+        v3timings: await attempt(root([v1, hero, timings])),
+        v4card: await attempt(
+          root([v1, hero, timings, F({ display: 'flex' }, 'footer')])
+        ),
+        v5full: await attempt(React.createElement(OgImageCard, { meta })),
+      });
     }
 
     return new ImageResponse(<OgImageCard meta={meta} />, {
