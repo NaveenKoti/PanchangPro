@@ -94,6 +94,19 @@ export default async function handler(req: any): Promise<Response> {
     const meta = buildOgMeta(url.searchParams.get('d') ?? '', host);
     if (!meta.ok) return errorRedirect(url);
     const fonts = await loadFonts();
+    if (url.searchParams.get('debug') === '1') {
+      const magic = (b: ArrayBuffer) =>
+        Array.from(new Uint8Array(b.slice(0, 4)))
+          .map((x) => x.toString(16))
+          .join('');
+      return Response.json({
+        font500bytes: fonts[500]?.byteLength ?? -1,
+        font700bytes: fonts[700]?.byteLength ?? -1,
+        magic500: fonts[500] ? magic(fonts[500]) : 'missing',
+        magic700: fonts[700] ? magic(fonts[700]) : 'missing',
+        title: meta.title,
+      });
+    }
 
     return new ImageResponse(<OgImageCard meta={meta} />, {
       width: 1200,
