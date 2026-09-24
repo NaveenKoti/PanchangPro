@@ -30,6 +30,7 @@ import {
   Circle as CircleIcon
 } from '@mui/icons-material'
 import './PWAInstall.css'
+import { usePWAStatus } from '../../hooks/usePWAStatus'
 
 interface PWAInstallPromptProps {
   open?: boolean
@@ -45,7 +46,11 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
   const [internalOpen, setInternalOpen] = useState(false)
   const [installInProgress, setInstallInProgress] = useState(false)
   const [successVisible, setSuccessVisible] = useState(false)
+  // Manual steps view: shown when the browser has no install prompt
+  // (iOS Safari, in-app browsers) — the honest fallback path.
+  const [showSteps, setShowSteps] = useState(false)
   const theme = useTheme()
+  const { platform, isStandalone, isInstallPromptSupported, promptInstall } = usePWAStatus()
 
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen
 
@@ -58,8 +63,19 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
   }, [installInProgress])
 
   const handleInstall = async () => {
+    // No native prompt (iOS Safari, in-app browsers, already-installed):
+    // show the manual steps instead of faking an installation.
+    if (!isInstallPromptSupported) {
+      setShowSteps(true)
+      return
+    }
     setInstallInProgress(true)
     setSuccessVisible(false)
+
+    // Real browser prompt (Chrome/Edge/Samsung): only celebrate acceptance.
+    const accepted = await promptInstall()
+    setInstallInProgress(false)
+    if (!accepted) return
 
     if (onAccept) {
       const result = onAccept()
@@ -73,9 +89,7 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
               setInstallInProgress(false)
               handleDismiss()
             }, 2000)
-          }, 3000)
-        } else {
-          setInstallInProgress(false)
+          }, 1000)
         }
       } else if (result !== false) {
         setTimeout(() => {
@@ -85,9 +99,7 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
             setInstallInProgress(false)
             handleDismiss()
           }, 2000)
-        }, 3000)
-      } else {
-        setInstallInProgress(false)
+        }, 1000)
       }
     } else {
       setTimeout(() => {
@@ -97,9 +109,32 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
           setInstallInProgress(false)
           setInternalOpen(false)
         }, 2000)
-      }, 3000)
+      }, 1000)
     }
   }
+
+  // Manual install steps per platform (no native prompt available).
+  const installSteps: { title: string; titleHi: string; detail: string; detailHi: string }[] =
+    platform === 'iOS'
+      ? [
+          { title: 'Tap the Share button in Safari', titleHi: 'Safari में शेयर बटन दबाएं', detail: 'Bottom toolbar, square with arrow', detailHi: 'नीचे टूलबार में तीर वाला बटन' },
+          { title: 'Tap “Add to Home Screen”', titleHi: '“होम स्क्रीन में जोड़ें” चुनें', detail: 'Scroll the share sheet if needed', detailHi: 'जरूरत हो तो शेयर शीट स्क्रॉल करें' },
+          { title: 'Tap Add (top right)', titleHi: 'Add दबाएं (ऊपर दाएं)', detail: 'VedaTime appears on your home screen', detailHi: 'VedaTime होम स्क्रीन पर आ जाएगा' },
+        ]
+      : platform === 'Android'
+        ? [
+            { title: 'Tap the ⋮ menu in Chrome', titleHi: 'Chrome में ⋮ मेनू खोलें', detail: 'Top-right corner of the browser', detailHi: 'ब्राउज़र के ऊपर दाएं कोने में' },
+            { title: 'Tap “Add to Home screen”', titleHi: '“होम स्क्रीन में जोड़ें” चुनें', detail: 'Or “Install app” if shown', detailHi: 'या “ऐप इंस्टॉल करें” दिखे तो वही' },
+            { title: 'Confirm Add / Install', titleHi: 'जोड़ें / इंस्टॉल की पुष्टि करें', detail: 'VedaTime appears on your home screen', detailHi: 'VedaTime होम स्क्रीन पर आ जाएगा' },
+          ]
+        : [
+            { title: 'Click the install icon in the address bar', titleHi: 'एड्रेस बार में इंस्टॉल आइकन क्लिक करें', detail: 'Computer / monitor symbol at the right end', detailHi: 'दाएं छोर पर कंप्यूटर जैसा निशान' },
+            { title: 'Click Install in the popup', titleHi: 'पॉपअप में Install दबाएं', detail: 'Works in Chrome and Edge', detailHi: 'Chrome और Edge में काम करता है' },
+          ]
+  const iosNote =
+    platform === 'iOS'
+      ? { en: 'Open this page in Safari — Chrome and in-app browsers cannot install.', hi: 'यह पेज Safari में खोलें — Chrome से इंस्टॉल नहीं होगा।' }
+      : null
 
   const handleDismiss = () => {
     if (onDismiss) {
@@ -108,6 +143,7 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
     setInternalOpen(false)
     setSuccessVisible(false)
     setInstallInProgress(false)
+    setShowSteps(false)
   }
 
   const benefits = [
@@ -222,6 +258,43 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
 
           <DialogContent dividers>
             <Stack spacing={2}>
+              {isStandalone ? (
+                <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center' }}>
+                  You are already using the installed VedaTime app. Add it to more home screens from your device settings if you like.
+                </Typography>
+              ) : showSteps ? (
+                <>
+                  <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center' }}>
+                    Your browser needs a manual step — it takes 20 seconds:
+                  </Typography>
+                  <List disablePadding>
+                    {installSteps.map((step, index) => (
+                      <ListItem key={index} disablePadding sx={{ mb: 1.5, alignItems: 'flex-start' }}>
+                        <Box
+                          sx={{
+                            width: 28, height: 28, borderRadius: '50%', flexShrink: 0, mr: 1.5, mt: 0.25,
+                            bgcolor: 'primary.main', color: (theme) => theme.palette.getContrastText(theme.palette.primary.main),
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: '0.875rem', fontWeight: 500,
+                          }}
+                        >
+                          {index + 1}
+                        </Box>
+                        <ListItemText
+                          primary={<Typography variant="body2" fontWeight="medium">{step.title}</Typography>}
+                          secondary={<><Typography variant="caption" color="textSecondary" sx={{ display: 'block' }}>{step.titleHi}</Typography><Typography variant="caption" color="textSecondary" sx={{ display: 'block' }}>{step.detail} · {step.detailHi}</Typography></>}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                  {iosNote && (
+                    <Typography variant="caption" color="warning.main" sx={{ textAlign: 'center', display: 'block' }}>
+                      {iosNote.en} {iosNote.hi}
+                    </Typography>
+                  )}
+                </>
+              ) : (
+              <>
               <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center' }}>
                 Get all these amazing features when you install:
               </Typography>
@@ -261,10 +334,18 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
                   One-click installation • Takes only 2 seconds
                 </Typography>
               </Paper>
+              </>
+              )}
             </Stack>
           </DialogContent>
 
           <DialogActions sx={{ p: 2, pt: 1 }}>
+            {showSteps || isStandalone ? (
+              <Button onClick={handleDismiss} variant="contained" fullWidth sx={{ borderRadius: 1, py: 1.25, fontWeight: 500 }}>
+                Done
+              </Button>
+            ) : (
+            <>
             <Button
               onClick={handleDismiss}
               variant="text"
@@ -290,6 +371,8 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({
             >
               {installInProgress ? 'Installing...' : 'Install Now'}
             </Button>
+            </>
+            )}
           </DialogActions>
         </>
       )}
