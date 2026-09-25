@@ -119,8 +119,8 @@
     "aboutApp": "வேதடைம் பற்றி",
     "aboutAppDesc": "பதிப்பு, அம்சங்கள் மற்றும் நன்றிகள்",
     "locationUpdated": "இருப்பிடம் புதுப்பிக்கப்பட்டது!",
-    "aboutContent": "Your complete Hindu calendar companion",
-    "clearDataConfirm": "Clear all data? This cannot be undone."
+    "aboutContent": "உங்கள் முழுமையான இந்து காலண்டர் துணை",
+    "clearDataConfirm": "எல்லா தரவையும் நீக்கவா? இதை மீட்க முடியாது."
   },
   "language": {
     "en": "English",
@@ -144,8 +144,8 @@
     "dinacharyaReminders": "தினசரி நினைவூட்டல்கள்",
     "dinacharyaDescription": "தினசரி ஆயுர்வேத வழக்கம் நினைவூட்டல்கள்",
     "customTithiReminders": "தனிப்பயன் திதி நினைவூட்டல்கள்",
-    "permissionDenied": "Notifications are blocked — enable them in browser settings to use reminders",
-    "permissionRequired": "Notification permission is required to schedule reminders"
+    "permissionDenied": "அறிவிப்புகள் தடுக்கப்பட்டுள்ளன — நினைவூட்டல்களுக்கு உலாவி அமைப்புகளில் அனுமதிக்கவும்",
+    "permissionRequired": "நினைவூட்டல்களுக்கு அறிவிப்பு அனுமதி தேவை"
   },
   "location": {
     "title": "இருப்பிடம்",
@@ -266,13 +266,12 @@
     "emptySubtitle": "உங்கள் குடும்ப சடங்குகள், பிராந்திய திருவிழாக்கள் அல்லது தனிப்பட்ட சடங்குகளை சேருங்கள்",
     "recurring": "மீண்டும் நிகழும்",
     "noReminder": "நினைவூட்டல் இல்லை",
-    "nextOccurences": "அடுத்த நிகழ்வுகள்",
     "nextOccurrences": "அடுத்த நிகழ்வுகள்",
     "deleteConfirm": "இந்த திதி நீக்கவா?",
-    "exportCopied": "Export copied to clipboard",
-    "exportFailed": "Export failed",
-    "exported": "Tithis exported",
-    "reminderSet": "Reminder scheduled"
+    "exportCopied": "ஏற்றுமதி கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது",
+    "exportFailed": "ஏற்றுமதி தோல்வியடைந்தது",
+    "exported": "திதிகள் ஏற்றுமதி செய்யப்பட்டன",
+    "reminderSet": "நினைவூட்டல் திட்டமிடப்பட்டது"
   },
   "about": {
     "title": "வேதடைம் பற்றி",
@@ -293,12 +292,12 @@
     "upgradeSubtitle": "விளம்பரம் இல்லாத அனுபவம் + அனைத்து அம்சங்களையும் திறக்கவும்",
     "upgradeNow": "மேம்படுத்துங்கள் — ₹99/ஆண்டு",
     "features": {
-      "exportImport": "Export & Import",
-      "exportImportDesc": "Backup your data",
-      "fullYearCalendar": "Full Year Calendar",
-      "fullYearCalendarDesc": "Navigate any month",
-      "noAds": "Ad-free Experience",
-      "noAdsDesc": "Browse without interruptions"
+      "exportImport": "ஏற்றுமதி மற்றும் இறக்குமதி",
+      "exportImportDesc": "உங்கள் தரவை காப்புப்பிரதி எடுக்கவும்",
+      "fullYearCalendar": "முழு ஆண்டு காலண்டர்",
+      "fullYearCalendarDesc": "எந்த மாதத்தையும் பார்க்கவும்",
+      "noAds": "விளம்பரமில்லா அனுபவம்",
+      "noAdsDesc": "இடையூறு இல்லாமல் உலாவுக"
     }
   },
   "stories": {
@@ -318,7 +317,7 @@
     "familyMember": "குடும்ப உறுப்பினரை அழையுங்கள்",
     "phone": "தொலைபேசி எண்",
     "send": "அழைப்பு அனுப்பு",
-    "sentSuccess": "Invitation sent successfully!"
+    "sentSuccess": "அழைப்பு வெற்றிகரமாக அனுப்பப்பட்டது!"
   },
   "errors": {
     "locationDenied": "இருப்பிட அனுமதி மறுக்கப்பட்டது. இயல்புநிலை இருப்பிடம் பயன்படுத்தப்படுகிறது.",

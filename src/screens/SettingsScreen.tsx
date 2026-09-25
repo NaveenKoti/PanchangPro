@@ -452,8 +452,10 @@ export default function SettingsScreen() {
                 >
                   <MenuItem value="en">English</MenuItem>
                   <MenuItem value="hi">हिन्दी (Hindi)</MenuItem>
-                  {/* Sanskrit + Kannada/Telugu/Tamil deferred by owner decision — kept visible, disabled */}
-                  <MenuItem value="sa" disabled>संस्कृत (Sanskrit) — soon</MenuItem>
+                  <MenuItem value="sa">संस्कृत (Sanskrit)</MenuItem>
+                  <MenuItem value="kn">ಕನ್ನಡ (Kannada)</MenuItem>
+                  <MenuItem value="te">తెలుగు (Telugu)</MenuItem>
+                  <MenuItem value="ta">தமிழ் (Tamil)</MenuItem>
                 </Select>
               </ListItem>
             </List>

@@ -119,8 +119,8 @@
     "aboutApp": "వేదటైమ్ గురించి",
     "aboutAppDesc": "వెర్షన్, ఫీచర్లు మరియు క్రెడిట్స్",
     "locationUpdated": "స్థానం నవీకరించబడింది!",
-    "aboutContent": "Your complete Hindu calendar companion",
-    "clearDataConfirm": "Clear all data? This cannot be undone."
+    "aboutContent": "మీ సంపూర్ణ హిందూ క్యాలెండర్ తోడు",
+    "clearDataConfirm": "మొత్తం డేటాను తొలగించాలా? దీన్ని రద్దు చేయలేరు."
   },
   "language": {
     "en": "English",
@@ -144,8 +144,8 @@
     "dinacharyaReminders": "దినచర్య రిమైండర్లు",
     "dinacharyaDescription": "రోజువారీ ఆయుర్వేద రొటీన్ రిమైండర్లు",
     "customTithiReminders": "అనుకూల తిథి రిమైండర్లు",
-    "permissionDenied": "Notifications are blocked — enable them in browser settings to use reminders",
-    "permissionRequired": "Notification permission is required to schedule reminders"
+    "permissionDenied": "నోటిఫికేషన్లు నిరోధించబడ్డాయి — రిమైండర్ల కోసం బ్రౌజర్ సెట్టింగుల్లో అనుమతించండి",
+    "permissionRequired": "రిమైండర్ల కోసం నోటిఫికేషన్ అనుమతి అవసరం"
   },
   "location": {
     "title": "స్థానం",
@@ -266,13 +266,12 @@
     "emptySubtitle": "మీ కుటుంబ ఆచారాలు, ప్రాంతీయ పండుగలు లేదా వ్యక్తిగత ఆచారాలను జోడించండి",
     "recurring": "పునరావృతం",
     "noReminder": "రిమైండర్ లేదు",
-    "nextOccurences": "తదుపరి సంఘటనలు",
     "nextOccurrences": "తదుపరి సంఘటనలు",
     "deleteConfirm": "ఈ తిథిని తొలగించాలా?",
-    "exportCopied": "Export copied to clipboard",
-    "exportFailed": "Export failed",
-    "exported": "Tithis exported",
-    "reminderSet": "Reminder scheduled"
+    "exportCopied": "ఎగుమతి క్లిప్‌బోర్డ్‌కు కాపీ చేయబడింది",
+    "exportFailed": "ఎగుమతి విఫలమైంది",
+    "exported": "తిథులు ఎగుమతి చేయబడ్డాయి",
+    "reminderSet": "రిమైండర్ షెడ్యూల్ చేయబడింది"
   },
   "about": {
     "title": "వేదటైమ్ గురించి",
@@ -293,12 +292,12 @@
     "upgradeSubtitle": "ప్రకటన-రహిత అనుభవం + అన్ని ఫీచర్లను అన్‌లాక్ చేయండి",
     "upgradeNow": "అప్‌గ్రేడ్ — ₹99/సంవత్సరం",
     "features": {
-      "exportImport": "Export & Import",
-      "exportImportDesc": "Backup your data",
-      "fullYearCalendar": "Full Year Calendar",
-      "fullYearCalendarDesc": "Navigate any month",
-      "noAds": "Ad-free Experience",
-      "noAdsDesc": "Browse without interruptions"
+      "exportImport": "ఎగుమతి మరియు దిగుమతి",
+      "exportImportDesc": "మీ డేటాను బ్యాకప్ చేయండి",
+      "fullYearCalendar": "పూర్తి సంవత్సర క్యాలెండర్",
+      "fullYearCalendarDesc": "ఏ నెలనైనా చూడండి",
+      "noAds": "ప్రకటనలు లేని అనుభవం",
+      "noAdsDesc": "అంతరాయం లేకుండా బ్రౌజ్ చేయండి"
     }
   },
   "stories": {
@@ -318,7 +317,7 @@
     "familyMember": "కుటుంబ సభ్యుడిని ఆహ్వానించండి",
     "phone": "ఫోన్ నంబర్",
     "send": "ఆహ్వానం పంపు",
-    "sentSuccess": "Invitation sent successfully!"
+    "sentSuccess": "ఆహ్వానం విజయవంతంగా పంపబడింది!"
   },
   "errors": {
     "locationDenied": "స్థాన యాక్సెస్ నిరాకరించబడింది. డిఫాల్ట్ స్థానం ఉపయోగించబడుతోంది.",

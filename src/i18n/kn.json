@@ -119,8 +119,8 @@
     "aboutApp": "ವೇಡ್‌ಟೈಮ್ ಕುರಿತು",
     "aboutAppDesc": "ಆವೃತ್ತಿ, ವೈಶಿಷ್ಟ್ಯಗಳು ಮತ್ತು ಸಲ್ಲುತ್ತದೆ",
     "locationUpdated": "ಸ್ಥಳ ನವೀಕರಿಸಲಾಗಿದೆ!",
-    "aboutContent": "Your complete Hindu calendar companion",
-    "clearDataConfirm": "Clear all data? This cannot be undone."
+    "aboutContent": "ನಿಮ್ಮ ಸಂಪೂರ್ಣ ಹಿಂದೂ ಕ್ಯಾಲೆಂಡರ್ ಸಂಗಾತಿ",
+    "clearDataConfirm": "ಎಲ್ಲಾ ಡೇಟಾ ಅಳಿಸಬೇಕೆ? ಇದನ್ನು ರದ್ದು ಮಾಡಲಾಗುವುದಿಲ್ಲ."
   },
   "language": {
     "en": "English",
@@ -144,8 +144,8 @@
     "dinacharyaReminders": "ದಿನಚರ್ಯಾ ನೆನಪಿಸುವಿಕೆಗಳು",
     "dinacharyaDescription": "ದೈನಂದಿನ ಆಯುರ್ವೇದಿಕ ರೂಟಿನ್ ನೆನಪಿಸುವಿಕೆಗಳು",
     "customTithiReminders": "ಕಸ್ಟಮ್ ತಿಥಿ ನೆನಪಿಸುವಿಕೆಗಳು",
-    "permissionDenied": "Notifications are blocked — enable them in browser settings to use reminders",
-    "permissionRequired": "Notification permission is required to schedule reminders"
+    "permissionDenied": "ಅಧಿಸೂಚನೆಗಳನ್ನು ನಿರ್ಬಂಧಿಸಲಾಗಿದೆ — ಜ್ಞಾಪನೆಗಳಿಗಾಗಿ ಬ್ರೌಸರ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಅನುಮತಿಸಿ",
+    "permissionRequired": "ಜ್ಞಾಪನೆಗಳಿಗಾಗಿ ಅಧಿಸೂಚನೆ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ"
   },
   "location": {
     "title": "ಸ್ಥಳ",
@@ -266,13 +266,12 @@
     "emptySubtitle": "ನಿಮ್ಮ ಕುಟುಂಬ ಆಚರಣೆಗಳು, ಪ್ರಾದೇಶಿಕ ಹಬ್ಬಗಳು ಅಥವಾ ವೈಯಕ್ತಿಕ ಆಚರಣೆಗಳನ್ನು ಸೇರಿಸಿ",
     "recurring": "ಪುನರಾವರ್ತಿತ",
     "noReminder": "ನೆನಪಿಸುವಿಕೆ ಇಲ್ಲ",
-    "nextOccurences": "ಮುಂದಿನ ಸಂದರ್ಭಗಳು",
     "nextOccurrences": "ಮುಂದಿನ ಸಂದರ್ಭಗಳು",
     "deleteConfirm": "ಈ ತಿಥಿ ಅಳಿಸಬೇಕೇ?",
-    "exportCopied": "Export copied to clipboard",
-    "exportFailed": "Export failed",
-    "exported": "Tithis exported",
-    "reminderSet": "Reminder scheduled"
+    "exportCopied": "ರಫ್ತು ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ನಕಲಿಸಲಾಗಿದೆ",
+    "exportFailed": "ರಫ್ತು ವಿಫಲವಾಗಿದೆ",
+    "exported": "ತಿಥಿಗಳನ್ನು ರಫ್ತು ಮಾಡಲಾಗಿದೆ",
+    "reminderSet": "ಜ್ಞಾಪನೆಯನ್ನು ನಿಗದಿಪಡಿಸಲಾಗಿದೆ"
   },
   "about": {
     "title": "ವೇಡ್‌ಟೈಮ್ ಕುರಿತು",
@@ -293,12 +292,12 @@
     "upgradeSubtitle": "ಜಾಹೀರಾತು-ಮುಕ್ತ ಅನುಭವ + ಎಲ್ಲಾ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ಅನ್‌ಲಾಕ್ ಮಾಡಿ",
     "upgradeNow": "ಅಪ್‌ಗ್ರೇಡ್ — ₹99/ವರ್ಷ",
     "features": {
-      "exportImport": "Export & Import",
-      "exportImportDesc": "Backup your data",
-      "fullYearCalendar": "Full Year Calendar",
-      "fullYearCalendarDesc": "Navigate any month",
-      "noAds": "Ad-free Experience",
-      "noAdsDesc": "Browse without interruptions"
+      "exportImport": "ರಫ್ತು ಮತ್ತು ಆಮದು",
+      "exportImportDesc": "ನಿಮ್ಮ ಡೇಟಾವನ್ನು ಬ್ಯಾಕಪ್ ಮಾಡಿ",
+      "fullYearCalendar": "ಪೂರ್ಣ ವರ್ಷದ ಕ್ಯಾಲೆಂಡರ್",
+      "fullYearCalendarDesc": "ಯಾವುದೇ ತಿಂಗಳನ್ನು ನೋಡಿ",
+      "noAds": "ಜಾಹೀರಾತು-ಮುಕ್ತ ಅನುಭವ",
+      "noAdsDesc": "ಅಡಚಣೆಯಿಲ್ಲದೆ ಬ್ರೌಸ್ ಮಾಡಿ"
     }
   },
   "stories": {
@@ -318,7 +317,7 @@
     "familyMember": "ಕುಟುಂಬ ಸದಸ್ಯರನ್ನು ಆಹ್ವಾನಿಸಿ",
     "phone": "ಫೋನ್ ಸಂಖ್ಯೆ",
     "send": "ಆಹ್ವಾನ ಕಳುಹಿಸಿ",
-    "sentSuccess": "Invitation sent successfully!"
+    "sentSuccess": "ಆಹ್ವಾನವನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಕಳುಹಿಸಲಾಗಿದೆ!"
   },
   "errors": {
     "locationDenied": "ಸ್ಥಳ ಪ್ರವೇಶ ನಿರಾಕರಿಸಲಾಗಿದೆ. ಡಿಫಾಲ್ಟ್ ಸ್ಥಳ ಬಳಸಲಾಗುತ್ತಿದೆ.",

@@ -133,7 +133,7 @@ export const themeOptions: ThemeOptions = {
     divider: 'rgba(34, 28, 21, 0.12)',
   },
   typography: {
-    fontFamily: '"Noto Sans", "Noto Sans Devanagari", sans-serif',
+    fontFamily: '"Noto Sans", "Noto Sans Devanagari", "Noto Sans Kannada", "Noto Sans Telugu", "Noto Sans Tamil", sans-serif',
     h1: {
       fontWeight: 500,
       letterSpacing: '-0.03em',

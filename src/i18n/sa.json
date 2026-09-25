@@ -119,13 +119,16 @@
     "aboutApp": "VedaTime-विषये",
     "aboutAppDesc": "संस्करणम्, सुविधाः, श्रेयश्च",
     "locationUpdated": "स्थानम् अद्यतनीकृतम्!",
-    "aboutContent": "Your complete Hindu calendar companion",
-    "clearDataConfirm": "Clear all data? This cannot be undone."
+    "aboutContent": "भवतः सम्पूर्णं हिन्दुपञ्चाङ्गसहचरम्",
+    "clearDataConfirm": "सर्वं दत्तांशं नाशयतु? एतत् प्रत्यावर्तयितुं न शक्यते।"
   },
   "language": {
     "en": "आङ्ग्लम्",
     "hi": "हिन्दी",
-    "sa": "संस्कृतम्"
+    "sa": "संस्कृतम्",
+    "kn": "ಕನ್ನಡ",
+    "te": "తెలుగు",
+    "ta": "தமிழ்"
   },
   "theme": {
     "light": "प्रकाशमानम्",
@@ -141,8 +144,8 @@
     "dinacharyaReminders": "दिनचर्या स्मारकाणि",
     "dinacharyaDescription": "दैनिक आयुर्वेदिक दिनचर्या स्मारकाणि",
     "customTithiReminders": "वैयक्तिकी तिथि स्मारकाणि",
-    "permissionDenied": "Notifications are blocked — enable them in browser settings to use reminders",
-    "permissionRequired": "Notification permission is required to schedule reminders"
+    "permissionDenied": "सूचनाः अवरुद्धाः — स्मरणार्थं ब्राउजरव्यवस्थायाम् अनुमतिं ददतु",
+    "permissionRequired": "स्मरणार्थं सूचनानुमतिः आवश्यकी अस्ति"
   },
   "location": {
     "title": "स्थानम्",
@@ -265,10 +268,10 @@
     "noReminder": "स्मारकं नास्ति",
     "nextOccurrences": "अग्रिमानि घटनानि",
     "deleteConfirm": "एतां तिथिं नाशयामि वा?",
-    "exportCopied": "Export copied to clipboard",
-    "exportFailed": "Export failed",
-    "exported": "Tithis exported",
-    "reminderSet": "Reminder scheduled"
+    "exportCopied": "निर्यातः क्लिपफलके प्रतिलिखितः",
+    "exportFailed": "निर्यातः विफलः",
+    "exported": "तिथयः निर्याताः",
+    "reminderSet": "स्मरणम् निश्चितम्"
   },
   "stories": {
     "title": "दैनिकज्ञानम्",
@@ -298,12 +301,12 @@
     "upgradeSubtitle": "विज्ञापनरहितानुभवः सर्वसुविधाः च",
     "upgradeNow": "उन्नयतु — ₹99/वर्षम्",
     "features": {
-      "exportImport": "Export & Import",
-      "exportImportDesc": "Backup your data",
-      "fullYearCalendar": "Full Year Calendar",
-      "fullYearCalendarDesc": "Navigate any month",
-      "noAds": "Ad-free Experience",
-      "noAdsDesc": "Browse without interruptions"
+      "exportImport": "निर्यातः च आयातः च",
+      "exportImportDesc": "स्वदत्तांशं रक्षतु",
+      "fullYearCalendar": "सम्पूर्णवर्षपञ्चाङ्गम्",
+      "fullYearCalendarDesc": "कमपि मासं पश्यतु",
+      "noAds": "विज्ञापनरहितः अनुभवः",
+      "noAdsDesc": "अव्यवधानेन चरतु"
     }
   },
   "invite": {
@@ -314,7 +317,7 @@
     "familyMember": "कुटुम्बसदस्यम् आमन्त्रयतु",
     "phone": "दूरभाषसङ्ख्या",
     "send": "आमन्त्रणं प्रेषयतु",
-    "sentSuccess": "Invitation sent successfully!"
+    "sentSuccess": "निमन्त्रणं सफलतया प्रेषितम्!"
   },
   "errors": {
     "locationDenied": "स्थानप्रवेशः निषिद्धः। प्रारम्भिकस्थानं प्रयुञ्ज्महे।",

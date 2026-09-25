@@ -119,13 +119,16 @@
     "aboutApp": "VedaTime के बारे में",
     "aboutAppDesc": "संस्करण, सुविधाएं और क्रेडिट",
     "locationUpdated": "स्थान अपडेट किया गया!",
-    "aboutContent": "Your complete Hindu calendar companion",
-    "clearDataConfirm": "Clear all data? This cannot be undone."
+    "aboutContent": "आपका संपूर्ण हिंदू कैलेंडर साथी",
+    "clearDataConfirm": "सारा डेटा हटाएं? यह वापस नहीं होगा।"
   },
   "language": {
     "en": "English",
     "hi": "हिंदी",
-    "sa": "संस्कृत"
+    "sa": "संस्कृत",
+    "kn": "ಕನ್ನಡ",
+    "te": "తెలుగు",
+    "ta": "தமிழ்"
   },
   "theme": {
     "light": "हल्का",
@@ -141,8 +144,8 @@
     "dinacharyaReminders": "दिनचर्या अनुस्मारक",
     "dinacharyaDescription": "दैनिक आयुर्वेदिक दिनचर्या अनुस्मारक",
     "customTithiReminders": "कस्टम तिथि अनुस्मारक",
-    "permissionDenied": "Notifications are blocked — enable them in browser settings to use reminders",
-    "permissionRequired": "Notification permission is required to schedule reminders"
+    "permissionDenied": "सूचनाएं बंद हैं — रिमाइंडर के लिए ब्राउज़र सेटिंग में अनुमति दें",
+    "permissionRequired": "रिमाइंडर के लिए सूचना अनुमति आवश्यक है"
   },
   "location": {
     "title": "स्थान",
@@ -265,10 +268,10 @@
     "noReminder": "कोई अनुस्मारक नहीं",
     "nextOccurrences": "आगामी तारीखें",
     "deleteConfirm": "यह तिथि हटाएं?",
-    "exportCopied": "Export copied to clipboard",
-    "exportFailed": "Export failed",
-    "exported": "Tithis exported",
-    "reminderSet": "Reminder scheduled"
+    "exportCopied": "निर्यात क्लिपबोर्ड पर कॉपी हुआ",
+    "exportFailed": "निर्यात विफल रहा",
+    "exported": "तिथियाँ निर्यात हुईं",
+    "reminderSet": "रिमाइंडर तय हुआ"
   },
   "about": {
     "title": "पंचांग प्रो परिचय",
@@ -289,12 +292,12 @@
     "upgradeSubtitle": "विज्ञापन-मुक्त अनुभव + सभी सुविधाएं अनलॉक करें",
     "upgradeNow": "अपग्रेड करें — ₹99/वर्ष",
     "features": {
-      "exportImport": "Export & Import",
-      "exportImportDesc": "Backup your data",
-      "fullYearCalendar": "Full Year Calendar",
-      "fullYearCalendarDesc": "Navigate any month",
-      "noAds": "Ad-free Experience",
-      "noAdsDesc": "Browse without interruptions"
+      "exportImport": "निर्यात और आयात",
+      "exportImportDesc": "अपना डेटा सहेजें",
+      "fullYearCalendar": "पूरे वर्ष का कैलेंडर",
+      "fullYearCalendarDesc": "कोई भी महीना देखें",
+      "noAds": "विज्ञापन-मुक्त अनुभव",
+      "noAdsDesc": "बिना रुकावट ब्राउज़ करें"
     }
   },
   "stories": {
@@ -314,7 +317,7 @@
     "familyMember": "परिवार के सदस्य को आमंत्रित करें",
     "phone": "फोन नंबर",
     "send": "आमंत्रण भेजें",
-    "sentSuccess": "Invitation sent successfully!"
+    "sentSuccess": "निमंत्रण सफलतापूर्वक भेजा गया!"
   },
   "errors": {
     "locationDenied": "स्थान पहुंच अस्वीकृत। डिफ़ॉल्ट स्थान का उपयोग कर रहे हैं।",

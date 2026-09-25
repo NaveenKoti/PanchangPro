@@ -359,22 +359,10 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           >
             <ToggleButton value="en" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>English</ToggleButton>
             <ToggleButton value="hi" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>हिंदी</ToggleButton>
-            <ToggleButton value="sa" disabled sx={{ minHeight: 48, py: 1, fontWeight: 500, flexDirection: 'column', lineHeight: 1.3 }}>
-              <span>संस्कृत</span>
-              <span style={{ fontSize: '0.65rem', fontWeight: 400, opacity: 0.7 }}>{isHindiOnboarding ? 'जल्द' : 'soon'}</span>
-            </ToggleButton>
-            <ToggleButton value="kn" disabled sx={{ minHeight: 48, py: 1, fontWeight: 500, flexDirection: 'column', lineHeight: 1.3 }}>
-              <span>ಕನ್ನಡ</span>
-              <span style={{ fontSize: '0.65rem', fontWeight: 400, opacity: 0.7 }}>{isHindiOnboarding ? 'जल्द' : 'soon'}</span>
-            </ToggleButton>
-            <ToggleButton value="te" disabled sx={{ minHeight: 48, py: 1, fontWeight: 500, flexDirection: 'column', lineHeight: 1.3 }}>
-              <span>తెలుగు</span>
-              <span style={{ fontSize: '0.65rem', fontWeight: 400, opacity: 0.7 }}>{isHindiOnboarding ? 'जल्द' : 'soon'}</span>
-            </ToggleButton>
-            <ToggleButton value="ta" disabled sx={{ minHeight: 48, py: 1, fontWeight: 500, flexDirection: 'column', lineHeight: 1.3 }}>
-              <span>தமிழ்</span>
-              <span style={{ fontSize: '0.65rem', fontWeight: 400, opacity: 0.7 }}>{isHindiOnboarding ? 'जल्द' : 'soon'}</span>
-            </ToggleButton>
+            <ToggleButton value="sa" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>संस्कृत</ToggleButton>
+            <ToggleButton value="kn" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>ಕನ್ನಡ</ToggleButton>
+            <ToggleButton value="te" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>తెలుగు</ToggleButton>
+            <ToggleButton value="ta" sx={{ minHeight: 48, py: 1.5, fontWeight: 500 }}>தமிழ்</ToggleButton>
           </ToggleButtonGroup>
 
           {/* Theme */}
