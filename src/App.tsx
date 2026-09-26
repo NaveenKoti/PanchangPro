@@ -24,6 +24,7 @@ import { notificationService, notificationScheduler } from './services/notificat
 import { useAppStore } from './stores/appStore';
 import { PanchangShareCard } from './components/PanchangShareCard';
 import { PWAInstallPrompt } from './components/pwa/PWAInstallPrompt';
+import { BackupPrompt } from './components/BackupPrompt';
 import { parseDayParam } from './utils/dayLink';
 import { requestPersistentStorage } from './services/storageGuard';
 import GestureHandler from './components/GestureHandler';
@@ -609,6 +610,9 @@ const App: React.FC = () => {
           open={showInstallPrompt || undefined}
           onDismiss={() => setShowInstallPrompt(false)}
         />
+
+        {/* Backup re-export nudge (Safari eviction guard) */}
+        <BackupPrompt />
       </Box>
     </ThemeProvider>
   );

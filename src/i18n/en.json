@@ -344,7 +344,11 @@
     "addPitru": "Also add Pitru Paksha (Mahalaya) event",
     "pitruChip": "Pitru Paksha",
     "annualOn": "Annual: {date}",
-    "pitruOn": "Pitru Paksha: {date}"
+    "pitruOn": "Pitru Paksha: {date}",
+    "backupNever": "Back up your tithis? One tap keeps them safe.",
+    "backupStale": "Backup is {days} days old — export a fresh copy?",
+    "backupLater": "Later",
+    "backupDone": "Backup saved — replaces the old one"
   },
   "about": {
     "title": "About VedaTime",

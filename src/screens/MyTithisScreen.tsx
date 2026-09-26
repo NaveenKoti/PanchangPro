@@ -60,6 +60,7 @@ import { useAppStore } from '../stores/appStore';
 import { notificationService } from '../services/notificationService';
 import { shareContent } from '../utils/share';
 import { buildDayLink } from '../utils/dayLink';
+import { performBackupExport, markExported } from '../services/backupReminder';
 import { useI18n } from '../hooks/useI18n';
 import { CustomTithi } from '../types';
 import { ScreenContainer } from '../components/ScreenContainer';
@@ -403,24 +404,16 @@ export const MyTithisScreen: React.FC = () => {
     }
     const json = exportCustomTithis();
     // Download as a file; fall back to clipboard when download fails.
-    try {
-      const blob = new Blob([json], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'vedatime-tithis.json';
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
+    // Successful exports stamp the backup flag (drives the re-export nudge).
+    const outcome = await performBackupExport(json);
+    if (outcome === 'downloaded') {
+      markExported();
       showMessage(t('myTithis.exported') || 'Tithis exported', 'success');
-    } catch {
-      try {
-        await navigator.clipboard.writeText(json);
-        showMessage(t('myTithis.exportCopied') || 'Export copied to clipboard', 'success');
-      } catch {
-        showMessage(t('myTithis.exportFailed') || 'Export failed', 'error');
-      }
+    } else if (outcome === 'clipboard') {
+      markExported();
+      showMessage(t('myTithis.exportCopied') || 'Export copied to clipboard', 'success');
+    } else {
+      showMessage(t('myTithis.exportFailed') || 'Export failed', 'error');
     }
   };
 
