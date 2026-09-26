@@ -8,7 +8,7 @@
  * - Ad-free experience indicator
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -57,6 +57,7 @@ import {
   X,
 } from 'lucide-react';
 import { useAppStore, clearAllData } from '../stores/appStore';
+import { isStoragePersisted } from '../services/storageGuard';
 import { useI18n } from '../hooks/useI18n';
 import { SupportedLanguage } from '../i18n';
 import { notificationService, notificationScheduler } from '../services/notificationService';
@@ -105,6 +106,17 @@ export default function SettingsScreen() {
 
   const [aboutDialog, setAboutDialog] = useState(false);
   const [privacyDialog, setPrivacyDialog] = useState(false);
+  // Storage-eviction protection state (Safari may drop unused site data).
+  const [storageProtected, setStorageProtected] = useState<boolean | null>(null);
+  useEffect(() => {
+    let live = true;
+    isStoragePersisted().then((v) => {
+      if (live) setStorageProtected(v);
+    }).catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, []);
   const [phone, setPhone] = useState('');
   const [inviteDialog, setInviteDialog] = useState(false);
   const [manualCoords, setManualCoords] = useState(false);
@@ -588,6 +600,34 @@ export default function SettingsScreen() {
                 >
                   {t('common.share')}
                 </Button>
+              </ListItem>
+              <Divider />
+              <ListItem>
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  <Lock size={20} color={muiTheme.palette.info.main} />
+                </ListItemIcon>
+                <ListItemText
+                  primary={t('settings.storageProtection')}
+                  secondary={
+                    storageProtected === null
+                      ? '…'
+                      : storageProtected
+                        ? t('settings.storageProtected')
+                        : t('settings.storageStandard')
+                  }
+                />
+                <Chip
+                  label={
+                    storageProtected === null
+                      ? '…'
+                      : storageProtected
+                        ? t('settings.storageProtected').split('—')[0].trim()
+                        : t('settings.storageStandard').split('—')[0].trim()
+                  }
+                  size="small"
+                  color={storageProtected ? 'success' : 'default'}
+                  sx={{ fontWeight: 500, height: 26 }}
+                />
               </ListItem>
               <Divider />
               <ListItem>

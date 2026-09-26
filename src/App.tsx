@@ -25,6 +25,7 @@ import { useAppStore } from './stores/appStore';
 import { PanchangShareCard } from './components/PanchangShareCard';
 import { PWAInstallPrompt } from './components/pwa/PWAInstallPrompt';
 import { parseDayParam } from './utils/dayLink';
+import { requestPersistentStorage } from './services/storageGuard';
 import GestureHandler from './components/GestureHandler';
 
 // Lazy-loaded screens with code-splitting for performance
@@ -131,6 +132,10 @@ const App: React.FC = () => {
     } catch {
       // Badge unsupported or denied — never block boot.
     }
+    // Ask the browser to keep our storage (Safari evicts unused site data
+    // after ~2 weeks; installed + persisted origins are protected first).
+    // Fire-and-forget; denial changes nothing about the app.
+    void requestPersistentStorage().catch(() => undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

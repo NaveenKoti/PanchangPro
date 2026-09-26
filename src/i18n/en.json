@@ -178,7 +178,10 @@
     "createdBy": "Created by Naveen Koti",
     "sendFeedback": "Send feedback",
     "glossaryTitle": "Parts of the Panchang — what do they mean?",
-    "privacyBody": "Your tithis, reminders and settings stay on your device (local storage) — no account, no login. Analytics, if any, are local-only. Your location is used on-device to compute sunrise timings. The only network call is a one-time map lookup to OpenStreetMap to name your city. Reminders fire while the app is open."
+    "privacyBody": "Your tithis, reminders and settings stay on your device (local storage) — no account, no login. Analytics, if any, are local-only. Your location is used on-device to compute sunrise timings. The only network call is a one-time map lookup to OpenStreetMap to name your city. Reminders fire while the app is open.",
+    "storageProtection": "Storage protection",
+    "storageProtected": "Protected — data stays on this device",
+    "storageStandard": "Standard — keep a backup via My Tithis → Export"
   },
   "language": {
     "en": "English",
