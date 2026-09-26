@@ -17,6 +17,7 @@ import {
 import { alpha } from '@mui/material/styles';
 import type { Panchang } from '../types';
 import { useAppStore } from '../stores/appStore';
+import { useI18n } from '../hooks/useI18n';
 import { triggerHapticIfSupported } from '../utils/haptics';
 
 export interface WeeklyAgendaProps {
@@ -37,8 +38,20 @@ export const WeeklyAgenda: React.FC<WeeklyAgendaProps> = ({
   isHindi,
 }) => {
   const muiTheme = useMuiTheme();
+  const { t, currentLanguage } = useI18n();
   const { preferences } = useAppStore();
-  const locale = isHindi ? 'hi-IN' : 'en-IN';
+  const locale =
+    currentLanguage === 'hi'
+      ? 'hi-IN'
+      : currentLanguage === 'sa'
+        ? 'sa-IN'
+        : currentLanguage === 'kn'
+          ? 'kn-IN'
+          : currentLanguage === 'te'
+            ? 'te-IN'
+            : currentLanguage === 'ta'
+              ? 'ta-IN'
+              : 'en-IN';
   const timezone = preferences.location.timezone;
 
   const formatTime = (date: Date) =>
@@ -65,7 +78,7 @@ export const WeeklyAgenda: React.FC<WeeklyAgendaProps> = ({
   return (
     <Box
       role="list"
-      aria-label={isHindi ? 'साप्ताहिक एजेंडा' : 'Weekly agenda'}
+      aria-label={t('common.weeklyAgenda')}
       sx={{
         display: 'flex',
         flexDirection: 'column',
@@ -197,7 +210,7 @@ export const WeeklyAgenda: React.FC<WeeklyAgendaProps> = ({
               </Box>
               {isToday && (
                 <Chip
-                  label={isHindi ? 'आज' : 'Today'}
+                  label={t('common.today')}
                   size="small"
                   sx={{
                     minHeight: 32,

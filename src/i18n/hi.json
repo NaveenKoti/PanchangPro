@@ -22,7 +22,48 @@
     "ads": "विज्ञापन",
     "enabled": "सक्षम",
     "disabled": "अक्षम",
-    "location": "स्थान"
+    "location": "स्थान",
+    "activitiesToAvoid": "क्या न करें",
+    "avoid": "इनसे बचें",
+    "avoidFor": "इनसे बचें",
+    "category": "श्रेणी",
+    "comingUp": "आगे · अगले 15 दिन",
+    "copiedToClipboard": "क्लिपबोर्ड पर कॉपी किया!",
+    "copy": "कॉपी",
+    "copyDayLink": "दिन का लिंक कॉपी करें",
+    "copyFailed": "कॉपी नहीं हो पाया",
+    "dayLinkCopied": "दिन का लिंक कॉपी हो गया!",
+    "deity": "देवता",
+    "detailsCopied": "विवरण कॉपी किए!",
+    "downloadImage": "इमेज डाउनलोड करें",
+    "downloadShareFestivalCard": "त्योहार कार्ड डाउनलोड करें या साझा करें",
+    "downloadSharePanchang": "छवि डाउनलोड करें या WhatsApp पर साझा करें",
+    "fastingRules": "व्रत के नियम",
+    "festivalCardDownloaded": "त्योहार कार्ड डाउनलोड हुआ!",
+    "generatingImage": "छवि तैयार हो रही है...",
+    "goodFor": "इनके लिए अच्छा",
+    "gotIt": "समझ गया",
+    "guna": "गुण",
+    "imageDownloaded": "छवि डाउनलोड हो गई!",
+    "inDays": "{{days}} दिन में",
+    "inOneDay": "1 दिन में",
+    "lunarCalendarNote": "तिथि चंद्र पंचांग के अनुसार",
+    "nature": "प्रकृति",
+    "neutral": "साधारण",
+    "noMatches": "कोई परिणाम नहीं",
+    "sankranti": "संक्रांति",
+    "searchLabel": "त्योहार खोजें",
+    "searchPlaceholder": "जैसे: दीपावली, एकादशी…",
+    "searchTitle": "त्योहार और व्रत खोजें",
+    "shareFestival": "त्योहार साझा करें",
+    "sharePanchang": "साझा करें",
+    "specialNote": "विशेष नोट",
+    "square": "स्क्वायर",
+    "symbol": "प्रतीक",
+    "todaysGuidance": "आज का मार्गदर्शन",
+    "weeklyAgenda": "साप्ताहिक एजेंडा",
+    "whatIsIt": "क्या है?",
+    "whyGuidance": "कारण"
   },
   "navigation": {
     "today": "आज",
@@ -120,7 +161,24 @@
     "aboutAppDesc": "संस्करण, सुविधाएं और क्रेडिट",
     "locationUpdated": "स्थान अपडेट किया गया!",
     "aboutContent": "आपका संपूर्ण हिंदू कैलेंडर साथी",
-    "clearDataConfirm": "सारा डेटा हटाएं? यह वापस नहीं होगा।"
+    "clearDataConfirm": "सारा डेटा हटाएं? यह वापस नहीं होगा।",
+    "pushNotSetup": "पुश अभी सेटअप नहीं है",
+    "pushUnsupported": "इस डिवाइस पर समर्थित नहीं",
+    "killedAppOn": "बंद ऐप रिमाइंडर चालू",
+    "killedAppOff": "बंद ऐप रिमाइंडर बंद",
+    "killedAppReminders": "बंद ऐप रिमाइंडर (पुश)",
+    "notSetupYet": "अभी सेटअप नहीं है",
+    "notSupportedDevice": "इस डिवाइस पर समर्थित नहीं",
+    "coordsEmptyError": "अक्षांश और देशांतर दोनों संख्याओं में भरें",
+    "coordsRangeError": "अक्षांश ±90 और देशांतर ±180 के भीतर होना चाहिए",
+    "reminderNote": "ऐप-खुले रिमाइंडर के लिए ऐप खुला रखें; बंद-ऐप रिमाइंडर के लिए नीचे वाली पुश पंक्ति चालू करें।",
+    "privacyTitle": "गोपनीयता",
+    "privacySubtitle": "आपका डेटा कहाँ रहता है",
+    "noAccountNote": "कोई खाता नहीं, कोई लॉगिन नहीं — सब कुछ आपके फ़ोन पर रहता है।",
+    "createdBy": "निर्माता: नवीन कोटि",
+    "sendFeedback": "प्रतिक्रिया भेजें",
+    "glossaryTitle": "पंचांग के अंग — क्या है?",
+    "privacyBody": "आपकी तिथियाँ, रिमाइंडर और सेटिंग्स आपके डिवाइस पर (स्थानीय संग्रहण में) रहती हैं — कोई खाता नहीं, कोई लॉगिन नहीं। विश्लेषण, यदि कोई हो, केवल स्थानीय है। सूर्योदय का समय निकालने के लिए आपका स्थान आपके डिवाइस पर ही उपयोग होता है। एकमात्र नेटवर्क अनुरोध आपके शहर का नाम जानने के लिए OpenStreetMap से एक बार का मानचित्र अनुरोध है। ऐप खुला रहने पर रिमाइंडर चलते हैं।"
   },
   "language": {
     "en": "English",
@@ -205,7 +263,13 @@
       "amavasya": "अमावस्या",
       "ekadashi": "एकादशी",
       "tapForDetails": "विवरण के लिए दिन पर टैप करें"
-    }
+    },
+    "calendarView": "कैलेंडर दृश्य",
+    "nextMonth": "अगला माह",
+    "nextWeek": "अगला सप्ताह",
+    "prevMonth": "पिछला माह",
+    "prevWeek": "पिछला सप्ताह",
+    "week": "सप्ताह"
   },
   "muhurta": {
     "title": "चौघड़िया",
@@ -271,7 +335,13 @@
     "exportCopied": "निर्यात क्लिपबोर्ड पर कॉपी हुआ",
     "exportFailed": "निर्यात विफल रहा",
     "exported": "तिथियाँ निर्यात हुईं",
-    "reminderSet": "रिमाइंडर तय हुआ"
+    "reminderSet": "रिमाइंडर तय हुआ",
+    "deathDate": "मृत्यु तारीख",
+    "deathDateHelp": "इसी तारीख से तिथि एक बार निकाली जाती है",
+    "addPitru": "पितृ पक्ष (महालय) आयोजन भी जोड़ें",
+    "pitruChip": "पितृ पक्ष",
+    "annualOn": "वार्षिक: {date}",
+    "pitruOn": "पितृ पक्ष: {date}"
   },
   "about": {
     "title": "पंचांग प्रो परिचय",
@@ -385,6 +455,49 @@
       "language": "भाषा",
       "preview": "पूर्वावलोकन",
       "complete": "सेटअप पूर्ण करें"
+    }
+  },
+  "app": {
+    "installApp": "ऐप इंस्टॉल करें",
+    "sharedTithi": "साझा तिथि: {{tithi}}{{fest}} ({{date}}) — VedaTime में देखें"
+  },
+  "today": {
+    "adhikMaas": "अधिक {{month}} मास",
+    "daysAgo": "{{count}} दिन पहले",
+    "dueDate": "देय {{date}}",
+    "lunarMonth": "{{month}} मास",
+    "missedPlural": "ऐप बंद रहने के दौरान {{count}} रिमाइंडर छूट गए।",
+    "missedSingle": "ऐप बंद रहने के दौरान एक रिमाइंडर छूट गया।",
+    "sankrantiTitle": "{{name}} संक्रांति",
+    "solarIngress": "सूर्य का राशि परिवर्तन",
+    "viewMyTithis": "मेरी तिथियाँ देखें",
+    "whileAway": "जब आप दूर थे"
+  },
+  "fasts": {
+    "emptyFasts": "अगले 30 दिनों में कोई व्रत नहीं — एकादशी और प्रदोष यहाँ दिखेंगे।",
+    "emptyFestivals": "अगले 60 दिनों में कोई त्योहार नहीं — तिथि अनुसार त्योहार यहाँ दिखेंगे।",
+    "festivalsSectionTitle": "प्रमुख और क्षेत्रीय त्योहार",
+    "majorFestivals": "प्रमुख त्योहार",
+    "minorFestivals": "लघु त्योहार",
+    "regionalFestivals": "क्षेत्रीय त्योहार",
+    "storyChip": "कहानी",
+    "majorChip": "प्रमुख",
+    "minorChip": "लघु",
+    "regionalChip": "क्षेत्रीय",
+    "everyMonth": "प्रत्येक माह",
+    "presidingDeity": "अधिष्ठाता देवता",
+    "fastingRules": "व्रत के नियम",
+    "paranaTime": "पारण का समय",
+    "specialNotes": "विशेष नोट"
+  },
+  "festival": {
+    "pujaMuhurat": "पूजा मुहूर्त",
+    "vyapti": {
+      "pradosh": "प्रदोष काल में — सूर्यास्त के बाद, तिथि व्याप्त होने पर मनाया जाता है।",
+      "madhyahna": "मध्याह्न में, तिथि व्याप्त होने पर मनाया जाता है।",
+      "nishita": "मध्यरात्रि (निशिता काल) में, तिथि व्याप्त होने पर मनाया जाता है।",
+      "aparahna": "अपराह्न काल में, तिथि व्याप्त होने पर मनाया जाता है।",
+      "moonrise": "उदया तिथि के दिन व्रत; चंद्रोदय पर पारण होता है।"
     }
   }
 }

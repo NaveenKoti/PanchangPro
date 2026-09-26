@@ -128,7 +128,7 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
         {/* Category & Nature */}
         <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
           <Chip
-            label={isHindi ? tithiData.category : `Category: ${tithiData.category}`}
+            label={isHindi ? tithiData.category : `${t('common.category')}: ${tithiData.category}`}
             size="small"
             sx={{
               fontWeight: 500,
@@ -138,17 +138,11 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
           />
           <Chip
             label={
-              isHindi
-                ? tithiData.nature === 'good'
-                  ? 'शुभ'
-                  : tithiData.nature === 'avoid'
-                  ? 'वर्जित'
-                  : 'साधारण'
-                : tithiData.nature === 'good'
-                ? 'Auspicious'
+              tithiData.nature === 'good'
+                ? t('panchang.auspicious')
                 : tithiData.nature === 'avoid'
-                ? 'Inauspicious'
-                : 'Neutral'
+                ? t('panchang.inauspicious')
+                : t('common.neutral')
             }
             size="small"
             sx={{
@@ -169,7 +163,7 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
           />
           {tithiData.deity && (
             <Chip
-              label={isHindi ? `देवता: ${tithiData.deity}` : `Deity: ${tithiData.deity}`}
+              label={`${t('common.deity')}: ${tithiData.deity}`}
               size="small"
               sx={{
                 fontWeight: 500,
@@ -185,7 +179,7 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
             <Info size={18} color={theme.palette.primary.main} />
             <Typography variant="subtitle2" sx={{ fontWeight: 500, color: theme.palette.primary.main }}>
-              {isHindi ? 'महत्व' : 'Significance'}
+              {t('festivals.significance')}
             </Typography>
           </Box>
           <Typography
@@ -206,7 +200,7 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
             <CheckCircle size={18} color={theme.palette.success.main} />
             <Typography variant="subtitle2" sx={{ fontWeight: 500, color: theme.palette.success.main }}>
-              {isHindi ? 'क्या करें' : 'Recommended Activities'}
+              {t('ayurveda.recommended')}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
@@ -233,7 +227,7 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
             <XCircle size={18} color={theme.palette.error.main} />
             <Typography variant="subtitle2" sx={{ fontWeight: 500, color: theme.palette.error.main }}>
-              {isHindi ? 'क्या न करें' : 'Activities to Avoid'}
+              {t('common.activitiesToAvoid')}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
@@ -275,7 +269,7 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
                 mb: 0.5,
               }}
             >
-              {isHindi ? 'विशेष नोट' : 'Special Note'}
+              {t('common.specialNote')}
             </Typography>
             <Typography
               variant="caption"
@@ -284,7 +278,7 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
                 lineHeight: 1.6,
               }}
             >
-              {isHindi ? tithiData.specialNotes : tithiData.specialNotes}
+              {tithiData.specialNotes}
             </Typography>
           </Box>
         )}
@@ -303,7 +297,7 @@ export const TithiExplanationDialog: React.FC<TithiExplanationDialogProps> = ({
             '&:hover': { bgcolor: theme.palette.primary.dark },
           }}
         >
-          {isHindi ? 'बंद करें' : 'Close'}
+          {t('common.close')}
         </Button>
       </DialogActions>
     </Dialog>

@@ -633,7 +633,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
             <Moon size={24} color={muiTheme.palette.primary.main} />
           </Box>
           <Typography variant="body2" color="text.secondary" sx={{ px: 0.5, lineHeight: 1.6 }}>
-            {isHindi ? 'अगले 30 दिनों में कोई व्रत नहीं — एकादशी और प्रदोष यहाँ दिखेंगे।' : 'No fasts in the next 30 days — Ekadashi and Pradosh will appear here.'}
+            {t('fasts.emptyFasts')}
           </Typography>
         </Box>
       )}
@@ -992,7 +992,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
             <Sparkles size={24} color={muiTheme.palette.primary.main} />
           </Box>
           <Typography variant="body2" color="text.secondary" sx={{ px: 0.5, lineHeight: 1.6 }}>
-            {isHindi ? 'अगले 60 दिनों में कोई त्योहार नहीं — तिथि अनुसार त्योहार यहाँ दिखेंगे।' : 'No festivals in the next 60 days — festivals appear here by tithi.'}
+            {t('fasts.emptyFestivals')}
           </Typography>
         </Box>
       )}
@@ -1039,7 +1039,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
       {activeTab === 0 && (
         <Box sx={{ px: 0 }}>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.25, px: 1, fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-            {t('fasting.ekadashiList') || (isHindi ? 'सभी 24 एकादशी व्रत' : 'All 24 Ekadashi Fasts')}
+            {t('fasting.ekadashiList')}
           </Typography>
           {EKADASHIS.map((ekadashi) => (
             <Box
@@ -1056,7 +1056,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
       {activeTab === 1 && (
         <Box sx={{ px: 0 }}>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.25, px: 1, fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-            {t('fasting.otherFasts') || (isHindi ? 'अन्य व्रत' : 'Other Fasting Days')}
+            {t('fasting.otherFasts')}
           </Typography>
           {Object.values(OTHER_FASTS).map((fast) => (
             <Box
@@ -1073,7 +1073,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
       {activeTab === 2 && (
         <Box sx={{ px: 0 }}>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.25, px: 1, fontSize: '0.75rem', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-            {isHindi ? 'प्रमुख और क्षेत्रीय त्योहार' : 'Major and Regional Festivals'}
+            {t('fasts.festivalsSectionTitle')}
           </Typography>
 
           {/* Major Festivals */}
@@ -1113,7 +1113,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     fontSize: '0.9rem',
                   }}
                 >
-                  {isHindi ? 'प्रमुख त्योहार' : 'Major Festivals'} ({festivalsByType.major.length})
+                  {t('fasts.majorFestivals')} ({festivalsByType.major.length})
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 0.5, pt: 0.75, pb: 0.5 }}>
@@ -1123,7 +1123,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   const monthIndex = festival.month;
                   const monthName = monthIndex > 0
                     ? (isHindi ? monthNamesHindi[monthIndex] : monthNames[monthIndex])
-                    : (isHindi ? 'प्रत्येक माह' : 'Every Month');
+                    : t('fasts.everyMonth');
 
                   return (
                     <Box
@@ -1165,7 +1165,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         </Typography>
                         {canViewStory && (
                           <Chip
-                            label={isHindi ? 'कहानी' : 'Story'}
+                            label={t('fasts.storyChip')}
                             size="small"
                             sx={{
                               height: 20,
@@ -1205,7 +1205,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                           }}
                         />
                         <Chip
-                          label={isHindi ? 'प्रमुख' : 'Major'}
+                          label={t('fasts.majorChip')}
                           size="small"
                           sx={{
                             height: 22,
@@ -1274,7 +1274,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     fontSize: '0.9rem',
                   }}
                 >
-                  {isHindi ? 'लघु त्योहार' : 'Minor Festivals'} ({festivalsByType.minor.length})
+                  {t('fasts.minorFestivals')} ({festivalsByType.minor.length})
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 0.5, pt: 0.75, pb: 0.5 }}>
@@ -1284,7 +1284,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   const monthIndex = festival.month;
                   const monthName = monthIndex > 0
                     ? (isHindi ? monthNamesHindi[monthIndex] : monthNames[monthIndex])
-                    : (isHindi ? 'प्रत्येक माह' : 'Every Month');
+                    : t('fasts.everyMonth');
 
                   return (
                     <Box
@@ -1326,7 +1326,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         </Typography>
                         {canViewStory && (
                           <Chip
-                            label={isHindi ? 'कहानी' : 'Story'}
+                            label={t('fasts.storyChip')}
                             size="small"
                             sx={{
                               height: 20,
@@ -1366,7 +1366,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                           }}
                         />
                         <Chip
-                          label={isHindi ? 'लघु' : 'Minor'}
+                          label={t('fasts.minorChip')}
                           size="small"
                           sx={{
                             height: 22,
@@ -1435,7 +1435,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     fontSize: '0.9rem',
                   }}
                 >
-                  {isHindi ? 'क्षेत्रीय त्योहार' : 'Regional Festivals'} ({festivalsByType.regional.length})
+                  {t('fasts.regionalFestivals')} ({festivalsByType.regional.length})
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 0.5, pt: 0.75, pb: 0.5 }}>
@@ -1445,7 +1445,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   const monthIndex = festival.month;
                   const monthName = monthIndex > 0
                     ? (isHindi ? monthNamesHindi[monthIndex] : monthNames[monthIndex])
-                    : (isHindi ? 'प्रत्येक माह' : 'Every Month');
+                    : t('fasts.everyMonth');
 
                   return (
                     <Box
@@ -1487,7 +1487,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                         </Typography>
                         {canViewStory && (
                           <Chip
-                            label={isHindi ? 'कहानी' : 'Story'}
+                            label={t('fasts.storyChip')}
                             size="small"
                             sx={{
                               height: 20,
@@ -1527,7 +1527,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                           }}
                         />
                         <Chip
-                          label={isHindi ? 'क्षेत्रीय' : 'Regional'}
+                          label={t('fasts.regionalChip')}
                           size="small"
                           sx={{
                             height: 22,
@@ -1674,7 +1674,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     letterSpacing: '0.08em',
                   }}
                 >
-                  {isHindi ? 'अधिष्ठाता देवता' : 'Presiding Deity'}
+                  {t('fasts.presidingDeity')}
                 </Typography>
                 <Typography
                   variant="body1"
@@ -1704,7 +1704,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     letterSpacing: '0.08em',
                   }}
                 >
-                  {isHindi ? 'महत्व' : 'Significance'}
+                  {t('fasting.significance')}
                 </Typography>
                 <Typography
                   variant="body2"
@@ -1732,7 +1732,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     letterSpacing: '0.08em',
                   }}
                 >
-                  {isHindi ? 'लाभ' : 'Benefits'}
+                  {t('fasting.benefits')}
                 </Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                   {(isHindi ? selectedFasting.benefitsHindi : selectedFasting.benefits).map((benefit, index) => (
@@ -1793,7 +1793,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                     letterSpacing: '0.08em',
                   }}
                 >
-                  {isHindi ? 'व्रत के नियम' : 'Fasting Rules'}
+                  {t('fasts.fastingRules')}
                 </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                   {(isHindi ? selectedFasting.rulesHindi : selectedFasting.rules).map((rule, index) => (
@@ -1860,7 +1860,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                       letterSpacing: '0.08em',
                     }}
                   >
-                    {isHindi ? 'पारण का समय' : 'Parana Time (Fast Breaking)'}
+                    {t('fasts.paranaTime')}
                   </Typography>
                   <Typography
                     variant="body1"
@@ -1898,7 +1898,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                       letterSpacing: '0.08em',
                     }}
                   >
-                    {isHindi ? 'विशेष नोट' : 'Special Notes'}
+                    {t('fasts.specialNotes')}
                   </Typography>
                   <Typography
                     variant="body2"

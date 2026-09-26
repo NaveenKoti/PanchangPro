@@ -125,7 +125,7 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
         {/* Basic Info Chips */}
         <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
           <Chip
-            label={isHindi ? `गुण: ${nakshatraData.guna}` : `Guna: ${nakshatraData.guna}`}
+            label={`${t('common.guna')}: ${nakshatraData.guna}`}
             size="small"
             sx={{
               fontWeight: 500,
@@ -144,7 +144,7 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
             }}
           />
           <Chip
-            label={isHindi ? `प्रकृति: ${nakshatraData.nature}` : `Nature: ${nakshatraData.nature}`}
+            label={`${t('common.nature')}: ${nakshatraData.nature}`}
             size="small"
             sx={{
               fontWeight: 500,
@@ -153,7 +153,7 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
             }}
           />
           <Chip
-            label={isHindi ? `देवता: ${nakshatraData.rulingDeityHindi}` : `Deity: ${nakshatraData.rulingDeity}`}
+            label={`${t('common.deity')}: ${isHindi ? nakshatraData.rulingDeityHindi : nakshatraData.rulingDeity}`}
             size="small"
             sx={{
               fontWeight: 500,
@@ -168,7 +168,7 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
             <Sparkles size={18} color={theme.palette.primary.main} />
             <Typography variant="subtitle2" sx={{ fontWeight: 500, color: theme.palette.primary.main }}>
-              {isHindi ? 'प्रतीक' : 'Symbol'}
+              {t('common.symbol')}
             </Typography>
           </Box>
           <Typography
@@ -190,7 +190,7 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
             <Info size={18} color={theme.palette.primary.main} />
             <Typography variant="subtitle2" sx={{ fontWeight: 500, color: theme.palette.primary.main }}>
-              {isHindi ? 'महत्व' : 'Significance'}
+              {t('festivals.significance')}
             </Typography>
           </Box>
           <Typography
@@ -211,7 +211,7 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
             <CheckCircle size={18} color={theme.palette.success.main} />
             <Typography variant="subtitle2" sx={{ fontWeight: 500, color: theme.palette.success.main }}>
-              {isHindi ? 'इनके लिए अच्छा' : 'Good For'}
+              {t('common.goodFor')}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
@@ -238,7 +238,7 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
             <XCircle size={18} color={theme.palette.error.main} />
             <Typography variant="subtitle2" sx={{ fontWeight: 500, color: theme.palette.error.main }}>
-              {isHindi ? 'इनसे बचें' : 'Avoid For'}
+              {t('common.avoidFor')}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
@@ -280,7 +280,7 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
                 mb: 0.5,
               }}
             >
-              {isHindi ? 'विशेष नोट' : 'Special Note'}
+              {t('common.specialNote')}
             </Typography>
             <Typography
               variant="caption"
@@ -310,7 +310,7 @@ export const NakshatraExplanationDialog: React.FC<NakshatraExplanationDialogProp
             '&:active': { transform: 'scale(0.98)' },
           }}
         >
-          {isHindi ? 'बंद करें' : 'Close'}
+          {t('common.close')}
         </Button>
       </DialogActions>
     </Dialog>

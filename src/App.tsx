@@ -53,7 +53,18 @@ const App: React.FC = () => {
   const [sharedDay, setSharedDay] = useState<Date | null>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const { t, currentLanguage } = useI18n();
-  const isHindi = currentLanguage === 'hi';
+  const sharedDayLocale =
+    currentLanguage === 'hi'
+      ? 'hi-IN'
+      : currentLanguage === 'sa'
+        ? 'sa-IN'
+        : currentLanguage === 'kn'
+          ? 'kn-IN'
+          : currentLanguage === 'te'
+            ? 'te-IN'
+            : currentLanguage === 'ta'
+              ? 'ta-IN'
+              : 'en-IN';
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -495,9 +506,9 @@ const App: React.FC = () => {
                   prompt — the self-marketing loop for link recipients. */}
               {tab === 0 && sharedDay && (() => {
                 const sharedPanchang = calculatePanchang(sharedDay);
-                const tithiName = isHindi ? sharedPanchang.tithi.nameHindi : sharedPanchang.tithi.name;
+                const tithiName = currentLanguage === 'hi' ? sharedPanchang.tithi.nameHindi : sharedPanchang.tithi.name;
                 const fest = sharedPanchang.festivals?.[0];
-                const festName = fest ? (isHindi ? fest.nameHindi : fest.name) : null;
+                const festName = fest ? (currentLanguage === 'hi' ? fest.nameHindi : fest.name) : null;
                 return (
                   <Alert
                     severity="info"
@@ -510,13 +521,15 @@ const App: React.FC = () => {
                         onClick={() => setShowInstallPrompt(true)}
                         sx={{ borderRadius: 1, whiteSpace: 'nowrap', ml: 1 }}
                       >
-                        {isHindi ? 'ऐप इंस्टॉल करें' : 'Install App'}
+                        {t('app.installApp')}
                       </Button>
                     }
                   >
-                    {isHindi
-                      ? `साझा तिथि: ${tithiName}${festName ? ` · ${festName}` : ''} (${sharedDay.toLocaleDateString('hi-IN')}) — VedaTime में देखें`
-                      : `Shared tithi: ${tithiName}${festName ? ` · ${festName}` : ''} (${sharedDay.toLocaleDateString()}) — view in VedaTime`}
+                    {t('app.sharedTithi', {
+                      tithi: tithiName,
+                      fest: festName ? ` · ${festName}` : '',
+                      date: sharedDay.toLocaleDateString(sharedDayLocale),
+                    })}
                   </Alert>
                 );
               })()}

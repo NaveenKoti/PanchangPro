@@ -22,7 +22,48 @@
     "ads": "Advertisement",
     "enabled": "Enabled",
     "disabled": "Disabled",
-    "location": "Location"
+    "location": "Location",
+    "activitiesToAvoid": "Activities to Avoid",
+    "avoid": "Avoid",
+    "avoidFor": "Avoid For",
+    "category": "Category",
+    "comingUp": "Coming up · next 15 days",
+    "copiedToClipboard": "Copied to clipboard!",
+    "copy": "Copy",
+    "copyDayLink": "Copy day link",
+    "copyFailed": "Copy failed",
+    "dayLinkCopied": "Day link copied!",
+    "deity": "Deity",
+    "detailsCopied": "Details copied to clipboard!",
+    "downloadImage": "Download Image",
+    "downloadShareFestivalCard": "Download or share the festival card",
+    "downloadSharePanchang": "Download image or share on WhatsApp",
+    "fastingRules": "Fasting Rules",
+    "festivalCardDownloaded": "Festival card downloaded!",
+    "generatingImage": "Generating image...",
+    "goodFor": "Good For",
+    "gotIt": "Got it",
+    "guna": "Guna",
+    "imageDownloaded": "Image downloaded!",
+    "inDays": "in {{days}} days",
+    "inOneDay": "in 1 day",
+    "lunarCalendarNote": "Follows the lunar calendar",
+    "nature": "Nature",
+    "neutral": "Neutral",
+    "noMatches": "No matches",
+    "sankranti": "Sankranti",
+    "searchLabel": "Search festivals",
+    "searchPlaceholder": "Try: Diwali, Ekadashi…",
+    "searchTitle": "Search festivals & vrats",
+    "shareFestival": "Share Festival",
+    "sharePanchang": "Share Panchang",
+    "specialNote": "Special Note",
+    "square": "Square",
+    "symbol": "Symbol",
+    "todaysGuidance": "Today's Guidance",
+    "weeklyAgenda": "Weekly agenda",
+    "whatIsIt": "What is it?",
+    "whyGuidance": "Why this guidance?"
   },
   "navigation": {
     "today": "Today",
@@ -120,7 +161,24 @@
     "aboutAppDesc": "Version, features & credits",
     "locationUpdated": "Location updated!",
     "aboutContent": "Your complete Hindu calendar companion",
-    "clearDataConfirm": "Clear all data? This cannot be undone."
+    "clearDataConfirm": "Clear all data? This cannot be undone.",
+    "pushNotSetup": "Push is not set up yet",
+    "pushUnsupported": "Not supported on this device",
+    "killedAppOn": "Killed-app reminders on",
+    "killedAppOff": "Killed-app reminders off",
+    "killedAppReminders": "Killed-app reminders (push)",
+    "notSetupYet": "Not set up yet",
+    "notSupportedDevice": "Not supported on this device",
+    "coordsEmptyError": "Enter both latitude and longitude as numbers",
+    "coordsRangeError": "Latitude must be within ±90 and longitude within ±180",
+    "reminderNote": "In-app reminders need the app open; push needs the killed-app row enabled.",
+    "privacyTitle": "Privacy",
+    "privacySubtitle": "Where your data stays",
+    "noAccountNote": "No account, no login — everything stays on your phone.",
+    "createdBy": "Created by Naveen Koti",
+    "sendFeedback": "Send feedback",
+    "glossaryTitle": "Parts of the Panchang — what do they mean?",
+    "privacyBody": "Your tithis, reminders and settings stay on your device (local storage) — no account, no login. Analytics, if any, are local-only. Your location is used on-device to compute sunrise timings. The only network call is a one-time map lookup to OpenStreetMap to name your city. Reminders fire while the app is open."
   },
   "language": {
     "en": "English",
@@ -205,7 +263,13 @@
       "amavasya": "Amavasya",
       "ekadashi": "Ekadashi",
       "tapForDetails": "Tap a day for details"
-    }
+    },
+    "calendarView": "Calendar view",
+    "nextMonth": "next month",
+    "nextWeek": "next week",
+    "prevMonth": "previous month",
+    "prevWeek": "previous week",
+    "week": "Week"
   },
   "muhurta": {
     "title": "Choghadiya",
@@ -271,7 +335,13 @@
     "exportCopied": "Export copied to clipboard",
     "exportFailed": "Export failed",
     "exported": "Tithis exported",
-    "reminderSet": "Reminder scheduled"
+    "reminderSet": "Reminder scheduled",
+    "deathDate": "Date of death",
+    "deathDateHelp": "Tithi is derived once from this date",
+    "addPitru": "Also add Pitru Paksha (Mahalaya) event",
+    "pitruChip": "Pitru Paksha",
+    "annualOn": "Annual: {date}",
+    "pitruOn": "Pitru Paksha: {date}"
   },
   "about": {
     "title": "About VedaTime",
@@ -385,6 +455,49 @@
       "language": "Language",
       "preview": "Preview",
       "complete": "Complete Setup"
+    }
+  },
+  "app": {
+    "installApp": "Install App",
+    "sharedTithi": "Shared tithi: {{tithi}}{{fest}} ({{date}}) — view in VedaTime"
+  },
+  "today": {
+    "adhikMaas": "Adhik {{month}} Maas",
+    "daysAgo": "{{count}} days ago",
+    "dueDate": "due {{date}}",
+    "lunarMonth": "{{month}} Maas",
+    "missedPlural": "You missed {{count}} reminders while the app was closed.",
+    "missedSingle": "You missed a reminder while the app was closed.",
+    "sankrantiTitle": "{{name}} Sankranti",
+    "solarIngress": "Solar ingress",
+    "viewMyTithis": "View My Tithis",
+    "whileAway": "While you were away"
+  },
+  "fasts": {
+    "emptyFasts": "No fasts in the next 30 days — Ekadashi and Pradosh will appear here.",
+    "emptyFestivals": "No festivals in the next 60 days — festivals appear here by tithi.",
+    "festivalsSectionTitle": "Major and Regional Festivals",
+    "majorFestivals": "Major Festivals",
+    "minorFestivals": "Minor Festivals",
+    "regionalFestivals": "Regional Festivals",
+    "storyChip": "Story",
+    "majorChip": "Major",
+    "minorChip": "Minor",
+    "regionalChip": "Regional",
+    "everyMonth": "Every Month",
+    "presidingDeity": "Presiding Deity",
+    "fastingRules": "Fasting Rules",
+    "paranaTime": "Parana Time (Fast Breaking)",
+    "specialNotes": "Special Notes"
+  },
+  "festival": {
+    "pujaMuhurat": "Puja Muhurat",
+    "vyapti": {
+      "pradosh": "Observed in Pradosh Kaal — after sunset, while the tithi prevails.",
+      "madhyahna": "Observed at midday (Madhyahna), while the tithi prevails.",
+      "nishita": "Observed at midnight (Nishita Kaal), while the tithi prevails.",
+      "aparahna": "Observed in the afternoon (Aparahna), while the tithi prevails.",
+      "moonrise": "Observed on the Udaya-tithi day; the fast ends at moonrise."
     }
   }
 }

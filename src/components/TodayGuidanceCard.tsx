@@ -47,7 +47,7 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
   gulikaKaal,
 }) => {
   const theme = useTheme();
-  const { currentLanguage } = useI18n();
+  const { t, currentLanguage } = useI18n();
   const [expanded, setExpanded] = useState(false);
   const [guidance, setGuidance] = useState<GuidanceResult | null>(null);
   const [currentTime] = useState(new Date());
@@ -155,7 +155,7 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
                     letterSpacing: '-0.01em',
                   }}
                 >
-                  {isHindi ? 'आज का मार्गदर्शन' : "Today's Guidance"}
+                  {t('common.todaysGuidance')}
                 </Typography>
                 <Typography
                   variant="body2"
@@ -254,7 +254,7 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
                       letterSpacing: '0.05em',
                     }}
                   >
-                    {isHindi ? 'इनके लिए अच्छा' : 'Good For'}
+                    {t('common.goodFor')}
                   </Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
                     {(isHindi ? guidance.goodForHindi : guidance.goodFor).slice(0, 6).map((item, index) => (
@@ -290,7 +290,7 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
                       letterSpacing: '0.05em',
                     }}
                   >
-                    {isHindi ? 'इनसे बचें' : 'Avoid'}
+                    {t('common.avoid')}
                   </Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
                     {(isHindi ? guidance.avoidHindi : guidance.avoid).slice(0, 6).map((item, index) => (
@@ -334,7 +334,7 @@ export const TodayGuidanceCard: React.FC<TodayGuidanceCardProps> = ({
                       letterSpacing: '0.05em',
                     }}
                   >
-                    {isHindi ? 'कारण' : 'Why this guidance?'}
+                    {t('common.whyGuidance')}
                   </Typography>
                   {(isHindi ? guidance.reasonsHindi : guidance.reasons).slice(0, 2).map((reason, index) => (
                     <Typography

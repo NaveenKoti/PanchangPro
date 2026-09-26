@@ -34,7 +34,7 @@ export const GlossaryDialog: React.FC<GlossaryDialogProps> = ({
   limbId,
 }) => {
   const theme = useTheme();
-  const { currentLanguage } = useI18n();
+  const { t, currentLanguage } = useI18n();
   const isHindi = currentLanguage === 'hi';
 
   const entry = getGlossaryEntry(limbId);
@@ -86,13 +86,13 @@ export const GlossaryDialog: React.FC<GlossaryDialogProps> = ({
               {isHindi ? entry.nameHindi : entry.name}
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-              {isHindi ? 'क्या है?' : 'What is it?'}
+              {t('common.whatIsIt')}
             </Typography>
           </Box>
           <IconButton
             onClick={onClose}
             size="small"
-            aria-label={isHindi ? 'बंद करें' : 'Close'}
+            aria-label={t('common.close')}
             sx={{
               color: 'text.secondary',
               minWidth: 48,
@@ -129,7 +129,7 @@ export const GlossaryDialog: React.FC<GlossaryDialogProps> = ({
             fontWeight: 500,
           }}
         >
-          {isHindi ? 'समझ गया' : 'Got it'}
+          {t('common.gotIt')}
         </Button>
       </DialogActions>
     </Dialog>

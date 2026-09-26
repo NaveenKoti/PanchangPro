@@ -65,17 +65,21 @@ import { useBreakpoints } from '../hooks/useBreakpoints';
 import { triggerHapticIfSupported } from '../utils/haptics';
 import './TodayScreen.css';
 
-/** Relative-day label for a missed fire-time ("Today" / "Yesterday" / "N days ago"). */
-function relativeDayLabel(fireTime: Date, now: Date): string {
+/** Relative-day label for a missed fire-time (translated via common.* + today.daysAgo). */
+function relativeDayLabel(
+  fireTime: Date,
+  now: Date,
+  t: (key: string, options?: Record<string, unknown>) => string
+): string {
   const startOfDay = (d: Date): number => {
     const c = new Date(d);
     c.setHours(0, 0, 0, 0);
     return c.getTime();
   };
   const diff = Math.round((startOfDay(now) - startOfDay(fireTime)) / 86400000);
-  if (diff <= 0) return 'Today';
-  if (diff === 1) return 'Yesterday';
-  return `${diff} days ago`;
+  if (diff <= 0) return t('common.today');
+  if (diff === 1) return t('common.yesterday');
+  return t('today.daysAgo', { count: diff });
 }
 
 function formatDueDate(date: Date): string {
@@ -102,7 +106,6 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
     addCustomTithi,
     requestTab,
   } = useAppStore();
-  const isDigestHindi = preferences.language === 'hi';
 
   // "While you were away" catch-up: custom-tithi reminders due while the app
   // was closed are silently skipped by the in-page scheduler, so surface them
@@ -261,6 +264,12 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
         ? 'hi-IN'
         : preferences.language === 'sa'
         ? 'sa-IN'
+        : preferences.language === 'kn'
+        ? 'kn-IN'
+        : preferences.language === 'te'
+        ? 'te-IN'
+        : preferences.language === 'ta'
+        ? 'ta-IN'
         : 'en-IN';
     return date.toLocaleDateString(locale, {
       weekday: 'long',
@@ -322,18 +331,18 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
       children: (
         <Box>
           <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-            {isDigestHindi ? 'जब आप दूर थे' : 'While you were away'}
+            {t('today.whileAway')}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             {missedReminders.length === 1
-              ? (isDigestHindi ? 'ऐप बंद रहने के दौरान एक रिमाइंडर छूट गया।' : 'You missed a reminder while the app was closed.')
-              : (isDigestHindi ? `ऐप बंद रहने के दौरान ${missedReminders.length} रिमाइंडर छूट गए।` : `You missed ${missedReminders.length} reminders while the app was closed.`)}
+              ? t('today.missedSingle')
+              : t('today.missedPlural', { count: missedReminders.length })}
           </Typography>
           <Box component="ul" sx={{ m: 0, mt: 0.5, pl: 2.5 }}>
             {missedReminders.map((m) => (
               <Typography key={m.id} component="li" variant="body2" sx={{ color: 'text.primary' }}>
-                {relativeDayLabel(m.fireTime, new Date())} — {m.tithiName}
-                {m.daysBefore > 0 ? ` (due ${formatDueDate(m.occurrenceDate)})` : ''}
+                {relativeDayLabel(m.fireTime, new Date(), t)} — {m.tithiName}
+                {m.daysBefore > 0 ? ` (${t('today.dueDate', { date: formatDueDate(m.occurrenceDate) })})` : ''}
               </Typography>
             ))}
           </Box>
@@ -343,7 +352,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
             onClick={() => requestTab('myTithis')}
             sx={{ mt: 1, borderRadius: 1, textTransform: 'none', fontWeight: 500, minHeight: 48 }}
           >
-            {isDigestHindi ? 'मेरी तिथियाँ देखें' : 'View My Tithis'}
+            {t('today.viewMyTithis')}
           </Button>
         </Box>
       ),
@@ -383,12 +392,15 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
       children: (
         <Box>
           <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
-            {preferences.language === 'hi'
-              ? `${panchang.sankranti.nameHindi} संक्रांति`
-              : `${panchang.sankranti.name} Sankranti`}
+            {t('today.sankrantiTitle', {
+              name:
+                preferences.language === 'hi'
+                  ? panchang.sankranti.nameHindi
+                  : panchang.sankranti.name,
+            })}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {preferences.language === 'hi' ? 'सूर्य का राशि परिवर्तन' : 'Solar ingress'}
+            {t('today.solarIngress')}
             {' · '}
             {formatTime(panchang.sankranti.ingressTime)}
           </Typography>
@@ -486,11 +498,11 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                       {' · '}
                       {preferences.language === 'hi'
                         ? panchang.adhikMaas?.isAdhik
-                          ? `अधिक ${panchang.adhikMaas.nameHindi} मास`
-                          : `${LUNAR_MONTHS_HINDI[panchang.lunarMonth - 1]} मास`
+                          ? t('today.adhikMaas', { month: panchang.adhikMaas.nameHindi })
+                          : t('today.lunarMonth', { month: LUNAR_MONTHS_HINDI[panchang.lunarMonth - 1] })
                         : panchang.adhikMaas?.isAdhik
-                          ? `Adhik ${panchang.adhikMaas.name} Maas`
-                          : `${LUNAR_MONTHS[panchang.lunarMonth - 1]} Maas`}
+                          ? t('today.adhikMaas', { month: panchang.adhikMaas.name })
+                          : t('today.lunarMonth', { month: LUNAR_MONTHS[panchang.lunarMonth - 1] })}
                     </Typography>
                   )}
                 </Box>

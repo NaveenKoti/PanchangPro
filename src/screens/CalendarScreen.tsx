@@ -238,6 +238,12 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   ? 'hi-IN'
   : currentLanguage === 'sa'
   ? 'sa-IN'
+  : currentLanguage === 'kn'
+  ? 'kn-IN'
+  : currentLanguage === 'te'
+  ? 'te-IN'
+  : currentLanguage === 'ta'
+  ? 'ta-IN'
   : 'en-IN';
   const end = new Date(weekStart);
   end.setDate(end.getDate() + 6);
@@ -291,13 +297,19 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   return weekdays.map((d) => d.slice(0, 2));
  };
 
- const getMonthName = (date: Date) => {
- const locale =
- currentLanguage === 'hi'
- ? 'hi-IN'
- : currentLanguage === 'sa'
- ? 'sa-IN'
- : 'en-IN';
+  const getMonthName = (date: Date) => {
+  const locale =
+  currentLanguage === 'hi'
+  ? 'hi-IN'
+  : currentLanguage === 'sa'
+  ? 'sa-IN'
+  : currentLanguage === 'kn'
+  ? 'kn-IN'
+  : currentLanguage === 'te'
+  ? 'te-IN'
+  : currentLanguage === 'ta'
+  ? 'ta-IN'
+  : 'en-IN';
  return date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
  };
 
@@ -382,7 +394,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   <IconButton
   onClick={handlePrevMonth}
   size="small"
-  aria-label={viewMode === 'week' ? (isHindi ? 'पिछला सप्ताह' : 'previous week') : 'previous month'}
+  aria-label={viewMode === 'week' ? t('calendar.prevWeek') : t('calendar.prevMonth')}
   sx={{
   width: 48,
   height: 48,
@@ -425,7 +437,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   <IconButton
   onClick={handleNextMonth}
   size="small"
-  aria-label={viewMode === 'week' ? (isHindi ? 'अगला सप्ताह' : 'next week') : 'next month'}
+  aria-label={viewMode === 'week' ? t('calendar.nextWeek') : t('calendar.nextMonth')}
   sx={{
   width: 48,
   height: 48,
@@ -449,11 +461,11 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   }
   }}
   variant="fullWidth"
-  aria-label={isHindi ? 'कैलेंडर दृश्य' : 'Calendar view'}
+  aria-label={t('calendar.calendarView')}
   sx={{ mb: 1.5, minHeight: 48 }}
   >
-  <Tab label={isHindi ? 'माह' : 'Month'} value="month" sx={{ minHeight: 48, textTransform: 'none', fontWeight: 500 }} />
-  <Tab label={isHindi ? 'सप्ताह' : 'Week'} value="week" sx={{ minHeight: 48, textTransform: 'none', fontWeight: 500 }} />
+  <Tab label={t('calendar.month')} value="month" sx={{ minHeight: 48, textTransform: 'none', fontWeight: 500 }} />
+  <Tab label={t('calendar.week')} value="week" sx={{ minHeight: 48, textTransform: 'none', fontWeight: 500 }} />
   </Tabs>
 
   <Fade in timeout={500}>

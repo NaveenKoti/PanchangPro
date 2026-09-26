@@ -274,40 +274,26 @@ function getRuleForFestivalStory(storyId: string): ObservanceRule | null {
 // ============================================================================
 
 /**
- * Observance-moment (vyapti) note for festivals whose shastra prescribes a
+ * Observance-moment (vyapti) i18n key for festivals whose shastra prescribes a
  * moment other than sunrise: Lakshmi Puja at sunset, Bhai Dooj in the
  * afternoon, Karva Chauth's fast ending at moonrise, and so on. Returns null
- * for Udaya-based festivals (no special muhurat to display).
+ * for Udaya-based festivals (no special muhurat to display). The key resolves
+ * via i18n so all six languages show translated text (see frag-k2.json).
  */
-function getVyaptiNote(storyId: string): { en: string; hi: string } | null {
+function getVyaptiKey(storyId: string): string | null {
   const festival = getFestivalById(storyId);
   if (!festival || !festival.vyapti || festival.vyapti === 'udaya') return null;
   switch (festival.vyapti) {
     case 'pradosh':
-      return {
-        en: 'Observed in Pradosh Kaal — after sunset, while the tithi prevails.',
-        hi: 'प्रदोष काल में — सूर्यास्त के बाद, तिथि व्याप्त होने पर मनाया जाता है।',
-      };
+      return 'festival.vyapti.pradosh';
     case 'madhyahna':
-      return {
-        en: 'Observed at midday (Madhyahna), while the tithi prevails.',
-        hi: 'मध्याह्न में, तिथि व्याप्त होने पर मनाया जाता है।',
-      };
+      return 'festival.vyapti.madhyahna';
     case 'nishita':
-      return {
-        en: 'Observed at midnight (Nishita Kaal), while the tithi prevails.',
-        hi: 'मध्यरात्रि (निशिता काल) में, तिथि व्याप्त होने पर मनाया जाता है।',
-      };
+      return 'festival.vyapti.nishita';
     case 'aparahna':
-      return {
-        en: 'Observed in the afternoon (Aparahna), while the tithi prevails.',
-        hi: 'अपराह्न काल में, तिथि व्याप्त होने पर मनाया जाता है।',
-      };
+      return 'festival.vyapti.aparahna';
     case 'moonrise':
-      return {
-        en: 'Observed on the Udaya-tithi day; the fast ends at moonrise.',
-        hi: 'उदया तिथि के दिन व्रत; चंद्रोदय पर पारण होता है।',
-      };
+      return 'festival.vyapti.moonrise';
     default:
       return null;
   }
@@ -324,7 +310,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
 }) => {
   const theme = useMuiTheme();
   const isDark = theme.palette.mode === 'dark';
-  const { currentLanguage } = useI18n();
+  const { t, currentLanguage } = useI18n();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isShareMenuOpen, setIsShareMenuOpen] = useState(false);
   const [showShareCard, setShowShareCard] = useState(false);
@@ -350,9 +336,9 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
     return findNextOccurrence(rule, new Date());
   }, [festival]);
 
-  const vyaptiNote = useMemo(() => {
+  const vyaptiKey = useMemo(() => {
     if (!festival) return null;
-    return getVyaptiNote(festival.id);
+    return getVyaptiKey(festival.id);
   }, [festival]);
 
   const festivalData = useMemo(() => {
@@ -700,9 +686,9 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
         {/* ================================================================== */}
         {/* PUJA MUHURAT (vyapti moment — only for non-Udaya festivals) */}
         {/* ================================================================== */}
-        {vyaptiNote && (
+        {vyaptiKey && (
           <Fade in timeout={900}>
-            <SectionCard icon={<Timer sx={{ color: theme.palette.primary.light }} />} title={isHindi ? 'पूजा मुहूर्त' : 'Puja Muhurat'}>
+            <SectionCard icon={<Timer sx={{ color: theme.palette.primary.light }} />} title={t('festival.pujaMuhurat')}>
               <Typography
                 sx={{
                   color: theme.palette.text.secondary,
@@ -710,7 +696,7 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                   fontSize: { xs: '0.95rem', sm: '1rem' },
                 }}
               >
-                {isHindi ? vyaptiNote.hi : vyaptiNote.en}
+                {vyaptiKey ? t(vyaptiKey) : null}
               </Typography>
             </SectionCard>
           </Fade>

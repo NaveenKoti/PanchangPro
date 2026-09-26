@@ -198,6 +198,13 @@ export interface CustomTithi {
   reminderDaysBefore?: number; // Days before to remind (0-7, 0 = on the day)
   nextOccurrence?: Date; // Calculated next occurrence date
   createdAt: Date;
+  /**
+   * Pitru Paksha (Mahalaya) companion: matched ONLY inside the Sep 1–Oct 31
+   * window (one occurrence per year). One-way derivation: created from a
+   * Shraddha death-date tithi; a manually entered Paksha date never derives
+   * anything back (not back-trackable by design).
+   */
+  pitruPaksha?: boolean;
 }
 
 // User preferences

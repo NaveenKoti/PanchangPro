@@ -33,7 +33,7 @@ interface EkadashiDetailCardProps {
 }
 
 export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi }) => {
-  const { currentLanguage } = useI18n();
+  const { t, currentLanguage } = useI18n();
   const muiTheme = useMuiTheme();
   const isHindi = currentLanguage === 'hi';
   const [expanded, setExpanded] = useState(false);
@@ -184,7 +184,7 @@ export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi
                 letterSpacing: '0.03em',
               }}
             >
-              {isHindi ? 'व्रत के नियम' : 'Fasting Rules'}
+              {t('common.fastingRules')}
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {(isHindi ? ekadashi.rulesHindi : ekadashi.rules).slice(0, 4).map((rule, index) => (
@@ -218,7 +218,7 @@ export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi
                 letterSpacing: '0.03em',
               }}
             >
-              {isHindi ? 'लाभ' : 'Benefits'}
+              {t('fasting.benefits')}
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {(isHindi ? ekadashi.benefitsHindi : ekadashi.benefits).slice(0, 4).map((benefit, index) => (
@@ -260,7 +260,7 @@ export const EkadashiDetailCard: React.FC<EkadashiDetailCardProps> = ({ ekadashi
                   letterSpacing: '0.03em',
                 }}
               >
-                {isHindi ? 'पारण का समय' : 'Parana Time'}
+                {t('fasting.parana')}
               </Typography>
               <Typography
                 variant="body2"

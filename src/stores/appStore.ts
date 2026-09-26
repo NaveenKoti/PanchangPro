@@ -41,6 +41,30 @@ const calculateNextOccurrences = (tithi: CustomTithi, location: GeoLocation): Da
     return occurrences;
   }
 
+  // Pitru Paksha companions: the same tithi+paksha, but only the occurrence
+  // inside the Sep 1–Oct 31 Mahalaya window (this year, else next year).
+  // Guarded by flag — the generic path below is untouched.
+  if (tithi.pitruPaksha) {
+    const engine = createPanchangEngine(location);
+    let year = now.getFullYear();
+    for (let attempt = 0; attempt < 2 && occurrences.length === 0; attempt++) {
+      const start = new Date(year, 8, 1);
+      const end = new Date(year, 9, 31);
+      for (let d = new Date(start); d <= end && occurrences.length < 5; d.setDate(d.getDate() + 1)) {
+        if (d < now) continue;
+        const panchang = engine.calculate(d);
+        if (
+          panchang.tithi.number === tithi.tithiNumber &&
+          panchang.tithi.paksha === tithi.paksha
+        ) {
+          occurrences.push(new Date(d));
+        }
+      }
+      year += 1;
+    }
+    return occurrences;
+  }
+
   // For recurring tithis, use the PanchangEngine to find when this specific
   // tithi (number + paksha) actually occurs in the lunar calendar over the next 5 months
   const engine = createPanchangEngine(location);
@@ -264,7 +288,7 @@ export const useAppStore = create<AppState>()(
               const updated = { ...t, ...data };
               // Recalculate next occurrences if anything date-affecting changed
               // (use !== undefined: month 0 = Chaitra and isRecurring false are valid)
-              if (data.tithiNumber !== undefined || data.paksha !== undefined || data.isRecurring !== undefined || data.month !== undefined || data.customDate !== undefined || data.reminderDaysBefore !== undefined) {
+              if (data.tithiNumber !== undefined || data.paksha !== undefined || data.isRecurring !== undefined || data.month !== undefined || data.customDate !== undefined || data.reminderDaysBefore !== undefined || data.pitruPaksha !== undefined) {
                 updated.nextOccurrence = calculateNextOccurrences(updated, preferences.location)[0];
               }
               // Reschedule notification if reminder settings changed

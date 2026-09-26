@@ -64,7 +64,7 @@ export const PanchangShareCard: React.FC<PanchangShareCardProps> = ({
   panchang,
   locationName,
 }) => {
-  const { currentLanguage } = useI18n();
+  const { t, currentLanguage } = useI18n();
   const theme = useTheme();
   const isHindi = currentLanguage === 'hi';
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -443,8 +443,8 @@ export const PanchangShareCard: React.FC<PanchangShareCardProps> = ({
     link.href = imageUrl;
     link.click();
 
-    setShareMessage(isHindi ? 'छवि डाउनलोड हो गई!' : 'Image downloaded!');
-  }, [generateImage, generatedImage, isStory, panchang, isHindi]);
+    setShareMessage(t('common.imageDownloaded'));
+  }, [generateImage, generatedImage, isStory, panchang, t]);
 
   const handleShareText = useCallback(async () => {
     if (!panchang) return;
@@ -472,15 +472,15 @@ Shared from VedaTime - vedatime.app`;
           title: 'VedaTime',
           text: shareText
         });
-        setShareMessage(isHindi ? 'सफलतापूर्वक शेयर किया!' : 'Shared successfully!');
+        setShareMessage(t('common.shareSuccess'));
       } catch {
         // User cancelled — not an error
       }
     } else {
       await navigator.clipboard.writeText(shareText);
-      setShareMessage(isHindi ? 'क्लिपबोर्ड पर कॉपी किया!' : 'Copied to clipboard!');
+      setShareMessage(t('common.copiedToClipboard'));
     }
-  }, [panchang, locationName, isHindi, hasFestival]);
+  }, [panchang, locationName, t, hasFestival]);
 
   // Copy the deep link for this day (?d=YYYY-MM-DD): recipients open the
   // exact tithi in the app and get an install nudge.
@@ -488,12 +488,12 @@ Shared from VedaTime - vedatime.app`;
     if (!panchang) return;
     try {
       await navigator.clipboard.writeText(buildDayLink(panchang.date));
-      setShareMessage(isHindi ? 'दिन का लिंक कॉपी हो गया!' : 'Day link copied!');
+      setShareMessage(t('common.dayLinkCopied'));
     } catch {
-      setShareMessage(isHindi ? 'कॉपी नहीं हो पाया' : 'Copy failed');
+      setShareMessage(t('common.copyFailed'));
     }
     setTimeout(() => setShareMessage(''), 3000);
-  }, [panchang, isHindi]);
+  }, [panchang, t]);
 
   // Reset state when dialog opens
   React.useEffect(() => {
@@ -535,7 +535,7 @@ Shared from VedaTime - vedatime.app`;
       }}
     >
       <DialogTitle sx={{ fontWeight: 500, pb: 1 }}>
-        {isHindi ? 'साझा करें' : 'Share Panchang'}
+        {t('common.sharePanchang')}
         <IconButton
           onClick={onClose}
           aria-label="Close share card"
@@ -570,7 +570,7 @@ Shared from VedaTime - vedatime.app`;
           </ToggleButtonGroup>
           {hasFestival && (
             <Chip
-              label={isHindi ? 'त्योहार' : 'Festival'}
+              label={t('calendar.legend.festival')}
               size="small"
               sx={{
                 bgcolor: alpha(theme.palette.warning.main, 0.12),
@@ -595,7 +595,7 @@ Shared from VedaTime - vedatime.app`;
           >
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 1.5 }}>
               <Typography variant="h6" sx={{ fontWeight: 500, color: theme.palette.primary.main }}>
-                {isHindi ? 'पंचांग' : 'Panchang'}
+                {t('panchang.title')}
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 ({panchang.tithi.paksha})
@@ -645,7 +645,7 @@ Shared from VedaTime - vedatime.app`;
             {isGenerating && (
               <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 2, minHeight: 120 }}>
                 <Typography variant="body2" color="text.secondary">
-                  {isHindi ? 'छवि तैयार हो रही है...' : 'Generating image...'}
+                  {t('common.generatingImage')}
                 </Typography>
               </Box>
             )}
@@ -667,7 +667,7 @@ Shared from VedaTime - vedatime.app`;
               '&:hover': { bgcolor: theme.palette.primary.dark }
             }}
           >
-            {isHindi ? 'इमेज डाउनलोड करें' : 'Download Image'}
+            {t('common.downloadImage')}
           </Button>
           <Button
             variant="outlined"
@@ -688,7 +688,7 @@ Shared from VedaTime - vedatime.app`;
           <Button
             variant="outlined"
             onClick={handleCopyLink}
-            aria-label={isHindi ? 'दिन का लिंक कॉपी करें' : 'Copy day link'}
+            aria-label={t('common.copyDayLink')}
             sx={{
               borderRadius: 2,
               minWidth: 48,
@@ -714,9 +714,7 @@ Shared from VedaTime - vedatime.app`;
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Typography variant="caption" color="text.secondary">
-          {isHindi
-            ? 'छवि डाउनलोड करें या WhatsApp पर साझा करें'
-            : 'Download image or share on WhatsApp'}
+          {t('common.downloadSharePanchang')}
         </Typography>
       </DialogActions>
     </Dialog>

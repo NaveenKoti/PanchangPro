@@ -129,14 +129,16 @@ function formatShortDate(d: Date): string {
   return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
 }
 
-function relativeDayText(days: number, isHindi: boolean): string {
-  if (days <= 0) return isHindi ? 'आज' : 'Today';
-  if (isHindi) return `${days} दिन में`;
-  return days === 1 ? 'in 1 day' : `in ${days} days`;
+type TFn = (key: string, options?: Record<string, unknown>) => string;
+
+function relativeDayText(days: number, t: TFn): string {
+  if (days <= 0) return t('common.today');
+  if (days === 1) return t('common.inOneDay');
+  return t('common.inDays', { days });
 }
 
-function countdownText(days: number, isHindi: boolean, date: Date): string {
-  return `${relativeDayText(days, isHindi)} · ${formatShortDate(date)}`;
+function countdownText(days: number, t: TFn, date: Date): string {
+  return `${relativeDayText(days, t)} · ${formatShortDate(date)}`;
 }
 
 function daysUntil(from: Date, to: Date): number {
@@ -164,7 +166,7 @@ interface UpcomingDay {
 
 export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }) => {
   const muiTheme = useMuiTheme();
-  const { currentLanguage } = useI18n();
+  const { t, currentLanguage } = useI18n();
   const isHindi = currentLanguage === 'hi';
   const { calculatePanchang } = useAppStore();
   const [query, setQuery] = useState('');
@@ -214,13 +216,13 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
       } else if (p.sankranti) {
         days.push({
           date,
-          name: isHindi ? `${p.sankranti.nameHindi} संक्रांति` : `${p.sankranti.name} Sankranti`,
+          name: `${isHindi ? p.sankranti.nameHindi : p.sankranti.name} ${t('common.sankranti')}`,
           detailId: null,
         });
       }
     }
     return days;
-  }, [calculatePanchang, isHindi]);
+  }, [calculatePanchang, isHindi, t]);
 
   const handleOpen = (detailId: string): void => {
     if (!onFestivalOpen) return;
@@ -243,7 +245,7 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
           
         }}
       >
-        {isHindi ? 'त्योहार और व्रत खोजें' : 'Search festivals & vrats'}
+              {t('common.searchTitle')}
       </Typography>
 
       <TextField
@@ -251,8 +253,8 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
         size="small"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        label={isHindi ? 'त्योहार खोजें' : 'Search festivals'}
-        placeholder={isHindi ? 'जैसे: दीपावली, एकादशी…' : 'Try: Diwali, Ekadashi…'}
+        label={t('common.searchLabel')}
+        placeholder={t('common.searchPlaceholder')}
         InputProps={{
           startAdornment: <Search size={18} color={muiTheme.palette.text.secondary} />,
         }}
@@ -288,10 +290,8 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
             {results.map(({ entry, next }) => {
               const tappable = !!entry.detailId && !!onFestivalOpen;
               const label = next
-                ? countdownText(daysUntil(new Date(), next), isHindi, next)
-                : isHindi
-                  ? 'तिथि चंद्र पंचांग के अनुसार'
-                  : 'Follows the lunar calendar';
+                ? countdownText(daysUntil(new Date(), next), t, next)
+                : t('common.lunarCalendarNote');
               return (
                 <ListItemButton
                   key={entry.id}
@@ -343,10 +343,10 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
                 pl: 0.5,
               }}
             >
-              {isHindi ? 'कोई परिणाम नहीं' : 'No matches'}
+              {t('common.noMatches')}
             </Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              {isHindi ? 'जैसे: दीपावली, एकादशी…' : 'Try: Diwali, Ekadashi…'}
+              {t('common.searchPlaceholder')}
             </Typography>
           </Box>
         )
@@ -365,7 +365,7 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
           
         }}
       >
-        {isHindi ? 'आगे · अगले 15 दिन' : 'Coming up · next 15 days'}
+              {t('common.comingUp')}
       </Typography>
 
       <Box
@@ -386,10 +386,10 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
               <PartyPopper size={24} strokeWidth={1.5} color={muiTheme.palette.primary.main} />
             </Box>
             <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 400 }}>
-              {isHindi ? 'आगे · अगले 15 दिन' : 'Coming up · next 15 days'}
+        {t('common.comingUp')}
             </Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              {isHindi ? 'त्योहार और व्रत खोजें' : 'Search festivals & vrats'}
+        {t('common.searchTitle')}
             </Typography>
           </Box>
         )}
@@ -463,7 +463,7 @@ export const SearchUpcoming: React.FC<SearchUpcomingProps> = ({ onFestivalOpen }
                   whiteSpace: 'nowrap',
                 }}
               >
-                {relativeDayText(daysUntil(new Date(), day.date), isHindi)}
+                {relativeDayText(daysUntil(new Date(), day.date), t)}
               </Typography>
             </Box>
           );

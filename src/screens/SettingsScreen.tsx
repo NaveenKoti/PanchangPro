@@ -208,8 +208,8 @@ export default function SettingsScreen() {
       setSnackbar({
         open: true,
         message: pushStatus === 'unconfigured'
-          ? (isHindi ? 'पुश अभी सेटअप नहीं है' : 'Push is not set up yet')
-          : (isHindi ? 'इस डिवाइस पर समर्थित नहीं' : 'Not supported on this device'),
+          ? t('settings.pushNotSetup')
+          : t('settings.pushUnsupported'),
         severity: 'info',
       });
       return;
@@ -221,7 +221,7 @@ export default function SettingsScreen() {
       setSnackbar({
         open: true,
         message: result.ok
-          ? (isHindi ? 'बंद ऐप रिमाइंडर बंद' : 'Killed-app reminders off')
+          ? t('settings.killedAppOff')
           : (result.error || 'Error'),
         severity: result.ok ? 'success' : 'error',
       });
@@ -236,7 +236,7 @@ export default function SettingsScreen() {
       setSnackbar({
         open: true,
         message: result.ok
-          ? (isHindi ? 'बंद ऐप रिमाइंडर चालू' : 'Killed-app reminders on')
+          ? t('settings.killedAppOn')
           : (result.error || 'Error'),
         severity: result.ok ? 'success' : 'error',
       });
@@ -249,11 +249,11 @@ export default function SettingsScreen() {
     const latNum = lat.trim() === '' ? NaN : Number(lat);
     const lngNum = lng.trim() === '' ? NaN : Number(lng);
     if (lat.trim() === '' || lng.trim() === '' || isNaN(latNum) || isNaN(lngNum)) {
-      setCoordsError(isHindi ? 'अक्षांश और देशांतर दोनों संख्याओं में भरें' : 'Enter both latitude and longitude as numbers');
+      setCoordsError(t('settings.coordsEmptyError'));
       return;
     }
     if (latNum < -90 || latNum > 90 || lngNum < -180 || lngNum > 180) {
-      setCoordsError(isHindi ? 'अक्षांश ±90 और देशांतर ±180 के भीतर होना चाहिए' : 'Latitude must be within ±90 and longitude within ±180');
+      setCoordsError(t('settings.coordsRangeError'));
       return;
     }
     setCoordsError('');
@@ -532,11 +532,11 @@ export default function SettingsScreen() {
                   <Bell size={20} color={pushStatus === 'on' ? muiTheme.palette.info.main : muiTheme.palette.text.disabled} />
                 </ListItemIcon>
                 <ListItemText
-                  primary={isHindi ? 'बंद ऐप रिमाइंडर (पुश)' : 'Killed-app reminders (push)'}
+                  primary={t('settings.killedAppReminders')}
                   secondary={
                     pushStatus === 'on' ? t('common.enabled')
-                      : pushStatus === 'unconfigured' ? (isHindi ? 'अभी सेटअप नहीं है' : 'Not set up yet')
-                      : pushStatus === 'unsupported' ? (isHindi ? 'इस डिवाइस पर समर्थित नहीं' : 'Not supported on this device')
+                      : pushStatus === 'unconfigured' ? t('settings.notSetupYet')
+                      : pushStatus === 'unsupported' ? t('settings.notSupportedDevice')
                       : t('common.disabled')
                   }
                 />
@@ -552,9 +552,7 @@ export default function SettingsScreen() {
               </ListItem>
               <Box sx={{ px: 2, py: 1 }}>
                 <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.6, display: 'block' }}>
-                  {isHindi
-                    ? 'ऐप-खुले रिमाइंडर के लिए ऐप खुला रखें; बंद-ऐप रिमाइंडर के लिए नीचे वाली पुश पंक्ति चालू करें।'
-                    : 'In-app reminders need the app open; push needs the killed-app row enabled.'}
+                  {t('settings.reminderNote')}
                 </Typography>
               </Box>
             </List>
@@ -664,8 +662,8 @@ export default function SettingsScreen() {
                   <Lock size={20} color={muiTheme.palette.info.main} />
                 </ListItemIcon>
                 <ListItemText
-                  primary={isHindi ? 'गोपनीयता' : 'Privacy'}
-                  secondary={isHindi ? 'आपका डेटा कहाँ रहता है' : 'Where your data stays'}
+                  primary={t('settings.privacyTitle')}
+                  secondary={t('settings.privacySubtitle')}
                 />
               </ListItem>
             </List>
@@ -682,7 +680,7 @@ export default function SettingsScreen() {
         <DialogTitle sx={{ fontWeight: 500 }}>
           {t('settings.enterManual')}
           <IconButton
-            aria-label={isHindi ? 'बंद करें' : 'Close'}
+            aria-label={t('common.close')}
             onClick={() => { setCoordsError(''); setManualCoords(false); }}
             sx={{ position: 'absolute', right: 16, top: 16 }}
           >
@@ -735,7 +733,7 @@ export default function SettingsScreen() {
         <DialogTitle sx={{ fontWeight: 500, textAlign: 'center' }}>
           🙏 {t('common.appName')}
           <IconButton
-            aria-label={isHindi ? 'बंद करें' : 'Close'}
+            aria-label={t('common.close')}
             onClick={() => setAboutDialog(false)}
             sx={{ position: 'absolute', right: 16, top: 16 }}
           >
@@ -747,15 +745,13 @@ export default function SettingsScreen() {
             {t('settings.aboutContent') || 'Your complete Hindu calendar companion'}
           </Typography>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-            {isHindi
-              ? 'कोई खाता नहीं, कोई लॉगिन नहीं — सब कुछ आपके फ़ोन पर रहता है।'
-              : 'No account, no login — everything stays on your phone.'}
+            {t('settings.noAccountNote')}
           </Typography>
           <Typography variant="caption" color="text.secondary">
             Version 3.8.0
           </Typography>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
-            {isHindi ? 'निर्माता: नवीन कोटि' : 'Created by Naveen Koti'}
+            {t('settings.createdBy')}
           </Typography>
           <Button
             component="a"
@@ -764,13 +760,13 @@ export default function SettingsScreen() {
             startIcon={<Mail size={16} />}
             sx={{ borderRadius: 1, mt: 1.5 }}
           >
-            {isHindi ? 'प्रतिक्रिया भेजें' : 'Send feedback'}
+            {t('settings.sendFeedback')}
           </Button>
 
           {/* Permanent glossary reference — same copy as onboarding */}
           <Divider sx={{ my: 2 }} />
           <Typography variant="subtitle2" sx={{ fontWeight: 500, textAlign: 'left', mb: 1 }}>
-            {isHindi ? 'पंचांग के अंग — क्या है?' : 'Parts of the Panchang — what do they mean?'}
+            {t('settings.glossaryTitle')}
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, textAlign: 'left' }}>
             {PANCHANG_GLOSSARY.map((entry) => (
@@ -803,9 +799,9 @@ export default function SettingsScreen() {
         PaperProps={{ sx: { borderRadius: 1, p: 2 } }}
       >
         <DialogTitle sx={{ fontWeight: 500, textAlign: 'center' }}>
-          {isHindi ? 'गोपनीयता' : 'Privacy'}
+          {t('settings.privacyTitle')}
           <IconButton
-            aria-label={isHindi ? 'बंद करें' : 'Close'}
+            aria-label={t('common.close')}
             onClick={() => setPrivacyDialog(false)}
             sx={{ position: 'absolute', right: 16, top: 16 }}
           >
@@ -814,9 +810,7 @@ export default function SettingsScreen() {
         </DialogTitle>
         <DialogContent>
           <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
-            {isHindi
-              ? 'आपकी तिथियाँ, रिमाइंडर और सेटिंग्स आपके डिवाइस पर (स्थानीय संग्रहण में) रहती हैं — कोई खाता नहीं, कोई लॉगिन नहीं। विश्लेषण, यदि कोई हो, केवल स्थानीय है। सूर्योदय का समय निकालने के लिए आपका स्थान आपके डिवाइस पर ही उपयोग होता है। एकमात्र नेटवर्क अनुरोध आपके शहर का नाम जानने के लिए OpenStreetMap से एक बार का मानचित्र अनुरोध है। ऐप खुला रहने पर रिमाइंडर चलते हैं।'
-              : 'Your tithis, reminders and settings stay on your device (local storage) — no account, no login. Analytics, if any, are local-only. Your location is used on-device to compute sunrise timings. The only network call is a one-time map lookup to OpenStreetMap to name your city. Reminders fire while the app is open.'}
+            {t('settings.privacyBody')}
           </Typography>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2, justifyContent: 'center' }}>
@@ -839,7 +833,7 @@ export default function SettingsScreen() {
         <DialogTitle sx={{ fontWeight: 500 }}>
           {t('invite.familyMember')}
           <IconButton
-            aria-label={isHindi ? 'बंद करें' : 'Close'}
+            aria-label={t('common.close')}
             onClick={() => setInviteDialog(false)}
             sx={{ position: 'absolute', right: 16, top: 16 }}
           >

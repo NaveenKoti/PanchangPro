@@ -9,7 +9,7 @@
  * - Ad integration
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import {
   Box,
   Typography,
@@ -122,6 +122,14 @@ export const MyTithisScreen: React.FC = () => {
   // of knowing the tithi — resolved summary shown under the picker.
   const [pickDate, setPickDate] = useState('');
   const [pickedSummary, setPickedSummary] = useState<string | null>(null);
+  // Shraddha flow: death date (one-way → tithi) + optional Pitru Paksha
+  // (Mahalaya) companion. A manually entered Paksha date never derives
+  // anything back — not back-trackable by design.
+  const [deathDate, setDeathDate] = useState('');
+  const [addPitru, setAddPitru] = useState(true);
+  const isShraddha =
+    formData.name.trim().toLowerCase() === 'shraddha' ||
+    formData.name.includes('श्राद्ध');
 
   const handlePickDate = (value: string) => {
     setPickDate(value);
@@ -156,6 +164,49 @@ export const MyTithisScreen: React.FC = () => {
       setPickedSummary(null);
     }
   };
+
+  // Shraddha death-date: one-way derivation — resolves the tithi (annual
+  // Shraddha follows automatically via recurring match) and previews the
+  // next annual + Pitru Paksha dates. Never runs in reverse.
+  const handleDeathDate = (value: string) => {
+    setDeathDate(value);
+    handlePickDate(value);
+  };
+
+  // Previews for the Shraddha section, recomputed from the form tithi.
+  const shraddhaPreview = useMemo(() => {
+    if (!isShraddha) return { annual: null as Date | null, pitru: null as Date | null };
+    const tn = Number(formData.tithiNumber);
+    const pk = formData.paksha as 'Shukla' | 'Krishna';
+    if (!tn || tn < 1 || tn > 15) return { annual: null, pitru: null };
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let annual: Date | null = null;
+    for (let off = 0; off < 400 && !annual; off++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() + off);
+      try {
+        const p = calculatePanchang(d);
+        if (p.tithi.number === tn && p.tithi.paksha === pk) annual = new Date(d);
+      } catch {
+        break;
+      }
+    }
+    let pitru: Date | null = null;
+    for (let y = today.getFullYear(); y <= today.getFullYear() + 1 && !pitru; y++) {
+      for (let d = new Date(y, 8, 1); d <= new Date(y, 9, 31) && !pitru; d.setDate(d.getDate() + 1)) {
+        if (d < today) continue;
+        try {
+          const p = calculatePanchang(d);
+          if (p.tithi.number === tn && p.tithi.paksha === pk) pitru = new Date(d);
+        } catch {
+          break;
+        }
+      }
+    }
+    return { annual, pitru };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isShraddha, formData.tithiNumber, formData.paksha]);
 
   // Sacred times render in the LOCATION timezone (never the device default):
   // engine instants are untouched; only this display formatter threads
@@ -210,6 +261,8 @@ export const MyTithisScreen: React.FC = () => {
     // Reset the date-picker helper (edit mode pre-fills it from customDate).
     setPickDate(tithi?.customDate ? new Date(tithi.customDate).toISOString().split('T')[0] : '');
     setPickedSummary(null);
+    setDeathDate('');
+    setAddPitru(true);
     if (tithi) {
       setEditing(tithi);
       setFormData({
@@ -278,6 +331,17 @@ export const MyTithisScreen: React.FC = () => {
       updateCustomTithi(editing.id, data);
     } else {
       addCustomTithi(data);
+      // Shraddha one-way flow: optional Pitru Paksha (Mahalaya) companion
+      // derived from the same tithi. Never runs in reverse.
+      if (isShraddha && addPitru) {
+        addCustomTithi({
+          ...data,
+          name: `${formData.name.trim()} (${t('myTithis.pitruChip') || 'Pitru Paksha'})`,
+          isRecurring: true,
+          customDate: undefined,
+          pitruPaksha: true,
+        });
+      }
     }
     if (data.reminderEnabled) {
       showMessage(t('myTithis.reminderSet') || 'Reminder scheduled', 'success');
@@ -584,6 +648,19 @@ export const MyTithisScreen: React.FC = () => {
                               }}
                             />
                           )}
+                          {tithi.pitruPaksha && (
+                            <Chip
+                              label={t('myTithis.pitruChip') || 'Pitru Paksha'}
+                              size="small"
+                              sx={{
+                                fontSize: '0.65rem',
+                                fontWeight: 500,
+                                bgcolor: 'info.light',
+                                color: 'info.main',
+                                height: 22,
+                              }}
+                            />
+                          )}
                         </Box>
 
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
@@ -865,6 +942,52 @@ export const MyTithisScreen: React.FC = () => {
                 </Typography>
               )}
             </Box>
+
+            {/* Shraddha: death date (one-way tithi derivation) + optional
+                Pitru Paksha companion. Shown for new Shraddha entries only —
+                a manually entered Paksha date never derives anything back. */}
+            {isShraddha && !editing && (
+              <Box sx={{ mb: 2, p: 1.5, borderRadius: 1.5, bgcolor: 'action.hover' }}>
+                <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
+                  {t('myTithis.deathDate') || 'Date of death'}
+                </Typography>
+                <TextField
+                  fullWidth
+                  type="date"
+                  value={deathDate}
+                  onChange={(e) => handleDeathDate(e.target.value)}
+                  sx={{ bgcolor: 'background.paper', borderRadius: 1 }}
+                  inputProps={{ 'aria-label': t('myTithis.deathDate') || 'Date of death' }}
+                  helperText={t('myTithis.deathDateHelp') || 'Tithi is derived once from this date'}
+                />
+                {shraddhaPreview.annual && (
+                  <Typography variant="body2" color="primary.main" sx={{ mt: 1, fontWeight: 500, lineHeight: 1.6 }}>
+                    {(t('myTithis.annualOn') || 'Annual: {date}').replace(
+                      '{date}',
+                      shraddhaPreview.annual.toLocaleDateString(isHindi ? 'hi-IN' : undefined, { day: 'numeric', month: 'long', year: 'numeric' })
+                    )}
+                  </Typography>
+                )}
+                {shraddhaPreview.pitru && (
+                  <Typography variant="body2" color="primary.main" sx={{ fontWeight: 500, lineHeight: 1.6 }}>
+                    {(t('myTithis.pitruOn') || 'Pitru Paksha: {date}').replace(
+                      '{date}',
+                      shraddhaPreview.pitru.toLocaleDateString(isHindi ? 'hi-IN' : undefined, { day: 'numeric', month: 'long', year: 'numeric' })
+                    )}
+                  </Typography>
+                )}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                  <Switch
+                    checked={addPitru}
+                    onChange={(e) => setAddPitru(e.target.checked)}
+                    inputProps={{ 'aria-label': t('myTithis.addPitru') || 'Also add Pitru Paksha event' }}
+                  />
+                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                    {t('myTithis.addPitru') || 'Also add Pitru Paksha (Mahalaya) event'}
+                  </Typography>
+                </Box>
+              </Box>
+            )}
 
             {/* Date Selection — Tithi full-width (names like Purnima/Amavasya
                 must never truncate), Paksha + Month side by side below. */}

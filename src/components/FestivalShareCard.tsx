@@ -127,7 +127,7 @@ export const FestivalShareCard: React.FC<FestivalShareCardProps> = ({
   tithiInfo,
   dateStr,
 }) => {
-  const { currentLanguage } = useI18n();
+  const { t, currentLanguage } = useI18n();
   const theme = useTheme();
   const isHindi = currentLanguage === 'hi';
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -536,8 +536,8 @@ export const FestivalShareCard: React.FC<FestivalShareCardProps> = ({
     link.href = imageUrl;
     link.click();
 
-    setShareMessage(isHindi ? 'त्योहार कार्ड डाउनलोड हुआ!' : 'Festival card downloaded!');
-  }, [generatedImage, drawFestivalCard, festival, isStory, isHindi]);
+    setShareMessage(t('common.festivalCardDownloaded'));
+  }, [generatedImage, drawFestivalCard, festival, isStory, t]);
 
   const handleCopyToClipboard = useCallback(async () => {
     const imageUrl = generatedImage || drawFestivalCard();
@@ -549,12 +549,12 @@ export const FestivalShareCard: React.FC<FestivalShareCardProps> = ({
       await navigator.clipboard.write([
         new ClipboardItem({ 'image/png': blob })
       ]);
-      setShareMessage(isHindi ? 'क्लिपबोर्ड पर कॉपी किया!' : 'Copied to clipboard!');
+      setShareMessage(t('common.copiedToClipboard'));
     } catch {
       // Fallback to download
       handleDownload();
     }
-  }, [generatedImage, drawFestivalCard, handleDownload, isHindi]);
+  }, [generatedImage, drawFestivalCard, handleDownload, t]);
 
   const handleShare = useCallback(async () => {
     if (!festival) return;
@@ -579,7 +579,7 @@ Shared from VedaTime - vedatime.app`;
             text: shareText,
             files: [file]
           });
-          setShareMessage(isHindi ? 'सफलतापूर्वक शेयर किया!' : 'Shared successfully!');
+          setShareMessage(t('common.shareSuccess'));
           return;
         }
       } catch {
@@ -594,15 +594,15 @@ Shared from VedaTime - vedatime.app`;
           title: festival.name,
           text: shareText
         });
-        setShareMessage(isHindi ? 'सफलतापूर्वक शेयर किया!' : 'Shared successfully!');
+        setShareMessage(t('common.shareSuccess'));
       } catch {
         // User cancelled
       }
     } else {
       await navigator.clipboard.writeText(shareText);
-      setShareMessage(isHindi ? 'विवरण कॉपी किए!' : 'Details copied to clipboard!');
+      setShareMessage(t('common.detailsCopied'));
     }
-  }, [festival, tithiInfo, dateStr, generatedImage, drawFestivalCard, isHindi]);
+  }, [festival, tithiInfo, dateStr, generatedImage, drawFestivalCard, t]);
 
   // Reset state when dialog opens
   useEffect(() => {
@@ -650,7 +650,7 @@ Shared from VedaTime - vedatime.app`;
         <Box sx={{ width: 32, height: 32, borderRadius: 1, bgcolor: alpha(theme.palette.primary.main, 0.08), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <Share size={18} strokeWidth={1.5} color={theme.palette.primary.main} />
         </Box>
-        {isHindi ? 'त्योहार साझा करें' : 'Share Festival'}
+        {t('common.shareFestival')}
         <IconButton
           onClick={onClose}
           aria-label="Close share card"
@@ -722,7 +722,7 @@ Shared from VedaTime - vedatime.app`;
               sx={{ bgcolor: alpha(theme.palette.primary.main, 0.06), borderRadius: 1 }}
             >
               <ToggleButton value="standard" sx={{ px: 1.5, borderRadius: 2, minHeight: 36 }}>
-                {isHindi ? 'स्क्वायर' : 'Square'}
+                {t('common.square')}
               </ToggleButton>
               <ToggleButton value="story" sx={{ px: 1.5, borderRadius: 2, minHeight: 36 }}>
                 <Smartphone size={14} style={{ marginRight: 4 }} />
@@ -742,11 +742,11 @@ Shared from VedaTime - vedatime.app`;
             >
               <ToggleButton value="light" sx={{ px: 1.5, borderRadius: 2, minHeight: 36 }}>
                 <Sun size={14} style={{ marginRight: 4 }} />
-                {isHindi ? 'लाइट' : 'Light'}
+                {t('theme.light')}
               </ToggleButton>
               <ToggleButton value="dark" sx={{ px: 1.5, borderRadius: 2, minHeight: 36 }}>
                 <Moon size={14} style={{ marginRight: 4 }} />
-                {isHindi ? 'डार्क' : 'Dark'}
+                {t('theme.dark')}
               </ToggleButton>
             </ToggleButtonGroup>
           </Box>
@@ -792,7 +792,7 @@ Shared from VedaTime - vedatime.app`;
               '&:hover': { bgcolor: 'primary.dark' },
             }}
           >
-            {isHindi ? 'डाउनलोड' : 'Download'}
+            {t('common.download')}
           </Button>
           <Button
             variant="outlined"
@@ -805,7 +805,7 @@ Shared from VedaTime - vedatime.app`;
               fontWeight: 500,
             }}
           >
-            {isHindi ? 'कॉपी' : 'Copy'}
+            {t('common.copy')}
           </Button>
           <Button
             variant="outlined"
@@ -835,9 +835,7 @@ Shared from VedaTime - vedatime.app`;
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Typography variant="caption" color="text.secondary">
-          {isHindi
-            ? 'त्योहार कार्ड डाउनलोड करें या साझा करें'
-            : 'Download or share the festival card'}
+          {t('common.downloadShareFestivalCard')}
         </Typography>
       </DialogActions>
     </Dialog>
