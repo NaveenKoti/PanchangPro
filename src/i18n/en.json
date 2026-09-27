@@ -348,7 +348,8 @@
     "backupNever": "Back up your tithis? One tap keeps them safe.",
     "backupStale": "Backup is {days} days old — export a fresh copy?",
     "backupLater": "Later",
-    "backupDone": "Backup saved — replaces the old one"
+    "backupDone": "Backup saved — replaces the old one",
+    "annual": "Annual"
   },
   "about": {
     "title": "About VedaTime",

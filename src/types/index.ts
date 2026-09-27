@@ -157,6 +157,7 @@ export interface Panchang {
   samvatsara?: string; // Hindu year name (60-year cycle)
   isAuspiciousTime?: boolean;
   lunarMonth?: number; // Hindu lunar month (1=Chaitra, 12=Phalguna)
+  amantaMonth?: number | null; // True amanta lunar month (differs from sun-sign lunarMonth near sankranti)
   sankranti?: SankrantiInfo | null; // Solar ingress if one occurs this day, else null
   adhikMaas?: AdhikMaasInfo | null; // Non-null only in Adhik/Kshaya lunar months
 }
@@ -198,6 +199,14 @@ export interface CustomTithi {
   reminderDaysBefore?: number; // Days before to remind (0-7, 0 = on the day)
   nextOccurrence?: Date; // Calculated next occurrence date
   createdAt: Date;
+  /**
+   * Annual recurrence (Shraddha): the same tithi+paksha in the SAME lunar
+   * month each year (~12 months apart). Without this flag, recurring
+   * entries match every lunar month (correct for fastings/vrats, wrong for
+   * Shraddha). Absent (undefined) preserves the legacy monthly behavior so
+   * pre-existing entries never change meaning.
+   */
+  annual?: boolean;
   /**
    * Pitru Paksha (Mahalaya) companion: matched ONLY inside the Sep 1–Oct 31
    * window (one occurrence per year). One-way derivation: created from a

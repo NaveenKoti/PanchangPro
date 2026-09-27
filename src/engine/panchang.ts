@@ -205,6 +205,7 @@ export class PanchangEngine {
       dinacharya,
       samvatsara: this.calculateSamvatsara(localDate),
       lunarMonth,
+      amantaMonth,
       sankranti,
       adhikMaas
     };

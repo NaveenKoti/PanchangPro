@@ -1,10 +1,11 @@
 /**
- * Shraddha one-way flow: death date -> tithi (annual, recurring) + optional
- * Pitru Paksha companion matched ONLY in the Sep-Oct Mahalaya window.
- * Ground truth: death 2023-03-10 (Krishna Tritiya) -> annual Mar 6 2026,
- * Mar 25 2027; Pitru Paksha Sep 29 2026 (user-reported example).
+ * Shraddha annual matching + Pitru Paksha companion.
+ *
+ * Ground truth (user-reported example, engine-verified): death 2023-03-10
+ * (Krishna Tritiya) -> annual Mar 6 2026, Mar 25 2027; Pitru Paksha Sep 29
+ * 2026. Fake timers pin "today" so these never rot.
  */
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { useAppStore } from '../../stores/appStore';
 
 const MUMBAI = {
@@ -14,29 +15,62 @@ const MUMBAI = {
   name: 'Mumbai',
 };
 
-describe('Shraddha Pitru Paksha companion', () => {
+const BASE = {
+  name: 'Test',
+  nameHindi: '',
+  tithiNumber: 3,
+  paksha: 'Krishna' as const,
+  month: 11, // Phalguna (0-based; engine lunarMonth 12)
+  isRecurring: true,
+  notes: '',
+  reminderEnabled: false,
+  reminderTime: '06:00',
+  reminderDaysBefore: 1,
+};
+
+describe('Shraddha annual matching', () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 26, 12, 0, 0));
     useAppStore.setState((s) => ({
       preferences: { ...s.preferences, location: MUMBAI },
       customTithis: [],
     }));
   });
 
-  it('matches Krishna Tritiya inside Sep-Oct 2026 (Sep 29)', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('annual entry fires ~yearly in the same amanta lunar month (Mar 25 2027, not Feb 23)', () => {
+    // Fake today is Sep 26 2026, so Mar 6 2026 is past: first hit must be
+    // Mar 25 2027 (amanta Phalguna) — NOT Feb 23 2027 (amanta Magha), which
+    // a sun-sign month gate would wrongly pick.
     const store = useAppStore.getState();
-    store.addCustomTithi({
-      name: 'Test (Pitru Paksha)',
-      nameHindi: '',
-      tithiNumber: 3,
-      paksha: 'Krishna',
-      month: 6,
-      isRecurring: true,
-      notes: '',
-      reminderEnabled: false,
-      reminderTime: '06:00',
-      reminderDaysBefore: 1,
-      pitruPaksha: true,
-    });
+    store.addCustomTithi({ ...BASE, annual: true });
+    const id = useAppStore.getState().customTithis[0].id;
+    const occ = useAppStore.getState().getNextOccurrences(id);
+    expect(occ.length).toBeGreaterThan(0);
+    expect([occ[0].getFullYear(), occ[0].getMonth(), occ[0].getDate()]).toEqual([2027, 2, 25]);
+    if (occ.length > 1) {
+      const gapDays = (occ[1].getTime() - occ[0].getTime()) / 86_400_000;
+      expect(gapDays).toBeGreaterThan(300);
+    }
+  });
+
+  it('monthly entry (no annual flag) fires every lunar month', () => {
+    const store = useAppStore.getState();
+    store.addCustomTithi({ ...BASE });
+    const id = useAppStore.getState().customTithis[0].id;
+    const occ = useAppStore.getState().getNextOccurrences(id);
+    expect(occ.length).toBeGreaterThan(1);
+    const gapDays = (occ[1].getTime() - occ[0].getTime()) / 86_400_000;
+    expect(gapDays).toBeLessThan(40);
+  });
+
+  it('Pitru Paksha companion matches inside Sep-Oct 2026 (Sep 29)', () => {
+    const store = useAppStore.getState();
+    store.addCustomTithi({ ...BASE, month: 6, pitruPaksha: true });
     const id = useAppStore.getState().customTithis[0].id;
     const occ = useAppStore.getState().getNextOccurrences(id);
     expect(occ.length).toBeGreaterThan(0);
@@ -46,21 +80,9 @@ describe('Shraddha Pitru Paksha companion', () => {
     expect(first.getDate()).toBe(29);
   });
 
-  it('does not match outside the Mahalaya window', () => {
+  it('Pitru Paksha matches nothing outside the Mahalaya window', () => {
     const store = useAppStore.getState();
-    store.addCustomTithi({
-      name: 'Test (Pitru Paksha)',
-      nameHindi: '',
-      tithiNumber: 3,
-      paksha: 'Krishna',
-      month: 6,
-      isRecurring: true,
-      notes: '',
-      reminderEnabled: false,
-      reminderTime: '06:00',
-      reminderDaysBefore: 1,
-      pitruPaksha: true,
-    });
+    store.addCustomTithi({ ...BASE, month: 6, pitruPaksha: true });
     const id = useAppStore.getState().customTithis[0].id;
     const occ = useAppStore.getState().getNextOccurrences(id);
     for (const d of occ) {

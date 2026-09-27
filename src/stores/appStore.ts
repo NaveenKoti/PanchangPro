@@ -71,7 +71,13 @@ const calculateNextOccurrences = (tithi: CustomTithi, location: GeoLocation): Da
 
   // Start searching from today, scan up to ~6 months to find 5 occurrences
   // (a lunar month is ~29.5 days, so 5 occurrences fit within ~5 lunar months)
-  const maxSearchDays = 180; // ~6 months
+  // Annual entries (Shraddha) scan ~13 months for the same tithi+paksha in
+  // the SAME amanta lunar month (entry.month is 0-based; amanta 1-based).
+  // Amanta — not the sun-sign month — so boundary months resolve correctly
+  // (Krishna Tritiya 2027: amanta Phalguna Mar 25, not solar-Chaitra... and
+  // not amanta-Magha Feb 23). Falls back to the legacy month on null.
+  const isAnnual = tithi.isRecurring && tithi.annual === true;
+  const maxSearchDays = isAnnual ? 400 : 180; // ~6 months
   const targetTithiNumber = tithi.tithiNumber;
   const targetPaksha = tithi.paksha;
 
@@ -84,7 +90,9 @@ const calculateNextOccurrences = (tithi: CustomTithi, location: GeoLocation): Da
     // Check if this date has the target tithi at sunrise (Udaya Tithi)
     if (
       panchang.tithi.number === targetTithiNumber &&
-      panchang.tithi.paksha === targetPaksha
+      panchang.tithi.paksha === targetPaksha &&
+      (!isAnnual ||
+        (engine.getAmantaMonthNumber(candidateDate) ?? panchang.lunarMonth) === tithi.month + 1)
     ) {
       occurrences.push(new Date(candidateDate));
     }
@@ -288,7 +296,7 @@ export const useAppStore = create<AppState>()(
               const updated = { ...t, ...data };
               // Recalculate next occurrences if anything date-affecting changed
               // (use !== undefined: month 0 = Chaitra and isRecurring false are valid)
-              if (data.tithiNumber !== undefined || data.paksha !== undefined || data.isRecurring !== undefined || data.month !== undefined || data.customDate !== undefined || data.reminderDaysBefore !== undefined || data.pitruPaksha !== undefined) {
+              if (data.tithiNumber !== undefined || data.paksha !== undefined || data.isRecurring !== undefined || data.month !== undefined || data.customDate !== undefined || data.reminderDaysBefore !== undefined || data.pitruPaksha !== undefined || data.annual !== undefined) {
                 updated.nextOccurrence = calculateNextOccurrences(updated, preferences.location)[0];
               }
               // Reschedule notification if reminder settings changed

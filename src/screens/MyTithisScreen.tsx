@@ -149,12 +149,12 @@ export const MyTithisScreen: React.FC = () => {
         ...f,
         tithiNumber: p.tithi.number,
         paksha: p.tithi.paksha,
-        month: (p.lunarMonth ?? 1) - 1,
+        month: ((p.amantaMonth ?? p.lunarMonth) ?? 1) - 1,
         customDate: value,
       }));
       const monthName = isHindi
-        ? LUNAR_MONTHS_HINDI[(p.lunarMonth ?? 1) - 1]
-        : LUNAR_MONTHS[(p.lunarMonth ?? 1) - 1];
+        ? LUNAR_MONTHS_HINDI[((p.amantaMonth ?? p.lunarMonth) ?? 1) - 1]
+        : LUNAR_MONTHS[((p.amantaMonth ?? p.lunarMonth) ?? 1) - 1];
       const tithiName = isHindi ? p.tithi.nameHindi : p.tithi.name;
       setPickedSummary(
         isHindi
@@ -331,14 +331,18 @@ export const MyTithisScreen: React.FC = () => {
     if (editing) {
       updateCustomTithi(editing.id, data);
     } else {
-      addCustomTithi(data);
+      // Shraddha is annual (same lunar month each year); fastings/vrats
+      // stay monthly. The flag is set only here — never inferred back.
+      const isShraddhaSave = isShraddha;
+      addCustomTithi(isShraddhaSave ? { ...data, annual: true } : data);
       // Shraddha one-way flow: optional Pitru Paksha (Mahalaya) companion
       // derived from the same tithi. Never runs in reverse.
-      if (isShraddha && addPitru) {
+      if (isShraddhaSave && addPitru) {
         addCustomTithi({
           ...data,
           name: `${formData.name.trim()} (${t('myTithis.pitruChip') || 'Pitru Paksha'})`,
           isRecurring: true,
+          annual: true,
           customDate: undefined,
           pitruPaksha: true,
         });
@@ -650,6 +654,19 @@ export const MyTithisScreen: React.FC = () => {
                                 fontWeight: 500,
                                 bgcolor: 'info.light',
                                 color: 'info.main',
+                                height: 22,
+                              }}
+                            />
+                          )}
+                          {tithi.annual && !tithi.pitruPaksha && (
+                            <Chip
+                              label={t('myTithis.annual') || 'Annual'}
+                              size="small"
+                              sx={{
+                                fontSize: '0.65rem',
+                                fontWeight: 500,
+                                bgcolor: 'warning.light',
+                                color: 'warning.dark',
                                 height: 22,
                               }}
                             />
