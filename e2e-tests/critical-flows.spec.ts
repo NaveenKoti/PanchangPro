@@ -133,10 +133,26 @@ test.describe('Critical User Flows', () => {
 
   test.describe('Calendar Screen', () => {
     test.beforeEach(async ({ page }) => {
-      // Navigate to Calendar from Today screen
+      // Navigate to Calendar from Today screen (lands on Week by default)
       const calendarBtn = page.getByRole('button', { name: /calendar/i });
       await calendarBtn.click();
       await page.waitForTimeout(2000);
+      // Month-dependent tests below: switch from default Week to Month grid
+      await page.getByRole('tab', { name: /^month/i }).click();
+      await page.waitForTimeout(800);
+    });
+
+    test('should default to week view', async ({ page }) => {
+      await page.getByRole('tab', { name: /week/i }).click();
+      const weekTab = page.getByRole('tab', { name: /week/i });
+      await expect(weekTab).toHaveAttribute('aria-selected', 'true');
+    });
+
+    test('should switch to month grid view', async ({ page }) => {
+      await page.getByRole('tab', { name: /^month/i }).click();
+      await page.waitForTimeout(800);
+      const monthHeader = page.locator('text=/January|February|March|April|May|June|July|August|September|October|November|December/').first();
+      await expect(monthHeader).toBeVisible({ timeout: 10000 });
     });
 
     test('should display calendar grid with dates', async ({ page }) => {

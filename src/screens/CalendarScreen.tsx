@@ -77,7 +77,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  direction: null,
  velocity: 0,
  });
-  const [viewMode, setViewMode] = useState<'month' | 'week'>('month');
+  const [viewMode, setViewMode] = useState<'month' | 'week'>('week');
   const [monthTransition, setMonthTransition] = useState<'none' | 'left' | 'right'>('none');
   const isHindi = currentLanguage === 'hi';
 
@@ -313,19 +313,12 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
  return date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
  };
 
-  const calendarCellMinHeight = isTablet ? 72 : 88;
+  const calendarCellMinHeight = isMobile ? 64 : isTablet ? 72 : 88;
   const calendarCellPadding = isTablet ? 0.75 : 1;
   const dayNumberFontSize = isTablet ? '0.9rem' : '1rem';
   const tithiTextFontSize = isTablet ? '0.6rem' : '0.7rem';
   const festivalTextFontSize = isTablet ? '0.55rem' : '0.65rem';
 
-  // Agenda for xs: every day of the DISPLAYED month as rows (replaces the
-  // crushed 7-col grid). No today-filter, no slice: filtering to upcoming
-  // days emptied past months entirely (nothing to tap = "day details don't
-  // work" on phones) and hid most of future months. The page scrolls.
-  const agendaDays = useMemo(() => {
-    return [...calendarDays].sort((a, b) => a.date.getTime() - b.date.getTime());
-  }, [calendarDays]);
 
  const monthAnimation = useSpring({
  transform: monthTransition === 'left' ? 'translateX(-100%)' :
@@ -489,7 +482,6 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   />
   ) : (
   <>
-  {!isMobile && (
   <Box
   sx={{
   display: 'grid',
@@ -497,8 +489,8 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   bgcolor: alpha(muiTheme.palette.primary.main, 0.03),
  borderBottom: '1px solid',
  borderBottomColor: 'divider',
- }}
- >
+  }}
+  >
   {getWeekdays().map((day, index) => (
   <Box
   key={index}
@@ -521,97 +513,7 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   </Box>
   ))}
   </Box>
-  )}
 
-  {isMobile ? (
-  <Box
-  sx={{
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 0.75,
-  p: 1,
-  width: '100%',
-  boxSizing: 'border-box',
-  }}
-  >
-  {agendaDays.map((day) => {
-  const tithiName = day.panchang.tithi.name;
-  const tithiColors = getTithiColors(tithiName, day);
-  const isSelected =
-  selectedDay?.date.toDateString() === day.date.toDateString();
-  const festivalName = day.panchang?.festivals?.[0]?.name || '';
-  return (
-  <Paper
-  key={day.date.toISOString()}
-  onClick={() => handleDayClick(day)}
-  elevation={0}
-  role="button"
-  tabIndex={0}
-  aria-label={`${day.date.getDate()} ${day.panchang.tithi.name}`}
-  aria-pressed={isSelected}
-  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleDayClick(day); }}
-  sx={{
-  display: 'flex',
-  alignItems: 'center',
-  gap: 1.25,
-  p: 1,
-  minHeight: 48,
-  width: '100%',
-  boxSizing: 'border-box',
-  borderRadius: 1,
-  cursor: 'pointer',
-  bgcolor: isSelected
-  ? alpha(muiTheme.palette.primary.main, 0.19)
-  : day.isToday
-  ? alpha(muiTheme.palette.primary.main, 0.10)
-  : tithiColors.bg,
-  border: isSelected || day.isToday
-  ? `2px solid ${muiTheme.palette.primary.main}`
-  : `1px solid ${tithiColors.borderColor}`,
-  }}
-  >
-  <Box
-  sx={{
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  minWidth: 48,
-  minHeight: 48,
-  justifyContent: 'center',
-  flexShrink: 0,
-  }}
-  >
-  <Typography sx={{ fontWeight: 500, fontSize: '1rem', lineHeight: 1.2, color: 'text.primary' }}>
-  {day.date.getDate()}
-  </Typography>
-  <Typography sx={{ fontSize: '0.65rem', color: 'text.secondary', lineHeight: 1.2 }}>
-  {day.date.toLocaleDateString('en-IN', { month: 'short' })}
-  </Typography>
-  </Box>
-  <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0, minWidth: 48, minHeight: 48, alignItems: 'center', justifyContent: 'center' }}>
-  {day.isFestival && (
-  <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'primary.main' }} />
-  )}
-  {day.isFasting && (
-  <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'success.main' }} />
-  )}
-  {!day.isFestival && !day.isFasting && (
-  <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: tithiColors.color }} />
-  )}
-  </Box>
-  <Box sx={{ flex: 1, minWidth: 0 }}>
-  <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', lineHeight: 1.3 }}>
-  {day.date.toLocaleDateString('en-IN', { weekday: 'long' })}
-  </Typography>
-  <Typography variant="caption" sx={{ color: tithiColors.color, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-  {festivalName || tithiName}
-  </Typography>
-  </Box>
-  </Paper>
-  );
-  })}
-  </Box>
-  ) : (
   <Box
   sx={{
   display: 'grid',
@@ -804,7 +706,6 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   );
   })}
   </Box>
-  )}
   </>
   )}
   </Paper>

@@ -3,7 +3,7 @@
  * 4-step flow: Welcome → Learn (what is Panchang) → Setup (location + language) → Ready
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { MapPin, CheckCircle, Sun, Moon, Monitor, ShieldCheck } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../stores/appStore';
 import { GeoLocation } from '../types';
 import { OnboardingLayout } from '../components/OnboardingLayout';
@@ -44,6 +45,12 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
     typeof navigator !== 'undefined' && navigator.language?.toLowerCase().startsWith('hi') ? 'hi' : 'en'
   );
   const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark' | 'system'>('system');
+  const { t, i18n } = useTranslation();
+  // Render copy in the picked language immediately (before the choice is
+  // saved to the store on completion) so all 6 locales preview live.
+  useEffect(() => {
+    if (i18n.language !== selectedLanguage) void i18n.changeLanguage(selectedLanguage);
+  }, [selectedLanguage, i18n]);
   const isHindiOnboarding = selectedLanguage === 'hi';
   const limbs = PANCHANG_GLOSSARY.filter((e) => e.id !== 'panchang');
   const panchangIntro = PANCHANG_GLOSSARY[0];
@@ -54,7 +61,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
     setLocationTimedOut(false);
 
     if (!navigator.geolocation) {
-      setLocationError(isHindiOnboarding ? 'स्थान सुविधा उपलब्ध नहीं है' : 'Geolocation not supported');
+      setLocationError(t('onboarding.geolocationNotSupported'));
       setIsDetecting(false);
       return;
     }
@@ -65,7 +72,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          name: isHindiOnboarding ? 'आपका स्थान' : 'Your Location',
+          name: t('onboarding.yourLocation'),
         };
         setDetectedLocation(loc);
         setLocation(loc);
@@ -76,15 +83,15 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
         const timedOut = err.code === err.TIMEOUT;
         setLocationError(
           timedOut
-            ? (isHindiOnboarding ? 'स्थान मिलने में समय लगा — पुनः प्रयास करें, या Mumbai उपयोग होगा' : 'Location timed out — try again, or Mumbai will be used')
-            : (isHindiOnboarding ? 'स्थान की अनुमति नहीं मिली — Mumbai उपयोग हो रहा है' : 'Location access denied — using Mumbai')
+            ? t('onboarding.locationTimedOut')
+            : t('onboarding.locationDeniedMumbai')
         );
         setLocationTimedOut(timedOut);
         setIsDetecting(false);
       },
       { timeout: 10000, enableHighAccuracy: false }
     );
-  }, [setLocation, isHindiOnboarding]);
+  }, [setLocation, t]);
 
   const handleComplete = useCallback(() => {
     setLanguage(selectedLanguage);
@@ -149,7 +156,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
               textAlign: 'center',
             }}
           >
-            {isHindiOnboarding ? 'समय की पवित्र लय' : 'Sacred Rhythms of Time'}
+            {t('onboarding.tagline')}
           </Typography>
 
           <Typography
@@ -164,7 +171,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
               fontWeight: 400,
             }}
           >
-            {isHindiOnboarding ? 'आपका दैनिक वैदिक साथी — सटीक पंचांग, चंद्र कैलेंडर और आयुर्वेदिक मार्गदर्शन, एक ही ऐप में।' : 'Your daily Vedic companion — accurate Panchang, lunar calendar, and Ayurvedic guidance in one app.'}
+            {t('onboarding.introDescription')}
           </Typography>
 
           <Button
@@ -190,7 +197,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
               transition: 'all 0.2s ease',
             }}
           >
-            {isHindiOnboarding ? 'आरंभ करें' : 'Get Started'}
+            {t('onboarding.welcome.getStarted')}
           </Button>
 
           <Button
@@ -198,7 +205,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             onClick={handleComplete}
             sx={{ mt: 2, color: 'primary.contrastText', opacity: 0.6, fontSize: '0.85rem', minHeight: 48 }}
           >
-            {isHindiOnboarding ? 'सेटअप छोड़ें' : 'Skip setup'}
+            {t('onboarding.skipSetup')}
           </Button>
         </OnboardingLayout>
       )}
@@ -206,7 +213,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
       {step === 1 && (
         <OnboardingLayout variant="setup" step={1}>
           <Typography variant="h4" sx={{ fontWeight: 500, mb: 0.75, color: 'text.primary' }}>
-            {isHindiOnboarding ? 'पंचांग क्या है?' : 'What is Panchang?'}
+            {t('onboarding.whatIsPanchang')}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.7 }}>
             {isHindiOnboarding ? panchangIntro.meaningHindi : panchangIntro.meaning}
@@ -251,9 +258,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           >
             <ShieldCheck size={20} color={theme.palette.success.main} style={{ flexShrink: 0, marginTop: 2 }} />
             <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-              {isHindiOnboarding
-                ? 'कोई खाता नहीं, कोई लॉगिन नहीं — सब कुछ आपके फ़ोन पर रहता है (आपके शहर का नाम जानने के लिए एक बार का मानचित्र अनुरोध छोड़कर)। My Tithis में पारिवारिक तिथियाँ जोड़ें और सूचनाएँ चालू करें; ऐप खोलते ही VedaTime याद दिलाएगा।'
-                : 'No account, no login — everything stays on your phone (apart from a one-time map lookup that names your city). Add family tithis in My Tithis and allow notifications; VedaTime reminds you when you open the app.'}
+              {t('onboarding.privacyNote')}
             </Typography>
           </Box>
 
@@ -264,7 +269,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             fullWidth
             sx={{ py: 1.5, minHeight: 48, borderRadius: 1, fontWeight: 500, fontSize: '1rem' }}
           >
-            {isHindiOnboarding ? 'आगे बढ़ें' : 'Continue'}
+            {t('onboarding.continue')}
           </Button>
 
           <Button
@@ -272,7 +277,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             onClick={() => setStep(0)}
             sx={{ mt: 1.5, color: 'text.secondary', fontSize: '0.85rem' }}
           >
-            {isHindiOnboarding ? 'पीछे' : 'Back'}
+            {t('onboarding.back')}
           </Button>
         </OnboardingLayout>
       )}
@@ -280,15 +285,15 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
       {step === 2 && (
         <OnboardingLayout variant="setup" step={2}>
           <Typography variant="h4" sx={{ fontWeight: 500, mb: 0.75, color: 'text.primary' }}>
-            {isHindiOnboarding ? 'त्वरित सेटअप' : 'Quick Setup'}
+            {t('onboarding.quickSetup')}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-            {isHindiOnboarding ? 'केवल 30 सेकंड लगेंगे — आप इन्हें बाद में सेटिंग्स में बदल सकते हैं।' : 'Takes 30 seconds — you can always change these in Settings.'}
+            {t('onboarding.quickSetupSubtitle')}
           </Typography>
 
           {/* Location */}
           <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: '0.1em', mb: 1.5, display: 'block' }}>
-            {isHindiOnboarding ? 'आपका स्थान' : 'Your Location'}
+            {t('onboarding.yourLocation')}
           </Typography>
           <Box
             sx={{
@@ -306,7 +311,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
                 <CheckCircle size={20} color={theme.palette.success.main} />
                 <Box>
                   <Typography variant="body2" sx={{ fontWeight: 500, color: 'success.main' }}>
-                    {isHindiOnboarding ? 'स्थान मिल गया' : 'Location detected'}
+                    {t('onboarding.locationDetected')}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
                     {detectedLocation.latitude.toFixed(3)}, {detectedLocation.longitude.toFixed(3)}
@@ -319,10 +324,10 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
                   <MapPin size={20} color={locationError ? theme.palette.error.main : theme.palette.primary.main} />
                   <Box>
                     <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      {locationError ? (isHindiOnboarding ? 'Mumbai उपयोग हो रहा है (डिफ़ॉल्ट)' : 'Using Mumbai (default)') : (isHindiOnboarding ? 'स्थान की अनुमति दें' : 'Allow location access')}
+                      {locationError ? t('onboarding.usingMumbaiDefault') : t('onboarding.allowLocationAccess')}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {locationError || (isHindiOnboarding ? 'सटीक सूर्योदय व समय के लिए' : 'For accurate sunrise & timings')}
+                      {locationError || t('onboarding.accurateSunriseNote')}
                     </Typography>
                   </Box>
                 </Box>
@@ -335,7 +340,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
                     startIcon={isDetecting ? <CircularProgress size={14} /> : undefined}
                     sx={{ borderColor: 'primary.main', color: 'primary.main', borderRadius: 1, minWidth: 80, minHeight: 48 }}
                   >
-                    {isDetecting ? '' : (isHindiOnboarding ? (locationTimedOut ? 'पुनः प्रयास करें' : 'अनुमति दें') : (locationTimedOut ? 'Retry' : 'Allow'))}
+                    {isDetecting ? '' : (locationTimedOut ? t('onboarding.retry') : t('onboarding.allow'))}
                   </Button>
                 )}
               </Box>
@@ -344,7 +349,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
 
           {/* Language */}
           <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: '0.1em', mb: 1.5, display: 'block' }}>
-            {isHindiOnboarding ? 'भाषा' : 'Language'}
+            {t('onboarding.preferences.language')}
           </Typography>
           <ToggleButtonGroup
             value={selectedLanguage}
@@ -367,7 +372,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
 
           {/* Theme */}
           <Typography variant="overline" sx={{ color: 'primary.main', letterSpacing: '0.1em', mb: 1.5, display: 'block' }}>
-            {isHindiOnboarding ? 'दिखावट' : 'Appearance'}
+            {t('settings.appearance')}
           </Typography>
           <ToggleButtonGroup
             value={selectedTheme}
@@ -377,13 +382,13 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             sx={{ mb: 5 }}
           >
             <ToggleButton value="light" sx={{ minHeight: 48, py: 1.5, gap: 0.75, fontWeight: 500 }}>
-              <Sun size={16} /> {isHindiOnboarding ? 'हल्का' : 'Light'}
+              <Sun size={16} /> {t('theme.light')}
             </ToggleButton>
             <ToggleButton value="dark" sx={{ minHeight: 48, py: 1.5, gap: 0.75, fontWeight: 500 }}>
-              <Moon size={16} /> {isHindiOnboarding ? 'गहरा' : 'Dark'}
+              <Moon size={16} /> {t('theme.dark')}
             </ToggleButton>
             <ToggleButton value="system" sx={{ minHeight: 48, py: 1.5, gap: 0.75, fontWeight: 500 }}>
-              <Monitor size={16} /> {isHindiOnboarding ? 'स्वचालित' : 'Auto'}
+              <Monitor size={16} /> {t('onboarding.themeAuto')}
             </ToggleButton>
           </ToggleButtonGroup>
 
@@ -394,7 +399,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             fullWidth
             sx={{ py: 1.5, minHeight: 48, borderRadius: 1, fontWeight: 500, fontSize: '1rem' }}
           >
-            {isHindiOnboarding ? 'आगे बढ़ें' : 'Continue'}
+            {t('onboarding.continue')}
           </Button>
 
           <Button
@@ -402,7 +407,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             onClick={() => setStep(1)}
             sx={{ mt: 1.5, color: 'text.secondary', fontSize: '0.85rem' }}
           >
-            {isHindiOnboarding ? 'पीछे' : 'Back'}
+            {t('onboarding.back')}
           </Button>
         </OnboardingLayout>
       )}
@@ -422,10 +427,10 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
           </Box>
 
           <Typography variant="h4" sx={{ fontWeight: 500, mb: 1, color: 'text.primary' }}>
-            {isHindiOnboarding ? 'सब तैयार है' : "You're all set"}
+            {t('onboarding.allSet')}
           </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 300, lineHeight: 1.7, mb: 5 }}>
-            {isHindiOnboarding ? 'VedaTime तैयार है। आपका दैनिक पंचांग, चंद्र कैलेंडर और पवित्र समय आपकी प्रतीक्षा कर रहे हैं।' : 'VedaTime is ready. Your daily Panchang, lunar calendar, and sacred timings await.'}
+            {t('onboarding.readyDescription')}
           </Typography>
 
           <Button
@@ -440,7 +445,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
               transition: 'all 0.2s ease',
             }}
           >
-            {isHindiOnboarding ? 'वेदाटाइम में प्रवेश करें' : 'Enter VedaTime'}
+            {t('onboarding.enterVedaTime')}
           </Button>
 
           <Button
@@ -448,7 +453,7 @@ const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
             onClick={() => setStep(2)}
             sx={{ mt: 2, color: 'text.secondary', fontSize: '0.85rem' }}
           >
-            {isHindiOnboarding ? 'पीछे' : 'Back'}
+            {t('onboarding.back')}
           </Button>
         </OnboardingLayout>
       )}

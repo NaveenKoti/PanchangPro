@@ -68,6 +68,7 @@ import { SectionCard } from '../components/layout/SectionCard';
 import { AlertStack } from '../components/layout/AlertStack';
 import { useBreakpoints } from '../hooks/useBreakpoints';
 import { LUNAR_MONTHS, LUNAR_MONTHS_HINDI } from '../engine/constants';
+import { appLocale, lunarMonthName } from '../utils/locale';
 import { format, differenceInDays } from 'date-fns';
 
 export const MyTithisScreen: React.FC = () => {
@@ -152,14 +153,17 @@ export const MyTithisScreen: React.FC = () => {
         month: ((p.amantaMonth ?? p.lunarMonth) ?? 1) - 1,
         customDate: value,
       }));
-      const monthName = isHindi
-        ? LUNAR_MONTHS_HINDI[((p.amantaMonth ?? p.lunarMonth) ?? 1) - 1]
-        : LUNAR_MONTHS[((p.amantaMonth ?? p.lunarMonth) ?? 1) - 1];
+      const monthName = lunarMonthName(currentLanguage, (p.amantaMonth ?? p.lunarMonth) ?? 1);
       const tithiName = isHindi ? p.tithi.nameHindi : p.tithi.name;
+      const pakshaLabel = isHindi
+        ? (p.tithi.paksha === 'Shukla' ? 'शुक्ल' : 'कृष्ण')
+        : p.tithi.paksha;
       setPickedSummary(
-        isHindi
-          ? `उस दिन: ${p.tithi.paksha === 'Shukla' ? 'शुक्ल' : 'कृष्ण'} ${tithiName}, ${monthName} मास`
-          : `That day: ${p.tithi.paksha} ${tithiName}, ${monthName} Maas`
+        t('myTithis.pickedSummary', {
+          paksha: pakshaLabel,
+          tithi: tithiName,
+          month: monthName,
+        })
       );
     } catch {
       setPickedSummary(null);
@@ -303,10 +307,10 @@ export const MyTithisScreen: React.FC = () => {
     // non-recurring. Inline errors en+hi; never save invalid.
     const nextErrors: { name?: string; customDate?: string } = {};
     if (formData.name.trim() === '') {
-      nextErrors.name = isHindi ? 'कृपया नाम भरें' : 'Please enter a name';
+      nextErrors.name = t('myTithis.validationName');
     }
     if (!formData.isRecurring && formData.customDate.trim() === '') {
-      nextErrors.customDate = isHindi ? 'एक बार की तिथि के लिए तारीख चुनें' : 'Pick a date for a one-time tithi';
+      nextErrors.customDate = t('myTithis.validationDate');
     }
     setFormErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
@@ -375,35 +379,28 @@ export const MyTithisScreen: React.FC = () => {
     const occurrences = getNextOccurrences(tithi.id);
     const next = occurrences[0] ?? tithi.customDate ?? null;
     if (!next) {
-      showMessage(
-        isHindi ? 'साझा करने के लिए कोई आगामी तारीख नहीं है' : 'No upcoming date to share',
-        'info'
-      );
+      showMessage(t('myTithis.noUpcomingToShare'), 'info');
       return;
     }
     const nextDate = next instanceof Date ? next : new Date(next);
-    const tithiLine = isHindi
-      ? `तिथि ${tithi.tithiNumber} - ${tithi.paksha} पक्ष`
-      : `Tithi ${tithi.tithiNumber} - ${tithi.paksha} Paksha`;
-    const dateLabel = nextDate.toLocaleDateString(isHindi ? 'hi-IN' : undefined, {
+    const tithiLine = t('myTithis.shareTithiLine', {
+      number: tithi.tithiNumber,
+      paksha: tithi.paksha,
+    });
+    const dateLabel = nextDate.toLocaleDateString(appLocale(currentLanguage), {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
       year: 'numeric',
     });
-    const text = isHindi
-      ? `${tithiLine}\nअगली: ${dateLabel}\n\nयह तिथि खोलें: ${buildDayLink(nextDate)}`
-      : `${tithiLine}\nNext: ${dateLabel}\n\nOpen this tithi: ${buildDayLink(nextDate)}`;
+    const text = `${tithiLine}\n${t('myTithis.shareNext', { date: dateLabel })}\n\n${t('myTithis.shareOpenLink', { link: buildDayLink(nextDate) })}`;
     await shareContent({ title: tithi.name, text });
-    showMessage(isHindi ? 'साझा किया!' : 'Shared!', 'success');
+    showMessage(t('myTithis.shared'), 'success');
   };
 
   const handleExport = async () => {
     if (customTithis.length === 0) {
-      showMessage(
-        isHindi ? 'निर्यात करने के लिए कोई तिथि नहीं है — पहले एक तिथि जोड़ें' : 'Nothing to export yet — add a tithi first',
-        'info'
-      );
+      showMessage(t('myTithis.nothingToExport'), 'info');
       return;
     }
     const json = exportCustomTithis();
@@ -572,9 +569,7 @@ export const MyTithisScreen: React.FC = () => {
               {t('myTithis.emptySubtitle') || 'Add your family rituals, regional festivals, or personal observances'}
             </Typography>
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2, lineHeight: 1.6 }}>
-              {isHindi
-                ? 'कोई लॉगिन नहीं — तिथि जोड़ें, रिमाइंडर चालू करें, ऐप खोलते ही याद पाएँ। सब कुछ आपके फ़ोन पर रहता है (आपके शहर का नाम जानने के लिए एक बार का मानचित्र अनुरोध छोड़कर)।'
-                : 'No login needed — add a tithi, turn on its reminder, and you’ll be reminded when you open the app. Everything stays on your phone (apart from a one-time map lookup that names your city).'}
+              {t('myTithis.emptyPrivacy')}
             </Typography>
             <Button
               variant="contained"
@@ -727,10 +722,10 @@ export const MyTithisScreen: React.FC = () => {
                             <Bell size={14} color={muiTheme.palette.text.secondary} />
                             <Typography variant="caption" color="text.secondary" sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {tithi.reminderTime} · {(tithi.reminderDaysBefore ?? 1) === 0
-                                ? (isHindi ? 'उसी दिन' : 'On the day')
-                                : isHindi
-                                  ? `${tithi.reminderDaysBefore} दिन पहले`
-                                  : `${tithi.reminderDaysBefore} day${(tithi.reminderDaysBefore ?? 1) > 1 ? 's' : ''} before`}
+                                ? t('myTithis.onTheDay')
+                                : (tithi.reminderDaysBefore ?? 1) === 1
+                                  ? t('myTithis.oneDayBefore')
+                                  : t('myTithis.daysBefore', { count: tithi.reminderDaysBefore })}
                             </Typography>
                           </Box>
                         )}
@@ -746,11 +741,11 @@ export const MyTithisScreen: React.FC = () => {
                                 </Typography>
                               </Box>
                               {occurrences.slice(0, 5).map((date, i) => {                                const daysUntil = differenceInDays(date, new Date());
-                                const comingInText = daysUntil === 0 
-                                  ? (isHindi ? 'आज' : 'Today')
-                                  : daysUntil === 1 
-                                    ? (isHindi ? 'कल' : 'Tomorrow')
-                                    : (isHindi ? `${daysUntil} दिन में` : `In ${daysUntil} days`);
+                                const comingInText = daysUntil === 0
+                                  ? t('common.today')
+                                  : daysUntil === 1
+                                    ? t('common.tomorrow')
+                                    : t('myTithis.inDays', { count: daysUntil });
                                 
                                 return (
                                   <Box
@@ -794,9 +789,7 @@ export const MyTithisScreen: React.FC = () => {
                               })}
                               {showTzNote && (
                                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
-                                  {isHindi
-                                    ? `तिथियाँ ${locationTimeZone} समय में दिख रही हैं`
-                                    : `Dates shown in ${locationTimeZone} time`}
+                                  {t('myTithis.tzNote', { tz: locationTimeZone })}
                                 </Typography>
                               )}
                             </Box>
@@ -821,9 +814,9 @@ export const MyTithisScreen: React.FC = () => {
                           </IconButton>
                         </Tooltip>
 
-                        <Tooltip title={isHindi ? 'साझा करें' : 'Share'}>
+                        <Tooltip title={t('common.share')}>
                           <IconButton
-                            aria-label={isHindi ? 'तिथि साझा करें' : 'Share tithi'}
+                            aria-label={t('myTithis.shareTithi')}
                             size="small"
                             onClick={() => handleShareTithi(tithi)}
                             sx={{
@@ -890,7 +883,7 @@ export const MyTithisScreen: React.FC = () => {
         <DialogTitle sx={{ fontWeight: 500, pb: 1 }}>
           {editing ? t('myTithis.edit') : t('myTithis.addNew')}
           <IconButton
-            aria-label={isHindi ? 'बंद करें' : 'Close'}
+            aria-label={t('common.close')}
             onClick={() => setOpen(false)}
             sx={{ position: 'absolute', right: 16, top: 16 }}
           >
@@ -901,7 +894,7 @@ export const MyTithisScreen: React.FC = () => {
           <Box sx={{ pt: 1 }}>
             {/* Event Type Selection */}
             <Typography variant="subtitle2" sx={{ fontWeight: 500, mb: 1, color: 'text.primary' }}>
-              {isHindi ? 'किस प्रकार का आयोजन है?' : 'What type of observance?'}
+              {t('myTithis.observanceType')}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
               {['Shraddha', 'Punya Tithi', 'Fasting', 'Festival', 'Other'].map((type) => (
@@ -924,19 +917,19 @@ export const MyTithisScreen: React.FC = () => {
             {/* Event Name */}
             <TextField
               fullWidth
-              label={isHindi ? 'विस्तृत नाम' : 'Full Name'}
-              placeholder={isHindi ? 'जैसे: रामेश्वर शास्त्री जी की पुण्यतिथि' : 'e.g., Rameshwar Shastri Ji Punyatithi'}
+              label={t('myTithis.fullName')}
+              placeholder={t('myTithis.namePlaceholder')}
               value={formData.name}
               onChange={(e) => { setFormData({ ...formData, name: e.target.value }); if (formErrors.name) setFormErrors((p) => ({ ...p, name: undefined })); }}
               sx={{ mb: 2 }}
               error={!!formErrors.name}
-              helperText={formErrors.name ?? (isHindi ? 'जिसके नाम का आयोजन है' : 'In whose name is this observance?')}
+              helperText={formErrors.name ?? t('myTithis.nameHelp')}
             />
             
             {/* Pick from date — for users who know the Gregorian date but not the tithi */}
             <Box sx={{ mb: 2, p: 1.5, borderRadius: 1.5, bgcolor: 'action.hover' }}>
               <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
-                {isHindi ? 'तारीख से चुनें (तिथि पता न हो तो)' : 'Pick from a date (if you don’t know the tithi)'}
+                {t('myTithis.pickFromDate')}
               </Typography>
               <TextField
                 fullWidth
@@ -944,7 +937,7 @@ export const MyTithisScreen: React.FC = () => {
                 value={pickDate}
                 onChange={(e) => handlePickDate(e.target.value)}
                 sx={{ bgcolor: 'background.paper', borderRadius: 1 }}
-                inputProps={{ 'aria-label': isHindi ? 'तारीख चुनें' : 'Pick a date' }}
+                inputProps={{ 'aria-label': t('myTithis.pickDate') }}
               />
               {pickedSummary && (
                 <Typography variant="body2" color="primary.main" sx={{ mt: 1, fontWeight: 500, lineHeight: 1.6 }}>
@@ -974,7 +967,7 @@ export const MyTithisScreen: React.FC = () => {
                   <Typography variant="body2" color="primary.main" sx={{ mt: 1, fontWeight: 500, lineHeight: 1.6 }}>
                     {(t('myTithis.annualOn') || 'Annual: {date}').replace(
                       '{date}',
-                      shraddhaPreview.annual.toLocaleDateString(isHindi ? 'hi-IN' : undefined, { day: 'numeric', month: 'long', year: 'numeric' })
+                      shraddhaPreview.annual.toLocaleDateString(appLocale(currentLanguage), { day: 'numeric', month: 'long', year: 'numeric' })
                     )}
                   </Typography>
                 )}
@@ -982,7 +975,7 @@ export const MyTithisScreen: React.FC = () => {
                   <Typography variant="body2" color="primary.main" sx={{ fontWeight: 500, lineHeight: 1.6 }}>
                     {(t('myTithis.pitruOn') || 'Pitru Paksha: {date}').replace(
                       '{date}',
-                      shraddhaPreview.pitru.toLocaleDateString(isHindi ? 'hi-IN' : undefined, { day: 'numeric', month: 'long', year: 'numeric' })
+                      shraddhaPreview.pitru.toLocaleDateString(appLocale(currentLanguage), { day: 'numeric', month: 'long', year: 'numeric' })
                     )}
                   </Typography>
                 )}
@@ -1003,13 +996,13 @@ export const MyTithisScreen: React.FC = () => {
                 must never truncate), Paksha + Month side by side below. */}
             <TextField
               fullWidth
-              label={isHindi ? 'तिथि' : 'Tithi'}
+              label={t('panchang.tithi')}
               select
               SelectProps={{ native: true }}
               value={formData.tithiNumber}
               onChange={(e) => setFormData({ ...formData, tithiNumber: Number(e.target.value) })}
               sx={{ mb: 2 }}
-              helperText={isHindi ? 'कौन सी तिथि?' : 'Which tithi?'}
+              helperText={t('myTithis.whichTithi')}
             >
               {[
                 'Pratipada', 'Dwitiya', 'Tritiya', 'Chaturthi', 'Panchami',
@@ -1023,7 +1016,7 @@ export const MyTithisScreen: React.FC = () => {
             <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
               <TextField
                 fullWidth
-                label={isHindi ? 'पक्ष' : 'Paksha'}
+                label={t('myTithis.paksha')}
                 select
                 SelectProps={{ native: true }}
                 value={formData.paksha}
@@ -1037,12 +1030,12 @@ export const MyTithisScreen: React.FC = () => {
               {/* Month Selection */}
               <TextField
                 fullWidth
-                label={isHindi ? 'महीना' : 'Month'}
+                label={t('myTithis.month')}
                 select
                 value={formData.month}
                 onChange={(e) => setFormData({ ...formData, month: Number(e.target.value) })}
                 sx={{ flex: 1, minWidth: 0 }}
-                helperText={isHindi ? 'किस महीने में?' : 'Which month?'}
+                helperText={t('myTithis.whichMonth')}
               >
                 {['Chaitra', 'Vaishakha', 'Jyeshtha', 'Ashadha', 'Shravana', 'Bhadrapada', 'Ashwin', 'Kartik', 'Margashirsha', 'Pausha', 'Magha', 'Phalguna'].map((month, i) => (
                   <option key={month} value={i}>{month}</option>
@@ -1060,10 +1053,10 @@ export const MyTithisScreen: React.FC = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Box>
                   <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    {isHindi ? 'हर साल दोहराएं' : 'Repeat Every Year'}
+                    {t('myTithis.repeatYearly')}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {isHindi ? 'इस तिथि को हर साल याद दिलाएं' : 'Remind on this tithi every year'}
+                    {t('myTithis.repeatYearlyHelp')}
                   </Typography>
                 </Box>
                 <Switch
@@ -1079,26 +1072,26 @@ export const MyTithisScreen: React.FC = () => {
               <TextField
                 fullWidth
                 type="date"
-                label={isHindi ? 'तारीख चुनें' : 'Pick a date'}
+                label={t('myTithis.pickDate')}
                 value={formData.customDate}
                 onChange={(e) => { setFormData({ ...formData, customDate: e.target.value }); if (formErrors.customDate) setFormErrors((p) => ({ ...p, customDate: undefined })); }}
                 InputLabelProps={{ shrink: true }}
                 sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: 1.5, minHeight: 48 } }}
                 error={!!formErrors.customDate}
-                helperText={formErrors.customDate ?? (isHindi ? 'यह तिथि सिर्फ इसी तारीख को आएगी' : 'This tithi occurs only on this date')}
+                helperText={formErrors.customDate ?? t('myTithis.oneTimeHelp')}
               />
             )}
             
             {/* Notes for Details */}
             <TextField
               fullWidth
-              label={isHindi ? 'अतिरिक्त जानकारी' : 'Additional Details'}
+              label={t('myTithis.additionalDetails')}
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               multiline
               rows={3}
               sx={{ mb: 2 }}
-              placeholder={isHindi ? 'गोत्र, समय, स्थान, या अन्य जानकारी...' : 'Gotra, time, location, or other details...'}
+              placeholder={t('myTithis.detailsPlaceholder')}
             />
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
               <Switch
@@ -1106,13 +1099,13 @@ export const MyTithisScreen: React.FC = () => {
                 onChange={(e) => setFormData({ ...formData, reminderEnabled: e.target.checked })}
               />
               <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {isHindi ? 'रिमाइंडर चालू करें' : 'Enable Reminder'}
+                {t('myTithis.reminder')}
               </Typography>
             </Box>
             {formData.reminderEnabled && (
               <Box sx={{ mb: 2 }}>
                 <Typography variant="caption" sx={{ display: 'block', mb: 0.5, color: 'text.secondary', fontWeight: 500 }}>
-                  {isHindi ? 'समय चुनें' : 'Select Time'}
+                  {t('myTithis.selectTime')}
                 </Typography>
                 <TextField
                   fullWidth
@@ -1127,10 +1120,10 @@ export const MyTithisScreen: React.FC = () => {
                   }}
                 />
                 <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: 'text.secondary', fontSize: '0.75rem' }}>
-                  {isHindi ? 'इस समय हम आपको याद दिलाएंगे' : 'We will remind you at this time'}
+                  {t('myTithis.remindAtTime')}
                 </Typography>
                 <Typography variant="caption" sx={{ display: 'block', mt: 1.5, mb: 0.5, color: 'text.secondary', fontWeight: 500 }}>
-                  {isHindi ? 'कितने दिन पहले याद दिलाएं' : 'Remind how many days before'}
+                  {t('myTithis.remindDaysBefore')}
                 </Typography>
                 <TextField
                   fullWidth
@@ -1147,7 +1140,7 @@ export const MyTithisScreen: React.FC = () => {
                 >
                   {[0, 1, 2, 3, 4, 5, 6, 7].map((d) => (
                     <option key={d} value={d}>
-                      {d === 0 ? (isHindi ? 'उसी दिन' : 'On the day') : isHindi ? `${d} दिन पहले` : `${d} day${d > 1 ? 's' : ''} before`}
+                      {d === 0 ? t('myTithis.onTheDay') : d === 1 ? t('myTithis.oneDayBefore') : t('myTithis.daysBefore', { count: d })}
                     </option>
                   ))}
                 </TextField>
@@ -1183,7 +1176,7 @@ export const MyTithisScreen: React.FC = () => {
         <DialogTitle sx={{ fontWeight: 500, pb: 1 }}>
           {t('myTithis.import')}
           <IconButton
-            aria-label={isHindi ? 'बंद करें' : 'Close'}
+            aria-label={t('common.close')}
             onClick={() => setImportDialogOpen(false)}
             sx={{ position: 'absolute', right: 16, top: 16 }}
           >
@@ -1199,7 +1192,13 @@ export const MyTithisScreen: React.FC = () => {
                     ? [{
                         key: 'import-success',
                         severity: 'success',
-                        children: `${isHindi ? 'सफलतापूर्वक आयात' : 'Successfully imported'} ${importResult.imported} ${isHindi ? 'तिथियाँ' : 'tithis'}${importResult.errors.length > 0 ? ` (${importResult.errors.length} ${isHindi ? 'छूटी' : 'skipped'}: ${importResult.errors[0]})` : ''}`,
+                        children: importResult.errors.length > 0
+                          ? t('myTithis.importSummarySkipped', {
+                              imported: importResult.imported,
+                              skipped: importResult.errors.length,
+                              error: importResult.errors[0],
+                            })
+                          : t('myTithis.importSummary', { imported: importResult.imported }),
                       }]
                     : importResult.errors.map((e, i) => ({ key: `import-error-${i}`, severity: 'error' as const, children: e }))
                 }

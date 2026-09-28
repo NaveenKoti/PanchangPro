@@ -90,6 +90,32 @@ export const LUNAR_MONTHS_HINDI = [
   'माघ', 'फाल्गुन'
 ];
 
+// Lunar month names in the remaining supported locales (same order as above).
+// Used wherever the UI previously fell back to English for non-Hindi locales.
+export const LUNAR_MONTHS_SANSKRIT = [
+  'चैत्रः', 'वैशाखः', 'ज्येष्ठः', 'आषाढः', 'श्रावणः',
+  'भाद्रपदः', 'आश्विनः', 'कार्तिकः', 'मार्गशीर्षः', 'पौषः',
+  'माघः', 'फाल्गुनः'
+];
+
+export const LUNAR_MONTHS_KANNADA = [
+  'ಚೈತ್ರ', 'ವೈಶಾಖ', 'ಜ್ಯೇಷ್ಠ', 'ಆಷಾಢ', 'ಶ್ರಾವಣ',
+  'ಭಾದ್ರಪದ', 'ಆಶ್ವಿನ', 'ಕಾರ್ತಿಕ', 'ಮಾರ್ಗಶಿರ್ಷ', 'ಪುಷ್ಯ',
+  'ಮಾಘ', 'ಫಾಲ್ಗುಣ'
+];
+
+export const LUNAR_MONTHS_TELUGU = [
+  'చైత్ర', 'వైశాఖ', 'జ్యేష్ఠ', 'ఆషాఢ', 'శ్రావణ',
+  'భాద్రపద', 'ఆశ్వయుజ', 'కార్తిక', 'మార్గశిర', 'పుష్య',
+  'మాఘ', 'ఫాల్గుణ'
+];
+
+export const LUNAR_MONTHS_TAMIL = [
+  'சித்திரை', 'வைகாசி', 'ஆனி', 'ஆடி', 'ஆவணி',
+  'புரட்டாசி', 'ஐப்பசி', 'கார்த்திகை', 'மார்கழி', 'தை',
+  'மாசி', 'பங்குனி'
+];
+
 // Dinacharya phases
 export const DINACHARYA_PHASES = [
   {

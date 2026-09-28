@@ -41,6 +41,14 @@ import EkadashiDetailCard from '../components/EkadashiDetailCard';
 import { triggerHapticIfSupported } from '../utils/haptics';
 import { findFestivalStoryByName } from '../data/festivalStories';
 import { FESTIVALS, FestivalData, festivalText } from '../data/festivals';
+import {
+  LUNAR_MONTHS,
+  LUNAR_MONTHS_HINDI,
+  LUNAR_MONTHS_SANSKRIT,
+  LUNAR_MONTHS_KANNADA,
+  LUNAR_MONTHS_TELUGU,
+  LUNAR_MONTHS_TAMIL,
+} from '../engine/constants';
 
 interface FastsScreenProps {
   /** Callback when user taps a festival to view its full story */
@@ -207,19 +215,30 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
     return grouped;
   }, []);
 
-  const monthNames = useMemo(() => [
-    '', // 0 is special case (Sankashti - every month)
-    'Chaitra', 'Vaishakha', 'Jyeshtha', 'Ashadha',
-    'Shravana', 'Bhadrapada', 'Ashwin', 'Kartik',
-    'Margashirsha', 'Pausha', 'Magha', 'Phalguna',
-  ], []);
-
-  const monthNamesHindi = useMemo(() => [
-    '', // 0 is special case
-    'चैत्र', 'वैशाख', 'ज्येष्ठ', 'आषाढ़',
-    'श्रावण', 'भाद्रपद', 'आश्विन', 'कार्तिक',
-    'मार्गशीर्ष', 'पौष', 'माघ', 'फाल्गुन',
-  ], []);
+  // Lunar month names in the active locale (0 = Sankashti special case).
+  const monthNames = useMemo(() => {
+    const table = [
+      LUNAR_MONTHS,
+      LUNAR_MONTHS_HINDI,
+      LUNAR_MONTHS_SANSKRIT,
+      LUNAR_MONTHS_KANNADA,
+      LUNAR_MONTHS_TELUGU,
+      LUNAR_MONTHS_TAMIL,
+    ];
+    const idx =
+      currentLanguage === 'hi'
+        ? 1
+        : currentLanguage === 'sa'
+          ? 2
+          : currentLanguage === 'kn'
+            ? 3
+            : currentLanguage === 'te'
+              ? 4
+              : currentLanguage === 'ta'
+                ? 5
+                : 0;
+    return ['', ...table[idx]];
+  }, [currentLanguage]);
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     triggerHapticIfSupported('light');
@@ -1122,7 +1141,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   const canViewStory = !!matchedStory && !!onFestivalOpen;
                   const monthIndex = festival.month;
                   const monthName = monthIndex > 0
-                    ? (isHindi ? monthNamesHindi[monthIndex] : monthNames[monthIndex])
+                    ? monthNames[monthIndex]
                     : t('fasts.everyMonth');
 
                   return (
@@ -1283,7 +1302,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   const canViewStory = !!matchedStory && !!onFestivalOpen;
                   const monthIndex = festival.month;
                   const monthName = monthIndex > 0
-                    ? (isHindi ? monthNamesHindi[monthIndex] : monthNames[monthIndex])
+                    ? monthNames[monthIndex]
                     : t('fasts.everyMonth');
 
                   return (
@@ -1444,7 +1463,7 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
                   const canViewStory = !!matchedStory && !!onFestivalOpen;
                   const monthIndex = festival.month;
                   const monthName = monthIndex > 0
-                    ? (isHindi ? monthNamesHindi[monthIndex] : monthNames[monthIndex])
+                    ? monthNames[monthIndex]
                     : t('fasts.everyMonth');
 
                   return (
