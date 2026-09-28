@@ -1,13 +1,13 @@
 /**
- * TodayScreen - TODAY-IA stage: slim date bar + hero + sun line +
- * inauspicious strip above the fold; Details/Day tabs below; ONE AlertStack.
+ * TodayScreen - main page: slim date bar + live timing clock + sun line +
+ * inauspicious strip + quick links to detail screens + ONE AlertStack.
+ * Details live on their own screens; Today links out via requestTab.
  */
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import {
   Box,
   Typography,
-  Card,
   CardContent,
   IconButton,
   Alert,
@@ -17,8 +17,6 @@ import {
   Skeleton,
   Paper,
   Snackbar,
-  Tabs,
-  Tab,
   Button,
   useTheme as useMuiTheme,
 } from '@mui/material';
@@ -26,13 +24,13 @@ import {
   MapPin,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
   Calendar as CalendarIcon,
   Star,
   Sunrise,
   Sunset,
   Clock,
   Heart,
+  Leaf,
 } from 'lucide-react';
 import { useAppStore } from '../stores/appStore';
 import {
@@ -46,12 +44,7 @@ import {
   type MissedTithiReminder,
 } from '../services/notificationService';
 import { useI18n } from '../hooks/useI18n';
-import { AyurvedicClock } from '../components/AyurvedicClock';
-import { TithiCard } from '../components/TithiCard';
-import { TodayGuidanceCard } from '../components/TodayGuidanceCard';
-import { ExpandableSection } from '../components/ExpandableSection';
-import { TithiExplanationDialog } from '../components/TithiExplanationDialog';
-import { NakshatraExplanationDialog } from '../components/NakshatraExplanationDialog';
+import { TodayTimingClock } from '../components/TodayTimingClock';
 import { GlossaryDialog } from '../components/GlossaryDialog';
 import type { GlossaryEntry } from '../data/panchangGlossary';
 import { festivalText } from '../data/festivals';
@@ -59,7 +52,6 @@ import { LUNAR_MONTHS, LUNAR_MONTHS_HINDI } from '../engine/constants';
 import { ScreenContainer } from '../components/ScreenContainer';
 import { SearchUpcoming } from '../components/SearchUpcoming';
 import { SectionCard } from '../components/layout/SectionCard';
-import { PanchangTimelineItem } from '../components/layout/PanchangTimelineItem';
 import { AlertStack, type AlertItem } from '../components/layout/AlertStack';
 import { useBreakpoints } from '../hooks/useBreakpoints';
 import { triggerHapticIfSupported } from '../utils/haptics';
@@ -90,8 +82,6 @@ export interface TodayScreenProps {
   /** Opens a festival detail overlay (provided by App; used by search results). */
   onFestivalOpen?: (id: string) => void;
 }
-
-type TodayTab = 'details' | 'day';
 
 export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
   const { t, currentLanguage } = useI18n();
@@ -198,11 +188,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
     return () => document.removeEventListener('visibilitychange', onVisibilityChange);
   }, []);
 
-  const [isTithiDialogOpen, setIsTithiDialogOpen] = useState(false);
-  const [isNakshatraDialogOpen, setIsNakshatraDialogOpen] = useState(false);
   const [glossaryLimb, setGlossaryLimb] = useState<GlossaryEntry['id'] | null>(null);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
-  const [activeTab, setActiveTab] = useState<TodayTab>('details');
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -288,20 +274,6 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
       timeZone: preferences.location.timezone,
     });
   }, [preferences.location.timezone]);
-
-  const toggleSection = (sectionId: string) => {
-    setExpandedSections((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(sectionId)) {
-        newSet.delete(sectionId);
-      } else {
-        newSet.add(sectionId);
-      }
-      return newSet;
-    });
-  };
-
-  const isExpanded = (sectionId: string) => expandedSections.has(sectionId);
 
   // Loading state
   if (!panchang) {
@@ -538,17 +510,54 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
         </Paper>
       </Zoom>
 
-      {/* ========== 2. TITHI HERO ========== */}
+      {/* ========== 2. LIVE TIMING CLOCK (hero) ========== */}
       <Box sx={{ mb: 1.5, minWidth: 0 }}>
-        <TithiCard
-          tithi={panchang.tithi}
-          onClick={() => {
-            triggerHapticIfSupported('light');
-            setIsTithiDialogOpen(true);
-          }}
-          style={{ height: '100%' }}
-        />
+        <TodayTimingClock onOpenTiming={() => requestTab('muhurta')} />
       </Box>
+
+      {/* ========== 3. QUICK LINKS (details live on their screens) ========== */}
+      <SectionCard dense>
+        {(
+          [
+            { key: 'calendar', icon: CalendarIcon, label: t('today.dayDetails') || 'Day details', tab: 'calendar' },
+            { key: 'fasts', icon: Leaf, label: t('navigation.fasts'), tab: 'fasts' },
+            { key: 'muhurta', icon: Clock, label: t('navigation.muhurta'), tab: 'muhurta' },
+            { key: 'myTithis', icon: Star, label: t('myTithis.title'), tab: 'myTithis' },
+          ] as const
+        ).map((link, i, arr) => (
+          <Box
+            key={link.key}
+            role="link"
+            tabIndex={0}
+            aria-label={link.label}
+            onClick={() => {
+              triggerHapticIfSupported('light');
+              requestTab(link.tab);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') requestTab(link.tab);
+            }}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5,
+              py: 1,
+              px: 0.5,
+              minHeight: 48,
+              cursor: 'pointer',
+              borderBottom: i < arr.length - 1 ? '1px solid' : 'none',
+              borderColor: 'divider',
+              '&:active': { transform: 'scale(0.98)' },
+            }}
+          >
+            <link.icon size={20} color={muiTheme.palette.primary.main} />
+            <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary', flex: 1 }}>
+              {link.label}
+            </Typography>
+            <ChevronRight size={20} color={muiTheme.palette.text.secondary} />
+          </Box>
+        ))}
+      </SectionCard>
 
       {/* ========== 3. SINGLE SUNRISE/SUNSET LINE ========== */}
       <SectionCard dense>
@@ -612,170 +621,10 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
         </Box>
       </Fade>
 
-      {/* ========== 7. DETAILS / DAY TABS ========== */}
-      <Tabs
-        value={activeTab}
-        onChange={(_, v) => setActiveTab(v)}
-        variant="fullWidth"
-        sx={{ mb: 1.5, minHeight: 48 }}
-      >
-        <Tab label={t('panchang.detailsTab')} value="details" sx={{ minHeight: 48, textTransform: 'none', fontWeight: 500 }} />
-        <Tab label={t('panchang.dayTab')} value="day" sx={{ minHeight: 48, textTransform: 'none', fontWeight: 500 }} />
-      </Tabs>
-
-      {activeTab === 'details' && (
-        <Fade in timeout={400}>
-          <Box>
-            <Typography
-              variant="h5"
-              sx={{
-                fontWeight: 500,
-                fontSize: '1.25rem',
-                mb: 1.25,
-                pl: 0.5,
-                letterSpacing: '-0.02em',
-                lineHeight: 1.3,
-                color: 'text.primary',
-              }}
-            >
-              {t('panchang.title')}
-            </Typography>
-
-            {/* Panchanga timeline: dashed spine + node per limb (almanac style) */}
-            <Box sx={{ width: '100%', maxWidth: '100%' }}>
-              {/* Nakshatra Section (timeline node carries the icon) */}
-              <PanchangTimelineItem icon={<Star size={18} />}>
-              <ExpandableSection
-                title={t('panchang.nakshatra')}
-                expanded={isExpanded('nakshatra')}
-                onToggle={() => toggleSection('nakshatra')}
-              >
-                <Card
-                  elevation={0}
-                  onClick={() => {
-                    triggerHapticIfSupported('light');
-                    setIsNakshatraDialogOpen(true);
-                  }}
-                  sx={{ borderRadius: 1, cursor: 'pointer', border: '1px solid', borderColor: 'divider', transition: 'all 0.2s ease', '&:hover': { bgcolor: 'action.hover' }, '&:active': { transform: 'scale(0.98)' } }}
-                >
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                      {panchang.nakshatra.name}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.25 }}>
-                      {panchang.nakshatra.nameHindi}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
-                      Ruler: {panchang.nakshatra.ruler}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </ExpandableSection>
-              </PanchangTimelineItem>
-
-              {/* Yoga Section (timeline node carries the icon) */}
-              <PanchangTimelineItem icon={<Sparkles size={18} />}>
-              <ExpandableSection
-                title={t('panchang.yoga')}
-                expanded={isExpanded('yoga')}
-                onToggle={() => toggleSection('yoga')}
-              >
-                <Card
-                  elevation={0}
-                  onClick={() => {
-                    triggerHapticIfSupported('light');
-                    setGlossaryLimb('yoga');
-                  }}
-                  sx={{ borderRadius: 1, cursor: 'pointer', border: '1px solid', borderColor: 'divider', transition: 'all 0.2s ease', '&:hover': { bgcolor: 'action.hover' }, '&:active': { transform: 'scale(0.98)' } }}
-                >
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                      {panchang.yoga.name}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.25 }}>
-                      {panchang.yoga.nameHindi}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
-                      #{panchang.yoga.number}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </ExpandableSection>
-              </PanchangTimelineItem>
-
-              {/* Karana Section */}
-              <PanchangTimelineItem icon={<Clock size={18} />} isLast={!panchang.samvatsara}>
-              <SectionCard
-                dense
-                title={
-                  <Typography
-                    variant="caption"
-                    sx={{ color: 'text.secondary', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}
-                    onClick={() => {
-                      triggerHapticIfSupported('light');
-                      setGlossaryLimb('karana');
-                    }}
-                  >
-                    {t('panchang.karana')}
-                  </Typography>
-                }
-              >
-                <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                  {panchang.karana.name}
-                </Typography>
-                <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
-                  {panchang.karana.type}
-                </Typography>
-              </SectionCard>
-              </PanchangTimelineItem>
-
-              {/* Samvatsara Section */}
-              {panchang.samvatsara && (
-                <PanchangTimelineItem icon={<CalendarIcon size={18} />} isLast>
-                <SectionCard
-                  dense
-                  title={
-                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>
-                      {t('panchang.samvatsara') || 'Samvatsara'}
-                    </Typography>
-                  }
-                >
-                  <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                    {panchang.samvatsara}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.25 }}>
-                    {t('panchang.samvatsaraDesc') || 'Hindu Year (60-year cycle)'}
-                  </Typography>
-                </SectionCard>
-                </PanchangTimelineItem>
-              )}
-            </Box>
-
-            {/* Search + coming up lives under Details */}
-            <Box sx={{ mt: 1.5 }}>
-              <SearchUpcoming onFestivalOpen={onFestivalOpen} />
-            </Box>
-          </Box>
-        </Fade>
-      )}
-
-      {activeTab === 'day' && (
-        <Fade in timeout={400}>
-          <Box>
-            <Box sx={{ mb: 1.25, maxWidth: '100%' }}>
-              <TodayGuidanceCard
-                panchang={panchang}
-                rahuKaal={panchang.rahuKaal}
-                yamagandam={panchang.yamagandam}
-                gulikaKaal={panchang.gulikaKaal}
-              />
-            </Box>
-            <Box sx={{ mb: 1.5 }}>
-              <AyurvedicClock panchang={panchang} />
-            </Box>
-          </Box>
-        </Fade>
-      )}
+      {/* ========== 7. SEARCH + COMING UP ========== */}
+      <Box sx={{ mt: 0.5, mb: 1.5 }}>
+        <SearchUpcoming onFestivalOpen={onFestivalOpen} />
+      </Box>
 
       {/* ========== SNACKBAR (as-is) ========== */}
       <Snackbar
@@ -795,19 +644,6 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
       </Snackbar>
 
       {/* ========== DIALOGS ========== */}
-      <TithiExplanationDialog
-        open={isTithiDialogOpen}
-        onClose={() => setIsTithiDialogOpen(false)}
-        tithiNumber={panchang?.tithi.number || 1}
-        paksha={panchang?.tithi.paksha || 'Shukla'}
-      />
-
-      <NakshatraExplanationDialog
-        open={isNakshatraDialogOpen}
-        onClose={() => setIsNakshatraDialogOpen(false)}
-        nakshatraNumber={panchang?.nakshatra.number || 1}
-      />
-
       <GlossaryDialog
         open={glossaryLimb !== null}
         onClose={() => setGlossaryLimb(null)}

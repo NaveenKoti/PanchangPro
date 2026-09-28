@@ -41,16 +41,18 @@ const calculateNextOccurrences = (tithi: CustomTithi, location: GeoLocation): Da
     return occurrences;
   }
 
-  // Pitru Paksha companions: the same tithi+paksha, but only the occurrence
-  // inside the Sep 1–Oct 31 Mahalaya window (this year, else next year).
-  // Guarded by flag — the generic path below is untouched.
+  // Pitru Paksha companions: the same tithi+paksha, but exactly ONE
+  // occurrence per year (first match in the window) — Mahalaya is an annual
+  // event, not a monthly repeat. Without the break the ~61-day window holds
+  // two hits of the same tithi (e.g. Sep 29 + Oct 28) and the reminder fires
+  // twice. Guarded by flag — the generic path below is untouched.
   if (tithi.pitruPaksha) {
     const engine = createPanchangEngine(location);
     let year = now.getFullYear();
     for (let attempt = 0; attempt < 2 && occurrences.length === 0; attempt++) {
       const start = new Date(year, 8, 1);
       const end = new Date(year, 9, 31);
-      for (let d = new Date(start); d <= end && occurrences.length < 5; d.setDate(d.getDate() + 1)) {
+      for (let d = new Date(start); d <= end && occurrences.length === 0; d.setDate(d.getDate() + 1)) {
         if (d < now) continue;
         const panchang = engine.calculate(d);
         if (

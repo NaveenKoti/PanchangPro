@@ -92,10 +92,7 @@ test.describe('Critical User Flows', () => {
     });
 
     test('should navigate to Fasts screen', async ({ page }) => {
-      // Fasts lives under More since the Muhurta tab swap — open More first
-      const moreBtn = page.getByRole('button', { name: /^more$/i });
-      await expect(moreBtn).toBeVisible();
-      await moreBtn.click();
+      // Fasts is a bottom-nav tab (Muhurta timing moved to More + Today clock)
       const fastsBtn = page.getByRole('button', { name: /fasts/i });
       await expect(fastsBtn).toBeVisible();
       await fastsBtn.click();
@@ -108,8 +105,9 @@ test.describe('Critical User Flows', () => {
       await expect(heading).toBeVisible({ timeout: 10000 });
     });
 
-    test('should navigate to Muhurta tab', async ({ page }) => {
-      // Muhurta is a bottom-nav tab since the tab swap
+    test('should navigate to Muhurta screen via More', async ({ page }) => {
+      // Muhurta timing lives under More (live clock sits on Today)
+      await page.getByRole('button', { name: /^more$/i }).click();
       const muhurtaBtn = page.getByRole('button', { name: /muhurta/i });
       await expect(muhurtaBtn).toBeVisible();
       await muhurtaBtn.click();
@@ -180,20 +178,35 @@ test.describe('Critical User Flows', () => {
     test('should show day details on date click', async ({ page }) => {
       await page.waitForTimeout(800);
 
-      // Find day cells with role="button" and aria-label containing tithi info
-      const dayCells = page.getByRole('button').filter({
-        has: page.locator('[class*="MuiPaper-root"]'),
-      });
+      // Day rows/cells are role="button" elements containing a day number
+      // (the Paper IS the button — filter by text, not by Paper descendant).
+      const dayCells = page.getByRole('button').filter({ hasText: /\d/ });
       const count = await dayCells.count();
+      expect(count).toBeGreaterThan(0);
 
-      if (count > 0) {
-        await dayCells.first().click();
-        await page.waitForTimeout(800);
+      await dayCells.first().click();
+      await page.waitForTimeout(800);
 
-        // Details panel should appear with panchang info
-        const detailText = page.getByText(/Tithi|Nakshatra|Sunrise|Sunset/i);
-        await expect(detailText.first()).toBeVisible({ timeout: 5000 });
-      }
+      // Details panel should appear with panchang info
+      const detailText = page.getByText(/Tithi|Nakshatra|Sunrise|Sunset/i);
+      await expect(detailText.first()).toBeVisible({ timeout: 5000 });
+    });
+
+    test('should show day details for a past-month day (mobile agenda)', async ({ page }) => {
+      // Regression: the mobile month agenda once filtered to upcoming days
+      // only, so past months rendered zero tappable rows ("day details don't
+      // work" on phones). The full displayed month must list rows.
+      await page.waitForTimeout(800);
+      const monthButtons = page.locator('button:has([class*="chevron"])');
+      await monthButtons.first().click({ force: true });
+      await page.waitForTimeout(1000);
+
+      const rows = page.getByRole('button').filter({ hasText: /\d/ });
+      expect(await rows.count()).toBeGreaterThan(0);
+      await rows.first().click();
+      await page.waitForTimeout(800);
+      const detailText = page.getByText(/Tithi|Nakshatra|Sunrise|Sunset/i);
+      await expect(detailText.first()).toBeVisible({ timeout: 5000 });
     });
 
     test('should have "Today" button to reset view', async ({ page }) => {
@@ -204,8 +217,7 @@ test.describe('Critical User Flows', () => {
 
   test.describe('Fasts Screen', () => {
     test.beforeEach(async ({ page }) => {
-      // Fasts lives under More since the Muhurta tab swap
-      await page.getByRole('button', { name: /^more$/i }).click();
+      // Fasts is a bottom-nav tab
       await page.getByRole('button', { name: /fasts/i }).click();
       await page.waitForTimeout(2000);
     });

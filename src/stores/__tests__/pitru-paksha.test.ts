@@ -80,6 +80,18 @@ describe('Shraddha annual matching', () => {
     expect(first.getDate()).toBe(29);
   });
 
+  it('Pitru Paksha fires exactly once per year (annual, not monthly)', () => {
+    // The ~61-day Mahalaya window holds TWO hits of the same tithi+paksha
+    // (Krishna Tritiya: Sep 29 + Oct 28 2026). Phone smoke test showed the
+    // reminder repeating monthly — it must return the first hit only.
+    const store = useAppStore.getState();
+    store.addCustomTithi({ ...BASE, month: 6, pitruPaksha: true });
+    const id = useAppStore.getState().customTithis[0].id;
+    const occ = useAppStore.getState().getNextOccurrences(id);
+    expect(occ).toHaveLength(1);
+    expect([occ[0].getFullYear(), occ[0].getMonth(), occ[0].getDate()]).toEqual([2026, 8, 29]);
+  });
+
   it('Pitru Paksha matches nothing outside the Mahalaya window', () => {
     const store = useAppStore.getState();
     store.addCustomTithi({ ...BASE, month: 6, pitruPaksha: true });

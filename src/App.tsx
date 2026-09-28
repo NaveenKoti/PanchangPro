@@ -47,7 +47,7 @@ const App: React.FC = () => {
   const [tab, setTab] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const [inlineScreen, setInlineScreen] = useState<'fasts' | 'stories' | null>(null);
+  const [inlineScreen, setInlineScreen] = useState<'muhurta' | 'stories' | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showShareCard, setShowShareCard] = useState(false);
   const [festivalDetail, setFestivalDetail] = useState<{ id: string } | null>(null);
@@ -93,7 +93,7 @@ const App: React.FC = () => {
   // Share-tithi deep link (?d=YYYY-MM-DD): open the sent day on Today,
   // show the shared-day banner + install nudge, then clean the URL.
   // Invalid/absent params boot normally (parseDayParam returns null).
-  // App-shortcut entry (?shortcut=today|calendar|muhurta|myTithis|fasts|stories):
+  // App-shortcut entry (?shortcut=today|calendar|fasts|myTithis|muhurta|stories):
   // Android long-press launcher shortcuts land on the right view.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -104,10 +104,10 @@ const App: React.FC = () => {
       setTab(0);
       setSharedDay(linked);
     } else if (shortcut) {
-      const tabFor: Record<string, number> = { today: 0, calendar: 1, muhurta: 2, myTithis: 3 };
+      const tabFor: Record<string, number> = { today: 0, calendar: 1, fasts: 2, myTithis: 3 };
       if (shortcut in tabFor) {
         setTab(tabFor[shortcut]);
-      } else if (shortcut === 'fasts' || shortcut === 'stories') {
+      } else if (shortcut === 'muhurta' || shortcut === 'stories') {
         setInlineScreen(shortcut);
       }
     }
@@ -140,15 +140,21 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Store-requested tab switch (e.g. Today digest "View My Tithis" CTA):
-  // map tab id → index, then clear the request. Subscribe-only; visuals untouched.
+  // Store-requested tab switch (e.g. Today digest "View My Tithis" CTA,
+  // quick links, timing clock): tab ids map to indices; 'muhurta' opens the
+  // full timing screen inline (it lives in More, not on the tab bar).
   useEffect(() => {
     if (!requestedTab) return;
-    const tabIndex: Record<string, number> = { today: 0, calendar: 1, muhurta: 2, myTithis: 3 };
+    const tabIndex: Record<string, number> = { today: 0, calendar: 1, fasts: 2, myTithis: 3 };
     const next = tabIndex[requestedTab];
     if (next !== undefined) {
       setInlineScreen(null);
       setTab(next);
+    } else if (requestedTab === 'muhurta') {
+      setFestivalDetail(null);
+      setShowSettings(false);
+      setInlineScreen('muhurta');
+      setTab(-1); // Deselect bottom nav
     }
     clearTabRequest();
   }, [requestedTab, clearTabRequest]);
@@ -261,14 +267,14 @@ const App: React.FC = () => {
         event.preventDefault();
         setTab((prev) => {
           const delta = event.key === 'ArrowLeft' ? -1 : 1;
-          const newTab = Math.max(0, Math.min(4, prev + delta));
+          const newTab = Math.max(0, Math.min(3, prev + delta));
           return newTab;
         });
         return;
       }
 
-      // 1-5: jump to specific tab
-      if (event.key >= '1' && event.key <= '5') {
+      // 1-4: jump to specific tab
+      if (event.key >= '1' && event.key <= '4') {
         const tabNum = parseInt(event.key, 10) - 1;
         setTab(tabNum);
         return;
@@ -493,9 +499,9 @@ const App: React.FC = () => {
           )}
 
           {/* Inline screens from More menu */}
-          {!festivalDetail && inlineScreen === 'fasts' && (
-            <Suspense key="fasts-inline" fallback={<FastsSkeleton />}>
-              <FastsScreen onFestivalOpen={(id) => setFestivalDetail({ id })} />
+          {!festivalDetail && inlineScreen === 'muhurta' && (
+            <Suspense key="muhurta-inline" fallback={<MuhurtaSkeleton />}>
+              <MuhurtaScreen />
             </Suspense>
           )}
           {!festivalDetail && inlineScreen === 'stories' && (
@@ -546,8 +552,8 @@ const App: React.FC = () => {
                 </Suspense>
               )}
               {tab === 2 && (
-                <Suspense key="muhurta" fallback={<MuhurtaSkeleton />}>
-                  <MuhurtaScreen />
+                <Suspense key="fasts" fallback={<FastsSkeleton />}>
+                  <FastsScreen onFestivalOpen={(id) => setFestivalDetail({ id })} />
                 </Suspense>
               )}
               {tab === 3 && <MyTithisScreen key="mytithis" />}
@@ -573,7 +579,7 @@ const App: React.FC = () => {
           onSelectItem={(item) => {
             if (item === 'settings') {
               setShowSettings(true);
-            } else if (item === 'fasts' || item === 'stories') {
+            } else if (item === 'muhurta' || item === 'stories') {
               setInlineScreen(item);
               setTab(-1); // Deselect bottom nav
             }

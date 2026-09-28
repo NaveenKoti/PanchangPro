@@ -319,14 +319,12 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   const tithiTextFontSize = isTablet ? '0.6rem' : '0.7rem';
   const festivalTextFontSize = isTablet ? '0.55rem' : '0.65rem';
 
-  // Agenda for xs: next 3 upcoming days with markers (replaces crushed 7-col grid).
+  // Agenda for xs: every day of the DISPLAYED month as rows (replaces the
+  // crushed 7-col grid). No today-filter, no slice: filtering to upcoming
+  // days emptied past months entirely (nothing to tap = "day details don't
+  // work" on phones) and hid most of future months. The page scrolls.
   const agendaDays = useMemo(() => {
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
-    return calendarDays
-      .filter((d) => d.date.getTime() >= start.getTime())
-      .sort((a, b) => a.date.getTime() - b.date.getTime())
-      .slice(0, 3);
+    return [...calendarDays].sort((a, b) => a.date.getTime() - b.date.getTime());
   }, [calendarDays]);
 
  const monthAnimation = useSpring({

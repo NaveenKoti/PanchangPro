@@ -12,12 +12,12 @@
 import React from 'react';
 import { BottomNavigation, BottomNavigationAction, Paper, useTheme } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { Sunrise, CalendarDays, Clock, MoreHorizontal, Star } from 'lucide-react';
+import { Sunrise, CalendarDays, Leaf, MoreHorizontal, Star } from 'lucide-react';
 import { useI18n } from '../hooks/useI18n';
 import { useBreakpoints } from '../hooks/useBreakpoints';
 import { triggerHapticIfSupported } from '../utils/haptics';
 
-export type NavTab = 'today' | 'calendar' | 'muhurta' | 'fasts' | 'myTithis' | 'more' | 'stories';
+export type NavTab = 'today' | 'calendar' | 'fasts' | 'myTithis' | 'more' | 'muhurta' | 'stories';
 
 interface BottomNavProps {
   value: number;
@@ -41,12 +41,12 @@ export const BottomNav: React.FC<BottomNavProps> = ({ value, onChange, onShowMor
     onChange(newValue);
   };
 
-  // 5 tabs: Today, Calendar, Muhurta, My Tithis, More (Fasts moved to More —
-  // auspicious-timings is daily utility, fasting is periodic)
+  // 5 tabs: Today, Calendar, Fasts, My Tithis, More (Muhurta timing lives
+  // in More + on Today as the live clock — fasting is checked more often)
   const navItems = [
     { key: 'today', label: t('navigation.today'), icon: Sunrise },
     { key: 'calendar', label: t('navigation.calendar'), icon: CalendarDays },
-    { key: 'muhurta', label: t('navigation.muhurta'), icon: Clock },
+    { key: 'fasts', label: t('navigation.fasts'), icon: Leaf },
     { key: 'myTithis', label: t('myTithis.title'), icon: Star },
     { key: 'more', label: t('navigation.more'), icon: MoreHorizontal },
   ];
