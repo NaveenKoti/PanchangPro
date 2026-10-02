@@ -80,12 +80,17 @@ export const BottomNav: React.FC<BottomNavProps> = ({ value, onChange, onShowMor
             minHeight: 48,
             minWidth: 'auto',
             padding: isMobile ? '8px 4px' : '10px 8px',
+            margin: isMobile ? '4px 2px' : '6px 4px',
+            borderRadius: 999,
             color: theme.palette.text.secondary,
             transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
             '&:hover': {
               bgcolor: alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.08 : 0.04),
             },
             '&:active': { transform: 'scale(0.97)' },
+            '&.Mui-selected': {
+              bgcolor: alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.16 : 0.1),
+            },
           },
           '& .Mui-selected': {
             color: `${theme.palette.primary.main} !important`,

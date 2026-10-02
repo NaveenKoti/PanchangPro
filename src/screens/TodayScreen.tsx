@@ -452,8 +452,8 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
             bgcolor: 'background.paper',
           }}
         >
-          <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
+          <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1.5 }}>
               <IconButton
                 onClick={handlePrevDay}
                 size="small"
@@ -472,7 +472,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
                       fontWeight: 500,
                       lineHeight: 1.3,
                       color: 'text.primary',
-                      fontSize: isMobile ? '0.85rem' : '1.05rem',
+                      fontSize: isMobile ? '0.95rem' : '1.15rem',
                       wordBreak: 'break-word',
                       maxWidth: '100%',
                     }}
@@ -608,7 +608,10 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
           </Typography>
         }
       >
-        <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary', lineHeight: 1.6 }}>
+        <Typography
+          variant="body1"
+          sx={{ fontWeight: 400, fontStyle: 'italic', fontSize: '1.05rem', color: 'text.primary', lineHeight: 1.7, borderLeft: '2px solid', borderColor: 'primary.main', pl: 1.5 }}
+        >
           {dailyMantra.sanskrit}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>

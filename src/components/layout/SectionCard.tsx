@@ -2,11 +2,13 @@
  * SectionCard — the ONE shared card primitive (Layout stage).
  *
  * Standard: elevation 0, `1px solid` divider border, radius from theme,
- * standard padding theme.spacing(2), dense variant theme.spacing(1.5).
+ * standard padding theme.spacing(2), dense variant theme.spacing(1.5),
+ * canonical soft shadow (documented in vedaTheme CARD SPEC).
  * Consume tokens via useTheme() — never hardcode.
  */
 import React from 'react';
 import { Card, CardContent, CardHeader, useTheme } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 
 export interface SectionCardProps {
   title?: React.ReactNode;
@@ -37,7 +39,11 @@ export const SectionCard = React.forwardRef<HTMLDivElement, SectionCardProps>(fu
         // (8): numeric 1 = 8px crisp. Never pass the raw token (8 → 64px!).
         borderRadius: 1,
         bgcolor: 'background.paper',
-        mb: 1.5,
+        mb: 2,
+        boxShadow:
+          theme.palette.mode === 'dark'
+            ? `0 1px 3px ${alpha(theme.palette.common.black, 0.3)}`
+            : `0 1px 3px ${alpha(theme.palette.common.black, 0.04)}`,
       }}
     >
       {(title || action) && (

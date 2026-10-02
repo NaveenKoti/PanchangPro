@@ -101,11 +101,11 @@ export const TodayTimingClock: React.FC<TodayTimingClockProps> = ({ onOpenTiming
         </Typography>
       }
     >
-      <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap' }}>
-        <Typography variant="h5" sx={{ fontWeight: 500, color: tone, letterSpacing: '-0.02em', lineHeight: 1.2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 1, flexWrap: 'wrap', mt: 0.5 }}>
+        <Typography variant="h4" sx={{ fontWeight: 500, color: tone, letterSpacing: '-0.02em', lineHeight: 1.15 }}>
           {name}
         </Typography>
-        <Typography variant="h6" sx={{ fontWeight: 500, color: 'text.primary', fontVariantNumeric: 'tabular-nums' }} aria-live="off">
+        <Typography variant="h5" sx={{ fontWeight: 500, color: 'text.primary', fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.01em' }} aria-live="off">
           {formatCountdown(active.endTime.getTime() - now.getTime())}
         </Typography>
       </Box>
@@ -113,8 +113,8 @@ export const TodayTimingClock: React.FC<TodayTimingClockProps> = ({ onOpenTiming
         variant="determinate"
         value={progress}
         sx={{
-          mt: 1,
-          height: 6,
+          mt: 1.25,
+          height: 8,
           borderRadius: 999,
           bgcolor: alpha(tone, 0.15),
           '& .MuiLinearProgress-bar': { bgcolor: tone, borderRadius: 999 },

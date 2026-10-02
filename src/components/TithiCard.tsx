@@ -95,8 +95,20 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
       }}
     >
       <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
-        {/* Header - Minimal */}
-        <Box sx={{ px: 2, pt: 2.5, pb: 1.5 }}>
+        {/* Header - editorial: eyebrow paksha, display name, moon tile */}
+        <Box sx={{ px: 2.5, pt: 3, pb: 2 }}>
+          <Typography
+            variant="overline"
+            sx={{
+              color: accent.main,
+              fontSize: '0.7rem',
+              letterSpacing: '0.14em',
+              mb: 1,
+              display: 'block',
+            }}
+          >
+            {isShukla ? 'Shukla Paksha' : 'Krishna Paksha'}
+          </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
             <Box
               sx={{
@@ -153,11 +165,11 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
                 variant="h4"
                 sx={{
                   fontWeight: 500,
-                  fontSize: isMobile ? 'clamp(1.75rem, 7vw, 2rem)' : '2.25rem',
+                  fontSize: isMobile ? 'clamp(2rem, 8vw, 2.5rem)' : '2.75rem',
                   color: 'text.primary',
-                  letterSpacing: '-0.02em',
+                  letterSpacing: '-0.03em',
                   mb: 0.25,
-                  lineHeight: 1.15,
+                  lineHeight: 1.1,
                 }}
               >
                 {tithi.name}
@@ -179,10 +191,10 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
               sx={{
                 marginLeft: 'auto',
                 fontWeight: 500,
-                fontSize: 'clamp(2.75rem, 12vw, 3.5rem)',
+                fontSize: 'clamp(3.25rem, 14vw, 4.25rem)',
                 lineHeight: 1,
                 color: 'primary.main',
-                opacity: 0.9,
+                opacity: 0.85,
                 letterSpacing: '-0.03em',
                 flexShrink: 0,
               }}
@@ -193,7 +205,7 @@ export const TithiCard: React.FC<TithiCardProps> = ({ tithi, compact = false, on
         </Box>
 
         {/* Paksha Chips - Minimal */}
-        <Box sx={{ px: 2, pb: 2.5 }}>
+        <Box sx={{ px: 2.5, pb: 2.5 }}>
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Chip
               label={isShukla ? 'Shukla Paksha' : 'Krishna Paksha'}
