@@ -165,6 +165,8 @@ export const WeeklyAgenda: React.FC<WeeklyAgendaProps> = ({
                   minWidth: 48,
                   minHeight: 48,
                   flexShrink: 0,
+                  borderRadius: 1,
+                  bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.12 : 0.06),
                 }}
               >
                 <Typography

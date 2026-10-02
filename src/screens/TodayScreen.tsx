@@ -22,6 +22,7 @@ import {
   Button,
   useTheme as useMuiTheme,
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import {
   MapPin,
   ChevronLeft,
@@ -558,36 +559,58 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onFestivalOpen }) => {
         />
       </Box>
 
-      {/* ========== 3. SINGLE SUNRISE/SUNSET LINE ========== */}
+      {/* ========== 3. SACRED TIMES (sun line + inauspicious periods, Mira tile rows) ========== */}
       <SectionCard dense>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-            <Sunrise size={16} color={muiTheme.palette.primary.main} />
-            <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
-              {formatTime(panchang.sunrise)}
-            </Typography>
-          </Box>
-          <Divider orientation="vertical" flexItem />
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-            <Sunset size={16} color={muiTheme.palette.primary.main} />
-            <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
-              {formatTime(panchang.sunset)}
-            </Typography>
-          </Box>
+        <Box sx={{ display: 'flex', alignItems: 'stretch', justifyContent: 'center', gap: 1 }}>
+          {(
+            [
+              { icon: Sunrise, label: null, value: formatTime(panchang.sunrise) },
+              { icon: Sunset, label: null, value: formatTime(panchang.sunset) },
+            ] as const
+          ).map((row, i) => (
+            <Box
+              key={i}
+              sx={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 1,
+                py: 1,
+                px: 1,
+                minHeight: 48,
+                borderRadius: 1,
+                bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.12 : 0.06),
+              }}
+            >
+              <row.icon size={18} color={muiTheme.palette.primary.main} />
+              <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.primary', fontVariantNumeric: 'tabular-nums' }}>
+                {row.value}
+              </Typography>
+            </Box>
+          ))}
         </Box>
-      </SectionCard>
-
-      {/* ========== 4. SINGLE INAUSPICIOUS-PERIODS STRIP (one neutral line) ========== */}
-      <SectionCard dense>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.75, flexWrap: 'wrap' }}>
-          <Clock size={16} color={muiTheme.palette.text.secondary} />
-          <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
-            {t('panchang.rahuKaal')} {formatTime(panchang.rahuKaal.start)}–{formatTime(panchang.rahuKaal.end)}
-            {' · '}
-            {t('panchang.yamagandam') || 'Yamagandam'} {formatTime(panchang.yamagandam.start)}–{formatTime(panchang.yamagandam.end)}
-            {' · '}
-            {t('panchang.gulikaKaal') || 'Gulika'} {formatTime(panchang.gulikaKaal.start)}–{formatTime(panchang.gulikaKaal.end)}
-          </Typography>
+        <Divider sx={{ my: 1 }} />
+        <Box sx={{ display: 'flex', alignItems: 'stretch', justifyContent: 'center', gap: 1 }}>
+          {(
+            [
+              { label: t('panchang.rahuKaal'), value: `${formatTime(panchang.rahuKaal.start)}–${formatTime(panchang.rahuKaal.end)}` },
+              { label: t('panchang.yamagandam') || 'Yamagandam', value: `${formatTime(panchang.yamagandam.start)}–${formatTime(panchang.yamagandam.end)}` },
+              { label: t('panchang.gulikaKaal') || 'Gulika', value: `${formatTime(panchang.gulikaKaal.start)}–${formatTime(panchang.gulikaKaal.end)}` },
+            ] as const
+          ).map((row) => (
+            <Box key={row.label} sx={{ flex: 1, minWidth: 0, textAlign: 'center', py: 0.5 }}>
+              <Typography
+                variant="caption"
+                sx={{ display: 'block', color: 'text.secondary', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500 }}
+              >
+                {row.label}
+              </Typography>
+              <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary', fontVariantNumeric: 'tabular-nums', fontSize: '0.8rem' }}>
+                {row.value}
+              </Typography>
+            </Box>
+          ))}
         </Box>
       </SectionCard>
 

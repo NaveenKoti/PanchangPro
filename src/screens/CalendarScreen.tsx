@@ -518,8 +518,8 @@ export const CalendarScreen: React.FC<CalendarScreenProps> = ({ onFestivalOpen }
   sx={{
   display: 'grid',
   gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
-  gap: { sm: '6px', md: '8px' },
-  p: { sm: '6px', md: '8px' },
+  gap: { xs: '2px', sm: '6px', md: '8px' },
+  p: { xs: '4px', sm: '6px', md: '8px' },
   width: '100%',
   overflow: 'visible',
   boxSizing: 'border-box',

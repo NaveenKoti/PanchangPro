@@ -533,8 +533,9 @@ export const FestivalDetailScreen: React.FC<FestivalDetailScreenProps> = ({
                 
                 color: 'primary.main',
                 fontSize: { xs: '1.8rem', sm: '2.5rem', md: '3rem', lg: '3.5rem' },
+                letterSpacing: '-0.03em',
                 mb: 1,
-                lineHeight: 1.2,
+                lineHeight: 1.15,
                 wordBreak: 'break-word',
               }}
             >

@@ -263,9 +263,9 @@ export const FastsScreen: React.FC<FastsScreenProps> = ({ onFestivalOpen }) => {
               sx={{
                 fontWeight: 500,
                 color: 'text.primary',
-                fontSize: { xs: '1.25rem', sm: '1.5rem' },
+                fontSize: { xs: '1.5rem', sm: '1.75rem' },
                 letterSpacing: '-0.02em',
-                lineHeight: 1.3,
+                lineHeight: 1.25,
               }}
             >
               {t('fasting.title')}

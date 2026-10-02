@@ -474,7 +474,9 @@ export const MyTithisScreen: React.FC = () => {
                   sx={{ 
                     fontWeight: 500, 
                     color: 'text.primary',
-                    fontSize: isTablet ? '1.5rem' : '1.25rem',
+                    fontSize: isTablet ? '1.75rem' : '1.5rem',
+                    letterSpacing: '-0.02em',
+                    lineHeight: 1.25,
                   }}
                 >
                   {t('myTithis.title')}
